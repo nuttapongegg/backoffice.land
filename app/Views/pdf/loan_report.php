@@ -32,16 +32,11 @@
         <tr>
             <th style="font-size: 6px;"></th>
         </tr>
-        <?php $txtAge = '';
-            $age = calculateAge($loan->birthday);
-            if ($age != date("Y")) {
-                $txtAge = calculateAge($loan->birthday);
-            } ?>
         <tr>
             <th width="23%">สัญญากู้ยืมเงินฉบับนี้ ทำขึ้นระหว่าง</th>
-            <th width="62%" style="text-align:center; border-bottom-style: dotted; "><?php echo $loan->fullname ?></th>
+            <th width="62%" style="text-align:center; border-bottom-style: dotted; "><?php echo $loan->loan_customer?></th>
             <th width="3%">อายุ</th>
-            <th width="10%" style="text-align:center; border-bottom-style: dotted; "><?php echo $txtAge ?></th>
+            <th width="10%" style="text-align:center; border-bottom-style: dotted; "></th>
             <th width="2%">ปี</th>
         </tr>
         <tr>
@@ -49,7 +44,7 @@
         </tr>
         <tr>
             <th width="3%">ที่อยู่</th>
-            <th width="97%" style="text-align:center; border-bottom-style: dotted; "><?php echo $loan->address ?></th>
+            <th width="97%" style="text-align:center; border-bottom-style: dotted; "></th>
         </tr>
         <tr>
             <th style="font-size: 6px;"></th>
@@ -109,11 +104,11 @@
         <tr>
             <th style="font-size: 6px;"></th>
         </tr>
-        <?php $month = date('Y-m-d',strtotime($loan->loan_date_promise . "+1 months"));?>
+        <?php $month = date('Y-m-d',strtotime($loan->loan_installment_date . "+0 months"));?>
         <tr>
             <th width="48%">ใหม่ให้ผู้กู้ทราบเป็นที่เรียบร้อย ซึ่งผู้กู้ตกลงชำระดอกเบี้ยเป็นรายเดือนทุกๆ</th>
             <th width="3%">วันที่</th>
-            <th width="6%" style="text-align:center; border-bottom-style: dotted; "><?php echo dayThai($loan->loan_date_promise) ?></th>
+            <th width="6%" style="text-align:center; border-bottom-style: dotted; "><?php echo dayThai($loan->loan_installment_date) ?></th>
             <th width="22%">ของเดือน เริ่มงวดแรกภายในวันที่</th>
             <th width="21%" style="text-align:center; border-bottom-style: dotted; "><?php echo dayThai($month).' '.monthThai($month).' '.yearThai($month) ?></th>
         </tr>
@@ -121,7 +116,8 @@
             <th style="font-size: 6px;"></th>
         </tr>
         <?php $months = $loan->loan_payment_year_counter * 12;
-         $year = date('Y-m-d',strtotime($loan->loan_date_promise . "+".$months." months"));?>
+            $month = $months - 1;
+         $year = date('Y-m-d',strtotime($loan->loan_installment_date . "+".$month." months"));?>
         <tr>
             <th width="2%"></th>
             <th width="3%"><B>ข้อ</B></th>
