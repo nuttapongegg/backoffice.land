@@ -1,0 +1,401 @@
+(function ($) {
+  flatpickr("#date_to_loan", {});
+  flatpickr("#date_to_loan_pay_date", {});
+  
+  callTableLoan();
+
+})(jQuery);
+var count_loan = 0;
+
+function callTableLoan() {
+  $("#tableLoanOn").DataTable().clear().destroy();
+  $.ajax({
+    url: serverUrl + "/loan/tableLoan",
+    dataType: "json",
+    type: "get",
+    success: function (response) {
+      var result = JSON.parse(response.message);
+      result.forEach(statusLoan);
+
+      $("#count_car").html(
+        '<div class="tx-primary tx-18" id="count_car">รายการสินเชื่อที่ยังไม่ปิด (' +
+        count_loan +
+        " ราย)</div>"
+      );
+      count_loan = 0;
+
+      callAutoloenTable(result);
+      slowSummarizeLoan();
+    },
+  });
+}
+
+function callAutoloenTable(data) {
+  var tableLoan = $("#tableLoanOn").DataTable({
+    responsive: false,
+    language: {
+      searchPlaceholder: "Search...",
+      sSearch: "",
+    },
+    info: true,
+    pagingType: "full_numbers",
+    lengthMenu: [
+      [10, 25, 50, 100, -1],
+      [10, 25, 50, 100, "All"],
+    ],
+    scrollX: "TRUE",
+    paging: true,
+    processing: true,
+    serverside: true,
+    data: data,
+    columnDefs: [
+      {
+        targets: 8,
+        className: "text-right",
+        data: "loan_summary_no_vat",
+        render: function (data, type, row, meta) {
+          return (
+            '<span class="tx-success">' +
+            new Intl.NumberFormat().format(
+              Number(data["loan_summary_no_vat"]).toFixed(2)
+            ) +
+            "</span>"
+          );
+        },
+      },
+      {
+        data: "loan_date_promise",
+        targets: 6,
+        render: function (data, type, row, meta) {
+          if (type == "display") {
+            const date = new Date(data["loan_date_promise"]);
+            const result = date.toLocaleDateString("th-TH", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            });
+            return result;
+          }
+          return data["loan_date_promise"];
+        },
+      },
+      {
+        data: "loan_installment_date",
+        targets: 10,
+        render: function (data, type, row, meta) {
+          if (data["loan_installment_date"] == null) {
+            return (
+              "<font class='tx-primary'>รอเพิ่มวันจ่าย</font>"
+            );
+          }else{
+            if (type == "display") {
+              const date = new Date(data["loan_installment_date"]);
+              const newDate = new Date(date.setMonth(date.getMonth() + 1));
+              const result = newDate.toLocaleDateString("th-TH", {
+                day: "numeric",
+              }) + " ของทุกเดือน";
+              return result;
+            }
+          }
+          return data["loan_installment_date"];
+        },
+      }
+    ],
+    columns: [
+      {
+        data: null,
+        render: function (data, type, row, meta) {
+          return meta.row + meta.settings._iDisplayStart + 1;
+        },
+      },
+      {
+        data: null,
+        render: function (data, type, row, meta) {
+          return (
+            '<a href="' +
+            serverUrl +
+            "/loan/detail/" +
+            data["loan_code"] +
+            '" target="_blank"><font>' +
+            data["loan_code"] +
+            "</font></a>"
+          );
+        },
+      },
+      {
+        data: "loan_customer",
+      },
+      {
+        data: "loan_address",
+      },
+      {
+        data: "loan_area",
+      },
+      {
+        data: "loan_number",
+      },
+      {
+        data: null,
+      },
+      {
+        data: null,
+        render: function (data, type, row, meta) {
+          if (data["loan_payment_process"] === "0.00") {
+            return (
+              "<font>" + "เงินสด" + "</font>"
+            );
+          } else {
+            return (
+              "<font>" + "เช่าซื้อ" + "</font>"
+            );
+          }
+
+        },
+      },
+      {
+        data: null,
+      },
+      {
+        data: null,
+        className: "text-center",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + data["loan_payment_year_counter"] + " ปี" + "</font>"
+          );
+        },
+      },
+      {
+        data: null,
+      },
+      {
+        data: null,
+        render: function (data, type, row, meta) {
+            if (data["loan_status"] == "ON_STATE") {
+
+              const date = new Date(data["loan_payment_date_fix"]);
+              const newDate = new Date(date.setMonth(date.getMonth() + (data["loan_period"] - 1)));
+
+              const daysPassed = Math.floor((Date.now() - newDate) / (1000 * 60 * 60 * 24));
+              if (daysPassed > 0) {
+                return (
+                  "<font class='tx-secondary'>รอการจ่าย/เลยกำหนด</font>"
+                );
+              } else {
+                return (
+                  "<font class='tx-success'>ยังไม่ถึงกำหนด</font>"
+                );
+              }
+            } else if (data["loan_status"] == "CLOSE_STATE") {
+              return (
+                "<font>สินเชื่อชำระเสร็จสิ้น</font>"
+              );
+            }
+          // }
+        },
+      },
+      {
+        data: null,
+        className: "text-center",
+        render: function (data, type, row, meta) {
+            if (data["loan_status"] == "ON_STATE") {
+
+              const date = new Date(data["loan_payment_date_fix"]);
+              const newDate = new Date(date.setMonth(date.getMonth() + (data["loan_period"] - 1)));
+
+              const daysPassed = Math.floor((Date.now() - newDate) / (1000 * 60 * 60 * 24));
+
+              if (daysPassed > 0) {
+                return (
+                  "<font class='tx-secondary'>" + daysPassed + " วัน" + "</font>"
+                );
+              } else {
+                return (
+                  "<font>-</font>"
+                );
+              }
+            }
+        },
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + data["loan_payment_interest"] + " %" + "</font>"
+          );
+        },
+      },
+      {
+        data: null,
+        className: "text-center",
+        render: function (data, type, row, meta) {
+          var installment = (data["loan_payment_year_counter"] * 12)
+          return (
+            "<font>" + installment + "</font>"
+          );
+        },
+      },
+      {
+        data: "loan_payment_type",
+        className: "text-center",
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + new Intl.NumberFormat().format(Number(data["loan_payment_month"]).toFixed(2)) + "</font>"
+          );
+        },
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + new Intl.NumberFormat().format(Number(data["loan_payment_sum_installment"]).toFixed(2)) + "</font>"
+          );
+        },
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          var summary_all = (data["loan_sum_interest"] - data["loan_payment_sum_installment"])
+          return (
+            "<font>" + new Intl.NumberFormat().format(Number(summary_all).toFixed(2)) + "</font>"
+          );
+        },
+      },
+      {
+        data: "loan_remnark",
+      },
+    ],
+  });
+}
+
+function statusLoan(item, index, arr) {
+  if (item.loan_status == "ON_STATE") {
+    count_loan++;
+  }
+}
+
+function dateDiff(date_now, date_stock) {
+  const diffTime = Math.abs(date_now - date_stock);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const result = diffDays - 1;
+
+  return "<font> " + result + " วัน</font>";
+}
+
+$(document).delegate(".btn-add-loan", "click", function (e) {
+  let modalAddLoan = $("#modalAddLoan");
+  let formAddLoan = modalAddLoan.find("form").attr("id");
+  let form = modalAddLoan.find("form");
+  var formData = new FormData(document.getElementById(formAddLoan));
+
+  var loan_list = form.parsley();
+  if (loan_list.isValid()) {
+    $(".btn-add-loan").text("กำลังบันทึก...");
+    $.ajax({
+      url: serverUrl + "/loan/addLoan",
+      method: "post",
+      data: formData,
+      contentType: false,
+      cache: false,
+      processData: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.error) {
+          notif({
+            type: "danger",
+            msg: "เพิ่มสินเชื่อไม่สำเร็จ",
+            position: "right",
+            fade: true,
+            time: 300,
+          });
+          $(".btn-add-loan").text("บันทึก");
+        } else {
+          notif({
+            type: "success",
+            msg: "เพิ่มสินเชื่อสำเร็จ!",
+            position: "right",
+            fade: true,
+            time: 300,
+          });
+
+          form.parsley().reset();
+          form[0].reset();
+          $(".btn-add-loan").text("บันทึก");
+          $("#modalAddLoan").modal("hide");
+          callTableLoan();
+        }
+      },
+    });
+  } else {
+    loan_list.validate();
+    $(".btn-add-loan").text("บันทึก");
+  }
+});
+
+$("#loan_without_vat").keyup(function () {
+  $("#money_loan").val($("#loan_without_vat").val());
+});
+
+$(".modalAddLoanClose").click(function () {
+  let modalAddLoan = $("#modalAddLoan");
+  let form = modalAddLoan.find("form");
+  form.parsley().reset();
+  form[0].reset();
+  $(".btn-add-loan").text("บันทึก");
+  $("#modalAddLoan").modal("hide");
+});
+
+$("#payment_interest").keyup(function () {
+  let $loanPrice = $("#money_loan").val(),
+    $numYear = $("#payment_year_counter").val(),
+    $interest = $("#payment_interest").val();
+
+  $loanPrice = Number($loanPrice.replace(/[^0-9.-]+/g, ""));
+  $numYear = Number($numYear.replace(/[^0-9.-]+/g, ""));
+
+  $dok_total = 0;
+  $sum_all = 0;
+
+  $dok_total = (($loanPrice * $interest) / 100) * $numYear;
+
+  $numYear = 12 * $numYear;
+
+  $pay_count = $dok_total / $numYear;
+
+  $sum_all = $dok_total + $loanPrice;
+  
+  $("#total_loan_interest").val($dok_total);
+  $("#pricePerMonth").val($pay_count);
+  $("#total_loan").val($sum_all);
+});
+
+// ทำการจัดการกับผลลัพธ์ที่ได้จากคำขอ Ajax
+function slowSummarizeLoan() {
+  $.ajax({
+    type: 'POST',
+    url: `/loan/ajax-summarizeLoan`,
+    contentType: 'application/json; charset=utf-8',
+    success: function (res) {
+      if (res.success) {
+        let $data_summarizeLoan = res.data_summarizeLoan
+        $("#summarizeLoan").hide().html($data_summarizeLoan).fadeIn('slow')
+
+        let $data_SummarizeLoan = res.data_SummarizeLoan
+        $("#SummarizeLoan").hide().html($data_SummarizeLoan).fadeIn('slow')
+      } else {
+        // Handle error
+      }
+    },
+    error: function (res) {
+      // Handle error
+    }
+  });
+}
+
+

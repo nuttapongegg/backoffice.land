@@ -1,0 +1,269 @@
+/** BASE **/
+* {
+    font-family: 'Kanit', sans-serif;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.was-validated .custom-select:invalid+.select2 .select2-selection {
+    border-color: #dc3545 !important;
+}
+
+.was-validated .custom-select:valid+.select2 .select2-selection {
+    border-color: #43ce85 !important;
+}
+
+*:focus {
+    outline: 0px;
+}
+
+div.gallery {
+    margin: 5px;
+    border: 1px solid #ccc;
+    float: right;
+    width: 180px;
+}
+
+div.gallery img {
+    width: 100%;
+    height: 100%;
+}
+
+/** เลือกธีม **/
+.profiles-gate-container {
+    background: rgba(20, 20, 20, 0.9);
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    text-align: center;
+    top: 0;
+    z-index: 9999;
+}
+.profiles-gate-container .centered-div.list-profiles-container:not(.js-transition-node) {
+    -webkit-animation: animateProfileGate .45s forwards;
+    animation: animateProfileGate .45s forwards;
+}
+.profiles-gate-container .centered-div {
+    align-items: center;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 100;
+}
+.list-profiles {
+    max-width: 80%;
+}
+.list-profiles .profile-gate-label {
+    color: #fff;
+    font-size: 3.5vw;
+    font-weight: unset;
+    width: 100%;
+}
+.list-profiles .choose-profile, .list-profiles .profile-gate-label {
+    opacity: 1;
+    transition: opacity .4s ease-out;
+}
+.list-profiles .choose-profile {
+    margin: 2em 0;
+}
+.list-profiles .choose-profile, .list-profiles .profile-gate-label {
+    opacity: 1;
+    transition: opacity .4s ease-out;
+}
+.profiles-gate-container ul {
+    padding: 0;
+}
+.profiles-gate-container li.profile:not(:last-child) {
+    margin: 0 2vw 0 0;
+}
+.profiles-gate-container li.profile {
+    max-width: 200px;
+    min-width: 84px;
+    width: 10vw;
+}
+.profiles-gate-container li {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+}
+.profiles-gate-container li a {
+    text-decoration: none;
+}
+.list-profiles .avatar-wrapper {
+    position: relative;
+}
+.profiles-gate-container .profile-icon {
+    background-color: #333;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 10vw;
+    max-height: 200px;
+    max-width: 200px;
+    min-height: 84px;
+    min-width: 84px;
+    position: relative;
+    text-decoration: none;
+    width: 10vw;
+    background-size: 50%;
+    background-position: center;
+}
+.profiles-gate-container .profile-icon:after {
+    border: 0.3em solid transparent;
+    border-radius: 4px;
+    bottom: 0;
+    content: "";
+    display: block;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.extended-diacritics-language .profiles-gate-container .profile-name {
+    line-height: 1.5;
+}
+@media screen and (min-width: 1666px) {
+    .profiles-gate-container .profile-name {
+        font-size: 24px;
+    }
+}
+.profiles-gate-container .profile-name {
+    color: grey;
+    display: block;
+    font-size: 1.3vw;
+    line-height: 1.2em;
+    margin: 0.6em 0;
+    min-height: 1.8em;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+}
+.profiles-gate-container li.profile .svg-icon-profile-lock {
+    color: #666;
+    height: 20px;
+    width: 20px;
+}
+.t_17d527 .svg-icon {
+    border: 1px solid transparent;
+    margin: 0 -1px;
+    overflow: visible;
+    transform: scale(1);
+}
+.profiles-gate-container li a.focused, .profiles-gate-container li a:focus, .profiles-gate-container li a:hover {
+    cursor: pointer;
+}
+.profiles-gate-container li a.focused .profile-icon, .profiles-gate-container li a.focused .profile-icon:after, .profiles-gate-container li a:focus .profile-icon, .profiles-gate-container li a:focus .profile-icon:after, .profiles-gate-container li a:hover .profile-icon, .profiles-gate-container li a:hover .profile-icon:after {
+    border-color: #e5e5e5;
+}
+.btn--snakeBorder {
+    background: #000;
+    overflow: hidden;
+}
+.btn--snakeBorder::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    bottom: 2px;
+}
+.btn--snakeBorder span {
+    position: absolute;
+}
+.btn--snakeBorder span:nth-child(1) {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, #0c002b, #1779ff);
+    animation: borderAnimation1 2s linear infinite;
+}
+@keyframes borderAnimation1 {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+.btn--snakeBorder span:nth-child(2) {
+    top: 0;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, #0c002b, #1779ff);
+    animation: borderAnimation2 2s linear infinite;
+    animation-delay: 1s;
+}
+@keyframes borderAnimation2 {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(100%);
+    }
+}
+.btn--snakeBorder span:nth-child(3) {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to left, #0c002b, #1779ff);
+    animation: borderAnimation3 2s linear infinite;
+}
+@keyframes borderAnimation3 {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+.btn--snakeBorder span:nth-child(4) {
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to top, #0c002b, #1779ff);
+    animation: borderAnimation4 2s linear infinite;
+    animation-delay: 1s;
+}
+@keyframes borderAnimation4 {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(-100%);
+    }
+}
+.btn-x {
+    position: relative;
+    display: inline-block;
+    padding: 12px 36px;
+    margin: 10px;
+    color: #fff;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-sizing: border-box;
+}
+
+@media (min-width: 992px) {
+    [data-layout=horizontal] .main-sidemenu.container-fluid {
+        overflow: hidden !important;
+    }
+}
