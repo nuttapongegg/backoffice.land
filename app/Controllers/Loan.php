@@ -464,13 +464,13 @@ class Loan extends BaseController
         $fileName_img = $file_payment->getFilename();
         if ($fileName_img !== "") {
             $fileName_img = $codeloan_hidden . "_" . $file_payment->getRandomName();
-            $file_payment->move('uploads/loan_img', $fileName_img);
+            $file_payment->move('uploads/loan_payment_img', $fileName_img);
 
             // if ($this->request->getPost('old_img_car') != '') {
-            //     unlink('uploads/loan_img/' . $this->request->getPost('old_img_car'));
+            //     unlink('uploads/loan_payment_img/' . $this->request->getPost('old_img_car'));
             // }
 
-            $file_Path = 'uploads/loan_img/' . $fileName_img;
+            $file_Path = 'uploads/loan_payment_img/' . $fileName_img;
 
             try {
 
@@ -488,14 +488,14 @@ class Loan extends BaseController
 
                 $result = $s3Client->putObject([
                     'Bucket' => $this->s3_bucket,
-                    'Key'    => 'uploads/loan_img/' . $fileName_img,
+                    'Key'    => 'uploads/loan_payment_img/' . $fileName_img,
                     'Body'   => fopen($file_Path, 'r'),
                     'ACL'    => 'public-read', // make file 'public'
                 ]);
 
 
                 if ($result['ObjectURL'] != "") {
-                    unlink('uploads/loan_img/' . $fileName_img);
+                    unlink('uploads/loan_payment_img/' . $fileName_img);
                 }
             } catch (Aws\S3\Exception\S3Exception $e) {
                 echo $e->getMessage();
