@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
 
     <!-- Title -->
-    <title> Used Car Backoffice | <?php echo $title; ?></title>
+    <title> Land Backoffice | <?php echo $title; ?></title>
 
     <!-- Favicon -->
     <link rel="icon" href="<?php echo base_url('/assets/img/brand/favicon.ico'); ?>" type="image/x-icon" />

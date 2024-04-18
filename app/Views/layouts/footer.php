@@ -48,7 +48,7 @@
 <div class="main-footer">
     <div class="col-md-12 col-sm-12 text-center">
         <div class="container-fluid pd-t-0 ht-100p">
-            Copyright © 2022 <a href="javascript:void(0)" class="tx-primary">Backoffice</a>. Designed by <a href="javascript:void(0)"> Used Car </a> All rights reserved
+            Copyright © 2022 <a href="javascript:void(0)" class="tx-primary">Backoffice</a>. Designed by <a href="javascript:void(0)"> Land </a> All rights reserved
         </div>
     </div>
 </div>

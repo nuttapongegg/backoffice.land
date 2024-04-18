@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <!-- Title -->
-    <title>Used Car | Backoffice</title>
+    <title>Land | Backoffice</title>
 
     <!-- Favicon -->
     <link rel="icon" href="<?php echo base_url('/assets/img/brand/favicon.ico'); ?>" type="image/x-icon"/>
@@ -99,7 +99,7 @@
                                 <div class="wd-100p">
                                     <div class="d-flex"><a href="#"><img src="<?php echo base_url('/assets/img/brand/favicon-white.png'); ?>" class="sign-favicon ht-40" alt="logo"></a></div>
                                     <div class="mt-3">
-                                        <h2 class="tx-medium tx-primary">Used Car | Backoffice</h2>
+                                        <h2 class="tx-medium tx-primary">Land | Backoffice</h2>
                                         <h6 class="font-weight-semibold mb-4 text-white-50">ล็อคอิน เพื่อเข้าสู่ระบบ</h6>
                                         <div class="panel tabs-style7 scaleX mt-2">
                                             <div class="panel-head">
