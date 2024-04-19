@@ -52,6 +52,10 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->post('addPayment', 'Loan::insertDataLoanPayment');
     $routes->get('detail/(:any)', 'Loan::detail/$1');
     $routes->get('detailForm/(:any)', 'Loan::detailForm/$1');
+    $routes->post('insertDetailPiture/(:any)', 'Loan::insertDetailPiture/$1');
+    $routes->get('fetchOtherPicture/(:any)', 'Loan::fetchOtherPicture/$1');
+    $routes->get('delete_other_picture/(:any)', 'Loan::deleteOtherPicture/$1');
+    $routes->get('dowloadPictureOther/(:any)', 'Loan::dowloadPictureOther/$1');
     $routes->post('updateLoan', 'Loan::updateLoan');
     $routes->get('cancelLoan/(:any)', 'Loan::offLoan/$1');
     $routes->get('callInstallMent/(:any)', 'Loan::callInstallMent/$1');

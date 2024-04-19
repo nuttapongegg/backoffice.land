@@ -311,6 +311,30 @@
                                         </div>
                                     </div>
                                 </form>
+                                <hr />
+                                <form id="AddPicture" name="AddPicture" method="POST" enctype="multipart/form-data" novalidate>
+                                    <div class="col-sm-12 col-md-12" style="text-align: center;">
+                                        <label for="file_picture_other_update" class="form-label" style="font-weight: bold;">รูปอื่นๆ</label>
+                                        <!-- <input id="file_picture_other_update" type="file" class="dropify" name="file_picture_other_update[]" accept="image/jpeg, image/png" data-height="200" multiple /> -->
+                                        <div class="input-other-images">
+                                        </div>
+                                    </div>
+                                    <p class="border-bottom-dashed tx-primary"></p>
+                                    <div align="right">
+                                        <div class="form-group mb-2 mt-2">
+                                            <button type="submit" id="add_btn_picture" class="btn btn-primary mb-0 me-2" role="button">แก้ไขรูปภาพ</button>
+                                        </div>
+                                    </div>
+                                    <p class="border-bottom-dashed tx-primary"></p>
+                                </form>
+                                <hr />
+                                <div class="masonry row">
+                                    <label style="font-weight: bold;">รูปอื่นๆ</label>
+                                    <div class="row mb-4" id="other_picture"></div>
+                                    <div class="col-sm-12 col-md-12" style="text-align: right;">
+                                        <button type="button" class="btn btn-dark button-icon mx-2 button-icon" onclick="downloadOther();"><i class="fas fa-download me-2"></i>โหลดรูป</button>
+                                    </div>
+                                </div>
                                 <!-- <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-1"></p>
                                 <div class="card-body">
                                     <h4 class="font-weight-semibold tx-25 pb-2  tx-primary">ตารางผ่อนต่องวด</h4>

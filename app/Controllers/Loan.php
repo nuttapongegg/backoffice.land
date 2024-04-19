@@ -36,6 +36,32 @@ class Loan extends BaseController
         $this->s3_key = getenv('KEY');
         $this->s3_endpoint = getenv('ENDPOINT');
         $this->s3_region = getenv('REGION');
+        $this->s3_cdn_img = getenv('CDN_IMG');
+
+        function reArrayFiles($file)
+        {
+            $file_ary = array();
+            $file_count = count($file['name']);
+            $file_key = array_keys($file);
+
+            for ($i = 0; $i < $file_count; $i++) {
+                foreach ($file_key as $val) {
+                    $file_ary[$i][$val] = $file[$val][$i];
+                }
+            }
+            return $file_ary;
+        }
+
+        function generateRandomString($length = 7)
+        {
+            $characters = '0123456789';
+            $charactersLength = strlen($characters);
+            $randomString = '';
+            for ($i = 0; $i < $length; $i++) {
+                $randomString .= $characters[rand(0, $charactersLength - 1)];
+            }
+            return $randomString;
+        }
     }
 
     public function list()
@@ -60,8 +86,6 @@ class Loan extends BaseController
             <script src="' . base_url('/assets/app/js/loan/loan_car.js?v=' . time()) . '"></script> 
             <script src="' . base_url('/assets/app/js/loan/loan_history.js?v=' . time()) . '"></script> 
         ';
-
-        // <script src="' . base_url('/assets/app/js/stock/stock_car_doc.js?v=' . time()) . '"></script>
 
         $data['employee'] = $this->EmployeeModel->getEmployeeByID(session()->get('employeeID'));
         $data['land_accounts'] = $this->SettingLandModel->getSettingLandAll();
@@ -234,7 +258,6 @@ class Loan extends BaseController
             ]);
         }
 
-
         if ($create_loan && ($count_installment == $installment)) {
 
             return $this->response->setJSON([
@@ -269,7 +292,8 @@ class Loan extends BaseController
         <script src="' . base_url('/assets/plugins/fancyuploder/jquery.iframe-transport.js') . '"></script>
         <script src="' . base_url('/assets/plugins/fancyuploder/jquery.fancy-fileupload.js') . '"></script>
         <script src="' . base_url('/assets/plugins/fancyuploder/fancy-uploader.js') . '"></script>
-        <script src="' . base_url('/assets/plugins/chart.js/Chart.bundle.min.js') . '"></script> 
+        <script src="' . base_url('/assets/plugins/chart.js/Chart.bundle.min.js') . '"></script>
+        <script src="' . base_url('/assets/js/image-uploader.min.js') . '"></script>
         <script src="' . base_url('/assets/app/js/loan/loan_detail.js?v=' . time()) . '"></script> 
         ';
 
@@ -283,12 +307,12 @@ class Loan extends BaseController
 
     public function detailForm($loanCode = null)
     {
-        $stock_loan = $this->LoanModel->getAllDataLoanByCode($loanCode);
+        $loan = $this->LoanModel->getAllDataLoanByCode($loanCode);
 
         return $this->response->setJSON([
             'status' => 200,
             'error' => false,
-            'message' => $stock_loan
+            'message' => $loan
         ]);
     }
 
@@ -1724,5 +1748,154 @@ class Loan extends BaseController
             ->setStatusCode(200)
             ->setContentType('application/json')
             ->setJSON($json_data);
+    }
+
+    public function insertDetailPiture($loanCode = null)
+    {
+        $buffer_datetime = date("Y-m-d H:i:s");
+
+        $s3Client = new S3Client([
+            'version' => 'latest',
+            'region'  => $this->s3_region,
+            'endpoint' => $this->s3_endpoint,
+            'use_path_style_endpoint' => false,
+            'credentials' => [
+                'key'    => $this->s3_key,
+                'secret' => $this->s3_secret_key
+            ]
+        ]);
+
+        //other file 
+        $other_files = $_FILES['file_picture_other_update'];
+        if ($other_files["name"][0] != null) {
+            $other_img_desc = reArrayFiles($other_files);
+            foreach ($other_img_desc as $val) {
+                $fileName_other = $loanCode . "_OTHER_" . generateRandomString() . "." . pathinfo($val['name'], PATHINFO_EXTENSION);
+                move_uploaded_file($val['tmp_name'], './uploads/loan_img_other/' . $fileName_other);
+                $file_Path_other = 'uploads/loan_img_other/' . $fileName_other;
+
+                $result_other = $s3Client->putObject([
+                    'Bucket' => $this->s3_bucket,
+                    'Key'    => 'uploads/loan_img_other/' . $fileName_other,
+                    'Body'   => fopen($file_Path_other, 'r'),
+                    'ACL'    => 'public-read', // make file 'public'
+                ]);
+
+                if ($result_other['ObjectURL'] != "") {
+                    unlink('uploads/loan_img_other/' . $fileName_other);
+                }
+
+                $data_other_picture = [
+                    'loan_code' => $loanCode,
+                    'picture_loan_src' => $fileName_other,
+                    'created_at' => $buffer_datetime
+                ];
+
+                $add_other_picture = $this->LoanModel->insertOtherPiture($data_other_picture);
+            }
+        }
+
+        if ($add_other_picture) {
+            return $this->response->setJSON([
+                'status' => 200,
+                'error' => false,
+                'message' => 'เพิ่มสำเร็จ'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'status' => 200,
+                'error' => true,
+                'message' => 'เพิ่มไม่สำเร็จ !'
+            ]);
+        }
+    }
+
+    public function fetchOtherPicture($code = null)
+    {
+        $other_picture_datas = $this->LoanModel->getOtherByCode($code);
+        $data = '';
+
+        if ($other_picture_datas) {
+
+            foreach ($other_picture_datas as $other_picture_data) {
+
+                $data .= '
+            <div class="col-sm-12 col-md-2" style="text-align: center;">
+             <div class="brick">
+               <div class="file-attach file-attach-lg">
+                    <div class="mb-1 border br-5 pos-relative overflow-hidden">
+                    <img src="' . $this->s3_cdn_img . "/uploads/loan_img_other/" . $other_picture_data->picture_loan_src . '" class="br-5" alt="doc">
+                        <div class="btn-list attach-options v-center d-flex flex-column">
+                            <a id="' . $other_picture_data->id . '===' . $other_picture_data->picture_loan_src . '" href="javascript:;" onclick="deleteOtherPicture(this.id);" class="btn btn-circle-sm btn-primary flex-center me-0 mb-0"><i class="fe fe-trash tx-12"></i></a>
+                            <a href="' . $this->s3_cdn_img . "/uploads/loan_img_other/" . $other_picture_data->picture_loan_src . '" class="btn btn-circle-sm btn-success flex-center me-0 mb-0 mg-t-3 js-img-viewer-other" data-caption="รูปอื่นๆ" data-id="other"><i class="fe fe-eye tx-12" style=" z-index: 9999;position: fixed;"></i><img src="' . $this->s3_cdn_img . "/uploads/loan_img_other/" . $other_picture_data->picture_loan_src . '" alt=""  style="z-index: 1;  filter: blur(10px);position: fixed;" /></a>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            </div>
+                ';
+            }
+
+            return $this->response->setJSON([
+                'status' => 200,
+                'error' => false,
+                'message' => $data,
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'status' => 200,
+                'error' => false,
+                'message' => '<a href="' . base_url("/assets/img/no_image.png") . '" class="js-img-viewer" data-caption="รูปอื่นๆ" data-id="other"><img src="' . base_url("/assets/img/no_image.png") . '" alt="" /></a>'
+
+            ]);
+        }
+    }
+
+    public function deleteOtherPicture($data = null)
+    {
+
+        $data_split = explode('===', $data);
+        $delete_other_picture = $this->LoanModel->deleteOtherPiture($data_split[0]);
+
+        $s3Client = new S3Client([
+            'version' => 'latest',
+            'region'  => $this->s3_region,
+            'endpoint' => $this->s3_endpoint,
+            'use_path_style_endpoint' => false,
+            'credentials' => [
+                'key'    => $this->s3_key,
+                'secret' => $this->s3_secret_key
+            ]
+        ]);
+
+        if ($delete_other_picture) {
+            $result_img_old = $s3Client->deleteObject([
+                'Bucket' => $this->s3_bucket,
+                'Key'    => 'uploads/loan_img_other/' . $data_split[1],
+            ]);
+
+            return $this->response->setJSON([
+                'status' => 200,
+                'error' => false,
+                'message' => 'แก้ไขสำเร็จ'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'status' => 200,
+                'error' => true,
+                'message' => 'แก้ไขไม่สำเร็จ !'
+            ]);
+        }
+    }
+
+    public function dowloadPictureOther($code)
+    {
+        $datas = $this->LoanModel->dowloadPictureOther($code);
+
+        return $this->response->setJSON([
+            'status' => 200,
+            'error' => false,
+            'message' => $datas
+        ]);
     }
 }

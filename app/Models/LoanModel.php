@@ -479,4 +479,37 @@ class LoanModel
 
         return $builder->getResult();
     }
+
+    public function insertOtherPiture($dataOthet_picture)
+    {
+        $builder_otherPicture = $this->db->table('picture_loan_other');
+        $builder_otherPicture_status = $builder_otherPicture->insert($dataOthet_picture);
+
+        return ($builder_otherPicture_status) ? true : false;
+    }
+
+    public function getOtherByCode($code)
+    {
+        $sql = "SELECT * FROM  picture_loan_other WHERE loan_code = '$code'
+        ORDER BY id DESC
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function deleteOtherPiture($id)
+    {
+        $sql = "DELETE FROM picture_loan_other WHERE id = $id";
+        $builder = $this->db->query($sql);
+        return $builder;
+    }
+
+    public function dowloadPictureOther($code)
+    {
+        $sql = "SELECT picture_loan_src
+         FROM `picture_loan_other` WHERE loan_code = '$code'";
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
 }

@@ -28,9 +28,19 @@ var payNow = 0;
     searchInputPlaceholder: "Search",
   });
 
+  $.ajax({
+    url: serverUrl + "/loan/fetchOtherPicture/" + searchParams_[1],
+    method: "get",
+    async: false,
+    success: function (response) {
+      $("#other_picture").html(response.message);
+    },
+  });
+
   loadLoan(searchParams_[1]);
   installmentTab();
   dataTablePaymentDetail();
+  $(".input-other-images").imageUploader();
 })(jQuery);
 
 function dateDiff(date_now, date_stock) {
@@ -203,6 +213,82 @@ function cancelLoan() {
         },
       });
     }
+  });
+}
+
+function loadPicture() {
+  let searchParams = window.location.pathname;
+  var searchParams_ = searchParams.split("/loan/detail/");
+  // //get picture other by stock code
+  $.ajax({
+    url: serverUrl + "/loan/fetchOtherPicture/" + searchParams_[1],
+    method: "get",
+    success: function (response) {
+      $("#other_picture").html(response.message);
+      new SmartPhoto(
+        $(".brick").find($(".brick").find(".js-img-viewer-other")),
+        {
+          resizeStyle: "fit",
+        }
+      );
+    },
+  });
+}
+
+// save แก้ไข stock tab2 piture car
+$("#AddPicture").submit(function (e) {
+  let searchParams = window.location.pathname;
+  var searchParams_ = searchParams.split("/loan/detail/");
+  e.preventDefault();
+  const formData = new FormData(this);
+  $("#add_btn_picture").text("กำลังเพิ่มรูปภาพ...");
+  $.ajax({
+    url: serverUrl + "/loan/insertDetailPiture/"+ searchParams_[1],
+    method: "post",
+    data: formData,
+    contentType: false,
+    // cache: false,
+    processData: false,
+    dataType: "json",
+    success: function (response) {
+      if (response.error) {
+      } else {
+        $(".input-other-images").html("");
+        $(".input-other-images").imageUploader();
+
+        loadPicture();
+
+        notif({
+          type: "success",
+          msg: "เพิ่มรูปภาพสำเร็จ!",
+          position: "right",
+          fade: true,
+          time: 300,
+        });
+        $("#add_btn_picture").text("เพิ่มรูปภาพ");
+      }
+    },
+  });
+});
+
+function deleteOtherPicture(id) {
+  $.ajax({
+    url: serverUrl + "/loan/delete_other_picture/" + id,
+    method: "get",
+    success: function (response) {
+      if (response.error) {
+      } else {
+        loadPicture();
+
+        notif({
+          type: "success",
+          msg: "ลบรูปภาพสำเร็จ!",
+          position: "right",
+          fade: true,
+          time: 300,
+        });
+      }
+    },
   });
 }
 
@@ -750,3 +836,68 @@ customer_payment_type.on("change", function () {
     $("#file_payment").prop("required", true);
   }
 });
+
+var upics = [];
+
+//set for dowload picture
+function download(item) {
+  var fileName = item.split(/(\\|\/)/g).pop();
+
+  var image = new Image();
+  image.crossOrigin = "anonymous";
+  image.src = item;
+  image.onload = function() {
+  
+    // use canvas to load image
+    var canvas = document.createElement('canvas');
+    canvas.width = this.naturalWidth;
+    canvas.height = this.naturalHeight;
+    canvas.getContext('2d').drawImage(this, 0, 0);
+    
+    // grab the blob url
+    var blob;
+    if (image.src.indexOf(".jpg") > -1) {
+      blob = canvas.toDataURL("image/jpeg");
+    } else if (image.src.indexOf(".png") > -1) {
+      blob = canvas.toDataURL("image/png");
+    } else if (image.src.indexOf(".gif") > -1) {
+      blob = canvas.toDataURL("image/gif");
+    } else {
+      blob = canvas.toDataURL("image/png");
+    }
+
+    // create link, set href to blob
+    var a = document.createElement('a');
+    a.title = fileName;
+    a.href = blob;
+    a.style.display = 'none';
+    a.setAttribute("download", fileName);
+    a.setAttribute("target", "_blank");
+    document.body.appendChild(a);
+    
+    // click item
+    a.click();
+  }
+}
+
+function downloadOther(item){
+  let searchParams = window.location.pathname;
+  var searchParams_ = searchParams.split("/loan/detail/");
+  $.ajax({
+    url: serverUrl + "/loan/dowloadPictureOther/" + searchParams_[1],
+    method: "get",
+    success: function (response) {
+      upics = [];
+      $.each(response.message, function (index, item) {
+        if(item.picture_loan_src != null || item.picture_loan_src != '')
+        {
+          upics.push(CDN_IMG + "/uploads/loan_img_other/" + item.picture_loan_src);
+        }
+      });
+
+      for (var i in upics) {
+        download(upics[i]);
+      }
+    },
+  });
+}
