@@ -82,6 +82,7 @@ function loadLoan(loanCode) {
       $("#charges_transfer").val(response.message.loan_tranfer);
       $("#charges_etc").val(response.message.loan_payment_other);
       $("#remark").val(response.message.loan_remnark);
+      $("#really_pay_loan").val(response.message.loan_really_pay);
       $("#loan_code").val(response.message.loan_code);
 
       loan_stock_name = response.message.loan_stock_name;
@@ -318,6 +319,60 @@ $("#payment_interest").keyup(function () {
   $("#total_loan").val($sum_all);
 
   calInstallment($pay_count, $numYear);
+});
+
+$("#charges_process").keyup(function () {
+
+  let $transfer = $("#charges_transfer").val(),
+  $etc = $("#charges_etc").val(),
+  $process = $("#charges_process").val(),
+  $loan_without = $("#loan_without_vat").val();
+
+  $transfer = Number($transfer.replace(/[^0-9.-]+/g, ""));
+  $etc = Number($etc.replace(/[^0-9.-]+/g, ""));
+  $loan_without = Number($loan_without.replace(/[^0-9.-]+/g, ""));
+  $process = Number($process.replace(/[^0-9.-]+/g, ""));
+
+  $really_pay = 0;
+  $really_pay = $loan_without - ($process + $etc + $transfer);
+  
+  $("#really_pay_loan").val($really_pay);
+});
+
+$("#charges_etc").keyup(function () {
+
+  let $transfer = $("#charges_transfer").val(),
+  $etc = $("#charges_etc").val(),
+  $process = $("#charges_process").val(),
+  $loan_without = $("#loan_without_vat").val();
+
+  $transfer = Number($transfer.replace(/[^0-9.-]+/g, ""));
+  $etc = Number($etc.replace(/[^0-9.-]+/g, ""));
+  $loan_without = Number($loan_without.replace(/[^0-9.-]+/g, ""));
+  $process = Number($process.replace(/[^0-9.-]+/g, ""));
+
+  $really_pay = 0;
+  $really_pay = $loan_without - ($process + $etc + $transfer);
+  
+  $("#really_pay_loan").val($really_pay);
+});
+
+$("#charges_transfer").keyup(function () {
+
+  let $transfer = $("#charges_transfer").val(),
+  $etc = $("#charges_etc").val(),
+  $process = $("#charges_process").val(),
+  $loan_without = $("#loan_without_vat").val();
+
+  $transfer = Number($transfer.replace(/[^0-9.-]+/g, ""));
+  $etc = Number($etc.replace(/[^0-9.-]+/g, ""));
+  $loan_without = Number($loan_without.replace(/[^0-9.-]+/g, ""));
+  $process = Number($process.replace(/[^0-9.-]+/g, ""));
+
+  $really_pay = 0;
+  $really_pay = $loan_without - ($process + $etc + $transfer);
+  
+  $("#really_pay_loan").val($really_pay);
 });
 
 function calInstallment(pay_count, numYear) {

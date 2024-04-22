@@ -340,6 +340,21 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
 
 $("#loan_without_vat").keyup(function () {
   $("#money_loan").val($("#loan_without_vat").val());
+
+  let $transfer = $("#charges_transfer").val(),
+  $etc = $("#charges_etc").val(),
+  $process = $("#charges_process").val(),
+  $loan_without = $("#loan_without_vat").val();
+
+  $transfer = Number($transfer.replace(/[^0-9.-]+/g, ""));
+  $etc = Number($etc.replace(/[^0-9.-]+/g, ""));
+  $loan_without = Number($loan_without.replace(/[^0-9.-]+/g, ""));
+  $process = Number($process.replace(/[^0-9.-]+/g, ""));
+
+  $really_pay = 0;
+  $really_pay = $loan_without - ($process + $etc + $transfer);
+  
+  $("#really_pay_loan").val($really_pay);
 });
 
 $(".modalAddLoanClose").click(function () {
@@ -373,6 +388,60 @@ $("#payment_interest").keyup(function () {
   $("#total_loan_interest").val($dok_total);
   $("#pricePerMonth").val($pay_count);
   $("#total_loan").val($sum_all);
+});
+
+$("#charges_process").keyup(function () {
+
+  let $transfer = $("#charges_transfer").val(),
+  $etc = $("#charges_etc").val(),
+  $process = $("#charges_process").val(),
+  $loan_without = $("#loan_without_vat").val();
+
+  $transfer = Number($transfer.replace(/[^0-9.-]+/g, ""));
+  $etc = Number($etc.replace(/[^0-9.-]+/g, ""));
+  $loan_without = Number($loan_without.replace(/[^0-9.-]+/g, ""));
+  $process = Number($process.replace(/[^0-9.-]+/g, ""));
+
+  $really_pay = 0;
+  $really_pay = $loan_without - ($process + $etc + $transfer);
+  
+  $("#really_pay_loan").val($really_pay);
+});
+
+$("#charges_etc").keyup(function () {
+
+  let $transfer = $("#charges_transfer").val(),
+  $etc = $("#charges_etc").val(),
+  $process = $("#charges_process").val(),
+  $loan_without = $("#loan_without_vat").val();
+
+  $transfer = Number($transfer.replace(/[^0-9.-]+/g, ""));
+  $etc = Number($etc.replace(/[^0-9.-]+/g, ""));
+  $loan_without = Number($loan_without.replace(/[^0-9.-]+/g, ""));
+  $process = Number($process.replace(/[^0-9.-]+/g, ""));
+
+  $really_pay = 0;
+  $really_pay = $loan_without - ($process + $etc + $transfer);
+  
+  $("#really_pay_loan").val($really_pay);
+});
+
+$("#charges_transfer").keyup(function () {
+
+  let $transfer = $("#charges_transfer").val(),
+  $etc = $("#charges_etc").val(),
+  $process = $("#charges_process").val(),
+  $loan_without = $("#loan_without_vat").val();
+
+  $transfer = Number($transfer.replace(/[^0-9.-]+/g, ""));
+  $etc = Number($etc.replace(/[^0-9.-]+/g, ""));
+  $loan_without = Number($loan_without.replace(/[^0-9.-]+/g, ""));
+  $process = Number($process.replace(/[^0-9.-]+/g, ""));
+
+  $really_pay = 0;
+  $really_pay = $loan_without - ($process + $etc + $transfer);
+  
+  $("#really_pay_loan").val($really_pay);
 });
 
 // ทำการจัดการกับผลลัพธ์ที่ได้จากคำขอ Ajax

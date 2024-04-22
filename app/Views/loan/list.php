@@ -399,7 +399,20 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="input-group mb-3">
-                                                    <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" name="charges_process" type="text" value="0">
+                                                    <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" name="charges_process" id="charges_process" type="text" value="0">
+                                                    <span class="input-group-text" id="basic-addon2">บาท</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4 tx-right">
+                                                <label class="form-label mt-0">ยอดจ่ายจริง</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="input-group mb-3">
+                                                    <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" name="really_pay_loan" id="really_pay_loan" type="text" readonly>
                                                     <span class="input-group-text" id="basic-addon2">บาท</span>
                                                 </div>
                                             </div>
@@ -414,7 +427,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="input-group mb-3">
-                                                    <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" name="charges_transfer" type="text" value="0">
+                                                    <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" name="charges_transfer" id="charges_transfer" type="text" value="0">
                                                     <span class="input-group-text" id="basic-addon2">บาท</span>
                                                 </div>
                                             </div>
@@ -429,7 +442,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="input-group mb-3">
-                                                    <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" name="charges_etc" type="text" value="0">
+                                                    <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" name="charges_etc" id="charges_etc" type="text" value="0">
                                                     <span class="input-group-text" id="basic-addon2">บาท</span>
                                                 </div>
                                             </div>

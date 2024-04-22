@@ -153,6 +153,7 @@ class Loan extends BaseController
         $charges_transfer = $this->request->getPost('charges_transfer');
         $charges_etc = $this->request->getPost('charges_etc');
         $remark = $this->request->getPost('remark');
+        $really_pay_loan = $this->request->getPost('really_pay_loan');
         $total_loan_interest = $this->request->getPost('total_loan_interest');
         
 
@@ -190,6 +191,7 @@ class Loan extends BaseController
             'loan_payment_other' => $charges_etc,
             'loan_status'  => 'ON_STATE',
             'loan_remnark' => $remark,
+            'loan_really_pay' => $really_pay_loan,
             'land_account_id' => $account_id,
             'land_account_name' => $land_account_name->land_account_name,
             'created_at'  => $buffer_datetime
@@ -336,6 +338,7 @@ class Loan extends BaseController
         $charges_transfer = $this->request->getPost('charges_transfer');
         $charges_etc = $this->request->getPost('charges_etc');
         $remark = $this->request->getPost('remark');
+        $really_pay_loan = $this->request->getPost('really_pay_loan');
 
 
         $loan_list = [
@@ -355,6 +358,7 @@ class Loan extends BaseController
             'loan_payment_other' => $charges_etc,
             'loan_status'  => 'ON_STATE',
             'loan_remnark' => $remark,
+            'loan_really_pay' => $really_pay_loan,
             'updated_at'  => $buffer_datetime
         ];
 
