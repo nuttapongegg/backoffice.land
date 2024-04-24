@@ -1775,18 +1775,18 @@ class Loan extends BaseController
             $other_img_desc = reArrayFiles($other_files);
             foreach ($other_img_desc as $val) {
                 $fileName_other = $loanCode . "_OTHER_" . generateRandomString() . "." . pathinfo($val['name'], PATHINFO_EXTENSION);
-                move_uploaded_file($val['tmp_name'], './uploads/loan_img_other/' . $fileName_other);
-                $file_Path_other = 'uploads/loan_img_other/' . $fileName_other;
+                move_uploaded_file($val['tmp_name'], './uploads/loan_payment_img/' . $fileName_other);
+                $file_Path_other = 'uploads/loan_payment_img/' . $fileName_other;
 
                 $result_other = $s3Client->putObject([
                     'Bucket' => $this->s3_bucket,
-                    'Key'    => 'uploads/loan_img_other/' . $fileName_other,
+                    'Key'    => 'uploads/loan_payment_img/' . $fileName_other,
                     'Body'   => fopen($file_Path_other, 'r'),
                     'ACL'    => 'public-read', // make file 'public'
                 ]);
 
                 if ($result_other['ObjectURL'] != "") {
-                    unlink('uploads/loan_img_other/' . $fileName_other);
+                    unlink('uploads/loan_payment_img/' . $fileName_other);
                 }
 
                 $data_other_picture = [
@@ -1828,10 +1828,10 @@ class Loan extends BaseController
              <div class="brick">
                <div class="file-attach file-attach-lg">
                     <div class="mb-1 border br-5 pos-relative overflow-hidden">
-                    <img src="' . $this->s3_cdn_img . "/uploads/loan_img_other/" . $other_picture_data->picture_loan_src . '" class="br-5" alt="doc">
+                    <img src="' . $this->s3_cdn_img . "/uploads/loan_payment_img/" . $other_picture_data->picture_loan_src . '" class="br-5" alt="doc">
                         <div class="btn-list attach-options v-center d-flex flex-column">
                             <a id="' . $other_picture_data->id . '===' . $other_picture_data->picture_loan_src . '" href="javascript:;" onclick="deleteOtherPicture(this.id);" class="btn btn-circle-sm btn-primary flex-center me-0 mb-0"><i class="fe fe-trash tx-12"></i></a>
-                            <a href="' . $this->s3_cdn_img . "/uploads/loan_img_other/" . $other_picture_data->picture_loan_src . '" class="btn btn-circle-sm btn-success flex-center me-0 mb-0 mg-t-3 js-img-viewer-other" data-caption="รูปอื่นๆ" data-id="other"><i class="fe fe-eye tx-12" style=" z-index: 9999;position: fixed;"></i><img src="' . $this->s3_cdn_img . "/uploads/loan_img_other/" . $other_picture_data->picture_loan_src . '" alt=""  style="z-index: 1;  filter: blur(10px);position: fixed;" /></a>
+                            <a href="' . $this->s3_cdn_img . "/uploads/loan_payment_img/" . $other_picture_data->picture_loan_src . '" class="btn btn-circle-sm btn-success flex-center me-0 mb-0 mg-t-3 js-img-viewer-other" data-caption="รูปอื่นๆ" data-id="other"><i class="fe fe-eye tx-12" style=" z-index: 9999;position: fixed;"></i><img src="' . $this->s3_cdn_img . "/uploads/loan_payment_img/" . $other_picture_data->picture_loan_src . '" alt=""  style="z-index: 1;  filter: blur(10px);position: fixed;" /></a>
                         </div>
                     </div> 
                 </div>
@@ -1875,7 +1875,7 @@ class Loan extends BaseController
         if ($delete_other_picture) {
             $result_img_old = $s3Client->deleteObject([
                 'Bucket' => $this->s3_bucket,
-                'Key'    => 'uploads/loan_img_other/' . $data_split[1],
+                'Key'    => 'uploads/loan_payment_img/' . $data_split[1],
             ]);
 
             return $this->response->setJSON([
