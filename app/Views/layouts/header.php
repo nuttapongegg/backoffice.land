@@ -648,9 +648,9 @@
                                 </ul>
                             </li>
                             <li class="slide">
-                                <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'setting_land' && service('uri')->getSegment(2) == 'land') {
+                                <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'setting_land' && service('uri')->getSegment(2) == 'index') {
                                                                         echo 'active';
-                                                                    } ?>" data-bs-toggle="slide" href="<?php echo base_url('/setting_land/land'); ?>">
+                                                                    } ?>" data-bs-toggle="slide" href="<?php echo base_url('/setting_land/index'); ?>">
                                     <i class="ionicon side-menu__icon icon ion-ios-construct"></i>
                                     <span class="side-menu__label">ตั้งค่า</span>
                                 </a>

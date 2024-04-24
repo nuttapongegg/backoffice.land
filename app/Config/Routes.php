@@ -89,6 +89,10 @@ $routes->group('setting_land', ['filter' => 'employeeAuth'], function ($routes) 
     $routes->post('transfer-land-account', 'Setting::TransferLandAccount');
     $routes->post('ajax-tableslandaccountlogs', 'Setting::ajaxTablesLandAccountLogs');
     $routes->post('ajax-tableslandaccountreport/(:num)', 'Setting::ajaxTablesLandAccounReport/$1');
+
+    //notify
+    $routes->get('edit-overdue-status', 'Setting::editSettingOverdueStatus');
+    $routes->post('update-overdue-status', 'Setting::updateSettingOverdueStatus');
 });
 
 /*
@@ -105,6 +109,10 @@ $routes->post('footer/ajax-datatable', 'EmployeeLog::ajaxDataTablesInFooter', ['
  * CRONJOB
  * --------------------------------------------------------------------
  */
+
+
+// ส่งแจ้งเตือนสินเชื่อ
+$routes->cli('cronjob/loanstatus', 'LoanStatus::run', ['namespace' => 'App\Controllers\cronjob']);
 
 /*
  * --------------------------------------------------------------------

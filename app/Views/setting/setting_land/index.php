@@ -8,6 +8,12 @@
             <div class="left-content">
                 <span class="main-content-title tx-primary tx-18 mg-b-0 mg-b-lg-1">ตั้งค่าบัญชี</span>
             </div>
+            <div class="justify-content-center mt-2">
+                <ol class="breadcrumb breadcrumb-style3">
+                    <li class="breadcrumb-item tx-15"><a href="<?php echo base_url('/setting_land/index'); ?>">ตั้งค่า</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">ตั้งค่าบัญชี</li>
+                </ol>
+            </div>
         </div>
 
         <!-- /breadcrumb -->

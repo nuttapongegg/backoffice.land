@@ -3,9 +3,21 @@
 namespace App\Controllers;
 
 use App\Models\SettingLandModel;
+use App\Models\OverdueStatusModel;
 
 class Setting extends BaseController
 {
+    // index
+    public function index()
+    {
+        $data['js_critical'] = '
+            <script src="' . base_url('/assets/app/js/setting/overdue_status/index.js') . '"></script>
+            ';
+        $data['content'] = 'setting/index';
+        $data['title'] = 'ตั้งค่า';
+        return view('app', $data);
+    }
+
     // Land
     public function listLand()
     {
@@ -484,7 +496,7 @@ class Setting extends BaseController
                     if ($this->request->getVar('land_account_name') == $land_account_cashs->id) {
                         $price_plus = str_replace(',', '', $this->request->getVar('transfer_money_land_account'));
                         $land_account_plus = $land_account_cashs->land_account_cash + intval($price_plus);
-                        
+
                         $SettingLandModel->updateSettingLandByID($this->request->getVar('land_account_name'), [
                             'land_account_cash' => $land_account_plus,
                             'updated_at' => date('Y-m-d H:i:s'),
@@ -644,5 +656,75 @@ class Setting extends BaseController
             "data" => $data // total data array
         );
         echo json_encode($json_data);
+    }
+
+    // show Modal editSettingOverdueStatus
+    public function editSettingOverdueStatus()
+    {
+        $OverdueStatusModel = new OverdueStatusModel();
+
+        if ($OverdueStatusModel->getOverdueStatusAll()) {
+            echo json_encode(array("status" => true, 'data' => $OverdueStatusModel->getOverdueStatusAll()));
+        } else {
+            echo json_encode(array("status" => false));
+        }
+    }
+
+    // update data
+    public function updateSettingOverdueStatus()
+    {
+        try {
+            // SET CONFIG
+            $status = 500;
+            $response['success'] = 0;
+            $response['message'] = '';
+            $OverdueStatusModel = new OverdueStatusModel();
+
+            if ($this->request->getVar('checkbox_Token_Loan') != '') {
+                $token_loan_status = 1;
+            } else {
+                $token_loan_status = 0;
+            }
+
+            $update = $OverdueStatusModel->updateOverdueStatus([
+                'token_loan' => $this->request->getVar('token_Loan'),
+                'token_overdue_loan' => $this->request->getVar('overdue_Loan'),
+                'token_loan_status' => $token_loan_status,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($update) {
+
+                //pusher edit
+                $pusher = getPusher();
+                $pusher->trigger('color_Status', 'event', [
+                    'img' => '/uploads/img/' . session()->get('thumbnail') != '' ? session()->get('thumbnail') : 'nullthumbnail.png',
+                    'event' => 'status_Yellow',
+                    'title' => session()->get('username') . " : " . 'ทำการแก้ไขตั้งค่าแจ้งเตือนสินเชื่อ'
+                ]);
+
+                logger_store([
+                    'employee_id' => session()->get('employeeID'),
+                    'username' => session()->get('username'),
+                    'event' => 'อัพเดท',
+                    'detail' => '[อัพเดท] ตั้งค่าแจ้งเตือนสินเชื่อ',
+                    'ip' => $this->request->getIPAddress()
+                ]);
+                $status = 200;
+                $response['success'] = 1;
+                $response['message'] = 'แก้ไข ตั้งค่าแจ้งเตือนสินเชื่อ สำเร็จ';
+            } else {
+                $status = 200;
+                $response['success'] = 0;
+                $response['message'] = 'แก้ไข ตั้งค่าแจ้งเตือนสินเชื่อ ไม่สำเร็จ';
+            }
+
+            return $this->response
+                ->setStatusCode($status)
+                ->setContentType('application/json')
+                ->setJSON($response);
+        } catch (\Exception $e) {
+            echo $e->getMessage() . ' ' . $e->getLine();
+        }
     }
 }

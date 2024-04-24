@@ -10,24 +10,9 @@ var payNow = 0;
   var searchParams_ = searchParams.split("/loan/detail/");
 
   flatpickr("#date_to_loan", {});
-  $(".select2-employees").select2({
-    placeholder: "โปรดเลือก",
-    searchInputPlaceholder: "Search",
-  });
 
   flatpickr("#date_to_payment", {});
-
-  $(".select2-employees-payment").select2({
-    placeholder: "โปรดเลือก",
-    searchInputPlaceholder: "Search",
-    dropdownParent: $("#modalPayLoan"),
-  });
-
-  $(".select2-branch").select2({
-    placeholder: "โปรดเลือก",
-    searchInputPlaceholder: "Search",
-  });
-
+  
   $.ajax({
     url: serverUrl + "/loan/fetchOtherPicture/" + searchParams_[1],
     method: "get",
@@ -464,7 +449,6 @@ $(".modalPaymentLoanClose").click(function () {
   form.parsley().reset();
   form[0].reset();
   $(".btn-add-loan-payment").text("บันทึก");
-  $(".select2-employees-payment").val(null).select2();
   $(".PaymentLoanType1").addClass("active");
   $(".PaymentLoanType2").removeClass("active");
   $("#modalPayLoan").modal("hide");
@@ -543,7 +527,6 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
           form.parsley().reset();
           form[0].reset();
           $(".btn-add-loan-payment").text("บันทึก");
-          $(".select2-employees-payment").val(null).select2();
           $(".PaymentLoanType1").addClass("active");
           $(".PaymentLoanType2").removeClass("active");
           $("#modalPayLoan").modal("hide");
