@@ -42,7 +42,7 @@ class LoanStatus extends BaseController
 
                     $date_sum = round($datediff / (60 * 60 * 24));
 
-                    $date_sum = $date_sum - 1;
+                    // $date_sum = $date_sum - 1;
 
                     $Message_Nofity = '';
 
