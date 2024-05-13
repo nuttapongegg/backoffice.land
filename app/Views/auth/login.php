@@ -31,7 +31,7 @@
         .bg-svg::before {
             content: "";
             position: absolute;
-            background: url(https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/76c356116160113.605c4fff7f0a7.jpg);
+            background: url(<?php echo base_url('/assets/img/world-11047_1920.jpg'); ?>);
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
