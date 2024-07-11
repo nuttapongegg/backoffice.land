@@ -304,7 +304,7 @@
                                     <th style="width: 50px;">ชื่อลูกค้า</th>
                                     <th style="width: 30px;">งวด</th>
                                     <th style="width: 70px;">ยอดค้างชำระ</th>
-                                    <th style="width: 90px;">วันที่ต้องชำระ</th>
+                                    <th style="width: 90px;">วันครบกำหนดชำระ</th>
                                 </tr>
                             </thead>
                             <tbody>
