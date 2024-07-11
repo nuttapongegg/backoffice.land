@@ -224,7 +224,6 @@
                                     <th style="width: 50px;">เลขที่สินเชื่อ</th>
                                     <th style="width: 100px;">ชื่อลูกค้า</th>
                                     <th style="width: 100px;">ชื่อพนักงาน</th>
-                                    <th style="width: 30px;">สาขา</th>
                                     <th style="width: 50px;">บัญชีสินเชื่อ</th>
                                     <th style="width: 70px;">ยอดสินเชื่อ</th>
                                     <th style="width: 90px;">วันที่ขอสินเชื่อ</th>
@@ -285,3 +284,40 @@
     </div>
 </div>
 <!-- จบ ตารางยอดรับชำระ -->
+
+<!-- ตารางยอดค้างชำระ -->
+<div class="modal fade" id="modalOverduePaymentMonth" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="card-title">ตารางยอดค้างชำระ (เดือน)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModalOverduePaymentMonth"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="#">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-nowrap border-bottom" id="DataTable_OverduePayment">
+                            <thead>
+                                <tr>
+                                    <th style="width: 22px;">#</th>
+                                    <th style="width: 50px;">เลขที่สินเชื่อ</th>
+                                    <th style="width: 50px;">ชื่อลูกค้า</th>
+                                    <th style="width: 30px;">งวด</th>
+                                    <th style="width: 70px;">ยอดค้างชำระ</th>
+                                    <th style="width: 90px;">วันที่ต้องชำระ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                        <div style="display: flex; justify-content: center;">
+                            <button type="button" class="btn btn-primary " data-bs-dismiss="modal" aria-label="Close">ปิด</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- จบ ตารางยอดค้างชำระ -->

@@ -67,6 +67,7 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->get('ajax-tablesreportloan/(:any)', 'Loan::ajaxTablesReportLoan/$1');
     $routes->get('ajaxdatatablepayment/(:any)', 'Loan::ajaxDataTablePayment/$1');
     $routes->get('ajaxdatatableloan/(:any)', 'Loan::ajaxDataTableLoan/$1');
+    $routes->get('ajaxdatatableoverduepayment/(:any)', 'Loan::ajaxDataTableOverduePayment/$1');
     $routes->get('ajax-graphloan/(:any)', 'Loan::ajaxGraphLoan/$1');
     $routes->get('ajax-summarizereportloan/(:any)', 'Loan::ajaxSummarizeReportLoan/$1');
     $routes->get('ajax-ajaxdatareportloanmonth/(:any)', 'Loan::ajaxDataReportLoanMonth/$1');

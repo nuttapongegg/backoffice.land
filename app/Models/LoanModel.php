@@ -45,7 +45,8 @@ class LoanModel
         (SELECT COUNT(loan_payment_type) FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code) AS loan_payment_type,
         (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date,
         (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
-        (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period
+        (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period,
+        TIMESTAMPDIFF(MONTH,(SELECT DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_period - 1) MONTH)  FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code),CURDATE()) AS loan_overdue
         FROM loan
         WHERE loan.loan_status = 'ON_STATE' ORDER BY loan.id DESC
         ";
@@ -455,7 +456,7 @@ class LoanModel
         $sql = "SELECT * , DATE_FORMAT(loan.loan_date_promise , '%Y-%m-%d') as loan_date  FROM loan
         WHERE YEAR(loan.loan_date_promise) = $years AND MONTH(loan.loan_date_promise) = $month AND loan.loan_status != 'CANCEL_STATE'
         and ((loan_code like '%" . $search_value . "%') OR (loan_employee like '%" . $search_value . "%')
-           OR (loan_address like '%" . $search_value . "%') OR (land_account_name like '%" . $search_value . "%') OR (loan_summary_no_vat like '%" . $search_value . "%')
+           OR (loan_customer like '%" . $search_value . "%') OR (land_account_name like '%" . $search_value . "%') OR (loan_summary_no_vat like '%" . $search_value . "%')
            OR (loan_date_promise like '%" . $search_value . "%')) ORDER BY loan.loan_date_promise ASC
         LIMIT $start, $length
             ";
@@ -472,7 +473,7 @@ class LoanModel
         $sql = "SELECT * FROM loan
         WHERE YEAR(loan.loan_date_promise) = $years AND MONTH(loan.loan_date_promise) = $month AND loan.loan_status != 'CANCEL_STATE'
         and ((loan_code like '%" . $search_value . "%') OR (loan_employee like '%" . $search_value . "%')
-           OR (loan_address like '%" . $search_value . "%') OR (land_account_name like '%" . $search_value . "%') OR (loan_summary_no_vat like '%" . $search_value . "%')
+           OR (loan_customer like '%" . $search_value . "%') OR (land_account_name like '%" . $search_value . "%') OR (loan_summary_no_vat like '%" . $search_value . "%')
            OR (loan_date_promise like '%" . $search_value . "%'))
             ";
         $builder = $this->db->query($sql);
@@ -510,6 +511,108 @@ class LoanModel
         $sql = "SELECT picture_loan_src
          FROM `picture_loan_other` WHERE loan_code = '$code'";
         $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getOverdueListPayments($year)
+    {
+        $sql = "SELECT * , DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH) as payment_date, 
+        LPAD(MONTH(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)), 2, '0') as overdue_payment
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)) = $year AND loan.loan_status != 'CANCEL_STATE' AND loan_payment.loan_payment_type IS NULL
+        ORDER BY loan_payment.id ASC;
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getListPaymentMonths($year)
+    {
+        $sql = "SELECT * , DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH) as payment_date , 
+        LPAD(MONTH(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)), 2, '0') as overdue_payment
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)) = $year AND loan.loan_status != 'CANCEL_STATE' AND loan.loan_status != 'CLOSE_STATE'
+        ORDER BY loan_payment.id ASC;
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    
+    public function getDataTableOverduePaymentMonthCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+
+        $sql = "SELECT *
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)) = $years AND loan.loan_status != 'CANCEL_STATE' AND loan_payment.loan_payment_type IS NULL
+        AND LPAD(MONTH(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)), 2, '0') = $month
+        ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableOverduePaymentMonth($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $start = $param['start'];
+        $length = $param['length'];
+
+        $sql = "SELECT * , DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH) as payment_date
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)) = $years AND loan.loan_status != 'CANCEL_STATE' AND loan_payment.loan_payment_type IS NULL
+        AND LPAD(MONTH(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)), 2, '0') = $month
+        ORDER BY loan_payment.id ASC LIMIT $start, $length";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableOverduePaymentMonthSearch($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $search_value = $param['search_value'];
+        $start = $param['start'];
+        $length = $param['length'];
+
+        $sql = "SELECT * , DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH) as payment_date
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)) = $years AND loan.loan_status != 'CANCEL_STATE' AND loan_payment.loan_payment_type IS NULL
+        AND LPAD(MONTH(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)), 2, '0') = $month
+        and ((loan_payment.loan_code like '%" . $search_value . "%') OR (loan.loan_customer like '%" . $search_value . "%')
+           OR (loan_payment.loan_payment_installment like '%" . $search_value . "%') OR (loan_payment.loan_payment_amount like '%" . $search_value . "%')) ORDER BY loan_payment.id ASC LIMIT $start, $length
+            ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableOverduePaymentMonthSearchCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $search_value = $param['search_value'];
+        $sql = "SELECT * , DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH) as payment_date
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)) = $years AND loan.loan_status != 'CANCEL_STATE' AND loan_payment.loan_payment_type IS NULL
+        AND LPAD(MONTH(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)), 2, '0') = $month
+        and ((loan_payment.loan_code like '%" . $search_value . "%') OR (loan.loan_customer like '%" . $search_value . "%')
+           OR (loan_payment.loan_payment_installment like '%" . $search_value . "%') OR (loan_payment.loan_payment_amount like '%" . $search_value . "%'))
+            ";
+        $builder = $this->db->query($sql);
+
         return $builder->getResult();
     }
 }

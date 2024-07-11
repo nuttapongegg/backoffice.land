@@ -155,7 +155,7 @@ class Loan extends BaseController
         $remark = $this->request->getPost('remark');
         $really_pay_loan = $this->request->getPost('really_pay_loan');
         $total_loan_interest = $this->request->getPost('total_loan_interest');
-        
+
 
         $loan_running_code = '';
         $buffer_loan_code = 0;
@@ -740,9 +740,9 @@ class Loan extends BaseController
             $summary_all = $loan_summary_all - $loan_payment_sum_installment;
             if($summary_all != 0){
                 $return_funds = ($loan_payment_month / $summary_all) * 100;
-
-            }
             
+            }
+
             $html_SummarizeLoan =
                 '<div class="row my-3 mx-1">
                     <div class="col" style="flex-grow: 1;">
@@ -772,38 +772,38 @@ class Loan extends BaseController
                 </div>
             ';
 
-        //     <div class="col" style="flex-grow: 1;">
-        //     <div class="card text-center">
-        //         <div class="card-body">
-        //             <div>เงินต้นคงเหลือ</div>
-        //             <div class="font-weight-semibold mb-1 tx-primary">' . number_format($summary_all, 2) . '</div>
-        //         </div>
-        //     </div>
-        // </div>
-        // <div class="col" style="flex-grow: 1;">
-        //     <div class="card text-center">
-        //         <div class="card-body">
-        //             <div>Y/เงินต้น</div>
-        //             <div class="font-weight-semibold mb-1 tx-purple">' . number_format($principle, 2) . '%</div>
-        //         </div>
-        //     </div>
-        // </div>
-        // <div class="col" style="flex-grow: 1;">
-        //     <div class="card text-center">
-        //         <div class="card-body">
-        //             <div>Y/เงินลงุทน</div>
-        //             <div class="font-weight-semibold mb-1 tx-pink">' . number_format($investment, 2) . '%</div>
-        //         </div>
-        //     </div>
-        // </div>
-        // <div class="col" style="flex-grow: 1;">
-        //     <div class="card text-center">
-        //         <div class="card-body">
-        //             <div>คืนเงินต้น/ทุน</div>
-        //             <div class="font-weight-semibold mb-1 tx-teal">' . number_format($return_funds, 2) . '%</div>
-        //         </div>
-        //     </div>
-        // </div>
+            //     <div class="col" style="flex-grow: 1;">
+            //     <div class="card text-center">
+            //         <div class="card-body">
+            //             <div>เงินต้นคงเหลือ</div>
+            //             <div class="font-weight-semibold mb-1 tx-primary">' . number_format($summary_all, 2) . '</div>
+            //         </div>
+            //     </div>
+            // </div>
+            // <div class="col" style="flex-grow: 1;">
+            //     <div class="card text-center">
+            //         <div class="card-body">
+            //             <div>Y/เงินต้น</div>
+            //             <div class="font-weight-semibold mb-1 tx-purple">' . number_format($principle, 2) . '%</div>
+            //         </div>
+            //     </div>
+            // </div>
+            // <div class="col" style="flex-grow: 1;">
+            //     <div class="card text-center">
+            //         <div class="card-body">
+            //             <div>Y/เงินลงุทน</div>
+            //             <div class="font-weight-semibold mb-1 tx-pink">' . number_format($investment, 2) . '%</div>
+            //         </div>
+            //     </div>
+            // </div>
+            // <div class="col" style="flex-grow: 1;">
+            //     <div class="card text-center">
+            //         <div class="card-body">
+            //             <div>คืนเงินต้น/ทุน</div>
+            //             <div class="font-weight-semibold mb-1 tx-teal">' . number_format($return_funds, 2) . '%</div>
+            //         </div>
+            //     </div>
+            // </div>
 
             $html_summarizeLoan =
                 '<div class="row">
@@ -899,6 +899,8 @@ class Loan extends BaseController
 
             $ListPayments = $this->LoanModel->getRevenueListPayments($data);
             $OpenLoans = $this->LoanModel->getOpenLoan($data);
+            $OverduePayments = $this->LoanModel->getOverdueListPayments($data);
+            $PaymentMonths = $this->LoanModel->getListPaymentMonths($data);
 
             $Month_Jan_Payment = 0;
             $Month_Feb_Payment = 0;
@@ -1008,6 +1010,201 @@ class Loan extends BaseController
                 }
             }
 
+            $Month_Jan_Overdue_Payment = 0;
+            $Month_Feb_Overdue_Payment = 0;
+            $Month_Mar_Overdue_Payment = 0;
+            $Month_Apr_Overdue_Payment = 0;
+            $Month_May_Overdue_Payment = 0;
+            $Month_Jun_Overdue_Payment = 0;
+            $Month_Jul_Overdue_Payment = 0;
+            $Month_Aug_Overdue_Payment = 0;
+            $Month_Sep_Overdue_Payment = 0;
+            $Month_Oct_Overdue_Payment = 0;
+            $Month_Nov_Overdue_Payment = 0;
+            $Month_Dec_Overdue_Payment = 0;
+
+            foreach ($OverduePayments as $OverduePayment) {
+                if ($data === date('Y')) {
+                    if ($OverduePayment->overdue_payment <= date('m')) {
+                        switch ($OverduePayment->overdue_payment) {
+                            case "1":
+                                $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "2":
+
+                                $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "3":
+                                $Month_Mar_Overdue_Payment = $Month_Mar_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "4":
+                                $Month_Apr_Overdue_Payment = $Month_Apr_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "5":
+                                $Month_May_Overdue_Payment = $Month_May_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "6":
+                                $Month_Jun_Overdue_Payment = $Month_Jun_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "7":
+                                $Month_Jul_Overdue_Payment = $Month_Jul_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "8":
+                                $Month_Aug_Overdue_Payment = $Month_Aug_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "9":
+                                $Month_Sep_Overdue_Payment = $Month_Sep_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "10":
+                                $Month_Oct_Overdue_Payment = $Month_Oct_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "11":
+                                $Month_Nov_Overdue_Payment = $Month_Nov_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "12":
+                                $Month_Dec_Overdue_Payment = $Month_Dec_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                        }
+                    }
+                } elseif ($data < date('Y')) {
+                    switch ($OverduePayment->overdue_payment) {
+                        case "1":
+                            $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "2":
+                            $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "3":
+                            $Month_Mar_Overdue_Payment = $Month_Mar_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "4":
+                            $Month_Apr_Overdue_Payment = $Month_Apr_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "5":
+                            $Month_May_Overdue_Payment = $Month_May_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "6":
+                            $Month_Jun_Overdue_Payment = $Month_Jun_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "7":
+                            $Month_Jul_Overdue_Payment = $Month_Jul_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "8":
+                            $Month_Aug_Overdue_Payment = $Month_Aug_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "9":
+                            $Month_Sep_Overdue_Payment = $Month_Sep_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "10":
+                            $Month_Oct_Overdue_Payment = $Month_Oct_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "11":
+                            $Month_Nov_Overdue_Payment = $Month_Nov_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "12":
+                            $Month_Dec_Overdue_Payment = $Month_Dec_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                    }
+                }
+            }
+
+            $Month_Jan_Payment_Month = 0;
+            $Month_Feb_Payment_Month = 0;
+            $Month_Mar_Payment_Month = 0;
+            $Month_Apr_Payment_Month = 0;
+            $Month_May_Payment_Month = 0;
+            $Month_Jun_Payment_Month = 0;
+            $Month_Jul_Payment_Month = 0;
+            $Month_Aug_Payment_Month = 0;
+            $Month_Sep_Payment_Month = 0;
+            $Month_Oct_Payment_Month = 0;
+            $Month_Nov_Payment_Month = 0;
+            $Month_Dec_Payment_Month = 0;
+
+            foreach ($PaymentMonths as $PaymentMonth) {
+                if ($data === date('Y')) {
+                    if ($PaymentMonth->overdue_payment <= date('m')) {
+                        switch ($PaymentMonth->overdue_payment) {
+                            case "1":
+                                $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "2":
+                                $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "3":
+                                $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "4":
+                                $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "5":
+                                $Month_May_Payment_Month = $Month_May_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "6":
+                                $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "7":
+                                $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "8":
+                                $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "9":
+                                $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "10":
+                                $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "11":
+                                $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "12":
+                                $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                        }
+                    }
+                } elseif ($data < date('Y')) {
+                    switch ($PaymentMonth->overdue_payment) {
+                        case "1":
+                            $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "2":
+                            $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "3":
+                            $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "4":
+                            $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "5":
+                            $Month_May_Payment_Month = $Month_May_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "6":
+                            $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "7":
+                            $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "8":
+                            $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "9":
+                            $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "10":
+                            $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "11":
+                            $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "12":
+                            $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                    }
+                }
+            }
+
             $Month_Class_Jan = '';
             $Month_Class_Feb = '';
             $Month_Class_Mar = '';
@@ -1061,6 +1258,20 @@ class Loan extends BaseController
                         break;
                 }
             }
+
+            $Month_Jan_Diff_Payment_Month = $Month_Jan_Payment_Month - $Month_Jan_Overdue_Payment;
+            $Month_Feb_Diff_Payment_Month = $Month_Feb_Payment_Month - $Month_Feb_Overdue_Payment;
+            $Month_Mar_Diff_Payment_Month = $Month_Mar_Payment_Month - $Month_Mar_Overdue_Payment;
+            $Month_Apr_Diff_Payment_Month = $Month_Apr_Payment_Month - $Month_Apr_Overdue_Payment;
+            $Month_May_Diff_Payment_Month = $Month_May_Payment_Month - $Month_May_Overdue_Payment;
+            $Month_Jun_Diff_Payment_Month = $Month_Jun_Payment_Month - $Month_Jun_Overdue_Payment;
+            $Month_Jul_Diff_Payment_Month = $Month_Jul_Payment_Month - $Month_Jul_Overdue_Payment;
+            $Month_Aug_Diff_Payment_Month = $Month_Aug_Payment_Month - $Month_Aug_Overdue_Payment;
+            $Month_Sep_Diff_Payment_Month = $Month_Sep_Payment_Month - $Month_Sep_Overdue_Payment;
+            $Month_Oct_Diff_Payment_Month = $Month_Oct_Payment_Month - $Month_Oct_Overdue_Payment;
+            $Month_Nov_Diff_Payment_Month = $Month_Nov_Payment_Month - $Month_Nov_Overdue_Payment;
+            $Month_Dec_Diff_Payment_Month = $Month_Dec_Payment_Month - $Month_Dec_Overdue_Payment;
+
             $Month_Payment_Sum = 0;
             $Month_Payment_Sum = $Month_Jan_Payment + $Month_Feb_Payment + $Month_Mar_Payment + $Month_Apr_Payment + $Month_May_Payment + $Month_Jun_Payment
                 + $Month_Jul_Payment + $Month_Aug_Payment + $Month_Sep_Payment + $Month_Oct_Payment + $Month_Nov_Payment + $Month_Dec_Payment;
@@ -1069,75 +1280,109 @@ class Loan extends BaseController
             $Month_Loan_Sum = $Month_Jan_Loan + $Month_Feb_Loan + $Month_Mar_Loan + $Month_Apr_Loan + $Month_May_Loan + $Month_Jun_Loan
                 + $Month_Jul_Loan + $Month_Aug_Loan + $Month_Sep_Loan + $Month_Oct_Loan + $Month_Nov_Loan + $Month_Dec_Loan;
 
+            $Month_Overdue_Payment_Sum = 0;
+            $Month_Overdue_Payment_Sum = $Month_Jan_Overdue_Payment + $Month_Feb_Overdue_Payment + $Month_Mar_Overdue_Payment + $Month_Apr_Overdue_Payment + $Month_May_Overdue_Payment + $Month_Jun_Overdue_Payment
+                + $Month_Jul_Overdue_Payment + $Month_Aug_Overdue_Payment + $Month_Sep_Overdue_Payment + $Month_Oct_Overdue_Payment + $Month_Nov_Overdue_Payment + $Month_Dec_Overdue_Payment;
+
+            $Month_Diff_Payment_Sum = 0;
+            $Month_Diff_Payment_Sum = $Month_Jan_Diff_Payment_Month + $Month_Feb_Diff_Payment_Month + $Month_Mar_Diff_Payment_Month + $Month_Apr_Diff_Payment_Month + $Month_May_Diff_Payment_Month + $Month_Jun_Diff_Payment_Month
+                + $Month_Jul_Diff_Payment_Month + $Month_Aug_Diff_Payment_Month + $Month_Sep_Diff_Payment_Month + $Month_Oct_Diff_Payment_Month + $Month_Nov_Diff_Payment_Month + $Month_Dec_Diff_Payment_Month;
+
             $html =
                 '<div class="card-body">
                 <div class="table-responsive">
                     <table class="table border-0 mb-0">
                         <tbody>
                             <tr>
-                                <th class="border-top-0 bg-black-03 br-bs-5 br-ts-5 tx-15 wd-50p">เดือน</th>
-                                <th class="border-top-0 bg-black-03 tx-15 wd-25p">ยอดรับชำระต่อเดือน</th>
-                                <th class="border-top-0 bg-black-03 br-be-5 br-te-5 tx-15 wd-25">ยอดเปิดสินเชื่อต่อเดือน</th>
+                                <th class="border-top-0 bg-black-03 br-bs-5 br-ts-5 tx-15 wd-20p">เดือน</th>
+                                <th class="border-top-0 bg-black-03 tx-15 wd-20p">ยอดรับชำระต่อเดือน</th>
+                                <th class="border-top-0 bg-black-03 tx-15 wd-20p">ยอดเปิดสินเชื่อต่อเดือน</th>
+                                <th class="border-top-0 bg-black-03 tx-15 wd-20p">ยอดค้างชำระต่อเดือน</th>
+                                <th class="border-top-0 bg-black-03 tx-15 wd-20p">ยอดชำระค่างวดต่อเดือน</th>
                             </tr>
                             <tr class="' . $Month_Class_Jan . '">
                                 <td class="border-top-0 pt-4"><a>มกราคม</a></td>
                                 <td class="border-top-0"><a href="javascript:void(0);" data-id="1" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Jan_Payment, 2) . '</a></td>
                                 <td class="border-top-0"><a href="javascript:void(0);" data-id="1" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Jan_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="01" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jan_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Jan_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_Feb . '">
                                 <td class="border-top-0 pt-4"><a>กุมภาพันธ์</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="2" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Feb_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="2" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Feb_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="02" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Feb_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Feb_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_Mar . '">
                                 <td class="border-top-0 pt-4"><a>มีนาคม</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="3" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Mar_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="3" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Mar_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="03" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Mar_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Mar_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_Apr . '">
                                 <td class="border-top-0 pt-4"><a>เมษายน</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="4" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Apr_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="4" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Apr_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="04" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Apr_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Apr_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_May . '">
                                 <td class="border-top-0 pt-4"><a>พฤษภาคม</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="5" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_May_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="5" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_May_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="05" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_May_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_May_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_Jun . '">
                                 <td class="border-top-0 pt-4"><a>มิถุนายน</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="6" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Jun_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="6" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Jun_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="06" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jun_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Jun_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_Jul . '">
                                 <td class="border-top-0 pt-4"><a>กรกฏาคม</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="7" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Jul_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="7" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Jul_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="07" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jul_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Jul_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_Aug . '">
                                 <td class="border-top-0 pt-4"><a>สิงหาคม</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="8" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Aug_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="8" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Aug_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="08" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Aug_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Aug_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_Sep . '">
                                 <td class="border-top-0 pt-4"><a>กันยายน</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="9" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Sep_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="9" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Sep_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="09" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Sep_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Sep_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_Oct . '">
                                 <td class="border-top-0 pt-4"><a>ตุลาคม</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="10" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Oct_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="10" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Oct_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="10" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Oct_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Oct_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_Nov . '">
                                 <td class="border-top-0 pt-4"><a>พฤศจิกายน</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="11" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Nov_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="11" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Nov_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="11" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Nov_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Nov_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="' . $Month_Class_Dec . '">
                                 <td class="border-top-0 pt-4"><a>ธันวาคม</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="12" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Dec_Payment, 2) . '</a></td>
                                 <td class="border-top-0 "><a href="javascript:void(0);" data-id="12" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Dec_Loan, 2) . '</a></td>
+                                <td class="border-top-0 "><a href="javascript:void(0);" data-id="12" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Dec_Overdue_Payment, 2) . '</a></td>
+                                <td class="border-top-0">' . number_format($Month_Dec_Diff_Payment_Month, 2) . '</td>
                             </tr>
                             <tr class="bg-primary">
                                 <td class="border-top-0 pt-4">
@@ -1148,6 +1393,12 @@ class Loan extends BaseController
                                 </td>
                                 <td class="border-top-0">
                                     <p class="mb-0">' . number_format($Month_Loan_Sum, 2) . '</p>
+                                </td>
+                                <td class="border-top-0">
+                                    <p class="mb-0">' . number_format($Month_Overdue_Payment_Sum, 2) . '</p>
+                                </td>
+                                <td class="border-top-0">
+                                    <p class="mb-0">' . number_format($Month_Diff_Payment_Sum, 2) . '</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -1204,7 +1455,7 @@ class Loan extends BaseController
                 $i,
                 $datas->loan_code,
                 $datas->loan_payment_customer,
-                $datas->loan_employee_response,
+                $datas->loan_employee,
                 $datas->loan_payment_installment,
                 $datas->land_account_name,
                 $datas->loan_payment_pay_type,
@@ -1253,12 +1504,58 @@ class Loan extends BaseController
             $data[] = array(
                 $i,
                 $datas->loan_code,
-                $datas->loan_employee_response,
-                $datas->loan_employee_response,
-                $datas->land_account_name,
+                $datas->loan_customer,
+                $datas->loan_employee,
                 $datas->land_account_name,
                 number_format($datas->loan_summary_no_vat, 2),
                 $datas->loan_date,
+            );
+        }
+
+        $json_data = array(
+            "draw" => intval($param['draw']),
+            "recordsTotal" => count($total_count),
+            "recordsFiltered" => count($total_count),
+            "data" => $data   // total data array
+        );
+
+        echo json_encode($json_data);
+    }
+
+    public function ajaxDataTableOverduePayment($id)
+    {
+        $LoanModel = new \App\Models\LoanModel();
+        $param['search_value'] = $_REQUEST['search']['value'];
+        $param['draw'] = $_REQUEST['draw'];
+        $param['start'] = $_REQUEST['start'];
+        $param['length'] = $_REQUEST['length'];
+        $param['month'] = $id;
+        $param['years'] = $_REQUEST['years'];
+
+        if (!empty($param['search_value'])) {
+            // count all data
+            $total_count = $LoanModel->getDataTableOverduePaymentMonthSearchCount($param);
+
+            $data_month = $LoanModel->getDataTableOverduePaymentMonthSearch($param);
+        } else {
+            // count all data
+            $total_count = $LoanModel->getDataTableOverduePaymentMonthCount($param);
+
+            // get per page data
+            $data_month = $LoanModel->getDataTableOverduePaymentMonth($param);
+        }
+
+        $i = 0;
+        $data = [];
+        foreach ($data_month as $datas) {
+            $i++;
+            $data[] = array(
+                $i,
+                $datas->loan_code,
+                $datas->loan_customer,
+                $datas->loan_payment_installment,
+                number_format($datas->loan_payment_amount, 2),
+                $datas->payment_date,
             );
         }
 

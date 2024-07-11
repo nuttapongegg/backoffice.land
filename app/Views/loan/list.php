@@ -63,6 +63,7 @@
                                                     <th class="wd-20p text-center">ชำระทุกวันที</th>
                                                     <th class="wd-30p text-center">สถานะ</th>
                                                     <th class="wd-30p text-center">เกินกำหนดชำระ</th>
+                                                    <th class="wd-30p text-center">ยอดค้างชำระ</th>
                                                     <th class="wd-30p text-center">ดอกเบี้ย</th>
                                                     <th class="wd-30p text-center">จำนวนงวด</th>
                                                     <th class="wd-30p text-center">ชำระแล้ว</th>

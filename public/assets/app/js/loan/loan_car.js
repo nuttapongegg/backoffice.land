@@ -220,6 +220,31 @@ function callAutoloenTable(data) {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
+            if (data["loan_status"] == "ON_STATE") {
+
+              const date = new Date(data["loan_payment_date_fix"]);
+              const newDate = new Date(date.setMonth(date.getMonth() + (data["loan_period"] - 1)));
+
+              const daysPassed = Math.floor((Date.now() - newDate) / (1000 * 60 * 60 * 24));
+
+              if (daysPassed > 0) {
+                const loan_overdue = Number(data["loan_overdue"].replace(/[^0-9.-]+/g, ""));
+                var loan_overdue_sum = (data["loan_payment_month"] * (loan_overdue + 1));
+                return (
+                  "<font class='tx-danger'>" + new Intl.NumberFormat().format(Number(loan_overdue_sum).toFixed(2)) + "</font>"
+                );
+              } else {
+                return (
+                  "<font>-</font>"
+                );
+              }
+            }
+        },
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
           return (
             "<font>" + data["loan_payment_interest"] + " %" + "</font>"
           );
