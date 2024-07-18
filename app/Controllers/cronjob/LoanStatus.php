@@ -53,7 +53,7 @@ class LoanStatus extends BaseController
                             'ยอดชำระเงินประจำงวดที่ ' . $dataLoan->loan_period . "\n" .
                             'วันครบกำหนด '.dateThaiDM($tomorrow) . "\n" .
                             'ยอดชำระ ' . number_format($dataLoan->loan_payment_month,2) .' บาท' . "\n" .
-                            'Link : ' . base_url('/loan/detail').'/'.$dataLoan->loan_code;
+                            'ชำระได้ที่ : ' . base_url('/loan/detail').'/'.$dataLoan->loan_code;
                     } elseif ($date_sum >= $nofity_Day->token_overdue_loan and $nofity_Day->token_overdue_loan != 0) {
                         $Message_Nofity ='สินเชื่อ ' .$dataLoan->loan_code. "\n" .
                             'ลูกค้า ' . $dataLoan->loan_customer . "\n" .
@@ -61,7 +61,8 @@ class LoanStatus extends BaseController
                             'ยอดชำระเงินประจำงวดที่ ' . $dataLoan->loan_period .  "\n" .
                             'วันครบกำหนด '.dateThaiDM($tomorrow). "\n" .
                             'ยอดชำระ ' . number_format($dataLoan->loan_payment_month,2) .' บาท'. "\n" .
-                            'เกินกำหนดชำระ '. $date_sum . ' วัน';
+                            'เกินกำหนดชำระ '. $date_sum . ' วัน' . "\n" .
+                            'ชำระได้ที่ : ' . base_url('/loan/detail').'/'.$dataLoan->loan_code;
                     }
 
                     $token = $nofity_Day->token_loan; // LINE Token
