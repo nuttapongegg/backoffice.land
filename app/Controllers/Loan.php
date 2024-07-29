@@ -738,9 +738,8 @@ class Loan extends BaseController
             }
 
             $summary_all = $loan_summary_all - $loan_payment_sum_installment;
-            if($summary_all != 0){
+            if ($summary_all != 0) {
                 $return_funds = ($loan_payment_month / $summary_all) * 100;
-            
             }
 
             $html_SummarizeLoan =
@@ -877,6 +876,12 @@ class Loan extends BaseController
 
     public function report_loan()
     {
+        $TargetedModel = new \App\Models\TargetedModel();
+        $data['targeteds'] = $TargetedModel->getTargetedAll();
+
+        $data['OverduePayments'] = $this->LoanModel->getOverdueListPayments(date('Y'));
+        $data['PaymentMonths'] = $this->LoanModel->getListPaymentMonths(date('Y'));
+
         $data['content'] = 'loan/report_loan';
         $data['title'] = 'รายงานสินเชื่อ';
         $data['css_critical'] = '';
@@ -1031,7 +1036,6 @@ class Loan extends BaseController
                                 $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
                                 break;
                             case "2":
-
                                 $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
                                 break;
                             case "3":
@@ -1579,20 +1583,242 @@ class Loan extends BaseController
 
             // $DocumentModel = new \App\Models\DocumentModel();
             // $Profit = $DocumentModel->getprofit($data);
+            $OverduePayments = $this->LoanModel->getOverdueListPayments($data);
+            $PaymentMonths = $this->LoanModel->getListPaymentMonths($data);
             // $Month = "";
+            $Month_Jan_Payment_Month = 0;
+            $Month_Feb_Payment_Month = 0;
+            $Month_Mar_Payment_Month = 0;
+            $Month_Apr_Payment_Month = 0;
+            $Month_May_Payment_Month = 0;
+            $Month_Jun_Payment_Month = 0;
+            $Month_Jul_Payment_Month = 0;
+            $Month_Aug_Payment_Month = 0;
+            $Month_Sep_Payment_Month = 0;
+            $Month_Oct_Payment_Month = 0;
+            $Month_Nov_Payment_Month = 0;
+            $Month_Dec_Payment_Month = 0;
 
-            $percent_from_last_month_Jan = 0;
-            $percent_from_last_month_Feb = 0;
-            $percent_from_last_month_Mar = 0;
-            $percent_from_last_month_Apr = 0;
-            $percent_from_last_month_May = 0;
-            $percent_from_last_month_Jun = 0;
-            $percent_from_last_month_Jul = 0;
-            $percent_from_last_month_Aug = 0;
-            $percent_from_last_month_Sep = 0;
-            $percent_from_last_month_Oct = 0;
-            $percent_from_last_month_Nov = 0;
-            $percent_from_last_month_Dec = 0;
+            foreach ($PaymentMonths as $PaymentMonth) {
+                if ($data === date('Y')) {
+                    if ($PaymentMonth->overdue_payment <= date('m')) {
+                        switch ($PaymentMonth->overdue_payment) {
+                            case "1":
+                                $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "2":
+                                $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "3":
+                                $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "4":
+                                $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "5":
+                                $Month_May_Payment_Month = $Month_May_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "6":
+                                $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "7":
+                                $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "8":
+                                $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "9":
+                                $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "10":
+                                $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "11":
+                                $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "12":
+                                $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                        }
+                    }
+                } elseif ($data < date('Y')) {
+                    switch ($PaymentMonth->overdue_payment) {
+                        case "1":
+                            $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "2":
+                            $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "3":
+                            $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "4":
+                            $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "5":
+                            $Month_May_Payment_Month = $Month_May_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "6":
+                            $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "7":
+                            $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "8":
+                            $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "9":
+                            $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "10":
+                            $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "11":
+                            $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "12":
+                            $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                    }
+                }
+            }
+
+            $Month_Jan_Overdue_Payment = 0;
+            $Month_Feb_Overdue_Payment = 0;
+            $Month_Mar_Overdue_Payment = 0;
+            $Month_Apr_Overdue_Payment = 0;
+            $Month_May_Overdue_Payment = 0;
+            $Month_Jun_Overdue_Payment = 0;
+            $Month_Jul_Overdue_Payment = 0;
+            $Month_Aug_Overdue_Payment = 0;
+            $Month_Sep_Overdue_Payment = 0;
+            $Month_Oct_Overdue_Payment = 0;
+            $Month_Nov_Overdue_Payment = 0;
+            $Month_Dec_Overdue_Payment = 0;
+
+            foreach ($OverduePayments as $OverduePayment) {
+                if ($data === date('Y')) {
+                    if ($OverduePayment->overdue_payment <= date('m')) {
+                        switch ($OverduePayment->overdue_payment) {
+                            case "1":
+                                $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "2":
+
+                                $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "3":
+                                $Month_Mar_Overdue_Payment = $Month_Mar_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "4":
+                                $Month_Apr_Overdue_Payment = $Month_Apr_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "5":
+                                $Month_May_Overdue_Payment = $Month_May_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "6":
+                                $Month_Jun_Overdue_Payment = $Month_Jun_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "7":
+                                $Month_Jul_Overdue_Payment = $Month_Jul_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "8":
+                                $Month_Aug_Overdue_Payment = $Month_Aug_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "9":
+                                $Month_Sep_Overdue_Payment = $Month_Sep_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "10":
+                                $Month_Oct_Overdue_Payment = $Month_Oct_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "11":
+                                $Month_Nov_Overdue_Payment = $Month_Nov_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "12":
+                                $Month_Dec_Overdue_Payment = $Month_Dec_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                        }
+                    }
+                } elseif ($data < date('Y')) {
+                    switch ($OverduePayment->overdue_payment) {
+                        case "1":
+                            $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "2":
+                            $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "3":
+                            $Month_Mar_Overdue_Payment = $Month_Mar_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "4":
+                            $Month_Apr_Overdue_Payment = $Month_Apr_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "5":
+                            $Month_May_Overdue_Payment = $Month_May_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "6":
+                            $Month_Jun_Overdue_Payment = $Month_Jun_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "7":
+                            $Month_Jul_Overdue_Payment = $Month_Jul_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "8":
+                            $Month_Aug_Overdue_Payment = $Month_Aug_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "9":
+                            $Month_Sep_Overdue_Payment = $Month_Sep_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "10":
+                            $Month_Oct_Overdue_Payment = $Month_Oct_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "11":
+                            $Month_Nov_Overdue_Payment = $Month_Nov_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "12":
+                            $Month_Dec_Overdue_Payment = $Month_Dec_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                    }
+                }
+            }
+
+            $Month_Revenue_Jan_Sum = 0;
+            $Month_Revenue_Feb_Sum = 0;
+            $Month_Revenue_Mar_Sum = 0;
+            $Month_Revenue_Apr_Sum = 0;
+            $Month_Revenue_May_Sum = 0;
+            $Month_Revenue_Jun_Sum = 0;
+            $Month_Revenue_Jul_Sum = 0;
+            $Month_Revenue_Aug_Sum = 0;
+            $Month_Revenue_Sep_Sum = 0;
+            $Month_Revenue_Oct_Sum = 0;
+            $Month_Revenue_Nov_Sum = 0;
+            $Month_Revenue_Dec_Sum = 0;
+
+            $Month_Jan_Diff_Payment_Month = $Month_Jan_Payment_Month - $Month_Jan_Overdue_Payment;
+            $Month_Feb_Diff_Payment_Month = $Month_Feb_Payment_Month - $Month_Feb_Overdue_Payment;
+            $Month_Mar_Diff_Payment_Month = $Month_Mar_Payment_Month - $Month_Mar_Overdue_Payment;
+            $Month_Apr_Diff_Payment_Month = $Month_Apr_Payment_Month - $Month_Apr_Overdue_Payment;
+            $Month_May_Diff_Payment_Month = $Month_May_Payment_Month - $Month_May_Overdue_Payment;
+            $Month_Jun_Diff_Payment_Month = $Month_Jun_Payment_Month - $Month_Jun_Overdue_Payment;
+            $Month_Jul_Diff_Payment_Month = $Month_Jul_Payment_Month - $Month_Jul_Overdue_Payment;
+            $Month_Aug_Diff_Payment_Month = $Month_Aug_Payment_Month - $Month_Aug_Overdue_Payment;
+            $Month_Sep_Diff_Payment_Month = $Month_Sep_Payment_Month - $Month_Sep_Overdue_Payment;
+            $Month_Oct_Diff_Payment_Month = $Month_Oct_Payment_Month - $Month_Oct_Overdue_Payment;
+            $Month_Nov_Diff_Payment_Month = $Month_Nov_Payment_Month - $Month_Nov_Overdue_Payment;
+            $Month_Dec_Diff_Payment_Month = $Month_Dec_Payment_Month - $Month_Dec_Overdue_Payment;
+
+            $Month_Revenue_Jan_Sum = $Month_Jan_Diff_Payment_Month + $Month_Jan_Overdue_Payment;
+            $Month_Revenue_Feb_Sum = $Month_Feb_Diff_Payment_Month + $Month_Feb_Overdue_Payment;
+            $Month_Revenue_Mar_Sum = $Month_Mar_Diff_Payment_Month + $Month_Mar_Overdue_Payment;
+            $Month_Revenue_Apr_Sum = $Month_Apr_Diff_Payment_Month + $Month_Apr_Overdue_Payment;
+            $Month_Revenue_May_Sum = $Month_May_Diff_Payment_Month + $Month_May_Overdue_Payment;
+            $Month_Revenue_Jun_Sum = $Month_Jun_Diff_Payment_Month + $Month_Jun_Overdue_Payment;
+            $Month_Revenue_Jul_Sum = $Month_Jul_Diff_Payment_Month + $Month_Jul_Overdue_Payment;
+            $Month_Revenue_Aug_Sum = $Month_Aug_Diff_Payment_Month + $Month_Aug_Overdue_Payment;
+            $Month_Revenue_Sep_Sum = $Month_Sep_Diff_Payment_Month + $Month_Sep_Overdue_Payment;
+            $Month_Revenue_Oct_Sum = $Month_Oct_Diff_Payment_Month + $Month_Oct_Overdue_Payment;
+            $Month_Revenue_Nov_Sum = $Month_Nov_Diff_Payment_Month + $Month_Nov_Overdue_Payment;
+            $Month_Revenue_Dec_Sum = $Month_Dec_Diff_Payment_Month + $Month_Dec_Overdue_Payment;
 
             $Month_Revenue_Jan = 0;
             $Month_Revenue_Feb = 0;
@@ -1607,136 +1833,100 @@ class Loan extends BaseController
             $Month_Revenue_Nov = 0;
             $Month_Revenue_Dec = 0;
 
-            if ($percent_from_last_month_Jan < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Jan = number_format($percent_from_last_month_Jan, 2) . '%';
-            } elseif ($percent_from_last_month_Jan > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Jan = '+' . number_format($percent_from_last_month_Jan, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Jan = number_format($percent_from_last_month_Jan, 2) . '%';
+            if ($Month_Revenue_Jan_Sum != 0 && $Month_Jan_Diff_Payment_Month != 0) {
+                $Month_Revenue_Jan = $Month_Jan_Diff_Payment_Month * 100 / $Month_Revenue_Jan_Sum;
+            } elseif ($Month_Revenue_Jan_Sum == 0) {
+                $Month_Revenue_Jan = 0;
+            } elseif ($Month_Jan_Diff_Payment_Month == 0 && $Month_Revenue_Jan_Sum != 0) {
+                $Month_Revenue_Jan = 100;
             }
 
-            if ($percent_from_last_month_Feb < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Feb = number_format($percent_from_last_month_Feb, 2) . '%';
-            } elseif ($percent_from_last_month_Feb > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Feb = '+' . number_format($percent_from_last_month_Feb, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Feb = number_format($percent_from_last_month_Feb, 2) . '%';
+            if ($Month_Revenue_Feb_Sum != 0 && $Month_Feb_Diff_Payment_Month != 0) {
+                $Month_Revenue_Feb = $Month_Feb_Diff_Payment_Month * 100 / $Month_Revenue_Feb_Sum;
+            } elseif ($Month_Revenue_Feb_Sum == 0) {
+                $Month_Revenue_Feb = 0;
+            } elseif ($Month_Feb_Diff_Payment_Month == 0 && $Month_Revenue_Feb_Sum != 0) {
+                $Month_Revenue_Feb = 100;
             }
 
-            if ($percent_from_last_month_Mar < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Mar = number_format($percent_from_last_month_Mar, 2) . '%';
-            } elseif ($percent_from_last_month_Mar > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Mar = '+' . number_format($percent_from_last_month_Mar, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Mar = number_format($percent_from_last_month_Mar, 2) . '%';
+            if ($Month_Revenue_Mar_Sum != 0 && $Month_Mar_Diff_Payment_Month != 0) {
+                $Month_Revenue_Mar = $Month_Mar_Diff_Payment_Month * 100 / $Month_Revenue_Mar_Sum;
+            } elseif ($Month_Revenue_Mar_Sum == 0) {
+                $Month_Revenue_Mar = 0;
+            } elseif ($Month_Mar_Diff_Payment_Month == 0 && $Month_Revenue_Mar_Sum != 0) {
+                $Month_Revenue_Mar = 100;
             }
 
-            if ($percent_from_last_month_Apr < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Apr = number_format($percent_from_last_month_Apr, 2) . '%';
-            } elseif ($percent_from_last_month_Apr > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Apr = '+' . number_format($percent_from_last_month_Apr, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Apr = number_format($percent_from_last_month_Apr, 2) . '%';
+            if ($Month_Revenue_Apr_Sum != 0 && $Month_Apr_Diff_Payment_Month != 0) {
+                $Month_Revenue_Apr = $Month_Apr_Diff_Payment_Month * 100 / $Month_Revenue_Apr_Sum;
+            } elseif ($Month_Revenue_Apr_Sum == 0) {
+                $Month_Revenue_Apr = 0;
+            } elseif ($Month_Apr_Diff_Payment_Month == 0 && $Month_Revenue_Apr_Sum != 0) {
+                $Month_Revenue_Apr = 100;
             }
 
-            if ($percent_from_last_month_May < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_May = number_format($percent_from_last_month_May, 2) . '%';
-            } elseif ($percent_from_last_month_May > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_May = '+' . number_format($percent_from_last_month_May, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_May = number_format($percent_from_last_month_May, 2) . '%';
+            if ($Month_Revenue_May_Sum != 0 && $Month_May_Diff_Payment_Month != 0) {
+                $Month_Revenue_May = $Month_May_Diff_Payment_Month * 100 / $Month_Revenue_May_Sum;
+            } elseif ($Month_Revenue_May_Sum == 0) {
+                $Month_Revenue_May = 0;
+            } elseif ($Month_May_Diff_Payment_Month == 0 && $Month_Revenue_May_Sum != 0) {
+                $Month_Revenue_May = 100;
             }
 
-            if ($percent_from_last_month_Jun < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Jun = number_format($percent_from_last_month_Jun, 2) . '%';
-            } elseif ($percent_from_last_month_Jun > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Jun = '+' . number_format($percent_from_last_month_Jun, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Jun = number_format($percent_from_last_month_Jun, 2) . '%';
+            if ($Month_Revenue_Jun_Sum != 0 && $Month_Jun_Diff_Payment_Month != 0) {
+                $Month_Revenue_Jun = $Month_Jun_Diff_Payment_Month * 100 / $Month_Revenue_Jun_Sum;
+            } elseif ($Month_Revenue_Jun_Sum == 0) {
+                $Month_Revenue_Jun = 0;
+            } elseif ($Month_Jun_Diff_Payment_Month == 0 && $Month_Revenue_Jun_Sum != 0) {
+                $Month_Revenue_Jun = 100;
             }
 
-            if ($percent_from_last_month_Jul < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Jul = number_format($percent_from_last_month_Jul, 2) . '%';
-            } elseif ($percent_from_last_month_Jul > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Jul = '+' . number_format($percent_from_last_month_Jul, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Jul = number_format($percent_from_last_month_Jul, 2) . '%';
+            if ($Month_Revenue_Jul_Sum != 0 && $Month_Jul_Diff_Payment_Month != 0) {
+                $Month_Revenue_Jul = $Month_Jul_Diff_Payment_Month * 100 / $Month_Revenue_Jul_Sum;
+            } elseif ($Month_Revenue_Jul_Sum == 0) {
+                $Month_Revenue_Jul = 0;
+            } elseif ($Month_Jul_Diff_Payment_Month == 0 && $Month_Revenue_Jul_Sum != 0) {
+                $Month_Revenue_Jul = 100;
             }
 
-            if ($percent_from_last_month_Aug < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Aug = number_format($percent_from_last_month_Aug, 2) . '%';
-            } elseif ($percent_from_last_month_Aug > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Aug = '+' . number_format($percent_from_last_month_Aug, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Aug = number_format($percent_from_last_month_Aug, 2) . '%';
+            if ($Month_Revenue_Aug_Sum != 0 && $Month_Aug_Diff_Payment_Month != 0) {
+                $Month_Revenue_Aug = $Month_Aug_Diff_Payment_Month * 100 / $Month_Revenue_Aug_Sum;
+            } elseif ($Month_Revenue_Aug_Sum == 0) {
+                $Month_Revenue_Aug = 0;
+            } elseif ($Month_Aug_Diff_Payment_Month == 0 && $Month_Revenue_Aug_Sum != 0) {
+                $Month_Revenue_Aug = 100;
             }
 
-            if ($percent_from_last_month_Sep < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Sep = number_format($percent_from_last_month_Sep, 2) . '%';
-            } elseif ($percent_from_last_month_Sep > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Sep = '+' . number_format($percent_from_last_month_Sep, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Sep = number_format($percent_from_last_month_Sep, 2) . '%';
+            if ($Month_Revenue_Sep_Sum != 0 && $Month_Sep_Diff_Payment_Month != 0) {
+                $Month_Revenue_Sep = $Month_Sep_Diff_Payment_Month * 100 / $Month_Revenue_Sep_Sum;
+            } elseif ($Month_Revenue_Sep_Sum == 0) {
+                $Month_Revenue_Sep = 0;
+            } elseif ($Month_Sep_Diff_Payment_Month == 0 && $Month_Revenue_Sep_Sum != 0) {
+                $Month_Revenue_Sep = 100;
             }
 
-            if ($percent_from_last_month_Oct < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Oct = number_format($percent_from_last_month_Oct, 2) . '%';
-            } elseif ($percent_from_last_month_Oct > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Oct = '+' . number_format($percent_from_last_month_Oct, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Oct = number_format($percent_from_last_month_Oct, 2) . '%';
+            if ($Month_Revenue_Oct_Sum != 0 && $Month_Oct_Diff_Payment_Month != 0) {
+                $Month_Revenue_Oct = $Month_Oct_Diff_Payment_Month * 100 / $Month_Revenue_Oct_Sum;
+            } elseif ($Month_Revenue_Oct_Sum == 0) {
+                $Month_Revenue_Oct = 0;
+            } elseif ($Month_Oct_Diff_Payment_Month == 0 && $Month_Revenue_Oct_Sum != 0) {
+                $Month_Revenue_Oct = 100;
             }
 
-            if ($percent_from_last_month_Nov < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Nov = number_format($percent_from_last_month_Nov, 2) . '%';
-            } elseif ($percent_from_last_month_Nov > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Nov = '+' . number_format($percent_from_last_month_Nov, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Nov = number_format($percent_from_last_month_Nov, 2) . '%';
+            if ($Month_Revenue_Nov_Sum != 0 && $Month_Nov_Diff_Payment_Month != 0) {
+                $Month_Revenue_Nov = $Month_Nov_Diff_Payment_Month * 100 / $Month_Revenue_Nov_Sum;
+            } elseif ($Month_Revenue_Nov_Sum == 0) {
+                $Month_Revenue_Nov = 0;
+            } elseif ($Month_Nov_Diff_Payment_Month == 0 && $Month_Revenue_Nov_Sum != 0) {
+                $Month_Revenue_Nov = 100;
             }
 
-            if ($percent_from_last_month_Dec < 0) {
-                $percent_Color = " badge-danger-transparent";
-                $percent_from_last_month_Dec = number_format($percent_from_last_month_Dec, 2) . '%';
-            } elseif ($percent_from_last_month_Dec > 0) {
-                $percent_Color = " badge-success-transparent";
-                $percent_from_last_month_Dec = '+' . number_format($percent_from_last_month_Dec, 2) . '%';
-            } else {
-                $percent_Color = "";
-                $percent_from_last_month_Dec = number_format($percent_from_last_month_Dec, 2) . '%';
+            if ($Month_Revenue_Dec_Sum != 0 && $Month_Dec_Diff_Payment_Month != 0) {
+                $Month_Revenue_Dec = $Month_Dec_Diff_Payment_Month * 100 / $Month_Revenue_Dec_Sum;
+            } elseif ($Month_Revenue_Dec_Sum == 0) {
+                $Month_Revenue_Dec = 0;
+            } elseif ($Month_Dec_Diff_Payment_Month == 0 && $Month_Revenue_Dec_Sum != 0) {
+                $Month_Revenue_Dec = 100;
             }
 
             $html =
@@ -1747,8 +1937,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">มกราคม</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Jan, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Jan . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Jan, 2) . "%" . '"></div>
@@ -1762,8 +1950,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">กุมภาพันธ์</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Feb, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Feb . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Feb, 2) . "%" . '"></div>
@@ -1777,8 +1963,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">มีนาคม</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Mar, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Mar . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Mar, 2) . "%" . '"></div>
@@ -1792,8 +1976,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">เมษายน</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Apr, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Apr . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Apr, 2) . "%" . '"></div>
@@ -1807,8 +1989,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">พฤษภาคม</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_May, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_May . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_May, 2) . "%" . '"></div>
@@ -1822,8 +2002,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">มิถุนายน</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Jun, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Jun . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Jun, 2) . "%" . '"></div>
@@ -1837,8 +2015,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">กรกฏาคม</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Jul, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Jul . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Jul, 2) . "%" . '"></div>
@@ -1852,8 +2028,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">สิงหาคม</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Aug, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Aug . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Aug, 2) . "%" . '"></div>
@@ -1867,8 +2041,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">กันยายน</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Sep, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Sep . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Sep, 2) . "%" . '"></div>
@@ -1882,8 +2054,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">ตุลาคม</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Oct, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Oct . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Oct, 2) . "%" . '"></div>
@@ -1897,8 +2067,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">พฤศจิกายน</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Nov, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Nov . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Nov, 2) . "%" . '"></div>
@@ -1912,8 +2080,6 @@ class Loan extends BaseController
                 <div class="flex-1">
                     <div class="flex-between mb-2">
                         <p class="mb-0"><span class="pe-2 border-end">ธันวาคม</span><span class="ps-2 tx-muted">' . number_format($Month_Revenue_Dec, 2) . "%" . '</span></p>
-
-                        <span class="' . $percent_Color . ' me-1">' . $percent_from_last_month_Dec . '</span>
                     </div>
                     <div class="progress mb-3">
                         <div class="progress-bar progress-bar-striped progress-bar-animated ht-5 bg-success" style="width: ' . number_format($Month_Revenue_Dec, 2) . "%" . '"></div>
@@ -1945,13 +2111,390 @@ class Loan extends BaseController
             $response['success'] = 0;
             $response['message'] = '';
 
+            $OverduePayments = $this->LoanModel->getOverdueListPayments($data);
+            $PaymentMonths = $this->LoanModel->getListPaymentMonths($data);
+
+            $datas = $this->LoanModel->getAllDataLoan();
+
+            $Month_Jan_Overdue_Payment = 0;
+            $Month_Feb_Overdue_Payment = 0;
+            $Month_Mar_Overdue_Payment = 0;
+            $Month_Apr_Overdue_Payment = 0;
+            $Month_May_Overdue_Payment = 0;
+            $Month_Jun_Overdue_Payment = 0;
+            $Month_Jul_Overdue_Payment = 0;
+            $Month_Aug_Overdue_Payment = 0;
+            $Month_Sep_Overdue_Payment = 0;
+            $Month_Oct_Overdue_Payment = 0;
+            $Month_Nov_Overdue_Payment = 0;
+            $Month_Dec_Overdue_Payment = 0;
+
+            foreach ($OverduePayments as $OverduePayment) {
+                if ($data === date('Y')) {
+                    if ($OverduePayment->overdue_payment <= date('m')) {
+                        switch ($OverduePayment->overdue_payment) {
+                            case "1":
+                                $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "2":
+
+                                $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "3":
+                                $Month_Mar_Overdue_Payment = $Month_Mar_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "4":
+                                $Month_Apr_Overdue_Payment = $Month_Apr_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "5":
+                                $Month_May_Overdue_Payment = $Month_May_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "6":
+                                $Month_Jun_Overdue_Payment = $Month_Jun_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "7":
+                                $Month_Jul_Overdue_Payment = $Month_Jul_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "8":
+                                $Month_Aug_Overdue_Payment = $Month_Aug_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "9":
+                                $Month_Sep_Overdue_Payment = $Month_Sep_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "10":
+                                $Month_Oct_Overdue_Payment = $Month_Oct_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "11":
+                                $Month_Nov_Overdue_Payment = $Month_Nov_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                            case "12":
+                                $Month_Dec_Overdue_Payment = $Month_Dec_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                break;
+                        }
+                    }
+                } elseif ($data < date('Y')) {
+                    switch ($OverduePayment->overdue_payment) {
+                        case "1":
+                            $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "2":
+                            $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "3":
+                            $Month_Mar_Overdue_Payment = $Month_Mar_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "4":
+                            $Month_Apr_Overdue_Payment = $Month_Apr_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "5":
+                            $Month_May_Overdue_Payment = $Month_May_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "6":
+                            $Month_Jun_Overdue_Payment = $Month_Jun_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "7":
+                            $Month_Jul_Overdue_Payment = $Month_Jul_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "8":
+                            $Month_Aug_Overdue_Payment = $Month_Aug_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "9":
+                            $Month_Sep_Overdue_Payment = $Month_Sep_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "10":
+                            $Month_Oct_Overdue_Payment = $Month_Oct_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "11":
+                            $Month_Nov_Overdue_Payment = $Month_Nov_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "12":
+                            $Month_Dec_Overdue_Payment = $Month_Dec_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                    }
+                }
+            }
+
+            $Month_Jan_Payment_Month = 0;
+            $Month_Feb_Payment_Month = 0;
+            $Month_Mar_Payment_Month = 0;
+            $Month_Apr_Payment_Month = 0;
+            $Month_May_Payment_Month = 0;
+            $Month_Jun_Payment_Month = 0;
+            $Month_Jul_Payment_Month = 0;
+            $Month_Aug_Payment_Month = 0;
+            $Month_Sep_Payment_Month = 0;
+            $Month_Oct_Payment_Month = 0;
+            $Month_Nov_Payment_Month = 0;
+            $Month_Dec_Payment_Month = 0;
+
+            foreach ($PaymentMonths as $PaymentMonth) {
+                if ($data === date('Y')) {
+                    if ($PaymentMonth->overdue_payment <= date('m')) {
+                        switch ($PaymentMonth->overdue_payment) {
+                            case "1":
+                                $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "2":
+                                $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "3":
+                                $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "4":
+                                $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "5":
+                                $Month_May_Payment_Month = $Month_May_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "6":
+                                $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "7":
+                                $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "8":
+                                $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "9":
+                                $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "10":
+                                $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "11":
+                                $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                            case "12":
+                                $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                break;
+                        }
+                    }
+                } elseif ($data < date('Y')) {
+                    switch ($PaymentMonth->overdue_payment) {
+                        case "1":
+                            $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "2":
+                            $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "3":
+                            $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "4":
+                            $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "5":
+                            $Month_May_Payment_Month = $Month_May_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "6":
+                            $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "7":
+                            $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "8":
+                            $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "9":
+                            $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "10":
+                            $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "11":
+                            $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "12":
+                            $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                    }
+                }
+            }
+            $Month_Jan_Diff_Payment_Month = 0;
+            $Month_Feb_Diff_Payment_Month = 0;
+            $Month_Mar_Diff_Payment_Month = 0;
+            $Month_Apr_Diff_Payment_Month = 0;
+            $Month_May_Diff_Payment_Month = 0;
+            $Month_Jun_Diff_Payment_Month = 0;
+            $Month_Jul_Diff_Payment_Month = 0;
+            $Month_Aug_Diff_Payment_Month = 0;
+            $Month_Sep_Diff_Payment_Month = 0;
+            $Month_Oct_Diff_Payment_Month = 0;
+            $Month_Nov_Diff_Payment_Month = 0;
+            $Month_Dec_Diff_Payment_Month = 0;
+
+            $Month_Jan_Diff_Payment_Month = $Month_Jan_Payment_Month - $Month_Jan_Overdue_Payment;
+            $Month_Feb_Diff_Payment_Month = $Month_Feb_Payment_Month - $Month_Feb_Overdue_Payment;
+            $Month_Mar_Diff_Payment_Month = $Month_Mar_Payment_Month - $Month_Mar_Overdue_Payment;
+            $Month_Apr_Diff_Payment_Month = $Month_Apr_Payment_Month - $Month_Apr_Overdue_Payment;
+            $Month_May_Diff_Payment_Month = $Month_May_Payment_Month - $Month_May_Overdue_Payment;
+            $Month_Jun_Diff_Payment_Month = $Month_Jun_Payment_Month - $Month_Jun_Overdue_Payment;
+            $Month_Jul_Diff_Payment_Month = $Month_Jul_Payment_Month - $Month_Jul_Overdue_Payment;
+            $Month_Aug_Diff_Payment_Month = $Month_Aug_Payment_Month - $Month_Aug_Overdue_Payment;
+            $Month_Sep_Diff_Payment_Month = $Month_Sep_Payment_Month - $Month_Sep_Overdue_Payment;
+            $Month_Oct_Diff_Payment_Month = $Month_Oct_Payment_Month - $Month_Oct_Overdue_Payment;
+            $Month_Nov_Diff_Payment_Month = $Month_Nov_Payment_Month - $Month_Nov_Overdue_Payment;
+            $Month_Dec_Diff_Payment_Month = $Month_Dec_Payment_Month - $Month_Dec_Overdue_Payment;
+
+            $Month_max = "";
+            $Month_min = "";
+            $MAX = 0;
+            $i = 0;
+
+            if ($Month_Jan_Diff_Payment_Month >= $MAX and $Month_Jan_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Jan_Diff_Payment_Month;
+                $Month_max = "มกราคม";
+            }
+            if ($Month_Feb_Diff_Payment_Month >= $MAX and $Month_Feb_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Feb_Diff_Payment_Month;
+                $Month_max = "กุมภาพันธ์";
+            }
+            if ($Month_Mar_Diff_Payment_Month >= $MAX and $Month_Mar_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Mar_Diff_Payment_Month;
+                $Month_max = "มีนาคม";
+            }
+            if ($Month_Apr_Diff_Payment_Month >= $MAX and $Month_Apr_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Apr_Diff_Payment_Month;
+                $Month_max = "เมษายน";
+            }
+            if ($Month_May_Diff_Payment_Month >= $MAX and $Month_May_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_May_Diff_Payment_Month;
+                $Month_max = "พฤษภาคม";
+            }
+            if ($Month_Jun_Diff_Payment_Month >= $MAX and $Month_Jun_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Jun_Diff_Payment_Month;
+                $Month_max = "มิถุนายน";
+            }
+            if ($Month_Jul_Diff_Payment_Month >= $MAX and $Month_Jul_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Jul_Diff_Payment_Month;
+                $Month_max = "กรกฎาคม";
+            }
+            if ($Month_Aug_Diff_Payment_Month >= $MAX and $Month_Aug_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Aug_Diff_Payment_Month;
+                $Month_max = "สิงหาคม";
+            }
+            if ($Month_Sep_Diff_Payment_Month >= $MAX and $Month_Sep_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Sep_Diff_Payment_Month;
+                $Month_max = "กันยายน";
+            }
+            if ($Month_Oct_Diff_Payment_Month >= $MAX and $Month_Oct_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Oct_Diff_Payment_Month;
+                $Month_max = "ตุลาคม";
+            }
+            if ($Month_Nov_Diff_Payment_Month >= $MAX and $Month_Nov_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Nov_Diff_Payment_Month;
+                $Month_max = "พฤศจิกายน";
+            }
+            if ($Month_Dec_Diff_Payment_Month >= $MAX and $Month_Dec_Diff_Payment_Month != 0) {
+                $i++;
+                $MAX = $Month_Dec_Diff_Payment_Month;
+                $Month_max = "ธันวาคม";
+            }
+
+            $MIN = $MAX;
+
+            if ($Month_Jan_Diff_Payment_Month <= $MIN and $Month_Jan_Diff_Payment_Month != 0) {
+                $MIN = $Month_Jan_Diff_Payment_Month;
+                $Month_min = "มกราคม";
+            }
+            if ($Month_Feb_Diff_Payment_Month <= $MIN and $Month_Feb_Diff_Payment_Month != 0) {
+                $MIN = $Month_Feb_Diff_Payment_Month;
+                $Month_min = "กุมภาพันธ์";
+            }
+            if ($Month_Mar_Diff_Payment_Month <= $MIN and $Month_Mar_Diff_Payment_Month != 0) {
+                $MIN = $Month_Mar_Diff_Payment_Month;
+                $Month_min = "มีนาคม";
+            }
+            if ($Month_Apr_Diff_Payment_Month <= $MIN and $Month_Apr_Diff_Payment_Month != 0) {
+                $MIN = $Month_Apr_Diff_Payment_Month;
+                $Month_min = "เมษายน";
+            }
+            if ($Month_May_Diff_Payment_Month <= $MIN and $Month_May_Diff_Payment_Month != 0) {
+                $MIN = $Month_May_Diff_Payment_Month;
+                $Month_min = "พฤษภาคม";
+            }
+            if ($Month_Jun_Diff_Payment_Month <= $MIN and $Month_Jun_Diff_Payment_Month != 0) {
+                $MIN = $Month_Jun_Diff_Payment_Month;
+                $Month_min = "มิถุนายน";
+            }
+            if ($Month_Jul_Diff_Payment_Month <= $MIN and $Month_Jul_Diff_Payment_Month != 0) {
+                $MIN = $Month_Jul_Diff_Payment_Month;
+                $Month_min = "กรกฎาคม";
+            }
+            if ($Month_Aug_Diff_Payment_Month <= $MIN and $Month_Aug_Diff_Payment_Month != 0) {
+                $MIN = $Month_Aug_Diff_Payment_Month;
+                $Month_min = "สิงหาคม";
+            }
+            if ($Month_Sep_Diff_Payment_Month <= $MIN and $Month_Sep_Diff_Payment_Month != 0) {
+                $MIN = $Month_Sep_Diff_Payment_Month;
+                $Month_min = "กันยายน";
+            }
+            if ($Month_Oct_Diff_Payment_Month <= $MIN and $Month_Oct_Diff_Payment_Month != 0) {
+                $MIN = $Month_Oct_Diff_Payment_Month;
+                $Month_min = "ตุลาคม";
+            }
+            if ($Month_Nov_Diff_Payment_Month <= $MIN and $Month_Nov_Diff_Payment_Month != 0) {
+                $MIN = $Month_Nov_Diff_Payment_Month;
+                $Month_min = "พฤศจิกายน";
+            }
+            if ($Month_Dec_Diff_Payment_Month <= $MIN and $Month_Dec_Diff_Payment_Month != 0) {
+                $MIN = $Month_Dec_Diff_Payment_Month;
+                $Month_min = "ธันวาคม";
+            }
+
+            $AVERAGE = 0;
+            $Sum_price = 0;
+
+            $Sum_price =  $Month_Jan_Diff_Payment_Month + $Month_Feb_Diff_Payment_Month + $Month_Mar_Diff_Payment_Month + $Month_Apr_Diff_Payment_Month + $Month_May_Diff_Payment_Month +
+                $Month_Jun_Diff_Payment_Month + $Month_Jul_Diff_Payment_Month + $Month_Aug_Diff_Payment_Month + $Month_Sep_Diff_Payment_Month + $Month_Oct_Diff_Payment_Month + $Month_Nov_Diff_Payment_Month + $Month_Dec_Diff_Payment_Month;
+
+            if ($data != date('Y')) {
+                $AVERAGE = $Sum_price / 12;
+            } elseif ($data == date('Y')) {
+                $AVERAGE = $Sum_price / date('m');
+            } else {
+                $AVERAGE = 0;
+            }
+
+            $loan_summary_no_vat = 0;
+            foreach ($datas as $data) {
+                if ($data->loan_summary_no_vat != '') {
+                    $loan_summary_no_vat = $loan_summary_no_vat + $data->loan_summary_no_vat;
+                }
+            }
+            $percent_profit = 0;
+            $percent_profit = $AVERAGE / $loan_summary_no_vat * 100;
+
+            if ($percent_profit < 0) {
+                $percent_Color = "tx-danger";
+                $percent_profit = number_format($percent_profit, 2) . '%';
+            } elseif ($percent_profit > 0) {
+                $percent_Color = "tx-success";
+                $percent_profit = '+' . number_format($percent_profit, 2) . '%';
+            } else {
+                $percent_Color = "";
+                $percent_profit = number_format($percent_profit, 2) . '%';
+            }
+
+
             $html =
                 '<div class="row">
                     <div class="col-xl-3 col-sm-4 col-12 p-0">
                         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
                             <p class="mb-0 font-weight-semibold tx-18">กำไรสูงสุด</p>
                             <div class="mt-2">
-                                <span class="mb-0 font-weight-semibold tx-15"> เดือน สิงหาคม ' . number_format(100000, 2) . '</span>
+                                <span class="mb-0 font-weight-semibold tx-15">' . "เดือน" . $Month_max . " " . number_format($MAX, 2) . '</span>
                             </div>
                         </div>
                     </div>
@@ -1959,7 +2502,7 @@ class Loan extends BaseController
                         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
                             <p class="mb-0 font-weight-semibold tx-18">กำไรน้อยสุด</p>
                             <div class="mt-2">
-                                <span class="mb-0 font-weight-semibold tx-15">เดือน มีนาคม ' . number_format(1000, 2) . '</span>
+                                <span class="mb-0 font-weight-semibold tx-15">' . "เดือน" . $Month_min . " " . number_format($MIN, 2) . '</span>
                             </div>
                         </div>
                     </div>
@@ -1967,7 +2510,7 @@ class Loan extends BaseController
                         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
                             <p class="mb-0 font-weight-semibold tx-18">เฉลี่ยต่อเดือน</p>
                             <div class="mt-2">
-                                <span class="mb-0 font-weight-semibold tx-15">' . number_format(10000, 2) . '</span>
+                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($AVERAGE, 2) . '</span>
                             </div>
                         </div>
                     </div>
@@ -1975,7 +2518,7 @@ class Loan extends BaseController
                         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
                             <p class="mb-0 font-weight-semibold tx-18">กำไรทั้งหมด</p>
                             <div class="mt-2">
-                                <span class="mb-0 font-weight-semibold tx-15">' . number_format(110000, 2) . '</span>
+                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($Sum_price, 2) . '</span>
                             </div>
                         </div>
                     </div>
@@ -1983,13 +2526,12 @@ class Loan extends BaseController
                         <div class="tx-center pd-y-7 pd-sm-y-0-f">
                             <p class="mb-0 font-weight-semibold tx-18">เปอร์เซ็นต์กำไร</p>
                             <div class="mt-2">
-                                <span class="mb-0 font-weight-semibold tx-15">0</span>
+                                <span class="mb-0 font-weight-semibold tx-15 ' . $percent_Color . '">' . $percent_profit . '</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 ';
-
 
 
             $response['data'] = $html;
@@ -2009,8 +2551,12 @@ class Loan extends BaseController
 
     public function ajaxDataReportLoanMonth($data)
     {
+
+        $OverduePayments = $this->LoanModel->getOverdueListPayments($data);
+        $PaymentMonths = $this->LoanModel->getListPaymentMonths($data);
+
         // เดือน1
-        $Month_Revenue_Jan = 10;
+        $Month_Revenue_Jan = 0;
         // เดือน2
         $Month_Revenue_Feb = 0;
         // เดือน3
@@ -2034,13 +2580,249 @@ class Loan extends BaseController
         // เดือน12
         $Month_Revenue_Dec = 0;
 
+        $Month_Jan_Overdue_Payment = 0;
+        $Month_Feb_Overdue_Payment = 0;
+        $Month_Mar_Overdue_Payment = 0;
+        $Month_Apr_Overdue_Payment = 0;
+        $Month_May_Overdue_Payment = 0;
+        $Month_Jun_Overdue_Payment = 0;
+        $Month_Jul_Overdue_Payment = 0;
+        $Month_Aug_Overdue_Payment = 0;
+        $Month_Sep_Overdue_Payment = 0;
+        $Month_Oct_Overdue_Payment = 0;
+        $Month_Nov_Overdue_Payment = 0;
+        $Month_Dec_Overdue_Payment = 0;
+
+        foreach ($OverduePayments as $OverduePayment) {
+            if ($data === date('Y')) {
+                if ($OverduePayment->overdue_payment <= date('m')) {
+                    switch ($OverduePayment->overdue_payment) {
+                        case "1":
+                            $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "2":
+
+                            $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "3":
+                            $Month_Mar_Overdue_Payment = $Month_Mar_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "4":
+                            $Month_Apr_Overdue_Payment = $Month_Apr_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "5":
+                            $Month_May_Overdue_Payment = $Month_May_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "6":
+                            $Month_Jun_Overdue_Payment = $Month_Jun_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "7":
+                            $Month_Jul_Overdue_Payment = $Month_Jul_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "8":
+                            $Month_Aug_Overdue_Payment = $Month_Aug_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "9":
+                            $Month_Sep_Overdue_Payment = $Month_Sep_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "10":
+                            $Month_Oct_Overdue_Payment = $Month_Oct_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "11":
+                            $Month_Nov_Overdue_Payment = $Month_Nov_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                        case "12":
+                            $Month_Dec_Overdue_Payment = $Month_Dec_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                            break;
+                    }
+                }
+            } elseif ($data < date('Y')) {
+                switch ($OverduePayment->overdue_payment) {
+                    case "1":
+                        $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "2":
+                        $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "3":
+                        $Month_Mar_Overdue_Payment = $Month_Mar_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "4":
+                        $Month_Apr_Overdue_Payment = $Month_Apr_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "5":
+                        $Month_May_Overdue_Payment = $Month_May_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "6":
+                        $Month_Jun_Overdue_Payment = $Month_Jun_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "7":
+                        $Month_Jul_Overdue_Payment = $Month_Jul_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "8":
+                        $Month_Aug_Overdue_Payment = $Month_Aug_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "9":
+                        $Month_Sep_Overdue_Payment = $Month_Sep_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "10":
+                        $Month_Oct_Overdue_Payment = $Month_Oct_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "11":
+                        $Month_Nov_Overdue_Payment = $Month_Nov_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                    case "12":
+                        $Month_Dec_Overdue_Payment = $Month_Dec_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                        break;
+                }
+            }
+        }
+
+        $Month_Jan_Payment_Month = 0;
+        $Month_Feb_Payment_Month = 0;
+        $Month_Mar_Payment_Month = 0;
+        $Month_Apr_Payment_Month = 0;
+        $Month_May_Payment_Month = 0;
+        $Month_Jun_Payment_Month = 0;
+        $Month_Jul_Payment_Month = 0;
+        $Month_Aug_Payment_Month = 0;
+        $Month_Sep_Payment_Month = 0;
+        $Month_Oct_Payment_Month = 0;
+        $Month_Nov_Payment_Month = 0;
+        $Month_Dec_Payment_Month = 0;
+
+        foreach ($PaymentMonths as $PaymentMonth) {
+            if ($data === date('Y')) {
+                if ($PaymentMonth->overdue_payment <= date('m')) {
+                    switch ($PaymentMonth->overdue_payment) {
+                        case "1":
+                            $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "2":
+                            $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "3":
+                            $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "4":
+                            $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "5":
+                            $Month_May_Payment_Month = $Month_May_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "6":
+                            $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "7":
+                            $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "8":
+                            $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "9":
+                            $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "10":
+                            $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "11":
+                            $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                        case "12":
+                            $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $PaymentMonth->loan_payment_amount;
+                            break;
+                    }
+                }
+            } elseif ($data < date('Y')) {
+                switch ($PaymentMonth->overdue_payment) {
+                    case "1":
+                        $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "2":
+                        $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "3":
+                        $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "4":
+                        $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "5":
+                        $Month_May_Payment_Month = $Month_May_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "6":
+                        $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "7":
+                        $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "8":
+                        $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "9":
+                        $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "10":
+                        $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "11":
+                        $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                    case "12":
+                        $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $PaymentMonth->loan_payment_amount;
+                        break;
+                }
+            }
+        }
+        $Month_Jan_Diff_Payment_Month = 0;
+        $Month_Feb_Diff_Payment_Month = 0;
+        $Month_Mar_Diff_Payment_Month = 0;
+        $Month_Apr_Diff_Payment_Month = 0;
+        $Month_May_Diff_Payment_Month = 0;
+        $Month_Jun_Diff_Payment_Month = 0;
+        $Month_Jul_Diff_Payment_Month = 0;
+        $Month_Aug_Diff_Payment_Month = 0;
+        $Month_Sep_Diff_Payment_Month = 0;
+        $Month_Oct_Diff_Payment_Month = 0;
+        $Month_Nov_Diff_Payment_Month = 0;
+        $Month_Dec_Diff_Payment_Month = 0;
+
+        $Month_Jan_Diff_Payment_Month = $Month_Jan_Payment_Month - $Month_Jan_Overdue_Payment;
+        $Month_Feb_Diff_Payment_Month = $Month_Feb_Payment_Month - $Month_Feb_Overdue_Payment;
+        $Month_Mar_Diff_Payment_Month = $Month_Mar_Payment_Month - $Month_Mar_Overdue_Payment;
+        $Month_Apr_Diff_Payment_Month = $Month_Apr_Payment_Month - $Month_Apr_Overdue_Payment;
+        $Month_May_Diff_Payment_Month = $Month_May_Payment_Month - $Month_May_Overdue_Payment;
+        $Month_Jun_Diff_Payment_Month = $Month_Jun_Payment_Month - $Month_Jun_Overdue_Payment;
+        $Month_Jul_Diff_Payment_Month = $Month_Jul_Payment_Month - $Month_Jul_Overdue_Payment;
+        $Month_Aug_Diff_Payment_Month = $Month_Aug_Payment_Month - $Month_Aug_Overdue_Payment;
+        $Month_Sep_Diff_Payment_Month = $Month_Sep_Payment_Month - $Month_Sep_Overdue_Payment;
+        $Month_Oct_Diff_Payment_Month = $Month_Oct_Payment_Month - $Month_Oct_Overdue_Payment;
+        $Month_Nov_Diff_Payment_Month = $Month_Nov_Payment_Month - $Month_Nov_Overdue_Payment;
+        $Month_Dec_Diff_Payment_Month = $Month_Dec_Payment_Month - $Month_Dec_Overdue_Payment;
+
+        $Sum_price =  $Month_Jan_Diff_Payment_Month + $Month_Feb_Diff_Payment_Month + $Month_Mar_Diff_Payment_Month + $Month_Apr_Diff_Payment_Month + $Month_May_Diff_Payment_Month +
+        $Month_Jun_Diff_Payment_Month + $Month_Jul_Diff_Payment_Month + $Month_Aug_Diff_Payment_Month + $Month_Sep_Diff_Payment_Month + $Month_Oct_Diff_Payment_Month + $Month_Nov_Diff_Payment_Month + $Month_Dec_Diff_Payment_Month;
+
+        $Month_Revenue_Jan = ($Month_Jan_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Feb = ($Month_Feb_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Mar = ($Month_Mar_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Apr = ($Month_Apr_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_May = ($Month_May_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Jun = ($Month_Jun_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Jul = ($Month_Jul_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Aug = ($Month_Aug_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Sep = ($Month_Sep_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Oct = ($Month_Oct_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Nov = ($Month_Nov_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Dec = ($Month_Dec_Diff_Payment_Month / $Sum_price) * 100;
         // $Month_Revenue = [
         //     10,0,0,0,0,90,0,0,0,0,0,0
         // ];
         $Month_Revenue = [
-            $Month_Revenue_Jan, $Month_Revenue_Feb, $Month_Revenue_Mar, $Month_Revenue_Apr, $Month_Revenue_May, $Month_Revenue_Jun,
-            $Month_Revenue_Jul, $Month_Revenue_Aug, $Month_Revenue_Sep, $Month_Revenue_Oct, $Month_Revenue_Nov, $Month_Revenue_Dec
+            round($Month_Revenue_Jan, 2), round($Month_Revenue_Feb, 2), round($Month_Revenue_Mar, 2), round($Month_Revenue_Apr, 2), round($Month_Revenue_May, 2), round($Month_Revenue_Jun, 2),
+            round($Month_Revenue_Jul, 2), round($Month_Revenue_Aug, 2), round($Month_Revenue_Sep, 2), round($Month_Revenue_Oct, 2), round($Month_Revenue_Nov, 2), round($Month_Revenue_Dec, 2)
         ];
+
         $json_data = array(
             "Month_Revenue" => $Month_Revenue   // total data array
         );
@@ -2198,5 +2980,111 @@ class Loan extends BaseController
             'error' => false,
             'message' => $datas
         ]);
+    }
+
+    //updateTargetedMonth
+    public function updateTargetedMonth()
+    {
+        $TargetedModel = new \App\Models\TargetedModel();
+
+        try {
+            // SET CONFIG
+            $status = 500;
+            $response['success'] = 0;
+            $response['message'] = '';
+            $id = $this->request->getVar('TargetedId');
+
+            // HANDLE REQUEST
+            $update = $TargetedModel->updateTargetedByID($id, [
+                'desired_goals_month' => $this->request->getVar('editTargetedMonth'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($update) {
+
+                // pusherEdit
+                $pusher = getPusher();
+                $pusher->trigger('color_Status', 'event', [
+                    'img' => '/uploads/img/' . session()->get('thumbnail') != '' ? session()->get('thumbnail') : 'nullthumbnail.png',
+                    'event' => 'status_Yellow',
+                    'title' => session()->get('username') . " : " . 'ทำการแก้ไขเป้าหมายต่อเดือน'
+                ]);
+
+                logger_store([
+                    'employee_id' => session()->get('employeeID'),
+                    'username' => session()->get('username'),
+                    'event' => 'อัพเดท',
+                    'detail' => '[อัพเดท] เป้าหมายต่อเดือน',
+                    'ip' => $this->request->getIPAddress()
+                ]);
+                $status = 200;
+                $response['success'] = 1;
+                $response['message'] = 'แก้ไข เป้าหมายต่อเดือน สำเร็จ';
+            } else {
+                $status = 200;
+                $response['success'] = 0;
+                $response['message'] = 'แก้ไข เป้าหมายต่อเดือน ไม่สำเร็จ';
+            }
+
+            return $this->response
+                ->setStatusCode($status)
+                ->setContentType('application/json')
+                ->setJSON($response);
+        } catch (\Exception $e) {
+            echo $e->getMessage() . ' ' . $e->getLine();
+        }
+    }
+
+    //updateTargeted
+    public function updateTargeted()
+    {
+        $TargetedModel = new \App\Models\TargetedModel();
+
+        try {
+            // SET CONFIG
+            $status = 500;
+            $response['success'] = 0;
+            $response['message'] = '';
+            $id = $this->request->getVar('TargetedId');
+
+            // HANDLE REQUEST
+            $update = $TargetedModel->updateTargetedByID($id, [
+                'desired_goal' => $this->request->getVar('editTargeted'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($update) {
+
+                // pusherEdit
+                $pusher = getPusher();
+                $pusher->trigger('color_Status', 'event', [
+                    'img' => '/uploads/img/' . session()->get('thumbnail') != '' ? session()->get('thumbnail') : 'nullthumbnail.png',
+                    'event' => 'status_Yellow',
+                    'title' => session()->get('username') . " : " . 'ทำการแก้ไขเป้าหมาย'
+                ]);
+
+                logger_store([
+                    'employee_id' => session()->get('employeeID'),
+                    'username' => session()->get('username'),
+                    'event' => 'อัพเดท',
+                    'detail' => '[อัพเดท] เป้าหมาย',
+                    'ip' => $this->request->getIPAddress()
+                ]);
+                $status = 200;
+                $response['success'] = 1;
+                $response['message'] = 'แก้ไข เป้าหมาย สำเร็จ';
+            } else {
+                $status = 200;
+                $response['success'] = 0;
+                $response['message'] = 'แก้ไข เป้าหมาย ไม่สำเร็จ';
+            }
+
+            return $this->response
+                ->setStatusCode($status)
+                ->setContentType('application/json')
+                ->setJSON($response);
+        } catch (\Exception $e) {
+            echo $e->getMessage() . ' ' . $e->getLine();
+        }
     }
 }

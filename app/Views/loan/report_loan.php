@@ -1,18 +1,18 @@
 <!-- main-content -->
 <div class="main-content app-content">
-<style>
-    .row {
-    --bs-gutter-x: 0.5rem;
-    --bs-gutter-y: 0;
-    margin-top: calc(-1 * var(--bs-gutter-y));
-    margin-right: calc(-.5 * var(--bs-gutter-x));
-    margin-left: calc(-.5 * var(--bs-gutter-x));
-}
+    <style>
+        .row {
+            --bs-gutter-x: 0.5rem;
+            --bs-gutter-y: 0;
+            margin-top: calc(-1 * var(--bs-gutter-y));
+            margin-right: calc(-.5 * var(--bs-gutter-x));
+            margin-left: calc(-.5 * var(--bs-gutter-x));
+        }
 
-.card {
-    margin-block-end: 0.6rem;
-}
-</style>
+        .card {
+            margin-block-end: 0.6rem;
+        }
+    </style>
     <!-- container -->
     <div class="main-container container-fluid">
 
@@ -39,6 +39,176 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="row">
+                                            <?php
+                                            $Month_Jan_Overdue_Payment = 0;
+                                            $Month_Feb_Overdue_Payment = 0;
+                                            $Month_Mar_Overdue_Payment = 0;
+                                            $Month_Apr_Overdue_Payment = 0;
+                                            $Month_May_Overdue_Payment = 0;
+                                            $Month_Jun_Overdue_Payment = 0;
+                                            $Month_Jul_Overdue_Payment = 0;
+                                            $Month_Aug_Overdue_Payment = 0;
+                                            $Month_Sep_Overdue_Payment = 0;
+                                            $Month_Oct_Overdue_Payment = 0;
+                                            $Month_Nov_Overdue_Payment = 0;
+                                            $Month_Dec_Overdue_Payment = 0;
+
+                                            foreach ($OverduePayments as $OverduePayment) {
+                                                if ($OverduePayment->overdue_payment <= date('m')) {
+                                                    switch ($OverduePayment->overdue_payment) {
+                                                        case "1":
+                                                            $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "2":
+                                                            $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "3":
+                                                            $Month_Mar_Overdue_Payment = $Month_Mar_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "4":
+                                                            $Month_Apr_Overdue_Payment = $Month_Apr_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "5":
+                                                            $Month_May_Overdue_Payment = $Month_May_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "6":
+                                                            $Month_Jun_Overdue_Payment = $Month_Jun_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "7":
+                                                            $Month_Jul_Overdue_Payment = $Month_Jul_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "8":
+                                                            $Month_Aug_Overdue_Payment = $Month_Aug_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "9":
+                                                            $Month_Sep_Overdue_Payment = $Month_Sep_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "10":
+                                                            $Month_Oct_Overdue_Payment = $Month_Oct_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "11":
+                                                            $Month_Nov_Overdue_Payment = $Month_Nov_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                        case "12":
+                                                            $Month_Dec_Overdue_Payment = $Month_Dec_Overdue_Payment + $OverduePayment->loan_payment_amount;
+                                                            break;
+                                                    }
+                                                }
+                                            }
+
+                                            $Month_Jan_Payment_Month = 0;
+                                            $Month_Feb_Payment_Month = 0;
+                                            $Month_Mar_Payment_Month = 0;
+                                            $Month_Apr_Payment_Month = 0;
+                                            $Month_May_Payment_Month = 0;
+                                            $Month_Jun_Payment_Month = 0;
+                                            $Month_Jul_Payment_Month = 0;
+                                            $Month_Aug_Payment_Month = 0;
+                                            $Month_Sep_Payment_Month = 0;
+                                            $Month_Oct_Payment_Month = 0;
+                                            $Month_Nov_Payment_Month = 0;
+                                            $Month_Dec_Payment_Month = 0;
+
+                                            foreach ($PaymentMonths as $PaymentMonth) {
+                                                if ($PaymentMonth->overdue_payment <= date('m')) {
+                                                    switch ($PaymentMonth->overdue_payment) {
+                                                        case "1":
+                                                            $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "2":
+                                                            $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "3":
+                                                            $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "4":
+                                                            $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "5":
+                                                            $Month_May_Payment_Month = $Month_May_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "6":
+                                                            $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "7":
+                                                            $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "8":
+                                                            $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "9":
+                                                            $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "10":
+                                                            $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "11":
+                                                            $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                        case "12":
+                                                            $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            break;
+                                                    }
+                                                }
+                                            }
+                                            $Month_Jan_Diff_Payment_Month = $Month_Jan_Payment_Month - $Month_Jan_Overdue_Payment;
+                                            $Month_Feb_Diff_Payment_Month = $Month_Feb_Payment_Month - $Month_Feb_Overdue_Payment;
+                                            $Month_Mar_Diff_Payment_Month = $Month_Mar_Payment_Month - $Month_Mar_Overdue_Payment;
+                                            $Month_Apr_Diff_Payment_Month = $Month_Apr_Payment_Month - $Month_Apr_Overdue_Payment;
+                                            $Month_May_Diff_Payment_Month = $Month_May_Payment_Month - $Month_May_Overdue_Payment;
+                                            $Month_Jun_Diff_Payment_Month = $Month_Jun_Payment_Month - $Month_Jun_Overdue_Payment;
+                                            $Month_Jul_Diff_Payment_Month = $Month_Jul_Payment_Month - $Month_Jul_Overdue_Payment;
+                                            $Month_Aug_Diff_Payment_Month = $Month_Aug_Payment_Month - $Month_Aug_Overdue_Payment;
+                                            $Month_Sep_Diff_Payment_Month = $Month_Sep_Payment_Month - $Month_Sep_Overdue_Payment;
+                                            $Month_Oct_Diff_Payment_Month = $Month_Oct_Payment_Month - $Month_Oct_Overdue_Payment;
+                                            $Month_Nov_Diff_Payment_Month = $Month_Nov_Payment_Month - $Month_Nov_Overdue_Payment;
+                                            $Month_Dec_Diff_Payment_Month = $Month_Dec_Payment_Month - $Month_Dec_Overdue_Payment;
+
+                                            $Month_Diff_Payment_Sum = 0;
+                                            $Month_Diff_Payment_Sum = $Month_Jan_Diff_Payment_Month + $Month_Feb_Diff_Payment_Month + $Month_Mar_Diff_Payment_Month + $Month_Apr_Diff_Payment_Month + $Month_May_Diff_Payment_Month + $Month_Jun_Diff_Payment_Month
+                                                + $Month_Jul_Diff_Payment_Month + $Month_Aug_Diff_Payment_Month + $Month_Sep_Diff_Payment_Month + $Month_Oct_Diff_Payment_Month + $Month_Nov_Diff_Payment_Month + $Month_Dec_Diff_Payment_Month;
+
+                                            $total_month = 0;
+                                            switch (date('m')) {
+                                                case "1":
+                                                    $total_month = $Month_Jan_Payment_Month - $Month_Jan_Overdue_Payment;
+                                                    break;
+                                                case "2":
+                                                    $total_month = $Month_Feb_Payment_Month - $Month_Feb_Overdue_Payment;
+                                                    break;
+                                                case "3":
+                                                    $total_month = $Month_Mar_Payment_Month - $Month_Mar_Overdue_Payment;
+                                                    break;
+                                                case "4":
+                                                    $total_month = $Month_Apr_Payment_Month - $Month_Apr_Overdue_Payment;
+                                                    break;
+                                                case "5":
+                                                    $total_month = $Month_May_Payment_Month - $Month_May_Overdue_Payment;
+                                                    break;
+                                                case "6":
+                                                    $total_month = $Month_Jun_Payment_Month - $Month_Jun_Overdue_Payment;
+                                                    break;
+                                                case "7":
+                                                    $total_month = $Month_Jul_Payment_Month - $Month_Jul_Overdue_Payment;
+                                                    break;
+                                                case "8":
+                                                    $total_month = $Month_Aug_Payment_Month - $Month_Aug_Overdue_Payment;
+                                                    break;
+                                                case "9":
+                                                    $total_month = $Month_Sep_Payment_Month - $Month_Sep_Overdue_Payment;
+                                                    break;
+                                                case "10":
+                                                    $total_month = $Month_Oct_Payment_Month - $Month_Oct_Overdue_Payment;
+                                                    break;
+                                                case "11":
+                                                    $total_month = $Month_Nov_Payment_Month - $Month_Nov_Overdue_Payment;
+                                                    break;
+                                                case "12":
+                                                    $total_month = $Month_Dec_Payment_Month - $Month_Dec_Overdue_Payment;
+                                                    break;
+                                            }
+                                            ?>
+
                                             <div class="col-md-12 text-center">
                                                 <button type="button" class="btn btn-outline-primary mb-3 float-end btnEditTargetedMonth" data-bs-toggle="modal" data-bs-target="#modalEditTargetedMonth"> <i class="fa-solid fa-plus"></i>เป้าหมาย</button>
                                                 <div align="center" class="ms-5">
@@ -46,12 +216,23 @@
                                                         <div class="ht-50 wd-50 rounded-circle bg-primary d-flex align-items-center justify-content-center"> <i class="ti-money tx-17 text-white"></i> </div>
                                                     </div>
                                                 </div>
-                                                <h4 class="tx-18 font-weight-semibold my-1">กำไร 0.00</h4>
+                                                <h4 class="tx-18 font-weight-semibold my-1">กำไร <?php echo number_format($total_month, 2) ?></h4>
                                                 <h4 class="tx-18 font-weight-semibold my-1">(การขายเดือนปัจจุบัน)</h4>
-                                                <p class="tx-14 mb-1"><span class="">0%</span> of target</p>
-                                                <p class="tx-13 text-start" style="margin-bottom: 8px;">เป้าหมาย ( 0 / 0)</p>
+                                                <?php $Sum_profit_month = $total_month * 100 / $targeteds->desired_goals_month; ?>
+                                                <?php if ($Sum_profit_month < 0) {
+                                                    $profit_Color = "bg-danger-transparent tx-danger";
+                                                    $Sum_profit = number_format($Sum_profit_month, 2) . '%';
+                                                } elseif ($Sum_profit_month > 0) {
+                                                    $profit_Color = "bg-success-transparent tx-success";
+                                                    $Sum_profit = '+' . number_format($Sum_profit_month, 2) . '%';
+                                                } else {
+                                                    $profit_Color = "";
+                                                    $Sum_profit = number_format($Sum_profit_month, 2) . '%';
+                                                } ?>
+                                                <p class="tx-14 mb-1"><span class="<?php echo $profit_Color ?>"><?php echo $Sum_profit ?></span> of target</p>
+                                                <p class="tx-13 text-start" style="margin-bottom: 8px;">เป้าหมาย ( <?php echo number_format($total_month, 2) ?> / <?php echo number_format($targeteds->desired_goals_month, 2) ?>)</p>
                                                 <div class="progress progress-style ht-5 mt-2">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="78" style="width:0%"></div>
+                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="78" style="width:<?php echo number_format($Sum_profit_month, 2) . "%" ?>"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -69,12 +250,23 @@
                                                         <div class="ht-50 wd-50 rounded-circle bg-primary d-flex align-items-center justify-content-center"> <i class="fas fa-hand-holding-usd tx-17 text-white"></i> </div>
                                                     </div>
                                                 </div>
-                                                <h4 class="tx-18 font-weight-semibold my-1">กำไร 75.00</h4>
+                                                <h4 class="tx-18 font-weight-semibold my-1">กำไร <?php echo number_format($Month_Diff_Payment_Sum, 2) ?></h4>
                                                 <h4 class="tx-18 font-weight-semibold my-1">(การขายปีปัจจุบัน)</h4>
-                                                <p class="tx-14 mb-1"><span class="bg-success-transparent tx-success">75%</span> of target</p>
-                                                <p class="tx-13 text-start" style="margin-bottom: 8px;">เป้าหมาย (75 / 100)</p>
+                                                <?php $Sum_price_percent = $Month_Diff_Payment_Sum * 100 / $targeteds->desired_goal; ?>
+                                                <?php if ($Sum_price_percent < 0) {
+                                                    $profit_Color_year = "bg-danger-transparent tx-danger";
+                                                    $Sum_profit_year = number_format($Sum_price_percent, 2) . '%';
+                                                } elseif ($Sum_price_percent > 0) {
+                                                    $profit_Color_year = "bg-success-transparent tx-success";
+                                                    $Sum_profit_year = '+' . number_format($Sum_price_percent, 2) . '%';
+                                                } else {
+                                                    $profit_Color_year = "";
+                                                    $Sum_profit_year = number_format($Sum_price_percent, 2) . '%';
+                                                } ?>
+                                                <p class="tx-14 mb-1"><span class="<?php echo $profit_Color_year ?>"><?php echo $Sum_profit_year ?></span> of target</p>
+                                                <p class="tx-13 text-start" style="margin-bottom: 8px;">เป้าหมาย (<?php echo number_format($Month_Diff_Payment_Sum, 2) ?> / <?php echo number_format($targeteds->desired_goal, 2) ?>)</p>
                                                 <div class="progress progress-style ht-5 mt-2">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="78" style="width:75%"></div>
+                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="78" style="width:<?php echo number_format($Sum_price_percent, 2) . "%" ?>"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -146,7 +338,7 @@
 
 </div>
 <!-- /main-content -->
-<!-- <div align="center">
+<div align="center">
     <div class="modal fade" id="modalEditTargetedMonth" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -158,13 +350,13 @@
                 </div>
                 <div class="modal-body">
                     <form method="post" id="updateTargetedMonth" name="updateTargetedMonth" action="#">
-                        <input type="hidden" name="TargetedId" id="TargetedId" value="<php echo $targeteds->id ?>" />
+                        <input type="hidden" name="TargetedId" id="TargetedId" value="<?php echo $targeteds->id ?>" />
 
                         <div class="form-group">
                             <div align="left">
                                 <label for="editTargeted" class="tx-15">เป้าหมาย</label>
                             </div>
-                            <input type="text" class="form-control" id="editTargetedMonth" name="editTargetedMonth" placeholder="เป้าหมาย" value="<php echo $targeteds->desired_goals_month ?>">
+                            <input type="text" class="form-control" id="editTargetedMonth" name="editTargetedMonth" placeholder="เป้าหมาย" value="<?php echo $targeteds->desired_goals_month ?>">
                         </div>
                         <button type="submit" class="btn btn-primary btnSaveTargetedMonth" role="button">ยืนยัน</button>
                     </form>
@@ -172,9 +364,9 @@
             </div>
         </div>
     </div>
-</div> -->
+</div>
 <!-- End Edit EditTargetedMonth -->
-<!-- <div align="center">
+<div align="center">
     <div class="modal fade" id="modalEditTargeted" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -186,13 +378,13 @@
                 </div>
                 <div class="modal-body">
                     <form method="post" id="updateTargeted" name="updateTargeted" action="#">
-                        <input type="hidden" name="TargetedId" id="TargetedId" value="<php echo $targeteds->id ?>" />
+                        <input type="hidden" name="TargetedId" id="TargetedId" value="<?php echo $targeteds->id ?>" />
 
                         <div class="form-group">
                             <div align="left">
                                 <label for="editTargeted" class="tx-15">เป้าหมาย</label>
                             </div>
-                            <input type="text" class="form-control" id="editTargeted" name="editTargeted" placeholder="เป้าหมาย" value="<php echo $targeteds->desired_goal ?>">
+                            <input type="text" class="form-control" id="editTargeted" name="editTargeted" placeholder="เป้าหมาย" value="<?php echo $targeteds->desired_goal ?>">
                         </div>
                         <button type="submit" class="btn btn-primary btnSave" role="button">ยืนยัน</button>
                     </form>
@@ -200,7 +392,7 @@
             </div>
         </div>
     </div>
-</div> -->
+</div>
 <!-- End Edit Finance -->
 
 <!-- ตารางยอดเปิดสินเชื่อ -->

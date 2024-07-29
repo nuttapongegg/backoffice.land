@@ -16,7 +16,7 @@ $(document).ready(function () {
   function slowgraph(year) {
     jQuery.ajax({
       type: 'GET',
-      url: '/loan/ajax-ajaxdatareportloanmonth/'+ year,
+      url: '/loan/ajaxdatareportloanmonth/'+ year,
       success: function (data) {
 
         // console.log(data.Month_Revenue);
