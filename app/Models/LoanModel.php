@@ -615,4 +615,77 @@ class LoanModel
 
         return $builder->getResult();
     }
+
+    public function getDataTableDiffPaymentMonthCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+
+        $sql = "SELECT * , loan_payment.loan_employee as employee
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)) = $years AND loan.loan_status != 'CANCEL_STATE' AND loan.loan_status != 'CLOSE_STATE'
+        AND LPAD(MONTH(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)), 2, '0') = $month AND loan_payment.loan_payment_type IS NOT NULL
+        ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDiffPaymentMonth($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $start = $param['start'];
+        $length = $param['length'];
+
+        $sql = "SELECT * , loan_payment.loan_employee as employee , DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH) as payment_date
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)) = $years AND loan.loan_status != 'CANCEL_STATE' AND loan.loan_status != 'CLOSE_STATE'
+        AND LPAD(MONTH(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)), 2, '0') = $month AND loan_payment.loan_payment_type IS NOT NULL
+        ORDER BY loan_payment.id ASC LIMIT $start, $length";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDiffPaymentMonthSearch($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $search_value = $param['search_value'];
+        $start = $param['start'];
+        $length = $param['length'];
+
+        $sql = "SELECT * , loan_payment.loan_employee as employee, DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH) as payment_date
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)) = $years AND loan.loan_status != 'CANCEL_STATE' AND loan.loan_status != 'CLOSE_STATE'
+        AND LPAD(MONTH(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)), 2, '0') = $month AND loan_payment.loan_payment_type IS NOT NULL
+        and ((loan_payment.loan_code like '%" . $search_value . "%') OR (loan_payment_customer like '%" . $search_value . "%') OR (loan_payment.loan_employee like '%" . $search_value . "%') OR (loan_payment.loan_payment_date like '%" . $search_value . "%')
+           OR (loan_payment.loan_payment_installment like '%" . $search_value . "%') OR (loan_payment.loan_payment_amount like '%" . $search_value . "%')) ORDER BY loan_payment.id ASC LIMIT $start, $length
+            ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDiffPaymentMonthSearchCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $search_value = $param['search_value'];
+        $sql = "SELECT * , loan_payment.loan_employee as employee, DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH) as payment_date
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)) = $years AND loan.loan_status != 'CANCEL_STATE' AND loan.loan_status != 'CLOSE_STATE'
+        AND LPAD(MONTH(DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_payment.loan_payment_installment - 1) MONTH)), 2, '0') = $month AND loan_payment.loan_payment_type IS NOT NULL
+and ((loan_payment.loan_code like '%" . $search_value . "%') OR (loan_payment_customer like '%" . $search_value . "%') OR (loan_payment.loan_employee like '%" . $search_value . "%') OR (loan_payment.loan_payment_date like '%" . $search_value . "%')
+           OR (loan_payment.loan_payment_installment like '%" . $search_value . "%') OR (loan_payment.loan_payment_amount like '%" . $search_value . "%'))
+            ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
 }

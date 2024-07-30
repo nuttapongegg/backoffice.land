@@ -457,4 +457,74 @@ $(document).ready(function () {
         });
 
     });
+
+    $('body').on('click', '#Month_Diff_Payment', function () {
+        var Month_id = $(this).attr('data-id');
+        var years = $(this).attr('name');
+        // console.log(years);
+        // console.log(Month_id);
+        let $DataTable_DiffPaymentMonth = $('#DataTable_DiffPaymentMonth').DataTable({
+            "oLanguage": {
+                "sInfo": "กำลังแสดง _START_ ถึง _END_ จาก _TOTAL_ แถว หน้า _PAGE_ ใน _PAGES_",
+                "sSearch": '',
+                "sSearchPlaceholder": "ค้นหา...",
+                "oPaginate": {
+                    "sFirst": "เิริ่มต้น",
+                    "sPrevious": "ก่อนหน้า",
+                    "sNext": "ถัดไป",
+                    "sLast": "สุดท้าย"
+                },
+            },
+            "stripeClasses": [],
+            "order": [],
+            "pageLength": 10,
+            "lengthMenu": [[10, 25, 50, 50000], [10, 25, 50, "ทั้งหมด"]],
+            "columnDefs": [
+                {
+                    'className': 'text-center',
+                    "targets": [0],
+                },
+                {
+                    'className': 'text-center',
+                    "targets": [1],
+                },
+                {
+                    'className': 'text-left',
+                    "targets": [2],
+                },
+                {
+                    'className': 'text-left',
+                    "targets": [3],
+                },
+                {
+                    'className': 'text-center',
+                    "targets": [4],
+                },
+                {
+                    'className': 'tx-right',
+                    "targets": [5],
+                },
+                {
+                    'className': 'text-center',
+                    "targets": [6],
+                }
+            ],
+            destroy: true,
+            // searching: false,
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                'type': 'GET',
+                'url': '/loan/ajaxdatatablediffpayment/' + Month_id,
+                'data': function (d) {
+                    d.years = years
+
+                    // console.log(d.years);
+                    return d
+                },
+            },
+            "bFilter": true, // to display datatable search
+        });
+
+    });
 });
