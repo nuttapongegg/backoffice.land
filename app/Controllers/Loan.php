@@ -1838,7 +1838,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Jan_Sum == 0) {
                 $Month_Revenue_Jan = 0;
             } elseif ($Month_Jan_Diff_Payment_Month == 0 && $Month_Revenue_Jan_Sum != 0) {
-                $Month_Revenue_Jan = 100;
+                $Month_Revenue_Jan = 0;
             }
 
             if ($Month_Revenue_Feb_Sum != 0 && $Month_Feb_Diff_Payment_Month != 0) {
@@ -1846,7 +1846,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Feb_Sum == 0) {
                 $Month_Revenue_Feb = 0;
             } elseif ($Month_Feb_Diff_Payment_Month == 0 && $Month_Revenue_Feb_Sum != 0) {
-                $Month_Revenue_Feb = 100;
+                $Month_Revenue_Feb = 0;
             }
 
             if ($Month_Revenue_Mar_Sum != 0 && $Month_Mar_Diff_Payment_Month != 0) {
@@ -1854,7 +1854,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Mar_Sum == 0) {
                 $Month_Revenue_Mar = 0;
             } elseif ($Month_Mar_Diff_Payment_Month == 0 && $Month_Revenue_Mar_Sum != 0) {
-                $Month_Revenue_Mar = 100;
+                $Month_Revenue_Mar = 0;
             }
 
             if ($Month_Revenue_Apr_Sum != 0 && $Month_Apr_Diff_Payment_Month != 0) {
@@ -1862,7 +1862,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Apr_Sum == 0) {
                 $Month_Revenue_Apr = 0;
             } elseif ($Month_Apr_Diff_Payment_Month == 0 && $Month_Revenue_Apr_Sum != 0) {
-                $Month_Revenue_Apr = 100;
+                $Month_Revenue_Apr = 0;
             }
 
             if ($Month_Revenue_May_Sum != 0 && $Month_May_Diff_Payment_Month != 0) {
@@ -1870,7 +1870,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_May_Sum == 0) {
                 $Month_Revenue_May = 0;
             } elseif ($Month_May_Diff_Payment_Month == 0 && $Month_Revenue_May_Sum != 0) {
-                $Month_Revenue_May = 100;
+                $Month_Revenue_May = 0;
             }
 
             if ($Month_Revenue_Jun_Sum != 0 && $Month_Jun_Diff_Payment_Month != 0) {
@@ -1878,7 +1878,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Jun_Sum == 0) {
                 $Month_Revenue_Jun = 0;
             } elseif ($Month_Jun_Diff_Payment_Month == 0 && $Month_Revenue_Jun_Sum != 0) {
-                $Month_Revenue_Jun = 100;
+                $Month_Revenue_Jun = 0;
             }
 
             if ($Month_Revenue_Jul_Sum != 0 && $Month_Jul_Diff_Payment_Month != 0) {
@@ -1886,7 +1886,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Jul_Sum == 0) {
                 $Month_Revenue_Jul = 0;
             } elseif ($Month_Jul_Diff_Payment_Month == 0 && $Month_Revenue_Jul_Sum != 0) {
-                $Month_Revenue_Jul = 100;
+                $Month_Revenue_Jul = 0;
             }
 
             if ($Month_Revenue_Aug_Sum != 0 && $Month_Aug_Diff_Payment_Month != 0) {
@@ -1894,7 +1894,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Aug_Sum == 0) {
                 $Month_Revenue_Aug = 0;
             } elseif ($Month_Aug_Diff_Payment_Month == 0 && $Month_Revenue_Aug_Sum != 0) {
-                $Month_Revenue_Aug = 100;
+                $Month_Revenue_Aug = 0;
             }
 
             if ($Month_Revenue_Sep_Sum != 0 && $Month_Sep_Diff_Payment_Month != 0) {
@@ -1902,7 +1902,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Sep_Sum == 0) {
                 $Month_Revenue_Sep = 0;
             } elseif ($Month_Sep_Diff_Payment_Month == 0 && $Month_Revenue_Sep_Sum != 0) {
-                $Month_Revenue_Sep = 100;
+                $Month_Revenue_Sep = 0;
             }
 
             if ($Month_Revenue_Oct_Sum != 0 && $Month_Oct_Diff_Payment_Month != 0) {
@@ -1910,7 +1910,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Oct_Sum == 0) {
                 $Month_Revenue_Oct = 0;
             } elseif ($Month_Oct_Diff_Payment_Month == 0 && $Month_Revenue_Oct_Sum != 0) {
-                $Month_Revenue_Oct = 100;
+                $Month_Revenue_Oct = 0;
             }
 
             if ($Month_Revenue_Nov_Sum != 0 && $Month_Nov_Diff_Payment_Month != 0) {
@@ -1918,7 +1918,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Nov_Sum == 0) {
                 $Month_Revenue_Nov = 0;
             } elseif ($Month_Nov_Diff_Payment_Month == 0 && $Month_Revenue_Nov_Sum != 0) {
-                $Month_Revenue_Nov = 100;
+                $Month_Revenue_Nov = 0;
             }
 
             if ($Month_Revenue_Dec_Sum != 0 && $Month_Dec_Diff_Payment_Month != 0) {
@@ -1926,7 +1926,7 @@ class Loan extends BaseController
             } elseif ($Month_Revenue_Dec_Sum == 0) {
                 $Month_Revenue_Dec = 0;
             } elseif ($Month_Dec_Diff_Payment_Month == 0 && $Month_Revenue_Dec_Sum != 0) {
-                $Month_Revenue_Dec = 100;
+                $Month_Revenue_Dec = 0;
             }
 
             $html =
