@@ -888,7 +888,7 @@ class Loan extends BaseController
         $data['js_critical'] = '
             <script src="' . base_url('/assets/js/apexcharts.js') . '"></script>
             <script src="' . base_url('/assets/js/report-loan-index-5.js') . '"></script>
-            <script src="' . base_url('/assets/app/js/loan/report_loan.js') . '"></script>
+            <script src="' . base_url('/assets/app/js/loan/report_loan.js?v=' . time()) . '"></script> 
         ';
 
         return view('app', $data);
