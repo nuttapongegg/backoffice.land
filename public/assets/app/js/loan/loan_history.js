@@ -207,6 +207,15 @@ function callTableLoanHistory() {
         },
       },
       {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + new Intl.NumberFormat().format(Number(data["loan_close_payment"]).toFixed(2)) + "</font>"
+          );
+        },
+      },
+      {
         data: "loan_remnark",
       },
     ],

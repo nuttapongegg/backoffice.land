@@ -418,7 +418,8 @@
                             <div class="panel-head">
                                 <ul class="nav nav-tabs bg-white">
                                     <li class="nav-item PaymentLoanType"><a class="nav-link tx-14 font-weight-semibold PaymentLoanType1 active" data-bs-toggle="tab" href="javascript:void(0);" onclick="installmentTab();">ชำระรายงวด</a></li>
-                                    <li class="nav-item PaymentLoanType"><a class="nav-link tx-14 font-weight-semibold PaymentLoanType2" data-bs-toggle="tab" href="javascript:void(0);" onclick="closeTab();">ชำระทั้งหมด</a></li>
+                                    <!-- <li class="nav-item PaymentLoanType"><a class="nav-link tx-14 font-weight-semibold PaymentLoanType2" data-bs-toggle="tab" href="javascript:void(0);" onclick="closeTab();">ชำระทั้งหมด</a></li> -->
+                                    <li class="nav-item PaymentLoanType"><a class="nav-link tx-14 font-weight-semibold PaymentLoanType3" data-bs-toggle="tab" href="javascript:void(0);" onclick="closeLoanTab();">ปิดสินเชื่อ</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -566,35 +567,66 @@
                             </div>
                             <div id="bookingWrapperFormPaymentType">
                                 <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-5">ข้อมูลการคำนวนรายการสินเชื่อ</p>
-                                <div class="row">
-                                    <div class="col-6" id="car_name">
-                                        <div class="row align-items-center">
-                                            <div class="col-md-4 tx-right">
-                                                <label class="form-label mt-0">ยอดชำระรวมทั้งสิ้น</label>
-                                            </div>
-                                            <div class="col-md-8">
-                                                <div class="input-group mb-3">
-                                                    <input aria-describedby="basic-addon2" aria-label="" class="form-control" placeholder="" name="pay_sum" id="pay_sum" type="text" readonly>
-                                                    <span class="input-group-text" id="basic-addon2">บาท</span>
+                                <div class="collapse" id="pay_sum_loan">
+                                    <div class="row">
+                                        <div class="col-6" id="car_name">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดชำระรวมทั้งสิ้น</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input aria-describedby="basic-addon2" aria-label="" class="form-control" placeholder="" name="pay_sum" id="pay_sum" type="text" readonly>
+                                                        <span class="input-group-text" id="basic-addon2">บาท</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="row align-items-center">
-                                            <div class="col-md-4 tx-right">
-                                                <label class="form-label mt-0" for="car_name_update">ยอดสินเชื่อรวม</label>
-                                            </div>
-                                            <div class="col-md-8">
-                                                <div class="input-group mb-3">
-                                                    <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" name="total_loan_payment" id="total_loan_payment" type="text" value="" readonly>
-                                                    <span class="input-group-text" id="basic-addon2">บาท</span>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดสินเชื่อรวม</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" name="total_loan_payment" id="total_loan_payment" type="text" value="" readonly>
+                                                        <span class="input-group-text" id="basic-addon2">บาท</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="collapse" id="pay_close_loan_tab">
+                                    <div class="row">
+                                        <div class="col-6" id="car_name">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดชำระปิดสินเชื่อ</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input aria-describedby="basic-addon2" aria-label="" class="form-control" placeholder="" name="close_loan_payment" id="close_loan_payment" type="text" readonly>
+                                                        <span class="input-group-text" id="basic-addon2">บาท</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0" for="car_name_update">ยอดเปิดสินเชื่อ</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" name="open_loan_payment" id="open_loan_payment" type="text" value="" readonly>
+                                                        <span class="input-group-text" id="basic-addon2">บาท</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <hr>
                             <div id="btn_edit_detail" style="display: flex; justify-content: center;">

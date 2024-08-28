@@ -487,6 +487,7 @@ class Loan extends BaseController
         $file_payment = $this->request->getFile('file_payment');
         $total_loan_payment = $this->request->getPost('total_loan_payment');
         $account_id = $this->request->getPost('account_name');
+        $close_loan_payment = $this->request->getPost('close_loan_payment');
 
         $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
         $fileName_img = $file_payment->getFilename();
@@ -562,7 +563,40 @@ class Loan extends BaseController
             $create_payment = $this->LoanModel->updateLoanPaymentClose($data_payment, $codeloan_hidden);
 
             $Loan_Staus = 'ชำระทั้งหมด';
-        } else {
+        }elseif(($payment_type == 'CloseLoan')){
+
+            $data_loan = [
+                'loan_close_payment' => $close_loan_payment,
+                'loan_status' => 'CLOSE_STATE',
+                'updated_at' => $buffer_datetime
+            ];
+
+            $data_close_payment = [
+                'loan_payment_amount'  => 0,
+                'loan_employee' => $employee_name,
+                'loan_payment_pay_type' => $customer_payment_type,
+                'loan_payment_customer' => $payment_name,
+                'loan_payment_src' => $fileName_img,
+                'loan_payment_date' => $date_to_payment,
+                'land_account_id' => $account_id,
+                'land_account_name' => $land_account_name->land_account_name,
+                'loan_balance'  => 0
+            ];
+
+            $create_close_payment = $this->LoanModel->updateLoanClosePayment($data_close_payment, $codeloan_hidden);
+
+            if($create_close_payment){
+                $data_payment = [
+                    'loan_payment_type' => 'Close',
+                    'updated_at' => $buffer_datetime
+                ];
+    
+                $create_payment = $this->LoanModel->updateLoanPaymentClose($data_payment, $codeloan_hidden);
+            }
+
+            $Loan_Staus = 'ชำระปิดสินเชื่อ';
+        }
+         else {
 
             $data_loan = [
                 'loan_payment_sum_installment' => $pay_sum

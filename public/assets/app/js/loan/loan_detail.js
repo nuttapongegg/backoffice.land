@@ -87,10 +87,12 @@ function loadLoan(loanCode) {
       }
 
       $("#total_loan_payment").val(response.message.loan_sum_interest);
-      
+
       $("#pay_sum").val(
         Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, ""))
       );
+
+      $("#open_loan_payment").val(response.message.loan_summary_no_vat);
 
       payNow = response.message.loan_payment_month;
     },
@@ -481,6 +483,9 @@ $("#payment_now").keyup(function () {
     Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, ""));
 
   $("#pay_sum").val(sum_pay);
+
+  $("#close_loan_payment").val(pay_now);
+
 });
 
 $(document).delegate(".btn-add-loan-payment", "click", function (e) {
@@ -544,6 +549,8 @@ function installmentTab() {
   typePayment = "Installment";
   $("#payment_type").val(typePayment);
   $("#installment_bar").addClass("show");
+  $("#pay_sum_loan").addClass("show");
+  $("#pay_close_loan_tab").removeClass("show");
 
   $("#pay_sum").val('');
 
@@ -565,6 +572,8 @@ function closeTab() {
   typePayment = "Close";
   $("#payment_type").val(typePayment);
   $("#installment_bar").removeClass("show");
+  $("#pay_sum_loan").addClass("show");
+  $("#pay_close_loan_tab").removeClass("show");
 
   $("#pay_sum").val('');
 
@@ -577,6 +586,26 @@ function closeTab() {
   $("#pay_sum").val(Number(total_loan_payment));
   $("#price_month").html("<font>" + close_pay + "</font>");
 }
+
+function closeLoanTab() {
+  typePayment = "CloseLoan";
+  $("#payment_type").val(typePayment);
+  $("#installment_bar").removeClass("show");
+  $("#pay_sum_loan").removeClass("show");
+  $("#pay_close_loan_tab").addClass("show");
+
+  $("#pay_sum").val('');
+
+  let open_loan_payment = $("#loan_without_vat").val();
+  let pay_sum = Number(open_loan_payment.replace(/[^0-9.-]+/g, ""));
+
+  let close_pay = $("#loan_without_vat").val();
+  let close_sum_pay = open_loan_payment + pay_sum;
+  $("#payment_now").val(close_pay);
+  $("#close_loan_payment").val(Number(close_pay));
+  $("#price_month").html("<font>" + close_pay + "</font>");
+}
+
 
 function dataTablePaymentDetail() {
   let searchParams = window.location.pathname;

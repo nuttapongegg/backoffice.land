@@ -121,6 +121,7 @@
                                                     <th class="wd-30p text-center">งวดละ</th>
                                                     <th class="wd-30p text-center">ชำระแล้วเป็นเงิน</th>
                                                     <th class="wd-30p text-center">เงินที่ต้องชำระคงเหลือ</th>
+                                                    <th class="wd-30p text-center">ยอดชำระปิดสินเชื่อ</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
                                                 </tr>
                                             </thead>

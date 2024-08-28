@@ -125,6 +125,17 @@ class LoanModel
         return $builder_payment_status ? true : false;
     }
 
+    public function updateLoanClosePayment($data,$code)
+    {
+        $builder_payment = $this->db->table('loan_payment');
+
+        $where ="loan_code = '$code' AND loan_payment_type IS NULL";
+
+        $builder_payment_status = $builder_payment->where($where)->update($data);
+
+        return $builder_payment_status ? true : false;
+    }
+
     public function callInstallMent($id)
     {
         $sql = "SELECT id,loan_payment_installment FROM loan_payment WHERE id = '$id'";
@@ -226,6 +237,7 @@ class LoanModel
          loan.loan_remnark,
          loan.loan_summary_all,
          loan.loan_sum_interest,
+         loan.loan_close_payment,
          (SELECT COUNT(loan_payment_type) FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code) AS loan_payment_type,
          (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
          (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date
