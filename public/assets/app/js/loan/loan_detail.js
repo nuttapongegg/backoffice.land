@@ -11,6 +11,8 @@ var payNow = 0;
 
   flatpickr("#date_to_loan", {});
 
+  flatpickr("#date_to_loan_pay_date", {});
+
   flatpickr("#date_to_payment", {});
   
   $.ajax({
@@ -54,6 +56,7 @@ function loadLoan(loanCode) {
       $("#loan_area").val(response.message.loan_area);
 
       $("#date_to_loan").val(response.message.loan_date_promise);
+      $("#date_to_loan_pay_date").val(response.message.loan_installment_date);
       $("#loan_without_vat").val(response.message.loan_summary_no_vat);
       $("#money_loan").val(response.message.loan_summary_no_vat);
       $("#payment_year_counter").val(

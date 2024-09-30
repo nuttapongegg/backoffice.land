@@ -108,6 +108,14 @@ class LoanModel
         return ($builder_loan_status) ? true : false;
     }
 
+    public function updateLoanPaymentDateFix($code, $data_loan)
+    {
+        $builder_loan = $this->db->table('loan_payment');
+        $builder_loan_status = $builder_loan->where('loan_code', $code)->update($data_loan);
+
+        return ($builder_loan_status) ? true : false;
+    }
+
     public function updateLoanPayment($data, $id)
     {
         $builder_payment = $this->db->table('loan_payment');

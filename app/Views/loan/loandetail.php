@@ -83,14 +83,26 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-12">
+                                        <div class="col-6">
                                             <div class="row align-items-center">
-                                                <div class="col-md-2 tx-right">
+                                                <div class="col-md-4 tx-right">
                                                     <label class="form-label mt-0">ชื่อสถานที่</label>
                                                 </div>
-                                                <div class="col-md-10">
+                                                <div class="col-md-8">
                                                     <div class="form-group">
                                                         <input class="form-control" type="text" name="loan_address" id="loan_address" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">เลขที่ดิน<span class="tx-danger">*</span></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <input class="form-control" type="text" name="loan_number" id="loan_number" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -100,11 +112,14 @@
                                         <div class="col-6">
                                             <div class="row align-items-center">
                                                 <div class="col-md-4 tx-right">
-                                                    <label class="form-label mt-0">เลขที่ดิน<span class="tx-danger">*</span></label>
+                                                    <label class="form-label mt-0">วันที่ออกสินเชื่อ</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <input class="form-control" type="text" name="loan_number" id="loan_number" required>
+                                                    <div class="input-group">
+                                                        <div class="input-group-text">
+                                                            <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                        </div>
+                                                        <input type="text" class="form-control dateToBooking" name="date_to_loan" id="date_to_loan" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d'); ?>" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -126,14 +141,14 @@
                                         <div class="col-6">
                                             <div class="row align-items-center">
                                                 <div class="col-md-4 tx-right">
-                                                    <label class="form-label mt-0">วันที่ออกสินเชื่อ</label>
+                                                    <label class="form-label mt-0">กำหนดชำระสินเชื่อ</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="input-group">
                                                         <div class="input-group-text">
                                                             <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                         </div>
-                                                        <input type="text" class="form-control dateToBooking" name="date_to_loan" id="date_to_loan" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d'); ?>" required>
+                                                        <input type="text" class="form-control dateToBooking" name="date_to_loan_pay_date" id="date_to_loan_pay_date" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d'); ?>" required>
                                                     </div>
                                                 </div>
                                             </div>

@@ -329,6 +329,7 @@ class Loan extends BaseController
         $employee_name = $this->request->getPost('employee_name');
         $loan_area = $this->request->getPost('loan_area');
         $date_to_loan = $this->request->getPost('date_to_loan');
+        $date_to_loan_pay_date = $this->request->getPost('date_to_loan_pay_date');
         $loan_without_vat = $this->request->getPost('loan_without_vat');
         $payment_year_counter = $this->request->getPost('payment_year_counter');
         $payment_interest = $this->request->getPost('payment_interest');
@@ -348,6 +349,7 @@ class Loan extends BaseController
             'loan_area' => $loan_area,
             'loan_employee' => $employee_name,
             'loan_date_promise' => $date_to_loan,
+            'loan_installment_date' => $date_to_loan_pay_date,
             'loan_summary_no_vat' => $loan_without_vat,
             'loan_payment_year_counter' => $payment_year_counter,
             'loan_payment_interest' => $payment_interest,
@@ -363,6 +365,16 @@ class Loan extends BaseController
         ];
 
         $update_loan = $this->LoanModel->updateLoan($loan_code, $loan_list);
+
+        if($date_to_loan_pay_date){
+            $loan_payment = [
+                'loan_payment_date_fix' => $date_to_loan_pay_date,
+                'updated_at'  => $buffer_datetime
+            ];
+
+            $update_loan_payment = $this->LoanModel->updateLoanPaymentDateFix($loan_code, $loan_payment);
+
+        }
 
         if ($update_loan) {
 
