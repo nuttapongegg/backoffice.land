@@ -100,6 +100,12 @@ $routes->group('setting_land', ['filter' => 'employeeAuth'], function ($routes) 
     $routes->post('update-overdue-status', 'Setting::updateSettingOverdueStatus');
 });
 
+// API
+$routes->group('api', ['namespace' => 'App\Controllers\api'], function ($routes) {
+    $routes->get('ajaxdatatablepayment/(:any)', 'Loan::ajaxDataTablePayment/$1');
+});
+
+
 /*
  * --------------------------------------------------------------------
  * Helper

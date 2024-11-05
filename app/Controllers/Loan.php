@@ -577,6 +577,23 @@ class Loan extends BaseController
             $Loan_Staus = 'ชำระทั้งหมด';
         }elseif(($payment_type == 'CloseLoan')){
 
+            $loan_payment = [
+                // 'loan_code' => $codeloan_hidden,
+                'loan_payment_amount'  => $payment_now,
+                'loan_employee' => $employee_name,
+                'loan_payment_type' => 'Installment',
+                'loan_payment_pay_type' => $customer_payment_type,
+                // 'loan_payment_installment' =>  $installment_count,
+                'loan_payment_customer' => $payment_name,
+                'loan_payment_src' => $fileName_img,
+                'land_account_id' => $account_id,
+                'land_account_name' => $land_account_name->land_account_name,
+                'loan_payment_date' => $date_to_payment,
+                'updated_at' => $buffer_datetime
+            ];
+
+            $close_payment = $this->LoanModel->updateLoanPayment($loan_payment, $payment_id);
+
             $data_loan = [
                 'loan_close_payment' => $close_loan_payment,
                 'loan_status' => 'CLOSE_STATE',
@@ -592,7 +609,7 @@ class Loan extends BaseController
                 'loan_payment_date' => $date_to_payment,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
-                'loan_balance'  => 0
+                'updated_at' => $buffer_datetime
             ];
 
             $create_close_payment = $this->LoanModel->updateLoanClosePayment($data_close_payment, $codeloan_hidden);
@@ -600,7 +617,7 @@ class Loan extends BaseController
             if($create_close_payment){
                 $data_payment = [
                     'loan_payment_type' => 'Close',
-                    'updated_at' => $buffer_datetime
+                    'loan_balance'  => 0
                 ];
     
                 $create_payment = $this->LoanModel->updateLoanPaymentClose($data_payment, $codeloan_hidden);
