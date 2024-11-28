@@ -20,7 +20,7 @@ class LoanModel
             null,
             null,
             'loan.loan_date_promise',
-            'loan.loan_payment_process',
+            'loan.loan_type',
             'loan.loan_summary_no_vat',
             'loan.loan_payment_year_counter',
             'loan.loan_status',
@@ -31,7 +31,7 @@ class LoanModel
         $this->column_search = [
             'loan.loan_code',
             'loan.loan_date_promise',
-            'loan.loan_payment_process',
+            'loan.loan_type',
             'loan.loan_summary_no_vat'
         ];
 
@@ -239,6 +239,7 @@ class LoanModel
          loan.loan_payment_interest,
          loan.loan_payment_month,
          loan.loan_payment_process,
+         loan.loan_type,
          loan.loan_tranfer,
          loan.loan_payment_other,
          loan.loan_status,

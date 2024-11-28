@@ -120,14 +120,7 @@ function callTableLoanHistory() {
         data: null,
       },
       {
-        data: null,
-        render: function (data, type, row, meta) {
-          if (data["loan_payment_process"] === "0.00") {
-            return "<font>" + "เงินสด" + "</font>";
-          } else {
-            return "<font>" + "เช่าซื้อ" + "</font>";
-          }
-        },
+        data: "loan_type",
       },
       {
         data: null,

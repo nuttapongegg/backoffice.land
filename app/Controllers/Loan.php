@@ -155,7 +155,7 @@ class Loan extends BaseController
         $remark = $this->request->getPost('remark');
         $really_pay_loan = $this->request->getPost('really_pay_loan');
         $total_loan_interest = $this->request->getPost('total_loan_interest');
-
+        $loan_type = $this->request->getVar('loan_type');
 
         $loan_running_code = '';
         $buffer_loan_code = 0;
@@ -187,6 +187,7 @@ class Loan extends BaseController
             'loan_summary_all' => $total_loan,
             'loan_payment_month' => $pricePerMonth,
             'loan_payment_process' => $charges_process,
+            'loan_type' => $loan_type,
             'loan_tranfer' => $charges_transfer,
             'loan_payment_other' => $charges_etc,
             'loan_status'  => 'ON_STATE',

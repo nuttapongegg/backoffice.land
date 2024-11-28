@@ -138,19 +138,7 @@ function callAutoloenTable(data) {
         data: null,
       },
       {
-        data: null,
-        render: function (data, type, row, meta) {
-          if (data["loan_payment_process"] === "0.00") {
-            return (
-              "<font>" + "เงินสด" + "</font>"
-            );
-          } else {
-            return (
-              "<font>" + "เช่าซื้อ" + "</font>"
-            );
-          }
-
-        },
+        data: "loan_type",
       },
       {
         data: null,
@@ -492,4 +480,10 @@ function slowSummarizeLoan() {
   });
 }
 
-
+$('.tabPaymentType').on('click', function () {
+  let $inputType = $("input[name=loan_type]")
+  let $me = $(this),
+      $docType = $me.find('a').data('type')
+      console.log($docType);
+      $inputType.val($docType)
+})

@@ -47,7 +47,8 @@
                                     <div class="panel tabs-style5 w-fit-content mx-auto">
                                         <div class="panel-head">
                                             <ul class="nav nav-tabs bg-white">
-                                                <li class="nav-item tabBookingPaymentType"><a class="nav-link tx-14 font-weight-semibold tabBookingPaymentType2 active" data-bs-toggle="tab" href="javascript:void(0);" onclick="setingTab();">เช่าซื้อ</a></li>
+                                                <!-- <li class="nav-item tabBookingPaymentType"><a class="nav-link tx-14 font-weight-semibold tabBookingPaymentType1 active" data-bs-toggle="tab" href="javascript:void(0);">เงินสด</a></li> -->
+                                                <li class="nav-item tabBookingPaymentType"><a class="nav-link tx-14 font-weight-semibold tabBookingPaymentType2 active" data-bs-toggle="tab" href="javascript:void(0);"><?php echo $loanData->loan_type; ?></a></li>
                                             </ul>
                                         </div>
                                     </div>

@@ -154,12 +154,14 @@
                         <div class="panel tabs-style5 w-fit-content mx-auto">
                             <div class="panel-head">
                                 <ul class="nav nav-tabs bg-white">
-                                    <li class="nav-item tabBookingPaymentType"><a class="nav-link tx-14 font-weight-semibold tabBookingPaymentType2 active" data-bs-toggle="tab" href="javascript:void(0);" onclick="setingTab();">เช่าซื้อ</a></li>
+                                    <li class="nav-item tabPaymentType"><a class="nav-link tx-14 font-weight-semibold tabPaymentType1 active" data-bs-toggle="tab" href="javascript:void(0);" data-type="เงินสด">เงินสด</a></li>
+                                    <li class="nav-item tabPaymentType"><a class="nav-link tx-14 font-weight-semibold tabPaymentType2" data-bs-toggle="tab" href="javascript:void(0);" data-type="เช่าซื้อ">เช่าซื้อ</a></li>
                                 </ul>
                             </div>
                         </div>
                         <?php $FORM_KEY = 'FORM_KEY_' . strtotime('now') . '_' . rand(10, 100); ?>
                         <form method="POST" enctype="multipart/form-data" name="formAddLoan" id="<?php echo $FORM_KEY; ?>" data-form-key="<?php echo $FORM_KEY; ?>" novalidate>
+                            <input type="hidden" name="loan_type" value="เงินสด">
                             <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-5">ข้อมูลพื้นฐาน</p>
                             <div class="row mb-3">
                                 <div class="col-6">
