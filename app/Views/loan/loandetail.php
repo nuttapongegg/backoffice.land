@@ -490,7 +490,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mt-3">
                                 <div class="col-6">
                                     <div class="collapse" id="installment_bar">
                                         <div class="row align-items-center">

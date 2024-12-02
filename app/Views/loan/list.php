@@ -89,6 +89,46 @@
                     <div class="card-header">
                         <div class="card-title justify-content-between d-flex">
                             <div>
+                                <div class="tx-primary tx-18" id="count_car">รายการชำระสินเชื่อ</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-wrap">
+                            <div class="mb-0 navbar navbar-expand-lg navbar-nav-right responsive-navbar navbar-dark p-0">
+                            </div>
+                            <div class="panel tabs-style1">
+                                <div class="panel-body">
+                                    <div class="table-responsive double-scroll">
+                                        <table class="table table-bordered text-nowrap border-bottom" id="tableLoanPayments">
+                                            <thead>
+                                                <tr>
+                                                    <th class="wd-5p text-center">#</th>
+                                                    <th class="wd-35p text-center">รายการ</th>
+                                                    <th class="wd-15p text-center">จำนวนเงิน</th>
+                                                    <th class="wd-45p text-center">รายละเอียด</th>
+                                                    <th class="wd-15p text-center">ผู้ทำรายการ</th>
+                                                    <th class="wd-15p text-center">ชื่อบัญชีรับชำระ</th>
+                                                    <th class="wd-15p text-center">จำนวนเงินในบัญชี</th>
+                                                    <th class="wd-25p text-center">วันที่ชำระ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Row -->
+            </div>
+            <div class="col-lg-12">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <div class="card-title justify-content-between d-flex">
+                            <div>
                                 <div id="count_car_history"></div>
                             </div>
                         </div>

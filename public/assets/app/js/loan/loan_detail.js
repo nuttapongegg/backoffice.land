@@ -569,6 +569,8 @@ function installmentTab() {
   // $("#payment_now").val(payNow);
   $("#price_month").html("<font>" + payNow + "</font>");
   $("#payment_now").val(payNow);
+
+  $("#payment_now").attr("readonly", false);
 }
 
 function closeTab() {
@@ -607,6 +609,8 @@ function closeLoanTab() {
   $("#payment_now").val(close_pay);
   $("#close_loan_payment").val(Number(close_pay));
   $("#price_month").html("<font>" + close_pay + "</font>");
+
+  $("#payment_now").attr("readonly", true);
 }
 
 

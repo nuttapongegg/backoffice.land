@@ -74,7 +74,9 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->get('ajaxdatareportloanmonth/(:any)', 'Loan::ajaxDataReportLoanMonth/$1');
     $routes->post('update-targetedmonth', 'Loan::updateTargetedMonth');
     $routes->post('update-targeted', 'Loan::updateTargeted');
-    
+    $routes->get('tableLoanPayments', 'Loan::FetchAllLoanPayments');
+    $routes->get('ajaxdatatableloanpayment/(:any)', 'Loan::ajaxDataTableLoanPayment/$1');
+    $routes->get('ajaxdatatableloanclosepayment/(:any)', 'Loan::ajaxDataTableLoanClosePayment/$1');
 });
 
 // ตั้งค่า

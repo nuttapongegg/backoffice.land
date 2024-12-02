@@ -3,6 +3,7 @@
   flatpickr("#date_to_loan_pay_date", {});
   
   callTableLoan();
+  callTableLoanPayments();
 
 })(jQuery);
 var count_loan = 0;
@@ -487,3 +488,81 @@ $('.tabPaymentType').on('click', function () {
       console.log($docType);
       $inputType.val($docType)
 })
+
+function callTableLoanPayments() {
+  $("#tableLoanPayments").DataTable().clear().destroy();
+  $.ajax({
+    url: serverUrl + "/loan/tableLoanPayments",
+    dataType: "json",
+    type: "get",
+    success: function (response) {
+      var result = JSON.parse(response.message);
+      callAutoloenTablePayments(result);
+    },
+  });
+}
+
+function callAutoloenTablePayments(data) {
+  var tableLoanPayments = $("#tableLoanPayments").DataTable({
+    responsive: false,
+    language: {
+      searchPlaceholder: "Search...",
+      sSearch: "",
+    },
+    info: true,
+    pagingType: "full_numbers",
+    lengthMenu: [
+      [10, 25, 50, 100, -1],
+      [10, 25, 50, 100, "All"],
+    ],
+    scrollX: "TRUE",
+    paging: true,
+    processing: true,
+    serverside: true,
+    data: data,
+    columns: [
+      {
+        className: "text-center",
+        data: null,
+        render: function (data, type, row, meta) {
+          return meta.row + meta.settings._iDisplayStart + 1;
+        },
+      },
+      {
+        data: "setting_land_report_detail",
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + new Intl.NumberFormat().format(Number(data["setting_land_report_money"]).toFixed(2)) + "</font>"
+          );
+        },
+      },
+      {
+        data: "setting_land_report_note",
+      },
+      {
+        className: "text-center",
+        data: "employee_name",
+      },
+      {
+        className: "text-center",
+        data: "land_account_name",
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + new Intl.NumberFormat().format(Number(data["setting_land_report_account_balance"]).toFixed(2)) + "</font>"
+          );
+        },
+      },
+      {
+        data: "created_at",
+      },
+    ],
+  });
+}
