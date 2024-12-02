@@ -892,10 +892,12 @@ class Loan extends BaseController
                                 </div>
                                 <div class="col" style="flex-grow: 1;">
                                     <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
-                                        <p class="mb-0 font-weight-semibold tx-18">เงินสดบัญชี</p>
-                                        <div class="mt-2">
-                                            <span class="mb-0 font-weight-semibold tx-15">' . number_format($sum_land_account, 2) . '</span>
-                                        </div>
+                                        <a href="'.base_url('/setting_land/land').'">
+                                            <p class="mb-0 font-weight-semibold tx-18">เงินสดบัญชี</p>
+                                            <div class="mt-2">
+                                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($sum_land_account, 2) . '</span>
+                                            </div>
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="col" style="flex-grow: 1;">
