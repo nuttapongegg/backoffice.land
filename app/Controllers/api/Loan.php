@@ -31,9 +31,9 @@ class Loan extends BaseController
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
         header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 
-        // if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        //     exit; // Handle preflight request
-        // }
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            exit; // Handle preflight request
+        }
 
         $response['code'] = 200;
         $response['message'] = '';
@@ -41,7 +41,7 @@ class Loan extends BaseController
         try {
 
             // HANDLE
-            $data = [1,2,3,4];
+            $data = [2,3,4];
 
             $response['data'] = $data;
             $response['message'] = 'success';
