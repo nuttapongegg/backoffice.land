@@ -715,7 +715,7 @@ class LoanModel
         $sql = "SELECT setting_land_report.*, setting_land.land_account_name
                 FROM setting_land_report
                 JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
-                WHERE setting_land_report_detail LIKE 'ชำระสินเชื่อ%' 
+                WHERE setting_land_report_detail LIKE 'ชำระสินเชื่อ%' OR setting_land_report_detail LIKE 'เปิดสินเชื่อ%'
                 ORDER BY setting_land_report.id DESC;
         ";
 
