@@ -122,6 +122,8 @@ $routes->post('footer/ajax-datatable', 'EmployeeLog::ajaxDataTablesInFooter', ['
  * CRONJOB
  * --------------------------------------------------------------------
  */
+// บันทึก logs
+$routes->cli('cronjob/land_logs', 'Landlogs::land_logs', ['namespace' => 'App\Controllers\cronjob']);
 
 
 // ส่งแจ้งเตือนสินเชื่อ

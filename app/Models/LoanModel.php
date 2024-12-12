@@ -884,4 +884,16 @@ class LoanModel
 
         return $builder->getResult();
     }
+
+    public function getAllLoan()
+    {
+        $sql = "
+        SELECT *
+        FROM loan
+        WHERE loan.loan_status = 'ON_STATE'
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
 }
