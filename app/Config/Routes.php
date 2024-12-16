@@ -104,7 +104,7 @@ $routes->group('setting_land', ['filter' => 'employeeAuth'], function ($routes) 
 
 // API
 $routes->group('api', ['namespace' => 'App\Controllers\api'], function ($routes) {
-    $routes->get('ajaxdatatablepayment/(:any)', 'Loan::ajaxDataTablePayment/$1');
+    $routes->get('ajaxdatatablelandpayment/(:any)/(:any)', 'Loan::ajaxDataTableLandPayment/$1/$2');
 });
 
 

@@ -52,4 +52,15 @@ class LandlogsModel
 
         return $builder;
     }
+
+    public function getLandlogsAllCreated($month, $years)
+    {
+        $sql = "SELECT ledger_land_logs.*, DATE_FORMAT(ledger_land_logs.created_at , '%Y-%m-%d') as formatted_date
+        FROM ledger_land_logs
+        WHERE YEAR(ledger_land_logs.created_at) = $years AND MONTH(ledger_land_logs.created_at) = $month
+        ORDER BY ledger_land_logs.created_at ASC ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
 }
