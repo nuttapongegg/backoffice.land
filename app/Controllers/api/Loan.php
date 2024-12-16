@@ -64,9 +64,9 @@ class Loan extends BaseController
                     <tbody>                   
                         <tr>
                             <td><h6 class="text-center p-2 mb-0">วันที่</h6></td>
-                            <td><h6 class="text-center p-2 mb-0">เงินรวม</h6></td>
+                            <td><h6 class="text-center p-2 mb-0">ยอดวงเงินกู้รวม</h6></td>
                             <td><h6 class="text-center p-2 mb-0">เงินสดในบัญชี</h6></td>
-                            <td><h6 class="text-center p-2 mb-0">กำไรรวม</h6></td>
+                            <td><h6 class="text-center p-2 mb-0">ดอกเบี้ยที่เก็บแล้ว</h6></td>
                         </tr>
             ';
 
@@ -90,7 +90,7 @@ class Loan extends BaseController
                 ->setStatusCode($response['code'])
                 ->setContentType('application/json')
                 ->setJSON($response);
-                
+
         } catch (\Exception $e) {
 
             $response['code'] = 500;
