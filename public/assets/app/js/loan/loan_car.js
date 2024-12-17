@@ -51,7 +51,7 @@ function callAutoloenTable(data) {
     data: data,
     columnDefs: [
       {
-        targets: 8,
+        targets: 7,
         className: "text-right",
         data: "loan_summary_no_vat",
         render: function (data, type, row, meta) {
@@ -82,7 +82,7 @@ function callAutoloenTable(data) {
       },
       {
         data: "loan_installment_date",
-        targets: 10,
+        targets: 8,
         render: function (data, type, row, meta) {
           if (data["loan_installment_date"] == null) {
             return (
@@ -139,19 +139,7 @@ function callAutoloenTable(data) {
         data: null,
       },
       {
-        data: "loan_type",
-      },
-      {
         data: null,
-      },
-      {
-        data: null,
-        className: "text-center",
-        render: function (data, type, row, meta) {
-          return (
-            "<font>" + data["loan_payment_year_counter"] + " ปี" + "</font>"
-          );
-        },
       },
       {
         data: null,
@@ -235,9 +223,44 @@ function callAutoloenTable(data) {
         className: "text-right",
         render: function (data, type, row, meta) {
           return (
-            "<font>" + data["loan_payment_interest"] + " %" + "</font>"
+            "<font class='tx-success'>" + new Intl.NumberFormat().format(Number(data["loan_payment_sum_installment"]).toFixed(2)) + "</font>"
           );
         },
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          var summary_all = (data["loan_sum_interest"] - data["loan_payment_sum_installment"])
+          return (
+            "<font>" + new Intl.NumberFormat().format(Number(summary_all).toFixed(2)) + "</font>"
+          );
+        },
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + new Intl.NumberFormat().format(Number(data["loan_payment_month"]).toFixed(2)) + "</font>"
+          );
+        },
+      },
+      {
+        data: "loan_type",
+      },
+      {
+        data: null,
+        className: "text-center",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + data["loan_payment_year_counter"] + " ปี" + "</font>"
+          );
+        },
+      },
+      {
+        data: "loan_payment_type",
+        className: "text-center",
       },
       {
         data: null,
@@ -250,34 +273,11 @@ function callAutoloenTable(data) {
         },
       },
       {
-        data: "loan_payment_type",
-        className: "text-center",
-      },
-      {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
           return (
-            "<font>" + new Intl.NumberFormat().format(Number(data["loan_payment_month"]).toFixed(2)) + "</font>"
-          );
-        },
-      },
-      {
-        data: null,
-        className: "text-right",
-        render: function (data, type, row, meta) {
-          return (
-            "<font>" + new Intl.NumberFormat().format(Number(data["loan_payment_sum_installment"]).toFixed(2)) + "</font>"
-          );
-        },
-      },
-      {
-        data: null,
-        className: "text-right",
-        render: function (data, type, row, meta) {
-          var summary_all = (data["loan_sum_interest"] - data["loan_payment_sum_installment"])
-          return (
-            "<font>" + new Intl.NumberFormat().format(Number(summary_all).toFixed(2)) + "</font>"
+            "<font>" + data["loan_payment_interest"] + " %" + "</font>"
           );
         },
       },

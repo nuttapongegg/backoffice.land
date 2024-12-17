@@ -67,7 +67,7 @@ function callTableLoanHistory() {
       },
       {
         data: "loan_payment_date_fix",
-        targets: 11,
+        targets: 13,
         render: function (data, type, row, meta) {
           if (type == "display") {
             const date = new Date(data["loan_payment_date_fix"]);
@@ -146,6 +146,24 @@ function callTableLoanHistory() {
       },
       {
         data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + new Intl.NumberFormat().format(Number(data["loan_payment_sum_installment"]).toFixed(2)) + "</font>"
+          );
+        },
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
+          return (
+            "<font>" + new Intl.NumberFormat().format(Number(data["loan_close_payment"]).toFixed(2)) + "</font>"
+          );
+        },
+      },
+      {
+        data: null,
       },
       {
         data: null,
@@ -183,28 +201,10 @@ function callTableLoanHistory() {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
-          return (
-            "<font>" + new Intl.NumberFormat().format(Number(data["loan_payment_sum_installment"]).toFixed(2)) + "</font>"
-          );
-        },
-      },
-      {
-        data: null,
-        className: "text-right",
-        render: function (data, type, row, meta) {
           var summary_all = (data["loan_sum_interest"] - data["loan_payment_sum_installment"])
           
           return (
             "<font>" + new Intl.NumberFormat().format(Number(summary_all).toFixed(2)) + "</font>"
-          );
-        },
-      },
-      {
-        data: null,
-        className: "text-right",
-        render: function (data, type, row, meta) {
-          return (
-            "<font>" + new Intl.NumberFormat().format(Number(data["loan_close_payment"]).toFixed(2)) + "</font>"
           );
         },
       },
