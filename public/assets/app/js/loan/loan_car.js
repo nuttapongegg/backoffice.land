@@ -248,6 +248,7 @@ function callAutoloenTable(data) {
       },
       {
         data: "loan_type",
+        className: "text-center",
       },
       {
         data: null,

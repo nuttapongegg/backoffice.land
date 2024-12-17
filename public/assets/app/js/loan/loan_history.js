@@ -121,6 +121,7 @@ function callTableLoanHistory() {
       },
       {
         data: "loan_type",
+        className: "text-center",
       },
       {
         data: null,
