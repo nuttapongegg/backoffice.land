@@ -1483,142 +1483,142 @@ class Loan extends BaseController
                         <tbody>
                             <tr>
                                 <th class="border-top-0 bg-black-03 br-bs-5 br-ts-5 tx-15 wd-8p">เดือน</th>
-                                <th class="border-top-0 bg-black-03 tx-15 wd-15p">ยอดรับชำระต่อเดือน</th>
-                                <th class="border-top-0 bg-black-03 tx-15 wd-15p">ยอดเปิดสินเชื่อต่อเดือน</th>
-                                <th class="border-top-0 bg-black-03 tx-15 wd-15p">ยอดค้างชำระต่อเดือน</th>
-                                <th class="border-top-0 bg-black-03 tx-15 wd-15p">ยอดชำระค่างวดต่อเดือน</th>
-                                <th class="border-top-0 bg-black-03 tx-15 wd-16p">ยอดชำระค่างวดจริงต่อเดือน</th>
-                                <th class="border-top-0 bg-black-03 tx-15 wd-16p">ยอดชำระปิดบัญชีต่อเดือน</th>
+                                <th class="border-top-0 bg-black-03 tx-15 wd-15p">ยอดเปิดสินเชื่อ(เดือน)</th>
+                                <th class="border-top-0 bg-black-03 tx-15 wd-15p">ยอดรับชำระ(เดือน)</th>
+                                <th class="border-top-0 bg-black-03 tx-15 wd-16p">ยอดชำระค่างวดจริง(เดือน)</th>
+                                <th class="border-top-0 bg-black-03 tx-15 wd-16p">ยอดชำระปิดบัญชี(เดือน)</th>
+                                <th class="border-top-0 bg-black-03 tx-15 wd-15p">ยอดชำระค่างวด(เดือน)</th>
+                                <th class="border-top-0 bg-black-03 tx-15 wd-15p">ยอดค้างชำระ(เดือน)</th>
                             </tr>
                             <tr class="' . $Month_Class_Jan . '">
                                 <td class="border-top-0 pt-4"><a>มกราคม</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="1" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Jan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="1" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Jan_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="01" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jan_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="01" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Jan_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="1" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Jan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="1" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Jan_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="1" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Jan_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="01" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Jan_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="01" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jan_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Feb . '">
                                 <td class="border-top-0 pt-4"><a>กุมภาพันธ์</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="2" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Feb_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="2" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Feb_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="02" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Feb_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="02" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Feb_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="2" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Feb_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="2" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Feb_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="2" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Feb_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="02" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Feb_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="02" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Feb_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Mar . '">
                                 <td class="border-top-0 pt-4"><a>มีนาคม</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="3" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Mar_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="3" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Mar_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="03" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Mar_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="03" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Mar_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="3" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Mar_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="3" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Mar_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="3" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Mar_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="03" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Mar_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="03" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Mar_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Apr . '">
                                 <td class="border-top-0 pt-4"><a>เมษายน</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="4" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Apr_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="4" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Apr_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="04" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Apr_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="04" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Apr_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="4" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Apr_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="4" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Apr_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="4" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Apr_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="04" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Apr_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="04" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Apr_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_May . '">
                                 <td class="border-top-0 pt-4"><a>พฤษภาคม</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="5" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_May_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="5" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_May_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="05" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_May_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="05" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_May_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="5" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_May_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="5" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_May_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="5" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_May_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="05" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_May_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="05" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_May_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Jun . '">
                                 <td class="border-top-0 pt-4"><a>มิถุนายน</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="6" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Jun_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="6" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Jun_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="06" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jun_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="06" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Jun_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="6" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Jun_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="6" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Jun_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="6" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Jun_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="06" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Jun_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="06" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jun_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Jul . '">
                                 <td class="border-top-0 pt-4"><a>กรกฏาคม</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="7" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Jul_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="7" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Jul_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="07" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jul_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="07" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Jul_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="7" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Jul_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="7" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Jul_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="7" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Jul_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="07" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Jul_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="07" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jul_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Aug . '">
                                 <td class="border-top-0 pt-4"><a>สิงหาคม</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="8" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Aug_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="8" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Aug_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="08" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Aug_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="08" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Aug_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="8" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Aug_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="8" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Aug_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="8" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Aug_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="08" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Aug_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="08" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Aug_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Sep . '">
                                 <td class="border-top-0 pt-4"><a>กันยายน</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="9" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Sep_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="9" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Sep_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="09" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Sep_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="09" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Sep_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="9" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Sep_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="9" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Sep_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="9" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Sep_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="09" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Sep_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="09" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Sep_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Oct . '">
                                 <td class="border-top-0 pt-4"><a>ตุลาคม</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Oct_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Oct_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Oct_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Oct_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Oct_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Oct_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Oct_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Oct_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Oct_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Nov . '">
                                 <td class="border-top-0 pt-4"><a>พฤศจิกายน</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Nov_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Nov_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Nov_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Nov_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Nov_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Nov_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Nov_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Nov_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Nov_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Dec . '">
                                 <td class="border-top-0 pt-4"><a>ธันวาคม</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Dec_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Loan" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanMonth">' . number_format($Month_Dec_Loan, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Dec_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Dec_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalPaymentMonth">' . number_format($Month_Dec_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">' . number_format($Month_Dec_Loan_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Dec_Loan_Close_Payment, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Dec_Diff_Payment_Month, 2) . '</a></td>
+                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Dec_Overdue_Payment, 2) . '</a></td>
                             </tr>
                             <tr class="bg-primary">
                                 <td class="border-top-0 pt-4">
                                     <p class="tx-left mb-0">ยอดรวม</p>
-                                </td>      
-                                <td class="border-top-0" style="text-align: right;">
-                                    <p class="mb-0">' . number_format($Month_Payment_Sum, 2) . '</p>
                                 </td>
                                 <td class="border-top-0" style="text-align: right;">
                                     <p class="mb-0">' . number_format($Month_Loan_Sum, 2) . '</p>
-                                </td>
+                                </td>      
                                 <td class="border-top-0" style="text-align: right;">
-                                    <p class="mb-0">' . number_format($Month_Overdue_Payment_Sum, 2) . '</p>
-                                </td>
-                                <td class="border-top-0" style="text-align: right;">
-                                    <p class="mb-0">' . number_format($Month_Diff_Payment_Sum, 2) . '</p>
+                                    <p class="mb-0">' . number_format($Month_Payment_Sum, 2) . '</p>
                                 </td>
                                 <td class="border-top-0" style="text-align: right;">
                                     <p class="mb-0">' . number_format($Month_Loan_Payment_Sum, 2) . '</p>
                                 </td>
                                 <td class="border-top-0" style="text-align: right;">
                                     <p class="mb-0">' . number_format($Month_Loan_Close_Payment_Sum, 2) . '</p>
+                                </td>
+                                <td class="border-top-0" style="text-align: right;">
+                                    <p class="mb-0">' . number_format($Month_Diff_Payment_Sum, 2) . '</p>
+                                </td>
+                                <td class="border-top-0" style="text-align: right;">
+                                    <p class="mb-0">' . number_format($Month_Overdue_Payment_Sum, 2) . '</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -2757,7 +2757,7 @@ class Loan extends BaseController
                 '<div class="row">
                     <div class="col-xl-3 col-sm-4 col-12 p-0">
                         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
-                            <p class="mb-0 font-weight-semibold tx-18">กำไรสูงสุด</p>
+                            <p class="mb-0 font-weight-semibold tx-18">ยอดรับชำระสูงสุด</p>
                             <div class="mt-2">
                                 <span class="mb-0 font-weight-semibold tx-15">' . "เดือน" . $Month_max . " " . number_format($MAX, 2) . '</span>
                             </div>
@@ -2765,7 +2765,7 @@ class Loan extends BaseController
                     </div>
                     <div class="col-xl-3 col-sm-4 col-12 p-0">
                         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
-                            <p class="mb-0 font-weight-semibold tx-18">กำไรน้อยสุด</p>
+                            <p class="mb-0 font-weight-semibold tx-18">ยอดรับชำระน้อยสุด</p>
                             <div class="mt-2">
                                 <span class="mb-0 font-weight-semibold tx-15">' . "เดือน" . $Month_min . " " . number_format($MIN, 2) . '</span>
                             </div>
@@ -2781,7 +2781,7 @@ class Loan extends BaseController
                     </div>
                     <div class="col-xl-2 col-sm-4 col-12 p-0">
                         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
-                            <p class="mb-0 font-weight-semibold tx-18">กำไรทั้งหมด</p>
+                            <p class="mb-0 font-weight-semibold tx-18">ยอดรับชำระทั้งหมด</p>
                             <div class="mt-2">
                                 <span class="mb-0 font-weight-semibold tx-15">' . number_format($Sum_price, 2) . '</span>
                             </div>
@@ -2789,7 +2789,7 @@ class Loan extends BaseController
                     </div>
                     <div class="col-xl-2 col-sm-4 col-12 p-0">
                         <div class="tx-center pd-y-7 pd-sm-y-0-f">
-                            <p class="mb-0 font-weight-semibold tx-18">เปอร์เซ็นต์กำไร</p>
+                            <p class="mb-0 font-weight-semibold tx-18">เปอร์เซ็นต์ยอดรับชำระ</p>
                             <div class="mt-2">
                                 <span class="mb-0 font-weight-semibold tx-15 ' . $percent_Color . '">' . $percent_profit . '</span>
                             </div>
