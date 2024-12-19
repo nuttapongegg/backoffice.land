@@ -224,5 +224,69 @@ function callTableLoanHistory() {
       );
     },
     createdRow: function (tr, tdsContent) {},
+
+    footerCallback: function (row, data, start, end, display) {
+      var api = this.api();
+
+      var intVal = function (i) {
+        return typeof i === "string"
+          ? i.replace(/[\$,]/g, "") * 1
+          : typeof i === "number"
+          ? i
+          : 0;
+      };
+
+      // Total over this page
+      var Total_payment_month = api
+        .column(17, { page: "current" })
+        .data()
+        .reduce(function (a, b) {
+          return intVal(a) + intVal(b.loan_payment_month) // Handle formatted numbers
+        }, 0);
+
+      Total_close_payment = api
+        .column(12, { page: "current" })
+        .data()
+        .reduce(function (a, b) {
+          return intVal(a) + intVal(b.loan_close_payment);
+        }, 0);
+
+      Total_summary_no_vat = api
+        .column(8, { page: "current" })
+        .data()
+        .reduce(function (a, b) {
+          return intVal(a) + intVal(b.loan_summary_no_vat);
+        }, 0);
+
+      Total_payment_sum_installment = api
+        .column(11, { page: "current" })
+        .data()
+        .reduce(function (a, b) {
+          return intVal(a) + intVal(b.loan_payment_sum_installment);
+        }, 0);
+
+      // Update footer
+      number_payment_month = parseFloat(Total_payment_month).toFixed(2);
+      $(api.column(17).footer()).html(
+        Number(number_payment_month).toLocaleString()
+      );
+
+      number_close_payment = parseFloat(Total_close_payment).toFixed(2);
+      $(api.column(12).footer()).html(
+        Number(number_close_payment).toLocaleString()
+      );
+
+      number_payment_sum_installment = parseFloat(Total_payment_sum_installment).toFixed(2);
+      $(api.column(11).footer()).html(
+        Number(number_payment_sum_installment).toLocaleString()
+      );
+
+      number_summary_no_vat = parseFloat(Total_summary_no_vat).toFixed(2);
+      $(api.column(8).footer()).html(
+       Number(number_summary_no_vat).toLocaleString()
+      );
+
+    },
+    bFilter: true,
   });
 }

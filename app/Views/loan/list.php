@@ -75,6 +75,20 @@
                                             </thead>
                                             <tbody>
                                             </tbody>
+                                            <tfoot>
+                                                <tr class="tx-black bg-primary">
+                                                    <th colspan="7" style="padding: 12px;">
+                                                        <h6 class="tx-left mt-2"><b>รวม</b></h6>
+                                                    </th>
+                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="3" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="6" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
@@ -167,6 +181,20 @@
                                             </thead>
                                             <tbody>
                                             </tbody>
+                                            <tfoot>
+                                                <tr class="tx-black bg-primary">
+                                                    <th colspan="8" style="padding: 12px;">
+                                                        <h6 class="tx-left mt-2"><b>รวม</b></h6>
+                                                    </th>
+                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="2" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="4" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="2" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
