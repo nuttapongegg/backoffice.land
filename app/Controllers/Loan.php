@@ -107,8 +107,8 @@ class Loan extends BaseController
 
     // Get Data Loan ทั้งหมด
     public function FetchAllLoan()
-     {
-     }
+    {
+    }
 
     public function GetEmp()
     {
@@ -374,7 +374,7 @@ class Loan extends BaseController
             ];
 
             $update_loan_payment = $this->LoanModel->updateLoanPaymentDateFix($loan_code, $loan_payment);
-
+        
         }
 
         if ($update_loan) {
@@ -544,25 +544,45 @@ class Loan extends BaseController
             }
         }
 
-        $year = $this->LoanModel->getYearCount($codeloan_hidden);
-        $year_loan =  $year->loan_payment_year_counter;
-        $year_loan =  $year_loan * 12;
+        $data = $this->LoanModel->getAllDataLoanByCode($codeloan_hidden);
+        // $data_loan จำนวนงวด
+        // $data_loan_installment  งวดแรกแรกที่ทำการเพิ่มใหม่
+        // $add_year จำนวนปีใหม่
+        // $loan_installments จำนวนงวดทั้งหมดที่ทำการเพิ่มใหม่จนครบ
+        $data_loan =  $data->loan_payment_year_counter;
+        $data_loan =  $data_loan * 12;
+        $data_loan_installment =  $data_loan + 1;
+        $add_year = $data->loan_payment_year_counter + 1;
+        $loan_installments = $add_year * 12;
 
-        $create_payment = false;
+            $create_payment = false;
 
-        if (($year_loan == $installment_count) || ($payment_type == 'Close')) {
+        if (($data_loan == $installment_count && $payment_type != 'CloseLoan')) {
 
             $data_loan = [
-                'loan_payment_sum_installment' => $pay_sum,
-                'loan_status' => 'CLOSE_STATE',
-                'updated_at' => $buffer_datetime
+                'loan_payment_year_counter' => $add_year,
+                'loan_payment_sum_installment' => $pay_sum
             ];
+
+            for ($index_installment = $data_loan_installment; $index_installment <= $loan_installments; $index_installment++) {
+
+                $add_load_payment_data = [
+                    'loan_code' => $codeloan_hidden,
+                    'loan_payment_amount' => $data->loan_payment_month,
+                    'loan_payment_installment' =>  $index_installment,
+                    'loan_payment_date_fix' =>  $data->loan_installment_date,
+                    // 'loan_payment_date' => $date_pay_loan,
+                    'created_at' => $buffer_datetime
+                ];
+
+                $this->LoanModel->insertpayment($add_load_payment_data);
+            }
 
             $data_payment = [
                 // 'loan_code' => $codeloan_hidden,
-                // 'loan_payment_amount'  => $payment_now,
+                'loan_payment_amount'  => $payment_now,
                 'loan_employee' => $employee_name,
-                'loan_payment_type' => 'Close',
+                'loan_payment_type' => $payment_type,
                 'loan_payment_pay_type' => $customer_payment_type,
                 // 'loan_payment_installment' =>  $installment_count,
                 'loan_payment_customer' => $payment_name,
@@ -573,9 +593,9 @@ class Loan extends BaseController
                 'updated_at' => $buffer_datetime
             ];
 
-            $create_payment = $this->LoanModel->updateLoanPaymentClose($data_payment, $codeloan_hidden);
+            $create_payment = $this->LoanModel->updateLoanPayment($data_payment, $payment_id);
 
-            $Loan_Staus = 'ชำระทั้งหมด';
+            $Loan_Staus = 'งวดที่ ' . $installment_count;
         }elseif(($payment_type == 'CloseLoan')){
 
             $loan_payment = [
