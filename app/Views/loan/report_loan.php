@@ -217,7 +217,7 @@
                                                     </div>
                                                 </div>
                                                 <h4 class="tx-18 font-weight-semibold my-1">กำไร <?php echo number_format($total_month, 2) ?></h4>
-                                                <h4 class="tx-18 font-weight-semibold my-1">(การขายเดือนปัจจุบัน)</h4>
+                                                <h4 class="tx-18 font-weight-semibold my-1">(กำไรเดือนปัจจุบัน)</h4>
                                                 <?php $Sum_profit_month = $total_month * 100 / $targeteds->desired_goals_month; ?>
                                                 <?php if ($Sum_profit_month < 0) {
                                                     $profit_Color = "bg-danger-transparent tx-danger";
@@ -251,7 +251,7 @@
                                                     </div>
                                                 </div>
                                                 <h4 class="tx-18 font-weight-semibold my-1">กำไร <?php echo number_format($Month_Diff_Payment_Sum, 2) ?></h4>
-                                                <h4 class="tx-18 font-weight-semibold my-1">(การขายปีปัจจุบัน)</h4>
+                                                <h4 class="tx-18 font-weight-semibold my-1">(กำไรปีปัจจุบัน)</h4>
                                                 <?php $Sum_price_percent = $Month_Diff_Payment_Sum * 100 / $targeteds->desired_goal; ?>
                                                 <?php if ($Sum_price_percent < 0) {
                                                     $profit_Color_year = "bg-danger-transparent tx-danger";
