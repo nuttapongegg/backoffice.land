@@ -5,6 +5,9 @@ var loan_payment_sum_installment = 0;
 var typePayment;
 var payNow = 0;
 
+var loan_period = 0;
+var loan_installment_date = 0;
+
 (function ($) {
   let searchParams = window.location.pathname;
   var searchParams_ = searchParams.split("/loan/detail/");
@@ -14,7 +17,7 @@ var payNow = 0;
   flatpickr("#date_to_loan_pay_date", {});
 
   flatpickr("#date_to_payment", {});
-  
+
   $.ajax({
     url: serverUrl + "/loan/fetchOtherPicture/" + searchParams_[1],
     method: "get",
@@ -47,7 +50,7 @@ function loadLoan(loanCode) {
     async: false,
     success: function (response) {
       //   $("#id_update").val(response.message[0].car_stock_code);
-      $('#payment_name').val(response.message.loan_customer);
+      $("#payment_name").val(response.message.loan_customer);
       $("#customer_name").val(response.message.loan_customer);
       $("#employee_name").val(response.message.loan_employee);
       $("#payment_employee_name").val(response.message.loan_employee);
@@ -79,6 +82,9 @@ function loadLoan(loanCode) {
         response.message.loan_payment_month,
         response.message.loan_payment_year_counter * 12
       );
+
+      loan_period = response.message.loan_period;
+      loan_installment_date = response.message.loan_installment_date;
 
       installments = response.message.loan_payment_year_counter;
       paymentPermonth = response.message.loan_payment_month;
@@ -314,9 +320,9 @@ $("#payment_interest").keyup(function () {
 $("#charges_process").keyup(function () {
 
   let $transfer = $("#charges_transfer").val(),
-  $etc = $("#charges_etc").val(),
-  $process = $("#charges_process").val(),
-  $loan_without = $("#loan_without_vat").val();
+    $etc = $("#charges_etc").val(),
+    $process = $("#charges_process").val(),
+    $loan_without = $("#loan_without_vat").val();
 
   $transfer = Number($transfer.replace(/[^0-9.-]+/g, ""));
   $etc = Number($etc.replace(/[^0-9.-]+/g, ""));
@@ -325,16 +331,16 @@ $("#charges_process").keyup(function () {
 
   $really_pay = 0;
   $really_pay = $loan_without - ($process + $etc + $transfer);
-  
+
   $("#really_pay_loan").val($really_pay);
 });
 
 $("#charges_etc").keyup(function () {
 
   let $transfer = $("#charges_transfer").val(),
-  $etc = $("#charges_etc").val(),
-  $process = $("#charges_process").val(),
-  $loan_without = $("#loan_without_vat").val();
+    $etc = $("#charges_etc").val(),
+    $process = $("#charges_process").val(),
+    $loan_without = $("#loan_without_vat").val();
 
   $transfer = Number($transfer.replace(/[^0-9.-]+/g, ""));
   $etc = Number($etc.replace(/[^0-9.-]+/g, ""));
@@ -343,16 +349,16 @@ $("#charges_etc").keyup(function () {
 
   $really_pay = 0;
   $really_pay = $loan_without - ($process + $etc + $transfer);
-  
+
   $("#really_pay_loan").val($really_pay);
 });
 
 $("#charges_transfer").keyup(function () {
 
   let $transfer = $("#charges_transfer").val(),
-  $etc = $("#charges_etc").val(),
-  $process = $("#charges_process").val(),
-  $loan_without = $("#loan_without_vat").val();
+    $etc = $("#charges_etc").val(),
+    $process = $("#charges_process").val(),
+    $loan_without = $("#loan_without_vat").val();
 
   $transfer = Number($transfer.replace(/[^0-9.-]+/g, ""));
   $etc = Number($etc.replace(/[^0-9.-]+/g, ""));
@@ -361,7 +367,7 @@ $("#charges_transfer").keyup(function () {
 
   $really_pay = 0;
   $really_pay = $loan_without - ($process + $etc + $transfer);
-  
+
   $("#really_pay_loan").val($really_pay);
 });
 
@@ -502,51 +508,122 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
   let form = modalPayLoan.find("form");
   var formData = new FormData(document.getElementById(formAddLoanPay));
 
-  var loan_payment = form.parsley();
-  if (loan_payment.isValid()) {
-    $(".btn-add-loan-payment").text("กำลังบันทึก...");
-    $.ajax({
-      url: serverUrl + "/loan/addPayment",
-      method: "post",
-      data: formData,
-      contentType: false,
-      cache: false,
-      processData: false,
-      dataType: "json",
-      success: function (response) {
-        if (response.error) {
-          notif({
-            type: "danger",
-            msg: "จ่ายสินเชื่อไม่สำเร็จ",
-            position: "right",
-            fade: true,
-            time: 300,
-          });
-          $(".btn-add-loan-payment").text("บันทึก");
-        } else {
-          notif({
-            type: "success",
-            msg: "จ่ายสินเชื่อสำเร็จ!",
-            position: "right",
-            fade: true,
-            time: 300,
-          });
+  const date = new Date(loan_installment_date);
+  const newDate = new Date(date.setMonth(date.getMonth() + (loan_period - 1)));
 
+  const overdue_days = Math.floor(
+    (Date.now() - newDate) / (1000 * 60 * 60 * 24)
+  );
+
+  let overdueColor;
+  if (overdue_days === 0) {
+    overdueColor ="tx-success"; // สีเขียวสำหรับวันที่เกินกำหนด = 0
+  } else if (overdue_days >= 1 && overdue_days <= 90) {
+    overdueColor = "tx-secondary"; // สีเหลืองสำหรับวันที่เกินกำหนด 1-90 วัน
+  } else {
+    overdueColor = "tx-danger"; // สีแดงสำหรับวันที่เกินกำหนดมากกว่า 90 วัน
+  }
+
+  let installmentValue = parseInt($("#installment_count").val(), 10);
+
+  var loan_payment = form.parsley();
+
+  if (loan_payment.isValid()) {
+    if (
+      !isNaN(installmentValue) &&
+      installmentValue % 12 === 0 &&
+      installmentValue !== 0
+    ) {
+      // หากเป็นค่า mod 12 เท่ากับ 0
+      Swal.fire({
+        title: "ชำระสินเชื่อ",
+        html: `คุณต้องการผ่อนต่อหรือปิดบัญชี? <span class="${overdueColor}">(เกินกำหนดชำระ ${overdue_days} วัน)</span>`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "ผ่อนต่อ",
+        cancelButtonText: "ปิดบัญชี",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // ผู้ใช้เลือก "ผ่อนต่อ"
+          formData.append("status_payment", "continue");
+          proceedLoanPayment(formData, form);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // ผู้ใช้กดปุ่ม "ปิดบัญชี" หรือคลิกข้างนอก
+          // ส่งข้อมูลและทำการบันทึกเหมือนกัน
+          notif({
+            type: "warning",
+            msg: '<span style="color: black;">คุณเลือกที่จะดำเนินการปิดบัญชีสินเชื่อ</span>',
+            position: "right",
+            fade: true,
+            time: 300,
+          });
           form.parsley().reset();
           form[0].reset();
-          $(".btn-add-loan-payment").text("บันทึก");
-          $(".PaymentLoanType1").addClass("active");
-          $(".PaymentLoanType2").removeClass("active");
           $("#modalPayLoan").modal("hide");
-          dataTablePaymentDetail();
+          // formData.append("status_payment", "close");
+          // proceedLoanPayment(formData, form);
+        } else {
+          // หากผู้ใช้คลิกข้างนอก (result.dismiss === Swal.DismissReason.backdrop)
+          notif({
+            type: "warning",
+            msg: '<span style="color: black;">คุณเลือกที่จะยกเลิกการดำเนินการชำระสินเชื่อ</span>',
+            position: "right",
+            fade: true,
+            time: 300,
+          });
         }
-      },
-    });
+      });
+    } else {
+      // ถ้าไม่เป็น mod 12 เท่ากับ 0 (ผ่อนงวดที่ไม่เป็น mod 12)
+      formData.append("status", "default"); // หรือค่าที่เหมาะสม
+      proceedLoanPayment(formData, form);
+    }
   } else {
     loan_payment.validate();
     $(".btn-add-loan-payment").text("บันทึก");
   }
 });
+// ฟังก์ชันดำเนินการบันทึก
+function proceedLoanPayment(formData, form) {
+  $(".btn-add-loan-payment").text("กำลังบันทึก...");
+  $.ajax({
+    url: serverUrl + "/loan/addPayment",
+    method: "post",
+    data: formData,
+    contentType: false,
+    cache: false,
+    processData: false,
+    dataType: "json",
+    success: function (response) {
+      if (response.error) {
+        notif({
+          type: "danger",
+          msg: "จ่ายสินเชื่อไม่สำเร็จ",
+          position: "right",
+          fade: true,
+          time: 300,
+        });
+        $(".btn-add-loan-payment").text("บันทึก");
+      } else {
+        notif({
+          type: "success",
+          msg: "จ่ายสินเชื่อสำเร็จ!",
+          position: "right",
+          fade: true,
+          time: 300,
+        });
+
+        form.parsley().reset();
+        form[0].reset();
+        $(".btn-add-loan-payment").text("บันทึก");
+        $(".PaymentLoanType1").addClass("active");
+        $(".PaymentLoanType2").removeClass("active");
+        $("#modalPayLoan").modal("hide");
+        dataTablePaymentDetail();
+      }
+    },
+  });
+}
 
 function installmentTab() {
   typePayment = "Installment";
@@ -555,7 +632,7 @@ function installmentTab() {
   $("#pay_sum_loan").addClass("show");
   $("#pay_close_loan_tab").removeClass("show");
 
-  $("#pay_sum").val('');
+  $("#pay_sum").val("");
 
   let sum_pay_installment =
     Number(payNow) +
@@ -563,7 +640,7 @@ function installmentTab() {
 
   if (loan_payment_sum_installment == 0) {
     $("#pay_sum").val(Number(payNow));
-  }else{
+  } else {
     $("#pay_sum").val(sum_pay_installment);
   }
   // $("#payment_now").val(payNow);
@@ -580,7 +657,7 @@ function closeTab() {
   $("#pay_sum_loan").addClass("show");
   $("#pay_close_loan_tab").removeClass("show");
 
-  $("#pay_sum").val('');
+  $("#pay_sum").val("");
 
   let total_loan_payment = $("#total_loan_payment").val();
   let pay_sum = Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, ""));
@@ -599,7 +676,7 @@ function closeLoanTab() {
   $("#pay_sum_loan").removeClass("show");
   $("#pay_close_loan_tab").addClass("show");
 
-  $("#pay_sum").val('');
+  $("#pay_sum").val("");
 
   let open_loan_payment = $("#loan_without_vat").val();
   let pay_sum = Number(open_loan_payment.replace(/[^0-9.-]+/g, ""));
@@ -612,7 +689,6 @@ function closeLoanTab() {
 
   $("#payment_now").attr("readonly", true);
 }
-
 
 function dataTablePaymentDetail() {
   let searchParams = window.location.pathname;
@@ -804,10 +880,7 @@ function tableCall(data) {
               return (
                 "<font style='color: #ffc107'>" +
                 "รอการจ่าย/เลยกำหนด " +
-                dateDiff(
-                  Date.now(),
-                  Date.parse(data["loan_payment_date"])
-                ) +
+                dateDiff(Date.now(), Date.parse(data["loan_payment_date"])) +
                 "</font>"
               );
             } else {
@@ -920,14 +993,13 @@ function download(item) {
   var image = new Image();
   image.crossOrigin = "anonymous";
   image.src = item;
-  image.onload = function() {
-  
+  image.onload = function () {
     // use canvas to load image
-    var canvas = document.createElement('canvas');
+    var canvas = document.createElement("canvas");
     canvas.width = this.naturalWidth;
     canvas.height = this.naturalHeight;
-    canvas.getContext('2d').drawImage(this, 0, 0);
-    
+    canvas.getContext("2d").drawImage(this, 0, 0);
+
     // grab the blob url
     var blob;
     if (image.src.indexOf(".jpg") > -1) {
@@ -941,17 +1013,17 @@ function download(item) {
     }
 
     // create link, set href to blob
-    var a = document.createElement('a');
+    var a = document.createElement("a");
     a.title = fileName;
     a.href = blob;
-    a.style.display = 'none';
+    a.style.display = "none";
     a.setAttribute("download", fileName);
     a.setAttribute("target", "_blank");
     document.body.appendChild(a);
-    
+
     // click item
     a.click();
-  }
+  };
 }
 
 function downloadOther(item){
@@ -963,9 +1035,10 @@ function downloadOther(item){
     success: function (response) {
       upics = [];
       $.each(response.message, function (index, item) {
-        if(item.picture_loan_src != null || item.picture_loan_src != '')
-        {
-          upics.push(CDN_IMG + "/uploads/loan_img_other/" + item.picture_loan_src);
+        if(item.picture_loan_src != null || item.picture_loan_src != "") {
+          upics.push(
+            CDN_IMG + "/uploads/loan_img_other/" + item.picture_loan_src
+          );
         }
       });
 

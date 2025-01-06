@@ -502,6 +502,8 @@ class Loan extends BaseController
         $account_id = $this->request->getPost('account_name');
         $close_loan_payment = $this->request->getPost('close_loan_payment');
 
+        // $status_payment = $this->request->getPost('status_payment');
+
         $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
         $fileName_img = $file_payment->getFilename();
         if ($fileName_img !== "") {

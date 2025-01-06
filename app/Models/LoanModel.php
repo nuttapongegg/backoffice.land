@@ -57,8 +57,9 @@ class LoanModel
 
     public function getAllDataLoanByCode($loan_code)
     {
-        $sql = "
-        SELECT * FROM loan
+        $sql = "SELECT * ,
+        (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period 
+        FROM loan
         WHERE loan.loan_code = '$loan_code' ORDER BY loan.id DESC
         ";
 
