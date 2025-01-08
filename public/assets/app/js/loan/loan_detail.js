@@ -76,6 +76,8 @@ function loadLoan(loanCode) {
       $("#really_pay_loan").val(response.message.loan_really_pay);
       $("#loan_code").val(response.message.loan_code);
 
+      $("#link_map").val(response.message.link_map);
+
       loan_stock_name = response.message.loan_stock_name;
 
       calInstallment(
@@ -336,7 +338,7 @@ $("#charges_process").keyup(function () {
 });
 
 $("#charges_etc").keyup(function () {
-
+  
   let $transfer = $("#charges_transfer").val(),
     $etc = $("#charges_etc").val(),
     $process = $("#charges_process").val(),
@@ -1048,3 +1050,31 @@ function downloadOther(item){
     },
   });
 }
+
+// When click add link
+$("body").on("click", "#btn_edit_link_map", function () {
+  let searchParams = window.location.pathname;
+  var searchParams_ = searchParams.split("/loan/detail/");
+  var mapLink = $("#link_map").val().trim();
+  if (mapLink !== "") {
+    $.ajax({
+      type: "POST",
+      url: "/loan/save_maplink/" + searchParams_[1], // Replace with the actual URL
+      data: { mapLink: mapLink },
+      success: function (response) {
+        if (response.success) {
+          setTimeout(function () {
+            location.reload(); // Reload the page
+          }, 1500); // Wait for 1.5 seconds before reloading
+        } else {
+          alert("เกิดข้อผิดพลาด: " + response.message);
+        }
+      },
+      error: function () {
+        alert("ไม่สามารถบันทึกลิงก์ Map ได้ในขณะนี้");
+      },
+    });
+  } else {
+    alert("กรุณากรอกลิงก์ Map ก่อนทำการบันทึก");
+  }
+});

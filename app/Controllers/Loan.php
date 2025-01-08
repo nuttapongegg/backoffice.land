@@ -374,7 +374,7 @@ class Loan extends BaseController
             ];
 
             $update_loan_payment = $this->LoanModel->updateLoanPaymentDateFix($loan_code, $loan_payment);
-        
+
         }
 
         if ($update_loan) {
@@ -557,7 +557,7 @@ class Loan extends BaseController
         $add_year = $data->loan_payment_year_counter + 1;
         $loan_installments = $add_year * 12;
 
-            $create_payment = false;
+        $create_payment = false;
 
         if (($data_loan == $installment_count && $payment_type != 'CloseLoan')) {
 
@@ -3493,5 +3493,51 @@ class Loan extends BaseController
         );
 
         echo json_encode($json_data);
+    }
+
+    // saveMapLink data 
+    public function saveMapLink($loanCode = null)
+    {
+        $LoanModel = new \App\Models\LoanModel();
+        $buffer_datetime = date("Y-m-d H:i:s");
+        $param['mapLink'] = $_REQUEST['mapLink'];
+        try {
+            // SET CONFIG
+            $status = 500;
+            $response['success'] = 0;
+            $response['message'] = '';
+
+            // HANDLE REQUEST
+            $update = $LoanModel->updateLoan($loanCode, [
+                'link_map' => $param['mapLink'],
+                'updated_at' => $buffer_datetime
+            ]);
+
+            if ($update) {
+
+                logger_store([
+                    'employee_id' => session()->get('employeeID'),
+                    'username' => session()->get('username'),
+                    'event' => 'อัพเดท',
+                    'detail' => '[อัพเดท] Link Map',
+                    'ip' => $this->request->getIPAddress()
+                ]);
+
+                $status = 200;
+                $response['success'] = 1;
+                $response['message'] = 'แก้ไข Link Map สำเร็จ';
+            } else {
+                $status = 200;
+                $response['success'] = 0;
+                $response['message'] = 'แก้ไข Link Map ไม่สำเร็จ';
+            }
+
+            return $this->response
+                ->setStatusCode($status)
+                ->setContentType('application/json')
+                ->setJSON($response);
+        } catch (\Exception $e) {
+            echo $e->getMessage() . ' ' . $e->getLine();
+        }
     }
 }

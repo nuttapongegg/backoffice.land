@@ -357,6 +357,32 @@
                                     <p class="border-bottom-dashed tx-primary"></p>
                                 </form>
                                 <hr />
+                                <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-1">ลิงก์ Map</p>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-1 d-flex align-items-center justify-content-end">
+                                                <a class="side-menu__item active d-flex align-items-center" data-bs-toggle="slide" href="<?php echo !empty($loanData->link_map) ? $loanData->link_map : 'javascript:void(0)'; ?>" target="<?php echo !empty($loanData->link_map) ? '_blank' : ''; ?>">
+                                                    <i class="ionicon side-menu__icon bi bi-globe me-1" style="font-size: 1.2rem;"></i>
+                                                    <span class="form-label mt-0 mb-0">ลิงก์ Map</span>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <div class="form-group mb-1">
+                                                    <input class="form-control" placeholder="ลิงก์ Map..." id="link_map" name="link_map">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div align="right">
+                                                    <div class="form-group mb-1 mt-0" id="btn_edit_link_map">
+                                                        <button type="button" id="btn_edit_link_map" class="btn btn-primary mb-0 me-2" role="button">บันทึก</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
                                 <div class="masonry row">
                                     <label style="font-weight: bold;">รูปอื่นๆ</label>
                                     <div class="row mb-4" id="other_picture"></div>
