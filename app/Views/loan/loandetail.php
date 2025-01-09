@@ -357,19 +357,19 @@
                                     <p class="border-bottom-dashed tx-primary"></p>
                                 </form>
                                 <hr />
-                                <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-1">ลิงก์ Map</p>
+                                <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-1">พิกัด</p>
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="row align-items-center">
                                             <div class="col-md-1 d-flex align-items-center justify-content-end">
-                                                <a class="side-menu__item active d-flex align-items-center" data-bs-toggle="slide" href="<?php echo !empty($loanData->link_map) ? $loanData->link_map : 'javascript:void(0)'; ?>" target="<?php echo !empty($loanData->link_map) ? '_blank' : ''; ?>">
-                                                    <i class="ionicon side-menu__icon bi bi-globe me-1" style="font-size: 1.2rem;"></i>
-                                                    <span class="form-label mt-0 mb-0">ลิงก์ Map</span>
+                                                <a class="side-menu__item active d-flex align-items-center" data-bs-toggle="slide" href="<?php echo !empty($loanData->link_map) ? 'https://www.google.com/maps?q=' . urlencode($loanData->link_map) : 'javascript:void(0)'; ?>" target="<?php echo !empty($loanData->link_map) ? '_blank' : ''; ?>">
+                                                <i class="ionicon side-menu__icon bi bi-globe me-1" style="font-size: 1.2rem;"></i>
+                                                <span class="form-label mt-0 mb-0">พิกัด</span>
                                                 </a>
                                             </div>
                                             <div class="col-md-10">
                                                 <div class="form-group mb-1">
-                                                    <input class="form-control" placeholder="ลิงก์ Map..." id="link_map" name="link_map">
+                                                    <input class="form-control" placeholder="พิกัด ..." id="link_map" name="link_map">
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
