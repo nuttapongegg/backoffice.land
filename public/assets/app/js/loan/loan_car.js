@@ -4,7 +4,7 @@
 
   callTableLoan();
   callTableLoanPayments();
-  
+
 })(jQuery);
 var count_loan = 0;
 
@@ -203,13 +203,21 @@ function callAutoloenTable(data) {
             const daysPassed = Math.floor(
               (Date.now() - newDate) / (1000 * 60 * 60 * 24)
             );
+            var installment = data["loan_payment_year_counter"] * 12;
+            const remaining_installments =
+              installment - data["loan_payment_type"];
 
             if (daysPassed > 0) {
-              const loan_overdue = Number(
-                data["loan_overdue"].replace(/[^0-9.-]+/g, "")
+              const loan_overdue =
+                Number(data["loan_overdue"].replace(/[^0-9.-]+/g, "")) + 1;
+              const overdue_months = Math.min(
+                loan_overdue,
+                remaining_installments
               );
-              var loan_overdue_sum =
-                data["loan_payment_month"] * (loan_overdue + 1);
+              const loan_overdue_sum =
+                overdue_months * data["loan_payment_month"];
+              // var loan_overdue_sum =
+              //   data["loan_payment_month"] * (loan_overdue);
               return (
                 "<font class='tx-danger'>" +
                 new Intl.NumberFormat().format(
@@ -260,6 +268,84 @@ function callAutoloenTable(data) {
             ) +
             "</font>"
           );
+        },
+      },
+      {
+        data: null,
+        className: "text-center",
+        render: function (data, type, row, meta) {
+          if (data["loan_status"] == "ON_STATE") {
+            const date = new Date(data["loan_payment_date_fix"]);
+            const newDate = new Date(
+              date.setMonth(date.getMonth() + (data["loan_period"] - 1))
+            );
+
+            const daysPassed = Math.floor(
+              (Date.now() - newDate) / (1000 * 60 * 60 * 24)
+            );
+            var installment = data["loan_payment_year_counter"] * 12;
+            const remaining_installments =
+              installment - data["loan_payment_type"];
+
+            const loan_overdue =
+              Number(data["loan_overdue"].replace(/[^0-9.-]+/g, "")) + 1;
+            const overdue_months = Math.min(
+              loan_overdue,
+              remaining_installments
+            );
+            const loan_overdue_sum =
+              overdue_months * data["loan_payment_month"];
+
+            let day_overdue_score = 0;
+            if (daysPassed <= 30) {
+              day_overdue_score = 5;
+            } else if (daysPassed <= 90) {
+              day_overdue_score = 3;
+            } else {
+              day_overdue_score = 1;
+            }
+
+            const overdue_percentage =
+              (loan_overdue_sum / data["loan_sum_interest"]) * 100;
+            let outstanding_amount_score = 0;
+            if (overdue_percentage < 10) {
+              outstanding_amount_score = 5; // น้อยกว่า 10% ได้ 5 คะแนน
+            } else if (overdue_percentage >= 10 && overdue_percentage <= 30) {
+              outstanding_amount_score = 3; // อยู่ระหว่าง 10%-30% ได้ 3 คะแนน
+            } else if (overdue_percentage > 30) {
+              outstanding_amount_score = 1; // มากกว่า 30% ได้ 1 คะแนน
+            }
+
+            // คำนวณเปอร์เซ็นต์ของเงินที่ชำระแล้วเทียบกับยอดทั้งหมด
+            const paid_percentage =
+              (data["loan_payment_sum_installment"] / data["loan_sum_interest"]) *100;
+
+            let payment_score = 0; // ค่าเริ่มต้นของคะแนน
+            // ตรวจสอบเงื่อนไขเพื่อกำหนดคะแนน
+            if (paid_percentage <= 20) {
+              payment_score = 1; // ชำระน้อยกว่า 30% ได้ 1 คะแนน
+            } else if (paid_percentage > 20 && paid_percentage <= 50) {
+              payment_score = 3; // ชำระระหว่าง 30%-60% ได้ 3 คะแนน
+            } else {
+              payment_score = 5; // ชำระมากกว่า 60% ได้ 5 คะแนน
+            }
+
+            // รวมคะแนนทั้งหมด
+            const total_score = day_overdue_score + outstanding_amount_score + payment_score;
+            if (total_score >= 12) {
+              return (
+                "<font class='tx-success'>ความเสี่ยงต่ำ</font>"
+              );
+            } else if (total_score >= 8 && total_score <= 11) {
+              return (
+                "<font class='tx-secondary'>ความเสี่ยงปานกลาง</font>"
+              );
+            } else {
+              return (
+                "<font class='tx-danger'>ความเสี่ยงสูง</font>"
+              );
+            }
+          }
         },
       },
       {
@@ -314,14 +400,18 @@ function callAutoloenTable(data) {
         .column(14, { page: "current" })
         .data()
         .reduce(function (a, b) {
-          return intVal(a) + intVal(b.loan_payment_month) // Handle formatted numbers
+          return intVal(a) + intVal(b.loan_payment_month); // Handle formatted numbers
         }, 0);
 
       Total_sum_remaining_payment = api
         .column(13, { page: "current" })
         .data()
         .reduce(function (a, b) {
-          return intVal(a) + (intVal(b.loan_sum_interest)-(intVal(b.loan_payment_sum_installment)));
+          return (
+            intVal(a) +
+            (intVal(b.loan_sum_interest) -
+              intVal(b.loan_payment_sum_installment))
+          );
         }, 0);
 
       Total_summary_no_vat = api
@@ -331,7 +421,7 @@ function callAutoloenTable(data) {
           return intVal(a) + intVal(b.loan_summary_no_vat);
         }, 0);
 
-        Total_loanOverdueSum = api
+      Total_loanOverdueSum = api
         .column(11, { page: "current" })
         .data()
         .reduce(function (a, b) {
@@ -339,18 +429,18 @@ function callAutoloenTable(data) {
           const newDate = new Date(
             date.setMonth(date.getMonth() + (b.loan_period - 1))
           );
-      
+
           const daysPassed = Math.floor(
             (Date.now() - newDate) / (1000 * 60 * 60 * 24)
           );
-      
+
           if (daysPassed > 0) {
             const loanPaymentMonth = intVal(b.loan_payment_month);
             const loanOverdue = intVal(b.loan_overdue);
-      
+
             // คำนวณยอดรวม
             const loanOverdueSum = loanPaymentMonth * (loanOverdue + 1);
-      
+
             // เพิ่มผลรวมลงใน total
             return a + loanOverdueSum;
           } else {
@@ -372,12 +462,16 @@ function callAutoloenTable(data) {
         Number(number_payment_month).toLocaleString()
       );
 
-      number_sum_remaining_payment = parseFloat(Total_sum_remaining_payment).toFixed(2);
+      number_sum_remaining_payment = parseFloat(
+        Total_sum_remaining_payment
+      ).toFixed(2);
       $(api.column(13).footer()).html(
         Number(number_sum_remaining_payment).toLocaleString()
       );
 
-      number_payment_sum_installment = parseFloat(Total_payment_sum_installment).toFixed(2);
+      number_payment_sum_installment = parseFloat(
+        Total_payment_sum_installment
+      ).toFixed(2);
       $(api.column(12).footer()).html(
         Number(number_payment_sum_installment).toLocaleString()
       );
@@ -389,9 +483,9 @@ function callAutoloenTable(data) {
 
       number_summary_no_vat = parseFloat(Total_summary_no_vat).toFixed(2);
       $(api.column(7).footer()).html(
-       Number(number_summary_no_vat).toLocaleString()
+        Number(number_summary_no_vat).toLocaleString()
       );
-
+      
     },
     bFilter: true,
   });

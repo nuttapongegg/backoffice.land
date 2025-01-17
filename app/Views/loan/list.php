@@ -65,6 +65,7 @@
                                                     <th class="wd-30p text-center">ชำระแล้วเป็นเงิน</th>
                                                     <th class="wd-30p text-center">เงินที่ต้องชำระคงเหลือ</th>
                                                     <th class="wd-30p text-center">งวดละ</th>
+                                                    <th class="wd-20p text-center">เครดิต</th>
                                                     <th class="wd-20p text-center">ประเภทสินเชื่อ</th>
                                                     <th class="wd-30p text-center">ระยะเวลาการผ่อน</th>
                                                     <th class="wd-30p text-center">ชำระแล้ว</th>
@@ -86,7 +87,7 @@
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th colspan="6" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="7" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                 </tr>
                                             </tfoot>
                                         </table>
