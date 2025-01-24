@@ -17,6 +17,17 @@
         .card {
             margin-block-end: 0rem;
         }
+
+        .text-ellipsis {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .wd-180 {
+            max-width: 180px;
+            /* กำหนดความกว้างของคอลัมน์แรก */
+        }
     </style>
     <!-- container -->
     <div class="main-container container-fluid">

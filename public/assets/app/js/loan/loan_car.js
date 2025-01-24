@@ -51,6 +51,18 @@ function callAutoloenTable(data) {
     data: data,
     columnDefs: [
       {
+        targets: 3, // กำหนดคอลัมน์ที่ต้องการให้ตัดข้อความ
+        render: function(data, type, row) {
+          return '<div class="text-ellipsis wd-180" title="' + data["loan_address"] + '">' + data["loan_address"] + '</div>';
+      }
+      },
+      {
+        targets: 5, // กำหนดคอลัมน์ที่ต้องการให้ตัดข้อความ
+        render: function(data, type, row) {
+          return '<div class="text-ellipsis wd-100" title="' + data["loan_number"] + '">' + data["loan_number"] + '</div>';
+      }
+      },
+      {
         targets: 7,
         className: "text-right",
         data: "loan_summary_no_vat",
@@ -126,13 +138,13 @@ function callAutoloenTable(data) {
         data: "loan_customer",
       },
       {
-        data: "loan_address",
+        data: null,
       },
       {
         data: "loan_area",
       },
       {
-        data: "loan_number",
+        data: null,
       },
       {
         data: null,
@@ -322,9 +334,9 @@ function callAutoloenTable(data) {
 
             let payment_score = 0; // ค่าเริ่มต้นของคะแนน
             // ตรวจสอบเงื่อนไขเพื่อกำหนดคะแนน
-            if (paid_percentage <= 20) {
+            if (paid_percentage < 20) {
               payment_score = 1; // ชำระน้อยกว่า 30% ได้ 1 คะแนน
-            } else if (paid_percentage > 20 && paid_percentage <= 50) {
+            } else if (paid_percentage >= 20 && paid_percentage <= 60) {
               payment_score = 3; // ชำระระหว่าง 30%-60% ได้ 3 คะแนน
             } else {
               payment_score = 5; // ชำระมากกว่า 60% ได้ 5 คะแนน
@@ -384,6 +396,14 @@ function callAutoloenTable(data) {
         data: "loan_remnark",
       },
     ],
+    createdRow: function (row, data, dataIndex) {
+      $(row)
+        .find(".text-ellipsis")
+        .each(function () {
+          var content = $(this).text();
+          $(this).attr("title", content); // ตั้งค่า title ให้แสดงข้อความเต็มเมื่อ hover
+        });
+    },
     footerCallback: function (row, data, start, end, display) {
       var api = this.api();
 
