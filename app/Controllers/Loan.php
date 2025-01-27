@@ -106,9 +106,7 @@ class Loan extends BaseController
     }
 
     // Get Data Loan ทั้งหมด
-    public function FetchAllLoan()
-{   
-}
+    public function FetchAllLoan() {}
 
     public function GetEmp()
     {
@@ -443,7 +441,7 @@ class Loan extends BaseController
 
         $update_loan = $this->LoanModel->updateLoan($loan_code, $loan_list);
 
-        if($date_to_loan_pay_date){
+        if ($date_to_loan_pay_date) {
             $loan_payment = [
                 'loan_payment_date_fix' => $date_to_loan_pay_date,
                 'updated_at'  => $buffer_datetime
@@ -455,14 +453,14 @@ class Loan extends BaseController
         $land_account_name_old = $this->SettingLandModel->getSettingLandByID($data->land_account_id);
         $charges_process_old = str_replace(',', '', $data->loan_payment_process);
         if ($charges_process_old != $charges_process) {
-            if($charges_process_old != 0){
+            if ($charges_process_old != 0) {
                 $land_account_cash_charges_process_old = $land_account_name_old->land_account_cash - intval($charges_process_old);
 
                 $this->SettingLandModel->updateSettingLandByID($land_account_name_old->id, [
                     'land_account_cash' => $land_account_cash_charges_process_old,
                     // 'updated_at' => date('Y-m-d H:i:s'),
                 ]);
-    
+
                 $detail = 'แก้ไขค่าดำเนินการ(ลบ)' . '(' . $loan_code . ')';
                 $this->SettingLandModel->insertSettingLandReport([
                     'setting_land_id' => $data->land_account_id,
@@ -501,7 +499,7 @@ class Loan extends BaseController
 
         $charges_transfer_old = str_replace(',', '', $data->loan_tranfer);
         if ($charges_transfer_old != $charges_transfer) {
-            if($charges_transfer_old != 0){
+            if ($charges_transfer_old != 0) {
                 $land_account_name = $this->SettingLandModel->getSettingLandByID($data->land_account_id);
                 $land_account_cash_charges_transfer_old = $land_account_name->land_account_cash - intval($charges_transfer_old);
 
@@ -509,7 +507,7 @@ class Loan extends BaseController
                     'land_account_cash' => $land_account_cash_charges_transfer_old,
                     // 'updated_at' => date('Y-m-d H:i:s'),
                 ]);
-    
+
                 $detail = 'แก้ไขค่าโอน(ลบ)' . '(' . $loan_code . ')';
                 $this->SettingLandModel->insertSettingLandReport([
                     'setting_land_id' => $data->land_account_id,
@@ -547,7 +545,7 @@ class Loan extends BaseController
 
         $loan_payment_other_old = str_replace(',', '', $data->loan_payment_other);
         if ($loan_payment_other_old != $charges_etc) {
-            if($loan_payment_other_old != 0){
+            if ($loan_payment_other_old != 0) {
                 $land_account_name = $this->SettingLandModel->getSettingLandByID($data->land_account_id);
                 $land_account_cash_loan_payment_other_old = $land_account_name->land_account_cash - intval($loan_payment_other_old);
 
@@ -555,7 +553,7 @@ class Loan extends BaseController
                     'land_account_cash' => $land_account_cash_loan_payment_other_old,
                     // 'updated_at' => date('Y-m-d H:i:s'),
                 ]);
-    
+
                 $detail = 'แก้ไขค่าใช้จ่ายอื่น ๆ(ลบ)' . '(' . $loan_code . ')';
                 $this->SettingLandModel->insertSettingLandReport([
                     'setting_land_id' => $data->land_account_id,
@@ -632,7 +630,6 @@ class Loan extends BaseController
                             // 'updated_at' => date('Y-m-d H:i:s'),
                         ]);
 
-
                         $detail = 'ลบสินเชื่อ ' . $code . '(งวดที่' . $LoanPayment->loan_payment_installment . ')';
                         $this->SettingLandModel->insertSettingLandReport([
                             'setting_land_id' => $land_account->id,
@@ -665,6 +662,78 @@ class Loan extends BaseController
                 'setting_land_report_money' => $dataLoanByCode->loan_summary_no_vat,
                 'setting_land_report_note' => '',
                 'setting_land_report_account_balance' => $land_account_cash_receipt,
+                'employee_id' => session()->get('employeeID'),
+                'employee_name' => session()->get('employee_fullname')
+            ]);
+            sleep(1);
+        }
+
+        if ($dataLoanByCode->loan_payment_process != 0) {
+            $land_account_name = $this->SettingLandModel->getSettingLandByID($dataLoanByCode->land_account_id);
+            $charges_process = str_replace(',', '', $dataLoanByCode->loan_payment_process);
+
+            $land_account_cash_charges_process = $land_account_name->land_account_cash - intval($charges_process);
+
+            $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
+                'land_account_cash' => $land_account_cash_charges_process,
+                // 'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            $detail = 'ลบสินเชื่อ ' . $code . '(ค่าดำเนินการ)';
+            $this->SettingLandModel->insertSettingLandReport([
+                'setting_land_id' => $dataLoanByCode->land_account_id,
+                'setting_land_report_detail' => $detail,
+                'setting_land_report_money' => $charges_process,
+                'setting_land_report_note' => '',
+                'setting_land_report_account_balance' => $land_account_cash_charges_process,
+                'employee_id' => session()->get('employeeID'),
+                'employee_name' => session()->get('employee_fullname')
+            ]);
+            sleep(1);
+        }
+
+        if ($dataLoanByCode->loan_tranfer != 0) {
+            $charges_transfer = str_replace(',', '', $dataLoanByCode->loan_tranfer);
+
+            $land_account_name = $this->SettingLandModel->getSettingLandByID($dataLoanByCode->land_account_id);
+            $land_account_cash_charges_transfer = $land_account_name->land_account_cash - intval($charges_transfer);
+
+            $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
+                'land_account_cash' => $land_account_cash_charges_transfer,
+                // 'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            $detail = 'ลบสินเชื่อ ' . $code . '(ค่าโอน)';
+            $this->SettingLandModel->insertSettingLandReport([
+                'setting_land_id' => $dataLoanByCode->land_account_id,
+                'setting_land_report_detail' => $detail,
+                'setting_land_report_money' => $charges_transfer,
+                'setting_land_report_note' => '',
+                'setting_land_report_account_balance' => $land_account_cash_charges_transfer,
+                'employee_id' => session()->get('employeeID'),
+                'employee_name' => session()->get('employee_fullname')
+            ]);
+            sleep(1);
+        }
+
+        if ($dataLoanByCode->loan_payment_other != 0) {
+            $loan_payment_other = str_replace(',', '', $dataLoanByCode->loan_payment_other);
+
+            $land_account_name = $this->SettingLandModel->getSettingLandByID($dataLoanByCode->land_account_id);
+            $land_account_cash_loan_payment_other = $land_account_name->land_account_cash - intval($loan_payment_other);
+
+            $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
+                'land_account_cash' => $land_account_cash_loan_payment_other,
+                // 'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            $detail = 'ลบสินเชื่อ ' . $code . '(ค่าใช้จ่ายอื่น ๆ)';
+            $this->SettingLandModel->insertSettingLandReport([
+                'setting_land_id' => $dataLoanByCode->land_account_id,
+                'setting_land_report_detail' => $detail,
+                'setting_land_report_money' => $loan_payment_other,
+                'setting_land_report_note' => '',
+                'setting_land_report_account_balance' => $land_account_cash_loan_payment_other,
                 'employee_id' => session()->get('employeeID'),
                 'employee_name' => session()->get('employee_fullname')
             ]);
@@ -811,7 +880,7 @@ class Loan extends BaseController
             $create_payment = $this->LoanModel->updateLoanPayment($data_payment, $payment_id);
 
             $Loan_Staus = 'งวดที่ ' . $installment_count;
-        }elseif(($payment_type == 'CloseLoan')){
+        } elseif (($payment_type == 'CloseLoan')) {
 
             $loan_payment = [
                 // 'loan_code' => $codeloan_hidden,
@@ -850,7 +919,7 @@ class Loan extends BaseController
 
             $create_close_payment = $this->LoanModel->updateLoanClosePayment($data_close_payment, $codeloan_hidden);
 
-            if($create_close_payment){
+            if ($create_close_payment) {
                 $data_payment = [
                     'loan_payment_type' => 'Close',
                     'loan_balance'  => 0
@@ -860,8 +929,7 @@ class Loan extends BaseController
             }
 
             $Loan_Staus = 'ชำระปิดสินเชื่อ';
-        }
-        else {
+        } else {
 
             $data_loan = [
                 'loan_payment_sum_installment' => $pay_sum
@@ -1129,7 +1197,7 @@ class Loan extends BaseController
                                 </div>
                                 <div class="col" style="flex-grow: 1;">
                                     <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
-                                        <a href="'.base_url('/setting_land/land').'">
+                                        <a href="' . base_url('/setting_land/land') . '">
                                             <p class="mb-0 font-weight-semibold tx-18">เงินสดบัญชี</p>
                                             <div class="mt-2">
                                                 <span class="mb-0 font-weight-semibold tx-15">' . number_format($sum_land_account, 2) . '</span>
