@@ -40,62 +40,6 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <?php
-                                            $Month_Jan_Overdue_Payment = 0;
-                                            $Month_Feb_Overdue_Payment = 0;
-                                            $Month_Mar_Overdue_Payment = 0;
-                                            $Month_Apr_Overdue_Payment = 0;
-                                            $Month_May_Overdue_Payment = 0;
-                                            $Month_Jun_Overdue_Payment = 0;
-                                            $Month_Jul_Overdue_Payment = 0;
-                                            $Month_Aug_Overdue_Payment = 0;
-                                            $Month_Sep_Overdue_Payment = 0;
-                                            $Month_Oct_Overdue_Payment = 0;
-                                            $Month_Nov_Overdue_Payment = 0;
-                                            $Month_Dec_Overdue_Payment = 0;
-
-                                            foreach ($OverduePayments as $OverduePayment) {
-                                                if ($OverduePayment->overdue_payment <= date('m')) {
-                                                    switch ($OverduePayment->overdue_payment) {
-                                                        case "1":
-                                                            $Month_Jan_Overdue_Payment = $Month_Jan_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "2":
-                                                            $Month_Feb_Overdue_Payment = $Month_Feb_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "3":
-                                                            $Month_Mar_Overdue_Payment = $Month_Mar_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "4":
-                                                            $Month_Apr_Overdue_Payment = $Month_Apr_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "5":
-                                                            $Month_May_Overdue_Payment = $Month_May_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "6":
-                                                            $Month_Jun_Overdue_Payment = $Month_Jun_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "7":
-                                                            $Month_Jul_Overdue_Payment = $Month_Jul_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "8":
-                                                            $Month_Aug_Overdue_Payment = $Month_Aug_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "9":
-                                                            $Month_Sep_Overdue_Payment = $Month_Sep_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "10":
-                                                            $Month_Oct_Overdue_Payment = $Month_Oct_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "11":
-                                                            $Month_Nov_Overdue_Payment = $Month_Nov_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                        case "12":
-                                                            $Month_Dec_Overdue_Payment = $Month_Dec_Overdue_Payment + $OverduePayment->loan_payment_amount;
-                                                            break;
-                                                    }
-                                                }
-                                            }
-
                                             $Month_Jan_Payment_Month = 0;
                                             $Month_Feb_Payment_Month = 0;
                                             $Month_Mar_Payment_Month = 0;
@@ -109,102 +53,90 @@
                                             $Month_Nov_Payment_Month = 0;
                                             $Month_Dec_Payment_Month = 0;
 
-                                            foreach ($PaymentMonths as $PaymentMonth) {
-                                                if ($PaymentMonth->overdue_payment <= date('m')) {
-                                                    switch ($PaymentMonth->overdue_payment) {
+                                            foreach ($LoanPaymentMonths as $LoanPaymentMonth) {
+                                                if ($LoanPaymentMonth->loan_created_payment <= date('m')) {
+                                                    switch ($LoanPaymentMonth->loan_created_payment) {
                                                         case "1":
-                                                            $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Jan_Payment_Month = $Month_Jan_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "2":
-                                                            $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Feb_Payment_Month = $Month_Feb_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "3":
-                                                            $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Mar_Payment_Month = $Month_Mar_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "4":
-                                                            $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Apr_Payment_Month = $Month_Apr_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "5":
-                                                            $Month_May_Payment_Month = $Month_May_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_May_Payment_Month = $Month_May_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "6":
-                                                            $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Jun_Payment_Month = $Month_Jun_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "7":
-                                                            $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Jul_Payment_Month = $Month_Jul_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "8":
-                                                            $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Aug_Payment_Month = $Month_Aug_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "9":
-                                                            $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Sep_Payment_Month = $Month_Sep_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "10":
-                                                            $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Oct_Payment_Month = $Month_Oct_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "11":
-                                                            $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Nov_Payment_Month = $Month_Nov_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                         case "12":
-                                                            $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $PaymentMonth->loan_payment_amount;
+                                                            $Month_Dec_Payment_Month = $Month_Dec_Payment_Month + $LoanPaymentMonth->setting_land_report_money;
                                                             break;
                                                     }
                                                 }
                                             }
-                                            $Month_Jan_Diff_Payment_Month = $Month_Jan_Payment_Month - $Month_Jan_Overdue_Payment;
-                                            $Month_Feb_Diff_Payment_Month = $Month_Feb_Payment_Month - $Month_Feb_Overdue_Payment;
-                                            $Month_Mar_Diff_Payment_Month = $Month_Mar_Payment_Month - $Month_Mar_Overdue_Payment;
-                                            $Month_Apr_Diff_Payment_Month = $Month_Apr_Payment_Month - $Month_Apr_Overdue_Payment;
-                                            $Month_May_Diff_Payment_Month = $Month_May_Payment_Month - $Month_May_Overdue_Payment;
-                                            $Month_Jun_Diff_Payment_Month = $Month_Jun_Payment_Month - $Month_Jun_Overdue_Payment;
-                                            $Month_Jul_Diff_Payment_Month = $Month_Jul_Payment_Month - $Month_Jul_Overdue_Payment;
-                                            $Month_Aug_Diff_Payment_Month = $Month_Aug_Payment_Month - $Month_Aug_Overdue_Payment;
-                                            $Month_Sep_Diff_Payment_Month = $Month_Sep_Payment_Month - $Month_Sep_Overdue_Payment;
-                                            $Month_Oct_Diff_Payment_Month = $Month_Oct_Payment_Month - $Month_Oct_Overdue_Payment;
-                                            $Month_Nov_Diff_Payment_Month = $Month_Nov_Payment_Month - $Month_Nov_Overdue_Payment;
-                                            $Month_Dec_Diff_Payment_Month = $Month_Dec_Payment_Month - $Month_Dec_Overdue_Payment;
 
                                             $Month_Diff_Payment_Sum = 0;
-                                            $Month_Diff_Payment_Sum = $Month_Jan_Diff_Payment_Month + $Month_Feb_Diff_Payment_Month + $Month_Mar_Diff_Payment_Month + $Month_Apr_Diff_Payment_Month + $Month_May_Diff_Payment_Month + $Month_Jun_Diff_Payment_Month
-                                                + $Month_Jul_Diff_Payment_Month + $Month_Aug_Diff_Payment_Month + $Month_Sep_Diff_Payment_Month + $Month_Oct_Diff_Payment_Month + $Month_Nov_Diff_Payment_Month + $Month_Dec_Diff_Payment_Month;
+                                            $Month_Diff_Payment_Sum = $Month_Jan_Payment_Month + $Month_Feb_Payment_Month + $Month_Mar_Payment_Month + $Month_Apr_Payment_Month + $Month_May_Payment_Month + $Month_Jun_Payment_Month
+                                                + $Month_Jul_Payment_Month + $Month_Aug_Payment_Month + $Month_Sep_Payment_Month + $Month_Oct_Payment_Month + $Month_Nov_Payment_Month + $Month_Dec_Payment_Month;
 
                                             $total_month = 0;
                                             switch (date('m')) {
                                                 case "1":
-                                                    $total_month = $Month_Jan_Payment_Month - $Month_Jan_Overdue_Payment;
+                                                    $total_month = $Month_Jan_Payment_Month;
                                                     break;
                                                 case "2":
-                                                    $total_month = $Month_Feb_Payment_Month - $Month_Feb_Overdue_Payment;
+                                                    $total_month = $Month_Feb_Payment_Month;
                                                     break;
                                                 case "3":
-                                                    $total_month = $Month_Mar_Payment_Month - $Month_Mar_Overdue_Payment;
+                                                    $total_month = $Month_Mar_Payment_Month;
                                                     break;
                                                 case "4":
-                                                    $total_month = $Month_Apr_Payment_Month - $Month_Apr_Overdue_Payment;
+                                                    $total_month = $Month_Apr_Payment_Month;
                                                     break;
                                                 case "5":
-                                                    $total_month = $Month_May_Payment_Month - $Month_May_Overdue_Payment;
+                                                    $total_month = $Month_May_Payment_Month;
                                                     break;
                                                 case "6":
-                                                    $total_month = $Month_Jun_Payment_Month - $Month_Jun_Overdue_Payment;
+                                                    $total_month = $Month_Jun_Payment_Month;
                                                     break;
                                                 case "7":
-                                                    $total_month = $Month_Jul_Payment_Month - $Month_Jul_Overdue_Payment;
+                                                    $total_month = $Month_Jul_Payment_Month;
                                                     break;
                                                 case "8":
-                                                    $total_month = $Month_Aug_Payment_Month - $Month_Aug_Overdue_Payment;
+                                                    $total_month = $Month_Aug_Payment_Month;
                                                     break;
                                                 case "9":
-                                                    $total_month = $Month_Sep_Payment_Month - $Month_Sep_Overdue_Payment;
+                                                    $total_month = $Month_Sep_Payment_Month;
                                                     break;
                                                 case "10":
-                                                    $total_month = $Month_Oct_Payment_Month - $Month_Oct_Overdue_Payment;
+                                                    $total_month = $Month_Oct_Payment_Month;
                                                     break;
                                                 case "11":
-                                                    $total_month = $Month_Nov_Payment_Month - $Month_Nov_Overdue_Payment;
+                                                    $total_month = $Month_Nov_Payment_Month;
                                                     break;
                                                 case "12":
-                                                    $total_month = $Month_Dec_Payment_Month - $Month_Dec_Overdue_Payment;
+                                                    $total_month = $Month_Dec_Payment_Month;
                                                     break;
                                             }
                                             ?>
@@ -302,7 +234,7 @@
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="card-title">
-                                            กราฟแสดงผลกำไรต่อเดือน
+                                            กราฟแสดงผลชำระค่างวดต่อเดือน
                                         </div>
                                     </div>
                                     <div class="card-body">

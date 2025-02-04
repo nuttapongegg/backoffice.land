@@ -1250,8 +1250,7 @@ class Loan extends BaseController
         $TargetedModel = new \App\Models\TargetedModel();
         $data['targeteds'] = $TargetedModel->getTargetedAll();
 
-        $data['OverduePayments'] = $this->LoanModel->getOverdueListPayments(date('Y'));
-        $data['PaymentMonths'] = $this->LoanModel->getListPaymentMonths(date('Y'));
+        $data['LoanPaymentMonths'] = $this->LoanModel->getListLoanPaymentMonths(date('Y'));
 
         $data['content'] = 'loan/report_loan';
         $data['title'] = 'รายงานสินเชื่อ';
