@@ -63,4 +63,14 @@ class LandlogsModel
 
         return $builder->getResult();
     }
+
+    public function getLandlogsAllCreatedToDay()
+    {
+        $sql = "SELECT ledger_land_logs.land_logs_cash_flow, DATE_FORMAT(ledger_land_logs.created_at , '%Y-%m-%d') as formatted_date
+        FROM ledger_land_logs
+        WHERE DATE(ledger_land_logs.created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+        $builder = $this->db->query($sql);
+
+        return $builder->getRow();
+    }
 }

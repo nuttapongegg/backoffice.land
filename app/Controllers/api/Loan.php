@@ -102,4 +102,58 @@ class Loan extends BaseController
                 ->setJSON($response);
         }
     }
+
+    public function ajaxDataTableLandPaymentToDay()
+    {
+        $allowed_origins = [
+            'http://localhost:8080',
+            'https://ceo.evxspst.com'
+        ];
+
+        if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+            header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+            header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+            header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        } else {
+            header('Access-Control-Allow-Origin: null');
+        }
+        // header('Access-Control-Allow-Origin: http://localhost:8080');
+        // header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        // header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            exit; // Handle preflight request
+        }
+
+        $response['code'] = 200;
+        $response['message'] = '';
+
+        try {
+
+            // โหลดโมเดล
+            $LandlogsModel = new \App\Models\LandlogsModel();
+            // ดึงข้อมูลจากโมเดล
+            $dataLandLogs = $LandlogsModel->getLandlogsAllCreatedToDay();
+            $land_logs_cash_flow = 0;
+            $land_logs_cash_flow = $dataLandLogs->land_logs_cash_flow;
+            $json_data = array(
+                "LandLord_S" => number_format($land_logs_cash_flow, 2, '.', '')
+            );
+
+            return $this->response
+                ->setStatusCode($response['code'])
+                ->setContentType('application/json')
+                ->setJSON($json_data);
+
+        } catch (\Exception $e) {
+
+            $response['code'] = 500;
+            $response['message'] = 'error';
+
+            return $this->response
+                ->setStatusCode($response['code'])
+                ->setContentType('application/json')
+                ->setJSON($response);
+        }
+    }
 }
