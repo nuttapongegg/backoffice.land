@@ -37,12 +37,15 @@ class Landlogs extends BaseController
             foreach ($land_accounts as $land_account) {
                 $sum_land_account = $sum_land_account + $land_account->land_account_cash;
             }
+            $summary_net_assets = 0;
+            $summary_net_assets = $summary_no_vat_ON_STATE + $sum_land_account;
 
             // บันทึกข้อมูลลง DB insertLandlogs
             $LandlogsModel->insertLandlogs([
                 'land_logs_loan_amount' => $summary_no_vat_ON_STATE,
                 'land_logs_cash_flow' => $sum_land_account,
-                'land_logs_interest' => $loan_payment_sum_installment
+                'land_logs_interest' => $loan_payment_sum_installment,
+                'land_logs_summary_net' => $summary_net_assets
             ]);
 
         } catch (\Exception $e) {
