@@ -78,7 +78,7 @@ class LandlogsModel
     {
         $sql = "SELECT ledger_land_logs.*, DATE_FORMAT(ledger_land_logs.created_at , '%Y-%m-%d') as formatted_date
         FROM ledger_land_logs
-        WHERE DATE(created_at) BETWEEN DATE_SUB(CURDATE(), INTERVAL $days DAY) AND DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+        WHERE DATE(ledger_land_logs.created_at) BETWEEN DATE_SUB(CURDATE(), INTERVAL $days DAY) AND DATE_SUB(CURDATE(), INTERVAL 1 DAY)
         ORDER BY ledger_land_logs.created_at DESC ";
         $builder = $this->db->query($sql);
 
