@@ -67,6 +67,7 @@ class Loan extends BaseController
                             <td><h6 class="text-center p-2 mb-0">ยอดวงเงินกู้รวม</h6></td>
                             <td><h6 class="text-center p-2 mb-0">เงินสดในบัญชี</h6></td>
                             <td><h6 class="text-center p-2 mb-0">ดอกเบี้ยที่เก็บแล้ว</h6></td>
+                            <td><h6 class="text-center p-2 mb-0">ทรัพย์สินสุทธิ</h6></td>
                         </tr>
             ';
 
@@ -77,6 +78,7 @@ class Loan extends BaseController
                             <td><h6 class="p-2 mb-0" style="text-align: right;">' . number_format($dataLandLog->land_logs_loan_amount, 2) . '</h6></td>
                             <td><h6 class="p-2 mb-0" style="text-align: right;">' . number_format($dataLandLog->land_logs_cash_flow, 2) . '</h6></td>
                             <td><h6 class="p-2 mb-0" style="text-align: right;">' . number_format($dataLandLog->land_logs_interest, 2) . '</h6></td>
+                            <td><h6 class="p-2 mb-0" style="text-align: right;">' . number_format($dataLandLog->land_logs_summary_net, 2) . '</h6></td>
                         </tr>
             ';
             }
