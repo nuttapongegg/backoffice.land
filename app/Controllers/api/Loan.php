@@ -92,7 +92,6 @@ class Loan extends BaseController
                 ->setStatusCode($response['code'])
                 ->setContentType('application/json')
                 ->setJSON($response);
-
         } catch (\Exception $e) {
 
             $response['code'] = 500;
@@ -146,7 +145,82 @@ class Loan extends BaseController
                 ->setStatusCode($response['code'])
                 ->setContentType('application/json')
                 ->setJSON($json_data);
+        } catch (\Exception $e) {
 
+            $response['code'] = 500;
+            $response['message'] = 'error';
+
+            return $this->response
+                ->setStatusCode($response['code'])
+                ->setContentType('application/json')
+                ->setJSON($response);
+        }
+    }
+
+    public function ajaxDataTableLandDay($days)
+    {
+        $allowed_origins = [
+            'http://localhost:8080',
+            'https://ceo.evxspst.com'
+        ];
+
+        if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+            header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+            header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+            header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        } else {
+            header('Access-Control-Allow-Origin: null');
+        }
+        // header('Access-Control-Allow-Origin: http://localhost:8080');
+        // header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        // header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            exit; // Handle preflight request
+        }
+
+        $response['code'] = 200;
+        $response['message'] = '';
+
+        try {
+
+            // โหลดโมเดล
+            $LandlogsModel = new \App\Models\LandlogsModel();
+            // ดึงข้อมูลจากโมเดล
+            $dataLandLogs = $LandlogsModel->getLandlogsAllByDay($days);
+            // $land_logs_cash_flow = 0;
+            // $land_logs_cash_flow = $dataLandLogs->land_logs_cash_flow;
+            // $json_data = array(
+            //     "LandLord_S" => number_format($land_logs_cash_flow, 2, '.', '')
+            // );
+            $dates = [];
+            for ($i = $days; $i > 0; $i--) {
+                $dates[] = date("d M Y", strtotime("-$i days"));
+            }
+            $LandLord = [];
+            foreach ($dates as $date) {
+                $LandLord[$date] = 0;
+            }
+
+            // ประมวลผลข้อมูลจากฐานข้อมูล
+            foreach ($dataLandLogs as $row) {
+                $date = date("d M Y", strtotime($row->formatted_date));
+
+                // กำหนดค่าที่ได้รับจากฐานข้อมูล (ตัวอย่างเช่น กำหนดให้บัญชี EVX)
+                if ($row->project_name == 'LandLord') {
+                    $LandLord[$date] = number_format($row->land_logs_summary_net, 2, '.', '');
+                }
+            }
+
+            // ส่งผลลัพธ์ในรูปแบบ JSON
+            $json_data = array(
+                "LandLord" => array_values($LandLord)
+            );
+
+            return $this->response
+                ->setStatusCode($response['code'])
+                ->setContentType('application/json')
+                ->setJSON($json_data);
         } catch (\Exception $e) {
 
             $response['code'] = 500;
