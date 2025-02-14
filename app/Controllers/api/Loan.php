@@ -204,12 +204,10 @@ class Loan extends BaseController
 
             // ประมวลผลข้อมูลจากฐานข้อมูล
             foreach ($dataLandLogs as $row) {
-                $date = date("d M Y", strtotime($row->created_at));
+                $date = date("d M Y", strtotime($row->formatted_date));
 
                 // กำหนดค่าที่ได้รับจากฐานข้อมูล (ตัวอย่างเช่น กำหนดให้บัญชี EVX)
-                if ($row->project_name == 'LandLord') {
-                    $LandLord[$date] = number_format($row->land_logs_summary_net, 2, '.', '');
-                }
+                $LandLord[$date] = number_format($row->land_logs_summary_net, 2, '.', '');
             }
 
             // ส่งผลลัพธ์ในรูปแบบ JSON
