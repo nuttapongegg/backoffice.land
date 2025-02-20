@@ -78,6 +78,7 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->get('ajaxdatatableloanpayment/(:any)', 'Loan::ajaxDataTableLoanPayment/$1');
     $routes->get('ajaxdatatableloanclosepayment/(:any)', 'Loan::ajaxDataTableLoanClosePayment/$1');
     $routes->post('save_maplink/(:any)', 'Loan::saveMapLink/$1');
+    $routes->post('update_deed_status', 'Loan::updateDeedStatus');
 });
 
 // ตั้งค่า

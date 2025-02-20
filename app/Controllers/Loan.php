@@ -3822,4 +3822,39 @@ class Loan extends BaseController
             echo $e->getMessage() . ' ' . $e->getLine();
         }
     }
+
+    //updateDeedStatus
+    public function updateDeedStatus()
+    {
+        $LoanModel = new \App\Models\LoanModel();
+        try {
+            // SET CONFIG
+            $status = 500;
+            $response['success'] = 0;
+            $response['message'] = '';
+            
+            $loan_code = $this->request->getPost('loan_code');
+            $status = $this->request->getPost('status');
+
+            // HANDLE REQUEST
+            $update = $LoanModel->updateLoan($loan_code, [
+                'land_deed_status' => $status
+            ]);
+
+            if ($update) {
+                $status = 200;
+                $response['success'] = 1;
+            } else {
+                $status = 200;
+                $response['success'] = 0;
+            }
+
+            return $this->response
+                ->setStatusCode($status)
+                ->setContentType('application/json')
+                ->setJSON($response);
+        } catch (\Exception $e) {
+            echo $e->getMessage() . ' ' . $e->getLine();
+        }
+    }
 }

@@ -52,15 +52,27 @@ function callAutoloenTable(data) {
     columnDefs: [
       {
         targets: 3, // กำหนดคอลัมน์ที่ต้องการให้ตัดข้อความ
-        render: function(data, type, row) {
-          return '<div class="text-ellipsis wd-180" title="' + data["loan_address"] + '">' + data["loan_address"] + '</div>';
-      }
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-180" title="' +
+            data["loan_address"] +
+            '">' +
+            data["loan_address"] +
+            "</div>"
+          );
+        },
       },
       {
         targets: 5, // กำหนดคอลัมน์ที่ต้องการให้ตัดข้อความ
-        render: function(data, type, row) {
-          return '<div class="text-ellipsis wd-100" title="' + data["loan_number"] + '">' + data["loan_number"] + '</div>';
-      }
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-100" title="' +
+            data["loan_number"] +
+            '">' +
+            data["loan_number"] +
+            "</div>"
+          );
+        },
       },
       {
         targets: 7,
@@ -395,6 +407,15 @@ function callAutoloenTable(data) {
       {
         data: "loan_remnark",
       },
+      {
+        data: "land_deed_status", // ค่า 0 หรือ 1 ที่จะติ๊ก
+        className: "text-center",
+        orderable: false,
+        render: function (data, type, row) {
+            let checked = data == 1 ? "checked" : "";
+            return `<input type="checkbox" class="row-check" data-id="${row.loan_code}" ${checked}>`;  // ใช้ row.loan_code ในการแทนค่า data-id
+        },
+      }    
     ],
     createdRow: function (row, data, dataIndex) {
       $(row)
@@ -505,7 +526,7 @@ function callAutoloenTable(data) {
       $(api.column(7).footer()).html(
         Number(number_summary_no_vat).toLocaleString()
       );
-      
+
     },
     bFilter: true,
   });
@@ -794,3 +815,22 @@ function callAutoloenTablePayments(data) {
     ],
   });
 }
+$(document).ready(function () {
+  // เมื่อ checkbox มีการเปลี่ยนค่า ให้ส่งข้อมูลไปอัปเดตฐานข้อมูล
+  $("#tableLoanOn tbody").on("change", ".row-check", function () {
+    let loan_code = $(this).data("id");
+    let status = this.checked ? 1 : 0; // ถ้าติ๊กให้เป็น 1, ไม่ติ๊กเป็น 0
+
+    $.ajax({
+      url: `/loan/update_deed_status`,
+      type: "POST",
+      data: { loan_code: loan_code, status: status },
+      success: function (response) {
+        console.log("บันทึกข้อมูลโฉนดสำเร็จ");
+      },
+      error: function (xhr) {
+        alert("เกิดข้อผิดพลาดในการบันทึก");
+      },
+    });
+  });
+});

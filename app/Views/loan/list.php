@@ -83,6 +83,7 @@
                                                     <th class="wd-30p text-center">จำนวนงวด</th>
                                                     <th class="wd-30p text-center">ดอกเบี้ย</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
+                                                    <th class="wd-30p text-center">โฉนด</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -98,7 +99,7 @@
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th colspan="7" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="8" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                 </tr>
                                             </tfoot>
                                         </table>
