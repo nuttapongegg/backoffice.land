@@ -4,8 +4,13 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 
+use App\Models\EmployeeLoginDetailModel;
+use App\Models\EmployeeModel;
+
 class LoginDetail extends BaseController
 {
+    private EmployeeLoginDetailModel $EmployeeLoginDetailModel;
+    private EmployeeModel $EmployeeModel;
 
     public function __construct()
     {
@@ -22,8 +27,8 @@ class LoginDetail extends BaseController
         */
 
         // Model
-        $this->EmployeeLoginDetailModel = new \App\Models\EmployeeLoginDetailModel();
-        $this->EmployeeModel = new \App\Models\EmployeeModel();
+        $this->EmployeeLoginDetailModel = new EmployeeLoginDetailModel();
+        $this->EmployeeModel = new EmployeeModel();
     }
 
     public function index()

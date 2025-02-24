@@ -7,7 +7,10 @@ use CodeIgniter\Database\ConnectionInterface;
 class LoanModel
 {
     protected $db;
-
+    protected $column_order;
+    protected $column_search;
+    protected $order;
+    
     public function __construct()
     {
         $db = \Config\Database::connect();

@@ -8,8 +8,27 @@ use App\Controllers\BaseController;
 use App\Models\RebuildModel;
 use Aws\S3\S3Client;
 
+use App\Models\CustomerModel;
+use App\Models\EmployeeModel;
+use App\Models\EmployeeLogModel;
+use App\Models\LoanModel;
+use App\Models\SettingLandModel;
+
 class Loan extends BaseController
 {
+    private CustomerModel $CustomerModel;
+    private EmployeeModel $EmployeeModel;
+    private EmployeeLogModel $EmployeeLogModel;
+    private LoanModel $LoanModel;
+    private SettingLandModel $SettingLandModel;
+
+    private string $s3_bucket;
+    private string $s3_secret_key;
+    private string $s3_key;
+    private string $s3_endpoint;
+    private string $s3_region;
+    private string $s3_cdn_img;
+
     public function __construct()
     {
         /*
@@ -25,18 +44,19 @@ class Loan extends BaseController
         */
 
         // Model
-        $this->CustomerModel = new \App\Models\CustomerModel();
-        $this->EmployeeModel = new \App\Models\EmployeeModel();
-        $this->EmployeeLogModel = new \App\Models\EmployeeLogModel();
-        $this->LoanModel = new \App\Models\LoanModel();
-        $this->SettingLandModel = new  \App\Models\SettingLandModel();
+        $this->CustomerModel = new CustomerModel();
+        $this->EmployeeModel = new EmployeeModel();
+        $this->EmployeeLogModel = new EmployeeLogModel();
+        $this->LoanModel = new LoanModel();
+        $this->SettingLandModel = new SettingLandModel();
 
-        $this->s3_bucket = getenv('S3_BUCKET');
-        $this->s3_secret_key = getenv('SECRET_KEY');
-        $this->s3_key = getenv('KEY');
-        $this->s3_endpoint = getenv('ENDPOINT');
-        $this->s3_region = getenv('REGION');
-        $this->s3_cdn_img = getenv('CDN_IMG');
+        // Environment Variables
+        $this->s3_bucket = getenv('S3_BUCKET') ?: '';
+        $this->s3_secret_key = getenv('SECRET_KEY') ?: '';
+        $this->s3_key = getenv('KEY') ?: '';
+        $this->s3_endpoint = getenv('ENDPOINT') ?: '';
+        $this->s3_region = getenv('REGION') ?: '';
+        $this->s3_cdn_img = getenv('CDN_IMG') ?: '';
 
         function reArrayFiles($file)
         {
