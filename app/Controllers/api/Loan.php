@@ -135,8 +135,11 @@ class Loan extends BaseController
             $LandlogsModel = new \App\Models\LandlogsModel();
             // ดึงข้อมูลจากโมเดล
             $dataLandLogs = $LandlogsModel->getLandlogsAllCreatedToDay();
-            $land_logs_cash_flow = 0;
-            $land_logs_cash_flow = $dataLandLogs->land_logs_cash_flow;
+
+            // ตรวจสอบว่ามีค่า land_logs_cash_flow หรือไม่ ถ้าไม่มีให้กำหนดเป็น 0
+            $land_logs_cash_flow = !empty($dataLandLogs->land_logs_cash_flow) ? $dataLandLogs->land_logs_cash_flow : 0;
+            $land_logs_cash_flow *= 35;
+
             $json_data = array(
                 "LandLord_S" => number_format($land_logs_cash_flow, 2, '.', '')
             );
