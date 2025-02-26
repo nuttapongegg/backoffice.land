@@ -67,6 +67,7 @@
                                                     <th class="wd-20p text-center">ชื่อสถานที่</th>
                                                     <th class="wd-20p text-center">เนื้อที่</th>
                                                     <th class="wd-20p text-center">เลขที่ดิน</th>
+                                                    <th class="wd-30p text-center">โฉนด</th>
                                                     <th class="wd-20p text-center">วันที่ขอสินเชื่อ</th>
                                                     <th class="wd-40p text-center">วงเงิน</th>
                                                     <th class="wd-20p text-center">ชำระทุกวันที</th>
@@ -83,14 +84,14 @@
                                                     <th class="wd-30p text-center">จำนวนงวด</th>
                                                     <th class="wd-30p text-center">ดอกเบี้ย</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
-                                                    <th class="wd-30p text-center">โฉนด</th>
+                                                    
                                                 </tr>
                                             </thead>
                                             <tbody>
                                             </tbody>
                                             <tfoot>
                                                 <tr class="tx-black bg-primary">
-                                                    <th colspan="7" style="padding: 12px;">
+                                                    <th colspan="8" style="padding: 12px;">
                                                         <h6 class="tx-left mt-2"><b>รวม</b></h6>
                                                     </th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
@@ -99,7 +100,7 @@
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th colspan="8" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="7" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                 </tr>
                                             </tfoot>
                                         </table>

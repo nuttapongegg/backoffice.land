@@ -75,7 +75,7 @@ function callAutoloenTable(data) {
         },
       },
       {
-        targets: 7,
+        targets: 8,
         className: "text-right",
         data: "loan_summary_no_vat",
         render: function (data, type, row, meta) {
@@ -90,7 +90,7 @@ function callAutoloenTable(data) {
       },
       {
         data: "loan_date_promise",
-        targets: 6,
+        targets: 7,
         render: function (data, type, row, meta) {
           if (type == "display") {
             const date = new Date(data["loan_date_promise"]);
@@ -106,7 +106,7 @@ function callAutoloenTable(data) {
       },
       {
         data: "loan_installment_date",
-        targets: 8,
+        targets: 9,
         render: function (data, type, row, meta) {
           if (data["loan_installment_date"] == null) {
             return "<font class='tx-primary'>รอเพิ่มวันจ่าย</font>";
@@ -157,6 +157,15 @@ function callAutoloenTable(data) {
       },
       {
         data: null,
+      },
+      {
+        data: "land_deed_status", // ค่า 0 หรือ 1 ที่จะติ๊ก
+        className: "text-center",
+        orderable: false,
+        render: function (data, type, row) {
+            let checked = data == 1 ? "checked" : "";
+            return `<input type="checkbox" class="row-check" data-id="${row.loan_code}" ${checked}>`;  // ใช้ row.loan_code ในการแทนค่า data-id
+        },
       },
       {
         data: null,
@@ -407,15 +416,6 @@ function callAutoloenTable(data) {
       {
         data: "loan_remnark",
       },
-      {
-        data: "land_deed_status", // ค่า 0 หรือ 1 ที่จะติ๊ก
-        className: "text-center",
-        orderable: false,
-        render: function (data, type, row) {
-            let checked = data == 1 ? "checked" : "";
-            return `<input type="checkbox" class="row-check" data-id="${row.loan_code}" ${checked}>`;  // ใช้ row.loan_code ในการแทนค่า data-id
-        },
-      }    
     ],
     createdRow: function (row, data, dataIndex) {
       $(row)

@@ -103,7 +103,7 @@ class Loan extends BaseController
             <script src="' . base_url('/assets/plugins/fancyuploder/jquery.iframe-transport.js') . '"></script>
             <script src="' . base_url('/assets/plugins/fancyuploder/jquery.fancy-fileupload.js') . '"></script>
             <script src="' . base_url('/assets/plugins/fancyuploder/fancy-uploader.js') . '"></script>
-            <script src="' . base_url('/assets/app/js/loan/loan_car.js?v=' . time()) . '"></script> 
+            <script src="' . base_url('/assets/app/js/loan/loan.js?v=' . time()) . '"></script> 
             <script src="' . base_url('/assets/app/js/loan/loan_history.js?v=' . time()) . '"></script> 
         ';
 
