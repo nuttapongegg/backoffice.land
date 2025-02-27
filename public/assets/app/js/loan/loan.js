@@ -582,6 +582,28 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
             time: 300,
           });
 
+          // ส่งข้อมูลไปยัง Google Sheets ผ่าน GAS
+          $.ajax({
+            url: 'https://script.google.com/macros/s/AKfycbznrCNyDbhEba9RnZ3nv82BW3UOb8QmLrym6Xa7gnI8mpqKyLawrz6wOPr40Z6ARLQ-/exec',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+              loan_code: response.loan_code,
+              latitude: response.latitude,
+              longitude: response.longitude,
+              customer_name: response.customer_name,
+              loan_number: response.loan_number,
+              loan_area: response.loan_area,
+              loan_without_vat: response.loan_without_vat
+            }),
+            success: function(response) {
+              console.log('Success:', response);
+            },
+            error: function(xhr, status, error) {
+              console.log('Error:', error);
+            }
+          });
+
           form.parsley().reset();
           form[0].reset();
           $(".btn-add-loan").text("บันทึก");
@@ -595,6 +617,7 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
     $(".btn-add-loan").text("บันทึก");
   }
 });
+
 
 $("#loan_without_vat").keyup(function () {
   $("#money_loan").val($("#loan_without_vat").val());

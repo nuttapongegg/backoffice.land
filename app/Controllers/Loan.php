@@ -359,7 +359,14 @@ class Loan extends BaseController
             return $this->response->setJSON([
                 'status' => 200,
                 'error' => false,
-                'message' => 'เพิ่มรายการสำเร็จ'
+                'message' => 'เพิ่มรายการสำเร็จ',
+                'loan_code' => $loan_running_code,  // ส่ง loan_code
+                'latitude' => '',  // เพิ่มข้อมูลที่ต้องการ
+                'longitude' => '',  // เพิ่มข้อมูลที่ต้องการ
+                'customer_name' => $customer_name,
+                'loan_number' => $loan_number,
+                'loan_area' => $loan_area,
+                'loan_without_vat' => $loan_without_vat
             ]);
         } else {
             return $this->response->setJSON([
@@ -3852,7 +3859,7 @@ class Loan extends BaseController
             $status = 500;
             $response['success'] = 0;
             $response['message'] = '';
-            
+
             $loan_code = $this->request->getPost('loan_code');
             $status = $this->request->getPost('status');
 
