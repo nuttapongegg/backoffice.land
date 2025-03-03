@@ -435,14 +435,14 @@ function callAutoloenTable(data) {
 
       // Total over this page
       var Total_payment_month = api
-        .column(14, { page: "current" })
+        .column(15, { page: "current" })
         .data()
         .reduce(function (a, b) {
           return intVal(a) + intVal(b.loan_payment_month); // Handle formatted numbers
         }, 0);
 
       Total_sum_remaining_payment = api
-        .column(13, { page: "current" })
+        .column(14, { page: "current" })
         .data()
         .reduce(function (a, b) {
           return (
@@ -453,14 +453,14 @@ function callAutoloenTable(data) {
         }, 0);
 
       Total_summary_no_vat = api
-        .column(7, { page: "current" })
+        .column(8, { page: "current" })
         .data()
         .reduce(function (a, b) {
           return intVal(a) + intVal(b.loan_summary_no_vat);
         }, 0);
 
       Total_loanOverdueSum = api
-        .column(11, { page: "current" })
+        .column(12, { page: "current" })
         .data()
         .reduce(function (a, b) {
           const date = new Date(b.loan_payment_date_fix);
@@ -488,7 +488,7 @@ function callAutoloenTable(data) {
         }, 0);
 
       Total_payment_sum_installment = api
-        .column(12, { page: "current" })
+        .column(13, { page: "current" })
         .data()
         .reduce(function (a, b) {
           return intVal(a) + intVal(b.loan_payment_sum_installment);
@@ -496,31 +496,31 @@ function callAutoloenTable(data) {
 
       // Update footer
       number_payment_month = parseFloat(Total_payment_month).toFixed(2);
-      $(api.column(14).footer()).html(
+      $(api.column(15).footer()).html(
         Number(number_payment_month).toLocaleString()
       );
 
       number_sum_remaining_payment = parseFloat(
         Total_sum_remaining_payment
       ).toFixed(2);
-      $(api.column(13).footer()).html(
+      $(api.column(14).footer()).html(
         Number(number_sum_remaining_payment).toLocaleString()
       );
 
       number_payment_sum_installment = parseFloat(
         Total_payment_sum_installment
       ).toFixed(2);
-      $(api.column(12).footer()).html(
+      $(api.column(13).footer()).html(
         Number(number_payment_sum_installment).toLocaleString()
       );
 
       number_loanOverdueSum = parseFloat(Total_loanOverdueSum).toFixed(2);
-      $(api.column(11).footer()).html(
+      $(api.column(12).footer()).html(
         Number(number_loanOverdueSum).toLocaleString()
       );
 
       number_summary_no_vat = parseFloat(Total_summary_no_vat).toFixed(2);
-      $(api.column(7).footer()).html(
+      $(api.column(8).footer()).html(
         Number(number_summary_no_vat).toLocaleString()
       );
 
@@ -580,7 +580,7 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
           });
 
           // ส่งข้อมูลไปยัง Google Sheets ผ่าน GAS
-          fetch('https://script.google.com/macros/s/AKfycbxamZybOQhbf9baSIIk8YMbsJlyz3ijZ2jae7kxYZHosm6XJ0GFzJbIdSD3pNpUNaIc1Q/exec', {
+          fetch('https://script.google.com/macros/s/AKfycby09PegXsfb_1SF7mZbyyAdY_zygCj6Cq8cuzcPdtPubcUETmEY5EsvZPl-KL5Jj1Lo/exec', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

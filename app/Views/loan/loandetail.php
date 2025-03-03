@@ -374,7 +374,7 @@
                                             </div>
                                             <div class="col-md-1">
                                                 <div align="right">
-                                                    <div class="form-group mb-1 mt-0" id="btn_edit_link_map">
+                                                    <div class="form-group mb-1 mt-0">
                                                         <button type="button" id="btn_edit_link_map" class="btn btn-primary mb-0 me-2" role="button">บันทึก</button>
                                                     </div>
                                                 </div>

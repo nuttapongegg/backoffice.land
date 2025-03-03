@@ -1050,6 +1050,44 @@ function downloadOther(item){
     },
   });
 }
+function parseMapLink(mapLink) {
+  let lat, lng;
+
+  // รูปแบบที่ 1: "15.0643520, 104.9294570"
+  const decimalPattern = /^([-+]?\d*\.\d+),\s*([-+]?\d*\.\d+)$/;
+  const dmsPattern = /^(\d+)°(\d+)'(\d+\.\d+)"([NS]),\s*(\d+)°(\d+)'(\d+\.\d+)"([EW])$/;
+
+  // ตรวจสอบรูปแบบแรก (แบบทศนิยม)
+  let match = mapLink.match(decimalPattern);
+  if (match) {
+    lat = parseFloat(match[1]);
+    lng = parseFloat(match[2]);
+  } else {
+    // ตรวจสอบรูปแบบที่สอง (แบบ DMS)
+    match = mapLink.match(dmsPattern);
+    if (match) {
+      // แปลงค่าจาก DMS ไปเป็น Decimal
+      let latDegree = parseInt(match[1]);
+      let latMinute = parseInt(match[2]);
+      let latSecond = parseFloat(match[3]);
+      let latDirection = match[4];
+
+      let lngDegree = parseInt(match[5]);
+      let lngMinute = parseInt(match[6]);
+      let lngSecond = parseFloat(match[7]);
+      let lngDirection = match[8];
+
+      // คำนวณ latitude และ longitude ในรูปแบบทศนิยม
+      lat = latDegree + latMinute / 60 + latSecond / 3600;
+      if (latDirection === 'S') lat = -lat;
+
+      lng = lngDegree + lngMinute / 60 + lngSecond / 3600;
+      if (lngDirection === 'W') lng = -lng;
+    }
+  }
+
+  return { latitude: lat, longitude: lng };
+}
 
 // When click add link
 $("body").on("click", "#btn_edit_link_map", function () {
@@ -1063,6 +1101,28 @@ $("body").on("click", "#btn_edit_link_map", function () {
       data: { mapLink: mapLink },
       success: function (response) {
         if (response.success) {
+          let parsedCoords = parseMapLink(mapLink);
+
+          fetch('https://script.google.com/macros/s/AKfycbycISLS1BJQEBffMcirtCdxwnjLwSmTcmxsGlkx3NEMLrlPO8CJ_KQCloRbwHdifh_cGw/exec', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              loan_code: searchParams_[1],  // หมายเลข loan_code ที่ต้องการอัปเดต
+              latitude: parsedCoords.latitude,  // ค่าใหม่ของ latitude
+              longitude: parsedCoords.longitude,  // ค่าใหม่ของ longitude
+            }),
+            mode: 'no-cors'  // ใช้โหมด no-cors
+          })
+          .then(response => {
+            // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
+            // console.log('Request sent');
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+
           setTimeout(function () {
             location.reload(); // Reload the page
           }, 1500); // Wait for 1.5 seconds before reloading
