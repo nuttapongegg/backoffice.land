@@ -163,8 +163,8 @@ function callAutoloenTable(data) {
         className: "text-center",
         orderable: false,
         render: function (data, type, row) {
-            let checked = data == 1 ? "checked" : "";
-            return `<input type="checkbox" class="row-check" data-id="${row.loan_code}" ${checked}>`;  // ใช้ row.loan_code ในการแทนค่า data-id
+          let checked = data == 1 ? "checked" : "";
+          return `<input type="checkbox" class="row-check" data-id="${row.loan_code}" ${checked}>`;  // ใช้ row.loan_code ในการแทนค่า data-id
         },
       },
       {
@@ -351,7 +351,9 @@ function callAutoloenTable(data) {
 
             // คำนวณเปอร์เซ็นต์ของเงินที่ชำระแล้วเทียบกับยอดทั้งหมด
             const paid_percentage =
-              (data["loan_payment_sum_installment"] / data["loan_sum_interest"]) *100;
+              (data["loan_payment_sum_installment"] /
+                data["loan_sum_interest"]) *
+              100;
 
             let payment_score = 0; // ค่าเริ่มต้นของคะแนน
             // ตรวจสอบเงื่อนไขเพื่อกำหนดคะแนน
@@ -364,19 +366,14 @@ function callAutoloenTable(data) {
             }
 
             // รวมคะแนนทั้งหมด
-            const total_score = day_overdue_score + outstanding_amount_score + payment_score;
+            const total_score =
+              day_overdue_score + outstanding_amount_score + payment_score;
             if (total_score >= 12) {
-              return (
-                "<font class='tx-success'>ความเสี่ยงต่ำ</font>"
-              );
+              return "<font class='tx-success'>ความเสี่ยงต่ำ</font>";
             } else if (total_score >= 8 && total_score <= 11) {
-              return (
-                "<font class='tx-secondary'>ความเสี่ยงปานกลาง</font>"
-              );
+              return "<font class='tx-secondary'>ความเสี่ยงปานกลาง</font>";
             } else {
-              return (
-                "<font class='tx-danger'>ความเสี่ยงสูง</font>"
-              );
+              return "<font class='tx-danger'>ความเสี่ยงสูง</font>";
             }
           }
         },
@@ -583,27 +580,30 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
           });
 
           // ส่งข้อมูลไปยัง Google Sheets ผ่าน GAS
-          $.ajax({
-            url: 'https://script.google.com/macros/s/AKfycbznrCNyDbhEba9RnZ3nv82BW3UOb8QmLrym6Xa7gnI8mpqKyLawrz6wOPr40Z6ARLQ-/exec',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
+          fetch('https://script.google.com/macros/s/AKfycbxamZybOQhbf9baSIIk8YMbsJlyz3ijZ2jae7kxYZHosm6XJ0GFzJbIdSD3pNpUNaIc1Q/exec', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
               loan_code: response.loan_code,
-              latitude: response.latitude,
-              longitude: response.longitude,
+              latitude: " ", //ตอนส่งไปต้องมีค่าไป
+              longitude: " ", //ตอนส่งไปต้องมีค่าไป
               customer_name: response.customer_name,
               loan_number: response.loan_number,
               loan_area: response.loan_area,
-              loan_without_vat: response.loan_without_vat
+              loan_without_vat: response.loan_without_vat,
             }),
-            success: function(response) {
-              console.log('Success:', response);
-            },
-            error: function(xhr, status, error) {
-              console.log('Error:', error);
-            }
+            mode: 'no-cors'  // ใช้โหมด no-cors
+          })
+          .then(response => {
+            // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
+            // console.log('Request sent');
+          })
+          .catch(error => {
+            console.error('Error:', error);
           });
-
+          
           form.parsley().reset();
           form[0].reset();
           $(".btn-add-loan").text("บันทึก");
@@ -617,7 +617,6 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
     $(".btn-add-loan").text("บันทึก");
   }
 });
-
 
 $("#loan_without_vat").keyup(function () {
   $("#money_loan").val($("#loan_without_vat").val());
