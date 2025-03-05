@@ -645,6 +645,9 @@
                                     <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'report_loan') {
                                                                     echo 'active';
                                                                 } ?>" href="<?php echo base_url('/loan/report_loan'); ?>">รายงานสินเชื่อ</a></li>
+                                    <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'Maps') {
+                                                                    echo 'active';
+                                                                } ?>" href="<?php echo base_url('/Maps'); ?>">Maps</a></li>
                                 </ul>
                             </li>
                             <li class="slide">
