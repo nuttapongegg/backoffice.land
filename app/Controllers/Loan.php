@@ -3889,7 +3889,7 @@ class Loan extends BaseController
     public function list_ai()
     {
 
-        $data['employee_logs'] = $this->EmployeeLogModel->getEmployeeLogToday();
+        // $data['employee_logs'] = $this->EmployeeLogModel->getEmployeeLogToday();
 
         $data['content'] = 'loan/list_ai';
         $data['title'] = 'เปิดสินเชื่อ';
@@ -3909,7 +3909,7 @@ class Loan extends BaseController
         <script src="' . base_url('/assets/app/js/loan/loan_history.js?v=' . time()) . '"></script> 
     ';
 
-        $data['employee'] = $this->EmployeeModel->getEmployeeByID(session()->get('employeeID'));
+        // $data['employee'] = $this->EmployeeModel->getEmployeeByID(session()->get('employeeID'));
         $data['land_accounts'] = $this->SettingLandModel->getSettingLandAll();
         $data['loan_on'] = $this->LoanModel->getAllDataLoanOn();
 
