@@ -81,6 +81,8 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->post('update_deed_status', 'Loan::updateDeedStatus');
 });
 
+$routes->get('list_ai', 'Loan::list_ai');
+
 // ตั้งค่า
 $routes->group('setting_land', ['filter' => 'employeeAuth'], function ($routes) {
     //index
