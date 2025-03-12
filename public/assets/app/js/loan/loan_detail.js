@@ -1050,12 +1050,15 @@ function downloadOther(item){
     },
   });
 }
+
 function parseMapLink(mapLink) {
   let lat, lng;
 
   // รูปแบบที่ 1: "15.0643520, 104.9294570"
   const decimalPattern = /^([-+]?\d*\.\d+),\s*([-+]?\d*\.\d+)$/;
-  const dmsPattern = /^(\d+)°(\d+)'(\d+\.\d+)"([NS]),\s*(\d+)°(\d+)'(\d+\.\d+)"([EW])$/;
+
+  // รูปแบบที่ 2: "15°17'10.6"N 104°53'08.2"E"
+  const dmsPattern = /(\d+)[°\u00B0](\d+)'(\d*\.\d+|\d+)"([NS]),?\s*(\d+)[°\u00B0](\d+)'(\d*\.\d+|\d+)"([EW])/;
 
   // ตรวจสอบรูปแบบแรก (แบบทศนิยม)
   let match = mapLink.match(decimalPattern);
