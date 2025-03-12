@@ -3884,4 +3884,36 @@ class Loan extends BaseController
             echo $e->getMessage() . ' ' . $e->getLine();
         }
     }
+
+
+    public function list_ai()
+    {
+
+        $data['employee_logs'] = $this->EmployeeLogModel->getEmployeeLogToday();
+
+        $data['content'] = 'loan/list_ai';
+        $data['title'] = 'เปิดสินเชื่อ';
+        $data['css_critical'] = '';
+        $data['js_critical'] = ' 
+        <script src="' . base_url('/assets/plugins/notify/js/notifIt.js') . '"></script>
+        <script src="' . base_url('/assets/plugins/jquery.maskedinput/jquery.maskedinput.js') . '"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="' . base_url('/assets/plugins/jquery-steps/jquery.steps.min.js') . '"></script>
+        <script src="' . base_url('/assets/plugins/parsleyjs/parsley.min.js') . '"></script>
+        <script src="' . base_url('/assets/plugins/fancyuploder/jquery.ui.widget.js') . '"></script>
+        <script src="' . base_url('/assets/plugins/fancyuploder/jquery.fileupload.js') . '"></script>
+        <script src="' . base_url('/assets/plugins/fancyuploder/jquery.iframe-transport.js') . '"></script>
+        <script src="' . base_url('/assets/plugins/fancyuploder/jquery.fancy-fileupload.js') . '"></script>
+        <script src="' . base_url('/assets/plugins/fancyuploder/fancy-uploader.js') . '"></script>
+        <script src="' . base_url('/assets/app/js/loan/loan.js?v=' . time()) . '"></script> 
+        <script src="' . base_url('/assets/app/js/loan/loan_history.js?v=' . time()) . '"></script> 
+    ';
+
+        $data['employee'] = $this->EmployeeModel->getEmployeeByID(session()->get('employeeID'));
+        $data['land_accounts'] = $this->SettingLandModel->getSettingLandAll();
+        $data['loan_on'] = $this->LoanModel->getAllDataLoanOn();
+
+
+        echo view('/app', $data);
+    }
 }
