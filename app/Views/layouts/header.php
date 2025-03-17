@@ -11,7 +11,7 @@
     <title> Land Backoffice | <?php echo $title; ?></title>
 
     <!-- Favicon -->
-    <link rel="icon" href="<?php echo base_url('/assets/img/brand/favicon.ico'); ?>" type="image/x-icon" />
+    <link rel="icon" href="<?php echo base_url('/assets/img/logo.png'); ?>" type="image/x-icon" />
 
     <!-- Icons css -->
     <link href="<?php echo base_url('/assets/css/icons.css'); ?>" rel="stylesheet">
