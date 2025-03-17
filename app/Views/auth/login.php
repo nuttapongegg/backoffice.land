@@ -30,7 +30,7 @@
         }
 
         .bg-primary {
-            background-color: rgb(255 234 128 / 30%) !important;
+            background-color: rgb(210 180 140 / 50%) !important;
             color: rgba(0, 0, 0, 0) !important;
         }
         
