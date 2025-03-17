@@ -10,7 +10,7 @@
     <title>Land | Backoffice</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="<?php echo base_url('/assets/img/logo.png'); ?>" type="image/x-icon"/>
+    <link rel="icon" href="<?php echo base_url('/assets/img/brand/logo.png'); ?>" type="image/x-icon"/>
 
     <!-- Icons css -->
     <link href="<?php echo base_url('/assets/css/icons.css'); ?>" rel="stylesheet">
@@ -103,7 +103,7 @@
                             <!-- Demo content-->
                             <div class="main-card-signin d-md-flex">
                                 <div class="wd-100p">
-                                    <div class="d-flex"><a href="#"><img src="<?php echo base_url('/assets/img/brand/favicon-white.png'); ?>" class="sign-favicon ht-40" alt="logo"></a></div>
+                                    <div class="d-flex" style="place-content: center;"><a href="#"><img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="sign-favicon ht-40" alt="logo"></a></div>
                                     <div class="mt-3">
                                         <h2 class="tx-medium tx-primary">Land | Backoffice</h2>
                                         <h6 class="font-weight-semibold mb-4 text-white-50">ล็อคอิน เพื่อเข้าสู่ระบบ</h6>
