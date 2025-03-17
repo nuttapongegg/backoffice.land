@@ -122,7 +122,7 @@
                                                             </div>
                                                             <div class="form-group">
                                                                 <input class="form-control" placeholder="*********" type="password" name="password" id="password" required>
-                                                                <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password tx-primary" style="color: rgb(183 152 0) !important;"></span>
+                                                                <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password tx-primary"></span>
                                                             </div>
                                                             <div class="d-flex align-items-center justify-content-between">
                                                                 <p class="mb-0"><a href="javascript:void(0);" class="tx-primary">ลืมรหัสผ่าน?</a></p>
