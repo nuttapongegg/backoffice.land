@@ -113,6 +113,8 @@ $routes->group('api', ['namespace' => 'App\Controllers\api'], function ($routes)
     $routes->get('ajaxdatatablelandpayment/(:any)/(:any)', 'Loan::ajaxDataTableLandPayment/$1/$2');
     $routes->get('ajaxdatatablelandpaymenttoday', 'Loan::ajaxDataTableLandPaymentToDay');
     $routes->get('ajaxdatatablelandday/(:any)', 'Loan::ajaxDataTableLandDay/$1');
+
+    $routes->get('landdatadocday', 'Loan::LandDataDocDay');
 });
 
 

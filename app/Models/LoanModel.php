@@ -930,4 +930,24 @@ class LoanModel
         $builder = $this->db->query($sql);
         return $builder->getResult();
     }
+
+    public function getLoanRevenuesDay()
+    {
+        $sql = "SELECT * FROM setting_land_report 
+            WHERE DATE(created_at) = CURDATE() AND setting_land_report_detail NOT LIKE '%เปิดสินเชื่อ%' AND setting_land_report_detail NOT LIKE '%ลบสินเชื่อ %'
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getLoanExpensesDay()
+    {
+        $sql = "SELECT * FROM setting_land_report 
+            WHERE DATE(created_at) = CURDATE() AND (setting_land_report_detail LIKE '%เปิดสินเชื่อ%' OR setting_land_report_detail LIKE '%ลบสินเชื่อ %')
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
 }

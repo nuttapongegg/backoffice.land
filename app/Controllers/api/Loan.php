@@ -232,4 +232,83 @@ class Loan extends BaseController
                 ->setJSON($response);
         }
     }
+
+    public function LandDataDocDay()
+    {
+        $allowed_origins = [
+            'http://localhost:8080',
+            'https://ceo.evxspst.com'
+        ];
+
+        if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+            header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+            header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+            header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        } else {
+            header('Access-Control-Allow-Origin: null');
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            exit; // Handle preflight request
+        }
+
+        $response = [
+            'code' => 200,
+            'message' => '',
+            'data' => []
+        ];
+
+        try {
+            // โหลดโมเดล
+            $LoanModel = new \App\Models\LoanModel();
+            $LoanRevenues = $LoanModel->getLoanRevenuesDay();
+            $LoanExpenses = $LoanModel->getLoanExpensesDay();
+
+            $Revenue = 0;
+            $Expense = 0;
+
+            $sum = 0;
+
+            // รวมค่าของ setting_land_report_money จาก LoanRevenues
+            foreach ($LoanRevenues as $LoanRevenue) {
+                $Revenue += $LoanRevenue->setting_land_report_money;
+            }
+
+            // รวมค่าของ setting_land_report_money จาก LoanExpenses
+            foreach ($LoanExpenses as $LoanExpense) {
+                $Expense += $LoanExpense->setting_land_report_money;
+            }
+
+            $sum = $Revenue - $Expense;
+
+            $SettingLandModel = new \App\Models\SettingLandModel();
+            $land_accounts = $SettingLandModel->getSettingLandAll();
+            $sum_land_account = 0;
+            foreach ($land_accounts as $land_account) {
+                $sum_land_account = $sum_land_account + $land_account->land_account_cash;
+            }
+
+            // JSON Response
+            $response['data'] = [
+                'date' => date('Y-m-d'),
+                'income' => $Revenue,     // รายรับ
+                'expense' => $Expense,   // รายจ่าย
+                'profit' => $sum,   // กำไร
+                'cash_flow' => $sum_land_account
+            ];
+
+            return $this->response
+                ->setStatusCode(200)
+                ->setContentType('application/json')
+                ->setJSON($response);
+        } catch (\Exception $e) {
+            $response['code'] = 500;
+            $response['message'] = 'error: ' . $e->getMessage();
+
+            return $this->response
+                ->setStatusCode($response['code'])
+                ->setContentType('application/json')
+                ->setJSON($response);
+        }
+    }
 }
