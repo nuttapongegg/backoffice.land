@@ -36,7 +36,8 @@
         </div>
         <!-- /breadcrumb -->
         <div>
-            <div class="col-xxl-12 col-xl-12" id="summarizeLoan">
+            <div class="col-xxl-12 col-xl-12" >
+            <?php echo $html_summarizeLoan ?>
             </div>
             <div class="col-lg-12">
                 <div class="card mt-3">
@@ -70,8 +71,8 @@
                                                     <th class="wd-30p text-center">โฉนด</th>
                                                     <th class="wd-20p text-center">วันที่ขอสินเชื่อ</th>
                                                     <th class="wd-40p text-center">วงเงิน</th>
-                                                    <th class="wd-20p text-center">ชำระทุกวันที</th>
-                                                    <th class="wd-30p text-center">สถานะ</th>
+                                                    <th class="wd-20p text-center">วันที่ต้องชำระ</th>
+                                                    <th class="wd-30p text-center">สถานะสินเชื่อ</th>
                                                     <th class="wd-30p text-center">เกินกำหนดชำระ</th>
                                                     <th class="wd-30p text-center">ยอดค้างชำระ</th>
                                                     <th class="wd-30p text-center">ชำระแล้วเป็นเงิน</th>
@@ -80,7 +81,7 @@
                                                     <th class="wd-20p text-center">เครดิต</th>
                                                     <th class="wd-20p text-center">ประเภทสินเชื่อ</th>
                                                     <th class="wd-30p text-center">ระยะเวลาการผ่อน</th>
-                                                    <th class="wd-30p text-center">ชำระแล้ว</th>
+                                                    <th class="wd-30p text-center">ชำระแล้วกี่งวด</th>
                                                     <th class="wd-30p text-center">จำนวนงวด</th>
                                                     <th class="wd-30p text-center">ดอกเบี้ย</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
