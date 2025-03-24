@@ -188,6 +188,7 @@ function callTableLoanHistory() {
       },
       {
         data: "loan_payment_type",
+        orderable: false,
         className: "text-center",
       },
       {
@@ -201,6 +202,7 @@ function callTableLoanHistory() {
       },
       {
         data: null,
+        orderable: false,
         className: "text-right",
         render: function (data, type, row, meta) {
           var summary_all = (data["loan_sum_interest"] - data["loan_payment_sum_installment"])
