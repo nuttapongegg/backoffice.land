@@ -50,11 +50,11 @@ function callTableLoanHistory() {
         },
       },
       {
-        data: "loan_date_promise",
+        data: "loan_date_close",
         targets: 6,
         render: function (data, type, row, meta) {
           if (type == "display") {
-            const date = new Date(data["loan_date_promise"]);
+            const date = new Date(data["loan_date_close"]);
             const result = date.toLocaleDateString("th-TH", {
               year: "numeric",
               month: "short",
@@ -62,15 +62,16 @@ function callTableLoanHistory() {
             });
             return result;
           }
-          return data["loan_date_promise"];
+          return data["loan_date_close"];
         },
       },
+      // loan_payment_date_fix วันเริ่มชำระ เปลี่ยนเป็น  loan_date_promise วันที่ขอสินเชื่อ
       {
-        data: "loan_payment_date_fix",
+        data: "loan_date_promise",
         targets: 13,
         render: function (data, type, row, meta) {
           if (type == "display") {
-            const date = new Date(data["loan_payment_date_fix"]);
+            const date = new Date(data["loan_date_promise"]);
             const newDate = new Date(date.setMonth(date.getMonth()));
             const result = newDate.toLocaleDateString("th-TH", {
               year: "numeric",
@@ -79,7 +80,7 @@ function callTableLoanHistory() {
             });
             return result;
           }
-          return data["loan_payment_date_fix"];
+          return data["loan_date_promise"];
         },
       },
     ],

@@ -929,6 +929,7 @@ class Loan extends BaseController
             $data_loan = [
                 'loan_close_payment' => $close_loan_payment,
                 'loan_status' => 'CLOSE_STATE',
+                'loan_date_close' => date("Y-m-d"),
                 'updated_at' => $buffer_datetime
             ];
 

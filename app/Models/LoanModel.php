@@ -20,22 +20,43 @@ class LoanModel
         $this->column_order = [
             'loan.loan_code',
             'loan.loan_code',
-            null,
-            null,
-            'loan.loan_date_promise',
+            'loan_customer',
+            'loan_address',
+            'loan.loan_area',
+            'loan.loan_number',
+            'loan.loan_date_close',
             'loan.loan_type',
             'loan.loan_summary_no_vat',
             'loan.loan_payment_year_counter',
             'loan.loan_status',
-            null
+            'loan.loan_payment_sum_installment',
+            'loan.loan_close_payment',
+            'loan.loan_date_promise',
+            'loan.loan_payment_interest',
+            'loan.loan_payment_year_counter',
+            null,
+            'loan.loan_payment_month',
+            null,
+            'loan.loan_remnark'
         ];
 
         // Set searchable column fields
         $this->column_search = [
             'loan.loan_code',
-            'loan.loan_date_promise',
+            'loan_customer',
+            'loan_address',
+            'loan.loan_area',
+            'loan.loan_number',
+            'loan.loan_date_close',
             'loan.loan_type',
-            'loan.loan_summary_no_vat'
+            'loan.loan_summary_no_vat',
+            'loan.loan_payment_year_counter',
+            'loan.loan_payment_sum_installment',
+            'loan.loan_close_payment',
+            'loan.loan_date_promise',
+            'loan.loan_payment_interest',
+            'loan.loan_payment_month',
+            'loan.loan_remnark'
         ];
 
         // Set default order
@@ -236,6 +257,7 @@ class LoanModel
          loan.loan_employee, 
          loan.loan_number,
          loan.loan_area,
+         loan.loan_date_close,
          loan.loan_date_promise,
          loan.loan_summary_no_vat,
          loan.loan_payment_sum_installment,
