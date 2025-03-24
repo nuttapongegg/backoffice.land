@@ -18,8 +18,8 @@ License        :   Licensed under ThemeForest License
     --background: rgba(255, 255, 255, 0.1);
     --color: #b0bbc7;
     --color2: rgba(255, 255, 255, 0.75);
-    --primary-rgb: 77, 238, 234;
-    --background-rgb: 18, 55, 61;
+    --primary-rgb: 210, 180, 140;
+    --background-rgb: 45, 45, 45;
     --main-gradient-bg: radial-gradient(circle, rgb(var(--background-rgb)) 0%, #121923, #121923 100%);
     --primary-bg-color: rgb(var(--primary-rgb));
     --primary-bg-hover: rgb(var(--primary-rgb));
@@ -124,7 +124,7 @@ License        :   Licensed under ThemeForest License
 [data-theme-color=glassy] {
     --main-gradient-bg: linear-gradient(72deg, #DADDE2, #ffffff 25% 40%, #ffffff 40% 80%, #DADDE2);
     --background-rgb: 241, 241, 241;
-    --primary-rgb: 78, 98, 177;
+    --primary-rgb: 170, 120, 80;
     --color: #5d6162;
     --color2: #7b8191;
     --muted: #7987a1;

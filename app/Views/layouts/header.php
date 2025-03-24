@@ -11,7 +11,7 @@
     <title> Land Backoffice | <?php echo $title; ?></title>
 
     <!-- Favicon -->
-    <link rel="icon" href="<?php echo base_url('/assets/img/brand/favicon.ico'); ?>" type="image/x-icon" />
+    <link rel="icon" href="<?php echo base_url('/assets/img/brand/logo.png'); ?>" type="image/x-icon" />
 
     <!-- Icons css -->
     <link href="<?php echo base_url('/assets/css/icons.css'); ?>" rel="stylesheet">
@@ -179,7 +179,7 @@
 <body class="ltr main-body app sidebar-mini">
 
     <section class="preload">
-        <img src="https://evxspst.sgp1.cdn.digitaloceanspaces.com/uploads/img/1680594044_952ae0ae19a1a2531a7d.png" class="img-fluid" alt="logo" width="20%">
+        <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="img-fluid" alt="logo" width="20%">
     </section>
 
     <!-- เลือกธีม -->
@@ -297,7 +297,7 @@
                     <div class="main-header-left">
                         <div class="responsive-logo">
                             <a href="<?php echo base_url(); ?>" class="header-logo">
-                                <img src="https://evxspst.sgp1.cdn.digitaloceanspaces.com/uploads/img/1680594044_952ae0ae19a1a2531a7d.png" class="mobile-logo dark-logo-1" alt="logo">
+                                <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo dark-logo-1" alt="logo">
                             </a>
                         </div>
                         <div class="app-sidebar__toggle" data-bs-toggle="sidebar">
@@ -307,8 +307,8 @@
                         </div>
                         <div class="logo-horizontal">
                             <a href="<?php echo base_url(); ?>" class="header-logo">
-                                <img src="https://evxspst.sgp1.cdn.digitaloceanspaces.com/uploads/img/1680594044_952ae0ae19a1a2531a7d.png" class="mobile-logo dark-logo-1" alt="logo">
-                                <img src="https://evxspst.sgp1.cdn.digitaloceanspaces.com/uploads/img/1680594044_952ae0ae19a1a2531a7d.png" class="mobile-logo-1 dark-logo-1" alt="logo">
+                                <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo dark-logo-1" alt="logo">
+                                <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo-1 dark-logo-1" alt="logo">
                             </a>
                         </div>
                     </div>

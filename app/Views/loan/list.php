@@ -177,14 +177,15 @@
                                                     <th class="wd-20p text-center">ชื่อสถานที่</th>
                                                     <th class="wd-20p text-center">เนื้อที่</th>
                                                     <th class="wd-20p text-center">เลขที่ดิน</th>
-                                                    <th class="wd-20p text-center">วันที่ขอสินเชื่อ</th>
+                                                    <th class="wd-20p text-center">วันที่ปิดสินเชื่อ</th>
                                                     <th class="wd-20p text-center">ประเภทสินเชื่อ</th>
                                                     <th class="wd-40p text-center">วงเงิน</th>
                                                     <th class="wd-30p text-center">ระยะเวลาการผ่อน</th>
                                                     <th class="wd-30p text-center">สถานะ</th>
                                                     <th class="wd-30p text-center">ชำระแล้วเป็นเงิน</th>
                                                     <th class="wd-30p text-center">ยอดชำระปิดสินเชื่อ</th>
-                                                    <th class="wd-20p text-center">วันเริ่มชำระ</th>
+                                                    <th class="wd-20p text-center">วันที่ขอสินเชื่อ</th>
+                                                    <!-- <th class="wd-20p text-center">วันเริ่มชำระ</th> -->
                                                     <th class="wd-30p text-center">ดอกเบี้ย</th>
                                                     <th class="wd-30p text-center">จำนวนงวด</th>
                                                     <th class="wd-30p text-center">ชำระแล้ว</th>

@@ -287,7 +287,7 @@ class Loan extends BaseController
             $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
             if ($charges_process != 0) {
                 $price = str_replace(',', '', $charges_process);
-                $land_account_cash_charges_process = $land_account_name->land_account_cash + intval($price);
+                $land_account_cash_charges_process = $land_account_name->land_account_cash + floatval($price);
 
                 $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                     'land_account_cash' => $land_account_cash_charges_process,
@@ -312,7 +312,7 @@ class Loan extends BaseController
             $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
             if ($charges_transfer != 0) {
                 $price = str_replace(',', '', $charges_transfer);
-                $land_account_cash_charges_transfer = $land_account_name->land_account_cash + intval($price);
+                $land_account_cash_charges_transfer = $land_account_name->land_account_cash + floatval($price);
 
                 $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                     'land_account_cash' => $land_account_cash_charges_transfer,
@@ -337,7 +337,7 @@ class Loan extends BaseController
             $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
             if ($charges_etc != 0) {
                 $price = str_replace(',', '', $charges_etc);
-                $land_account_cash_charges_etc = $land_account_name->land_account_cash + intval($price);
+                $land_account_cash_charges_etc = $land_account_name->land_account_cash + floatval($price);
 
                 $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                     'land_account_cash' => $land_account_cash_charges_etc,
@@ -484,7 +484,7 @@ class Loan extends BaseController
         $charges_process_old = str_replace(',', '', $data->loan_payment_process);
         if ($charges_process_old != $charges_process) {
             if ($charges_process_old != 0) {
-                $land_account_cash_charges_process_old = $land_account_name_old->land_account_cash - intval($charges_process_old);
+                $land_account_cash_charges_process_old = $land_account_name_old->land_account_cash - floatval($charges_process_old);
 
                 $this->SettingLandModel->updateSettingLandByID($land_account_name_old->id, [
                     'land_account_cash' => $land_account_cash_charges_process_old,
@@ -506,7 +506,7 @@ class Loan extends BaseController
 
             $land_account_name = $this->SettingLandModel->getSettingLandByID($data->land_account_id);
             $price = str_replace(',', '', $charges_process);
-            $land_account_cash_charges_process = $land_account_name->land_account_cash + intval($price);
+            $land_account_cash_charges_process = $land_account_name->land_account_cash + floatval($price);
 
             $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                 'land_account_cash' => $land_account_cash_charges_process,
@@ -531,7 +531,7 @@ class Loan extends BaseController
         if ($charges_transfer_old != $charges_transfer) {
             if ($charges_transfer_old != 0) {
                 $land_account_name = $this->SettingLandModel->getSettingLandByID($data->land_account_id);
-                $land_account_cash_charges_transfer_old = $land_account_name->land_account_cash - intval($charges_transfer_old);
+                $land_account_cash_charges_transfer_old = $land_account_name->land_account_cash - floatval($charges_transfer_old);
 
                 $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                     'land_account_cash' => $land_account_cash_charges_transfer_old,
@@ -553,7 +553,7 @@ class Loan extends BaseController
 
             $land_account_name = $this->SettingLandModel->getSettingLandByID($data->land_account_id);
             $price = str_replace(',', '', $charges_transfer);
-            $land_account_cash_charges_transfer = $land_account_name->land_account_cash + intval($price);
+            $land_account_cash_charges_transfer = $land_account_name->land_account_cash + floatval($price);
 
             $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                 'land_account_cash' => $land_account_cash_charges_transfer,
@@ -577,7 +577,7 @@ class Loan extends BaseController
         if ($loan_payment_other_old != $charges_etc) {
             if ($loan_payment_other_old != 0) {
                 $land_account_name = $this->SettingLandModel->getSettingLandByID($data->land_account_id);
-                $land_account_cash_loan_payment_other_old = $land_account_name->land_account_cash - intval($loan_payment_other_old);
+                $land_account_cash_loan_payment_other_old = $land_account_name->land_account_cash - floatval($loan_payment_other_old);
 
                 $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                     'land_account_cash' => $land_account_cash_loan_payment_other_old,
@@ -599,7 +599,7 @@ class Loan extends BaseController
 
             $land_account_name = $this->SettingLandModel->getSettingLandByID($data->land_account_id);
             $price = str_replace(',', '', $charges_etc);
-            $land_account_cash_charges_etc = $land_account_name->land_account_cash + intval($price);
+            $land_account_cash_charges_etc = $land_account_name->land_account_cash + floatval($price);
 
             $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                 'land_account_cash' => $land_account_cash_charges_etc,
@@ -702,7 +702,7 @@ class Loan extends BaseController
             $land_account_name = $this->SettingLandModel->getSettingLandByID($dataLoanByCode->land_account_id);
             $charges_process = str_replace(',', '', $dataLoanByCode->loan_payment_process);
 
-            $land_account_cash_charges_process = $land_account_name->land_account_cash - intval($charges_process);
+            $land_account_cash_charges_process = $land_account_name->land_account_cash - floatval($charges_process);
 
             $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                 'land_account_cash' => $land_account_cash_charges_process,
@@ -726,7 +726,7 @@ class Loan extends BaseController
             $charges_transfer = str_replace(',', '', $dataLoanByCode->loan_tranfer);
 
             $land_account_name = $this->SettingLandModel->getSettingLandByID($dataLoanByCode->land_account_id);
-            $land_account_cash_charges_transfer = $land_account_name->land_account_cash - intval($charges_transfer);
+            $land_account_cash_charges_transfer = $land_account_name->land_account_cash - floatval($charges_transfer);
 
             $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                 'land_account_cash' => $land_account_cash_charges_transfer,
@@ -750,7 +750,7 @@ class Loan extends BaseController
             $loan_payment_other = str_replace(',', '', $dataLoanByCode->loan_payment_other);
 
             $land_account_name = $this->SettingLandModel->getSettingLandByID($dataLoanByCode->land_account_id);
-            $land_account_cash_loan_payment_other = $land_account_name->land_account_cash - intval($loan_payment_other);
+            $land_account_cash_loan_payment_other = $land_account_name->land_account_cash - floatval($loan_payment_other);
 
             $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                 'land_account_cash' => $land_account_cash_loan_payment_other,
@@ -932,6 +932,7 @@ class Loan extends BaseController
             $data_loan = [
                 'loan_close_payment' => $close_loan_payment,
                 'loan_status' => 'CLOSE_STATE',
+                'loan_date_close' => date("Y-m-d"),
                 'updated_at' => $buffer_datetime
             ];
 

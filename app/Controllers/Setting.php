@@ -283,7 +283,7 @@ class Setting extends BaseController
                 if ($this->request->getVar('LandAccountId') == $land_account->id) {
                     $name = $land_account->land_account_name;
                     $price = str_replace(',', '', $this->request->getVar('land_account_money_plus'));
-                    $land_account_cash_receipt = $land_account->land_account_cash + intval($price);
+                    $land_account_cash_receipt = $land_account->land_account_cash + floatval($price);
 
                     $SettingLandModel->updateSettingLandByID($this->request->getVar('LandAccountId'), [
                         'land_account_cash' => $land_account_cash_receipt,
@@ -366,7 +366,7 @@ class Setting extends BaseController
                 if ($this->request->getVar('LandAccountId') == $land_account->id) {
                     $name = $land_account->land_account_name;
                     $price = str_replace(',', '', $this->request->getVar('land_account_money_minus'));
-                    $land_account_cash_receipt = $land_account->land_account_cash - intval($price);
+                    $land_account_cash_receipt = $land_account->land_account_cash - floatval($price);
 
                     $SettingLandModel->updateSettingLandByID($this->request->getVar('LandAccountId'), [
                         'land_account_cash' => $land_account_cash_receipt,
@@ -463,7 +463,7 @@ class Setting extends BaseController
                     // px($this->request->getVar('LandAccountId').'ss'.$cashflow->id);
                     $name = $land_account->land_account_name;
                     $price_minus = str_replace(',', '', $this->request->getVar('transfer_money_land_account'));
-                    $land_account_minus = $land_account->land_account_cash - intval($price_minus);
+                    $land_account_minus = $land_account->land_account_cash - floatval($price_minus);
 
                     $detail_minus = 'โอนเงินไปยัง ' . $land_account_cashs->land_account_name;
                     $detail_cash = 'รับโอนจาก ' . $land_account->land_account_name;
@@ -495,7 +495,7 @@ class Setting extends BaseController
                     // px($land_account_cashs);
                     if ($this->request->getVar('land_account_name') == $land_account_cashs->id) {
                         $price_plus = str_replace(',', '', $this->request->getVar('transfer_money_land_account'));
-                        $land_account_plus = $land_account_cashs->land_account_cash + intval($price_plus);
+                        $land_account_plus = $land_account_cashs->land_account_cash + floatval($price_plus);
 
                         $SettingLandModel->updateSettingLandByID($this->request->getVar('land_account_name'), [
                             'land_account_cash' => $land_account_plus,
