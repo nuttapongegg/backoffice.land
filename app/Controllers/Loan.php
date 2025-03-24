@@ -7,6 +7,7 @@ date_default_timezone_set('Asia/Jakarta');
 use App\Controllers\BaseController;
 use App\Models\RebuildModel;
 use Aws\S3\S3Client;
+use \GuzzleHttp\Client;
 
 use App\Models\CustomerModel;
 use App\Models\EmployeeModel;
@@ -21,6 +22,7 @@ class Loan extends BaseController
     private EmployeeLogModel $EmployeeLogModel;
     private LoanModel $LoanModel;
     private SettingLandModel $SettingLandModel;
+    private $http;
 
     private string $s3_bucket;
     private string $s3_secret_key;
@@ -49,6 +51,7 @@ class Loan extends BaseController
         $this->EmployeeLogModel = new EmployeeLogModel();
         $this->LoanModel = new LoanModel();
         $this->SettingLandModel = new SettingLandModel();
+        $this->http = new Client();
 
         // Environment Variables
         $this->s3_bucket = getenv('S3_BUCKET') ?: '';
@@ -3909,6 +3912,107 @@ class Loan extends BaseController
         <script src="' . base_url('/assets/app/js/loan/loan_history.js?v=' . time()) . '"></script> 
     ';
 
+        $carUrl = "https://stock.evxspst.com/api/datadocday";
+        $landUrl = "https://land.evxspst.com//api/landdatadocday";
+        $carLoanUrl = "https://stock.evxspst.com/api/financedatadocday";
+
+        $response_carUrl = $this->http->get($carUrl);
+        $data_carUrl = json_decode($response_carUrl->getBody(), true);
+        $car_income = (int) $data_carUrl['data']['income'] * 35;
+        $car_expense = (int) $data_carUrl['data']['expense'] * 35;
+        $car_profit = (int) $data_carUrl['data']['profit'] * 35;
+        $car_cashflow = (int) $data_carUrl['data']['cash_flow'] * 35;
+
+        $response_landUrl = $this->http->get($landUrl);
+        $data_landUrl = json_decode($response_landUrl->getBody(), true);
+        $land_income = (int) $data_landUrl['data']['income'];
+        $land_expense = (int) $data_landUrl['data']['expense'];
+        $land_profit = (int) $data_landUrl['data']['profit'];
+        $land_cashflow = (int) $data_landUrl['data']['cash_flow'];
+
+        $response_carLoanUrl = $this->http->get($carLoanUrl);
+        $datacarLoanUrl = json_decode($response_carLoanUrl->getBody(), true);
+        $carLoan_income = (int) $datacarLoanUrl['data']['income'] * 35;
+        $carLoan_expense = (int) $datacarLoanUrl['data']['expense'] * 35;
+        $carLoan_profit = (int) $datacarLoanUrl['data']['profit'] * 35;
+        $carLoan_cashflow = (int) $datacarLoanUrl['data']['cash_flow'] * 35;
+
+        $html_summarizeLoan =
+            '<div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body mt-2 mb-3">
+                    <div class="row">
+                        <div class="col" style="flex-grow: 1;">
+                            <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
+                                <p class="mb-0 font-weight-semibold tx-18">รายรับ/รายจ่ายประจำวัน เว็บรถ(EVX)</p>
+                                <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">วันที่ ' . date('Y-m-d', strtotime($data_carUrl['data']['date'])) . '</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">รายรับ ' . number_format($car_income, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">รายจ่าย ' . number_format($car_expense, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">กำไร ' . number_format($car_profit, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">เงินในบัญชี ' .  number_format($car_cashflow, 2) . 'บาท</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col" style="flex-grow: 1;">
+                             <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
+                                <p class="mb-0 font-weight-semibold tx-18">รายรับ/รายจ่ายประจำวัน ที่ดิน(land)</p>
+                                <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">วันที่ ' . date('Y-m-d', strtotime($data_carUrl['data']['date'])) . '</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">รายรับ ' . number_format($land_income, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">รายจ่าย ' . number_format($land_expense, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">กำไร ' . number_format($land_profit, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">เงินในบัญชี ' .  number_format($land_cashflow, 2) . 'บาท</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col" style="flex-grow: 1;">
+                             <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
+                                <p class="mb-0 font-weight-semibold tx-18">รายรับ/รายจ่ายประจำวัน สินเชื่อรถ(car evx loan)</p>
+                                <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">วันที่ ' . date('Y-m-d', strtotime($data_carUrl['data']['date'])) . '</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">รายรับ ' . number_format($carLoan_income, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">รายจ่าย ' . number_format($carLoan_expense, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">กำไร ' . number_format($carLoan_profit, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">เงินในบัญชี ' .  number_format($carLoan_cashflow, 2) . 'บาท</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>*หมายเหตุหากต้องการเงินกีบให้คูณ 650</div>
+                <div>*หมายเหตุหากต้องการเงินusให้หาร 35</div>
+            </div>
+        </div>
+    </div>
+        ';
+
+        $data['html_summarizeLoan'] = $html_summarizeLoan;
         // $data['employee'] = $this->EmployeeModel->getEmployeeByID(session()->get('employeeID'));
         $data['land_accounts'] = $this->SettingLandModel->getSettingLandAll();
         $data['loan_on'] = $this->LoanModel->getAllDataLoanOn();
