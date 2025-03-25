@@ -3916,6 +3916,8 @@ class Loan extends BaseController
         $carUrl = "https://stock.evxspst.com/api/datadocday";
         $landUrl = "https://land.evxspst.com//api/landdatadocday";
         $carLoanUrl = "https://stock.evxspst.com/api/financedatadocday";
+        $apartMentsUrl = "https://apart.evxspst.com/api/apartdatadocday";
+        $farmUrl = "https://farm.evxspst.com/api/farmdatadocday";
 
         $response_carUrl = $this->http->get($carUrl);
         $data_carUrl = json_decode($response_carUrl->getBody(), true);
@@ -3937,6 +3939,24 @@ class Loan extends BaseController
         $carLoan_expense = (int) $datacarLoanUrl['data']['expense'] * 35;
         $carLoan_profit = (int) $datacarLoanUrl['data']['profit'] * 35;
         $carLoan_cashflow = (int) $datacarLoanUrl['data']['cash_flow'] * 35;
+
+        $response_apartMentsUrl = $this->http->get($apartMentsUrl);
+        $apartMentsLoanUrl = json_decode($response_apartMentsUrl->getBody(), true);
+        $apartMents_income_bath = (int) $apartMentsLoanUrl['data']['income_baht'];
+        $apartMents_income_kip = (int) $apartMentsLoanUrl['data']['income_kip'];
+        $apartMents_expense_bath = (int) $apartMentsLoanUrl['data']['expense_baht'];
+        $apartMents_expense_kip = (int) $apartMentsLoanUrl['data']['expense_kip'];
+        $apartMents_profit_bath = (int) $apartMentsLoanUrl['data']['profit_baht'];
+        $apartMents_profit_kip = (int) $apartMentsLoanUrl['data']['profit_kip'];
+        $apartMents_cashflow_bath = (int) $apartMentsLoanUrl['data']['cash_flow_baht'];
+        $apartMents_cashflow_kip = (int) $apartMentsLoanUrl['data']['cash_flow_kip'];
+
+        $response_farmUrl = $this->http->get($farmUrl);
+        $farmLoanUrl = json_decode($response_farmUrl->getBody(), true);
+        $farm_income = (int) $farmLoanUrl['data']['income'] * 35;
+        $farm_expense = (int) $farmLoanUrl['data']['expense'] * 35;
+        $farm_profit = (int) $farmLoanUrl['data']['profit'] * 35;
+        $farm_cashflow = (int) $farmLoanUrl['data']['cash_flow'] * 35;
 
         $html_summarizeLoan =
             '<div class="row">
@@ -4004,7 +4024,46 @@ class Loan extends BaseController
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="col" style="flex-grow: 1;">
+                             <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
+                                <p class="mb-0 font-weight-semibold tx-18">รายรับ/รายจ่ายประจำวัน อพาร์ทเม้นท์(apartments evx)</p>
+                                <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">วันที่ ' . date('Y-m-d', strtotime($data_carUrl['data']['date'])) . '</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">รายรับ ' . number_format($apartMents_income_bath, 2) . 'บาท  /  ' . number_format($apartMents_income_kip, 2) . 'กีบ</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">รายจ่าย ' . number_format($apartMents_expense_bath, 2) . 'บาท  /  ' . number_format($apartMents_expense_kip, 2) . 'กีบ</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">กำไร ' . number_format($apartMents_profit_bath, 2) . 'บาท  /  ' . number_format($apartMents_profit_kip, 2) . 'กีบ</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">เงินในบัญชี ' .  number_format($apartMents_cashflow_bath, 2) . 'บาท  /  ' . number_format($apartMents_cashflow_kip, 2) . 'กีบ</span>
+                                </div>
+                            </div>
+                        </div>
+                          <div class="col" style="flex-grow: 1;">
+                             <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
+                                <p class="mb-0 font-weight-semibold tx-18">รายรับ/รายจ่ายประจำวัน ฟาร์ม(farm evx)</p>
+                                <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">วันที่ ' . date('Y-m-d', strtotime($data_carUrl['data']['date'])) . '</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">รายรับ ' . number_format($farm_income, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">รายจ่าย ' . number_format($farm_expense, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">กำไร ' . number_format($farm_profit, 2) . 'บาท</span>
+                                </div>
+                                 <div class="mt-2">
+                                     <span class="mb-0 font-weight-semibold tx-15">เงินในบัญชี ' .  number_format($farm_cashflow, 2) . 'บาท</span>
+                                </div>
+                            </div>
+                        </div>
                 </div>
                 <div>*หมายเหตุหากต้องการเงินกีบให้คูณ 650</div>
                 <div>*หมายเหตุหากต้องการเงินusให้หาร 35</div>
