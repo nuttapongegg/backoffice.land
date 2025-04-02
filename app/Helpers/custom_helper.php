@@ -526,3 +526,28 @@ function send_line_message($token, $message)
         // echo $result;
     }
 }
+
+function get_line_access_token()
+{
+    $clientId = getenv('LINE_CLIENT_ID');
+    $clientSecret = getenv('LINE_CLIENT_SECRET');
+
+    $client = \Config\Services::curlrequest();
+    $response = $client->post("https://api.line.me/v2/oauth/accessToken", [
+        'headers' => [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ],
+        'form_params' => [
+            'grant_type' => 'client_credentials',
+            'client_id' => $clientId,
+            'client_secret' => $clientSecret
+        ]
+    ]);
+
+    if ($response->getStatusCode() == 200) {
+        $tokenData = json_decode($response->getBody(), true);
+        return $tokenData['access_token']; // คืนค่า Token ไปใช้
+    }
+
+    return false;
+}
