@@ -3894,12 +3894,14 @@ class Loan extends BaseController
     {
 
         $message_back = $this->LoanModel->getAllDataLoanOn();
+        $loan_close = $this->LoanModel->DataLoanHistoryQueryAI();
 
         $status = 200;
         $response = [
             'code' => $status,
             'message' => "",
-            'data' =>$message_back
+            'data' =>$message_back,
+            'data_close_loan' => $loan_close,
         ];
 
         return $this->response
