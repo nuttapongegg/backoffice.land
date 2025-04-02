@@ -61,7 +61,6 @@ if (!function_exists('dateThai')) {
 
         return "$strDay $strMonthThai $strYear, $strHour:$strMinute";
     }
-
 }
 
 if (!function_exists('dateThaiNoTime')) {
@@ -79,7 +78,6 @@ if (!function_exists('dateThaiNoTime')) {
 
         return "$strDay $strMonthThai $strYear";
     }
-
 }
 
 if (!function_exists('dateThaiDM')) {
@@ -97,7 +95,6 @@ if (!function_exists('dateThaiDM')) {
 
         return "$strDay $strMonthThai $strYear";
     }
-
 }
 
 if (!function_exists('monthThai')) {
@@ -116,7 +113,6 @@ if (!function_exists('monthThai')) {
 
         return "$strMonthThai";
     }
-
 }
 
 if (!function_exists('dayThai')) {
@@ -135,7 +131,6 @@ if (!function_exists('dayThai')) {
 
         return "$strDay";
     }
-
 }
 
 if (!function_exists('yearThai')) {
@@ -158,21 +153,22 @@ if (!function_exists('yearThai')) {
 
 if (!function_exists('textFormat')) {
 
-    function textFormat( $text = '', $pattern = '', $ex = '' ) {
-        $cid = ( $text == '' ) ? '0000000000000' : $text;
-        $pattern = ( $pattern == '' ) ? '_-____-_____-__-_' : $pattern;
-        $p = explode( '-', $pattern );
-        $ex = ( $ex == '' ) ? '-' : $ex;
+    function textFormat($text = '', $pattern = '', $ex = '')
+    {
+        $cid = ($text == '') ? '0000000000000' : $text;
+        $pattern = ($pattern == '') ? '_-____-_____-__-_' : $pattern;
+        $p = explode('-', $pattern);
+        $ex = ($ex == '') ? '-' : $ex;
         $first = 0;
         $last = 0;
-        for ( $i = 0; $i <= count( $p ) - 1; $i++ ) {
-           $first = $first + $last;
-           $last = strlen( $p[$i] );
-           $returnText[$i] = substr( $cid, $first, $last );
+        for ($i = 0; $i <= count($p) - 1; $i++) {
+            $first = $first + $last;
+            $last = strlen($p[$i]);
+            $returnText[$i] = substr($cid, $first, $last);
         }
-      
-        return implode( $ex, $returnText );
-     }
+
+        return implode($ex, $returnText);
+    }
 }
 
 if (!function_exists('dateDifference')) {
@@ -186,7 +182,6 @@ if (!function_exists('dateDifference')) {
 
         return $interval->format($differenceFormat);
     }
-
 }
 
 if (!function_exists('minutesDifference')) {
@@ -201,7 +196,6 @@ if (!function_exists('minutesDifference')) {
 
         return ($hours * 60 + $minutes);
     }
-
 }
 
 if (!function_exists('pr')) {
@@ -212,7 +206,6 @@ if (!function_exists('pr')) {
         print_r($data);
         echo '</pre>';
     }
-
 }
 
 if (!function_exists('px')) {
@@ -224,7 +217,6 @@ if (!function_exists('px')) {
         echo '</pre>';
         exit;
     }
-
 }
 
 if (!function_exists('dr')) {
@@ -235,7 +227,6 @@ if (!function_exists('dr')) {
         var_dump($data);
         echo '</pre>';
     }
-
 }
 
 if (!function_exists('dx')) {
@@ -247,7 +238,6 @@ if (!function_exists('dx')) {
         echo '</pre>';
         exit;
     }
-
 }
 
 if (!function_exists('ip_info')) {
@@ -410,7 +400,7 @@ if (!function_exists('numToThaiBath')) {
 //PUSHER
 function getPusher()
 {
-	return new Pusher(
+    return new Pusher(
         getenv('PUSHER_KEY'),
         getenv('PUSHER_SECRET'),
         getenv('PUSHER_APP_ID'),
@@ -421,63 +411,63 @@ function getPusher()
 //DocumentSetUp
 function getDocumentSetUp()
 {
-	$DocumentSetUpModel = new \App\Models\DocumentSetUpModel();
-	// $data['DocumentSetUp'] = $DocumentSetUpModel->getDocumentSetUpAll();
-	// print_r($data['DocumentSetUp']); exit();
-	return $data['DocumentSetUp'] = $DocumentSetUpModel->getDocumentSetUpAll();
+    $DocumentSetUpModel = new \App\Models\DocumentSetUpModel();
+    // $data['DocumentSetUp'] = $DocumentSetUpModel->getDocumentSetUpAll();
+    // print_r($data['DocumentSetUp']); exit();
+    return $data['DocumentSetUp'] = $DocumentSetUpModel->getDocumentSetUpAll();
 }
 
 //CashFlow
 function getCashFlow()
 {
     $CashFlowModel = new \App\Models\CashFlowModel();
-	return $data['cashflows'] = $CashFlowModel->getCashFlowAll();
+    return $data['cashflows'] = $CashFlowModel->getCashFlowAll();
 }
 
 //car_logger_store
 function car_logger_store($data)
 {
-	$db = \Config\Database::connect();
+    $db = \Config\Database::connect();
 
-	$builder = $db->table('car_logs');
+    $builder = $db->table('car_logs');
 
-	$builder->insert([
-		'car_event_id' => get_car_event_id($data['event']),
-		'car_detail' => $data['detail'],
-		'ip' => $data['ip'],
-		'car_log_code' => $data['car_stock_code'],
-		'username' => $data['username']
-	]);
+    $builder->insert([
+        'car_event_id' => get_car_event_id($data['event']),
+        'car_detail' => $data['detail'],
+        'ip' => $data['ip'],
+        'car_log_code' => $data['car_stock_code'],
+        'username' => $data['username']
+    ]);
 }
 
 //car_event
 function get_car_event_id($event)
 {
-	$car_event_id = 0;
+    $car_event_id = 0;
 
-	switch ($event) {
+    switch ($event) {
 
-		case 'เพิ่ม':
-			$car_event_id = 1;
-			break;
+        case 'เพิ่ม':
+            $car_event_id = 1;
+            break;
 
-		case 'อัพเดท':
-			$car_event_id = 2;
-			break;
+        case 'อัพเดท':
+            $car_event_id = 2;
+            break;
 
-		case 'ลบ':
-			$car_event_id = 3;
-			break;
+        case 'ลบ':
+            $car_event_id = 3;
+            break;
 
-		case 'ขาย':
-			$car_event_id = 4;
-			break;
+        case 'ขาย':
+            $car_event_id = 4;
+            break;
 
-		default:
-			$car_event_id = 5;
-	}
+        default:
+            $car_event_id = 5;
+    }
 
-	return $car_event_id;
+    return $car_event_id;
 }
 
 function notify($token,$data)
@@ -503,4 +493,36 @@ function notify($token,$data)
     // }
     //Close connection
     curl_close($chOne);
+}
+
+function send_line_message($token, $message)
+{
+    $data = [
+        'to' => 'C42b75bab9b01cb8e0a78d76002f81fe0', // ใส่ ID ของผู้ใช้หรือกลุ่ม
+        'messages' => [[
+            'type' => 'text',
+            'text' => $message
+        ]]
+    ];
+
+    $headers = [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $token
+    ];
+
+    $ch = curl_init("https://api.line.me/v2/bot/message/push");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $result = curl_exec($ch);
+    curl_close($ch);
+
+    if (!$result) {
+        echo 'Error: "' . curl_error($ch) . '" - Code: ' . curl_errno($ch);
+    } else {
+        // Optional: You can log the response from LINE API for debugging
+        // echo $result;
+    }
 }

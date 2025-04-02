@@ -79,6 +79,20 @@ class LoanModel
         return $builder->getResult();
     }
 
+    public function getAllDataLoanMessageAPI()
+    {
+        $sql = "SELECT  loan_code, loan_customer, loan_address, loan_payment_month,
+        (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
+        (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period
+        FROM loan
+        WHERE loan.loan_status = 'ON_STATE' ORDER BY loan.id DESC;
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+
     public function getAllDataLoanByCode($loan_code)
     {
         $sql = "SELECT * ,
