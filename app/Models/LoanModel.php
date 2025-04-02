@@ -986,4 +986,38 @@ class LoanModel
         $builder = $this->db->query($sql);
         return $builder->getResult();
     }
+
+    public function DataLoanHistoryQueryAI()
+    {
+        $builder = $this->db->table('loan');
+        $builder->select(" 
+         loan.loan_code,
+         loan.loan_customer,
+         loan.loan_address, 
+         loan.loan_employee, 
+         loan.loan_number,
+         loan.loan_area,
+         loan.loan_date_close,
+         loan.loan_date_promise,
+         loan.loan_summary_no_vat,
+         loan.loan_payment_sum_installment,
+         loan.loan_payment_year_counter,
+         loan.loan_payment_interest,
+         loan.loan_payment_month,
+         loan.loan_payment_process,
+         loan.loan_type,
+         loan.loan_tranfer,
+         loan.loan_payment_other,
+         loan.loan_status,
+         loan.loan_remnark,
+         loan.loan_summary_all,
+         loan.loan_sum_interest,
+         loan.loan_close_payment,
+         (SELECT COUNT(loan_payment_type) FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code) AS loan_payment_type,
+         (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
+         (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date
+        ");
+        $builder->where("loan_status = 'CLOSE_STATE'");
+        return $builder->get()->getResult();
+    }
 }
