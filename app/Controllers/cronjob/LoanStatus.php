@@ -13,7 +13,7 @@ class LoanStatus extends BaseController
 
     public function run()
     {
-        set_time_limit(120);
+        set_time_limit(300);
         $this->line_message_api();
     }
 
@@ -26,6 +26,9 @@ class LoanStatus extends BaseController
 
             $nofity_Day = $OverdueStatusModel->getOverdueStatusAll();
             if ($nofity_Day->token_loan_status == 1) {
+
+                // **ดึง Token ล่าสุดจากฐานข้อมูล**
+                $token = $nofity_Day->token_loan;
 
                 foreach ($LoanModel->getAllDataLoanMessageAPI() as $dataLoan) {
 
@@ -43,8 +46,6 @@ class LoanStatus extends BaseController
 
                     $date_sum = round($datediff / (60 * 60 * 24));
 
-                    $token = 'DbYhN3QORqGRc2bPDuQOKLgnvfmvqrcrQlx695CqfNavutEfYA0BtVH0cVUrXaLPOALegu81juvvRNd/TRF+teZaIcSkrs8Xprrgafeg7Zs+Ayu/Fg+x0V+/+Pk3DLYQOn4CoxVc2kgkJ2NMqFFKggdB04t89/1O/w1cDnyilFU=';
-
                     $Message_Nofity = '';
 
                     if ($date_sum == 0) {
@@ -55,7 +56,7 @@ class LoanStatus extends BaseController
                             'วันครบกำหนด ' . dateThaiDM($tomorrow) . "\n" .
                             'ยอดชำระ ' . number_format($dataLoan->loan_payment_month, 2) . ' บาท' . "\n" .
                             'ชำระได้ที่ : ' . base_url('/loan/detail') . '/' . $dataLoan->loan_code;
-                    } elseif ($date_sum >= $nofity_Day->token_overdue_loan and $nofity_Day->token_overdue_loan != 0) {
+                    } elseif ($date_sum >= $nofity_Day->token_overdue_loan && $nofity_Day->token_overdue_loan != 0) {
                         $Message_Nofity = 'สินเชื่อ ' . $dataLoan->loan_code . "\n" .
                             'ลูกค้า ' . $dataLoan->loan_customer . "\n" .
                             'สถานที่ ' . $dataLoan->loan_address . "\n" .
@@ -66,7 +67,26 @@ class LoanStatus extends BaseController
                             'ชำระได้ที่ : ' . base_url('/loan/detail') . '/' . $dataLoan->loan_code;
                     }
 
-                    send_line_message($token, $Message_Nofity);
+                    // ส่งข้อความผ่าน LINE API
+                    $response = send_line_message($token, $Message_Nofity);
+                    if ($response === false) {
+                        log_message('info', 'Attempting to refresh LINE Access Token...');
+                        $newToken = get_line_access_token();
+
+                        if ($newToken) {
+                            $token = $newToken; // อัปเดต Token ใหม่
+                            $OverdueStatusModel->updateOverdueStatus([
+                                'token_loan' => $newToken
+                            ]);
+
+                            // ลองส่งข้อความอีกครั้งด้วย Token ใหม่
+                            if (!send_line_message($token, $Message_Nofity)) {
+                                log_message('error', 'Failed to send LINE message for loan code: ' . $dataLoan->loan_code);
+                            }
+                        } else {
+                            log_message('error', 'Failed to refresh LINE access token.');
+                        }
+                    }
                     sleep(1);
                 }
             }
