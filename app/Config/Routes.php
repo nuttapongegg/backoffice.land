@@ -117,9 +117,9 @@ $routes->group('api', ['namespace' => 'App\Controllers\api'], function ($routes)
     $routes->get('landdatadocday', 'Loan::LandDataDocDay');
 });
 
-$routes->group('cronjob', ['namespace' => 'App\Controllers\cronjob'], function ($routes) {
-    $routes->get('loanstatus', 'LoanStatus::run');
-});
+// $routes->group('cronjob', ['namespace' => 'App\Controllers\cronjob'], function ($routes) {
+//     $routes->get('loanstatus', 'LoanStatus::run');
+// });
 
 /*
  * --------------------------------------------------------------------
@@ -140,7 +140,7 @@ $routes->cli('cronjob/land_logs', 'Landlogs::land_logs', ['namespace' => 'App\Co
 
 
 // ส่งแจ้งเตือนสินเชื่อ
-// $routes->cli('cronjob/loanstatus', 'LoanStatus::run', ['namespace' => 'App\Controllers\cronjob']);
+$routes->cli('cronjob/loanstatus', 'LoanStatus::run', ['namespace' => 'App\Controllers\cronjob']);
 
 /*
  * --------------------------------------------------------------------

@@ -13,7 +13,7 @@ class LoanStatus extends BaseController
 
     public function run()
     {
-        set_time_limit(300);
+        set_time_limit(180);
         $this->line_message_api();
     }
 
@@ -67,9 +67,10 @@ class LoanStatus extends BaseController
                             'ชำระได้ที่ : ' . base_url('/loan/detail') . '/' . $dataLoan->loan_code;
                     }
 
+                    if($Message_Nofity != ''){
                     // ส่งข้อความผ่าน LINE API
                     $response = send_line_message($token, $Message_Nofity);
-                    if ($response === false) {
+                    if ($response['status'] === 401) {
                         log_message('info', 'Attempting to refresh LINE Access Token...');
                         $newToken = get_line_access_token();
 
@@ -80,14 +81,18 @@ class LoanStatus extends BaseController
                             ]);
 
                             // ลองส่งข้อความอีกครั้งด้วย Token ใหม่
-                            if (!send_line_message($token, $Message_Nofity)) {
+                            $retryResponse = send_line_message($token, $Message_Nofity);
+                            if ($retryResponse['status'] !== 200) {
                                 log_message('error', 'Failed to send LINE message for loan code: ' . $dataLoan->loan_code);
                             }
                         } else {
                             log_message('error', 'Failed to refresh LINE access token.');
                         }
+                    } elseif ($response['status'] !== 200) {
+                        log_message('error', 'Failed to send LINE message for loan code: ' . $dataLoan->loan_code);
                     }
                     sleep(1);
+                    }
                 }
             }
         } catch (\Exception $e) {
