@@ -68,7 +68,8 @@ class LoanStatus extends BaseController
                     }
 
                     // ส่งข้อความผ่าน LINE API
-                    if (!send_line_message($token, $Message_Nofity)) {
+                    $response = send_line_message($token, $Message_Nofity);
+                    if ($response === false) {
                         log_message('info', 'Attempting to refresh LINE Access Token...');
                         $newToken = get_line_access_token();
 

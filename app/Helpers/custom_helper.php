@@ -517,14 +517,25 @@ function send_line_message($token, $message)
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $result = curl_exec($ch);
-    curl_close($ch);
 
     if (!$result) {
-        echo 'Error: "' . curl_error($ch) . '" - Code: ' . curl_errno($ch);
-    } else {
-        // Optional: You can log the response from LINE API for debugging
-        // echo $result;
+        log_message('error', 'cURL Error in send_line_message: ' . curl_error($ch));
+        curl_close($ch);
+        return false; // ส่งข้อความล้มเหลว
     }
+
+    curl_close($ch);
+
+    // แปลงผลลัพธ์เป็น JSON
+    $response = json_decode($result, true);
+
+    // ตรวจสอบว่ามีข้อผิดพลาดใน Response หรือไม่
+    if (isset($response['message']) && strpos($response['message'], 'Invalid access token') !== false) {
+        log_message('error', 'LINE API Error: Invalid access token detected.');
+        return false; // Token ไม่ valid
+    }
+
+    return true; // ส่งข้อความสำเร็จ
 }
 
 function get_line_access_token()
