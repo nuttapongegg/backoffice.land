@@ -1018,6 +1018,7 @@ class LoanModel
          (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date
         ");
         $builder->where("loan_status = 'CLOSE_STATE'");
+        $builder->orderBy("loan_code", "DESC");
         return $builder->get()->getResult();
     }
 }
