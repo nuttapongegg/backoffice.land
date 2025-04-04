@@ -29,6 +29,7 @@ class LoanStatus extends BaseController
 
                 // **ดึง Token ล่าสุดจากฐานข้อมูล**
                 $token = $nofity_Day->token_loan;
+                $loanMessages = [];
 
                 foreach ($LoanModel->getAllDataLoanMessageAPI() as $dataLoan) {
 
@@ -46,57 +47,182 @@ class LoanStatus extends BaseController
 
                     $date_sum = round($datediff / (60 * 60 * 24));
 
-                    $Message_Nofity = '';
-
                     if ($date_sum == 0) {
-                        $Message_Nofity = 'สินเชื่อ ' . $dataLoan->loan_code . "\n" .
-                            'ลูกค้า ' . $dataLoan->loan_customer . "\n" .
-                            'สถานที่ ' . $dataLoan->loan_address . "\n" .
-                            'ยอดชำระเงินประจำงวดที่ ' . $dataLoan->loan_period . "\n" .
-                            'วันครบกำหนด ' . dateThaiDM($tomorrow) . "\n" .
-                            'ยอดชำระ ' . number_format($dataLoan->loan_payment_month, 2) . ' บาท' . "\n" .
-                            'ชำระได้ที่ : ' . base_url('/loan/detail') . '/' . $dataLoan->loan_code;
+                        // กรณีครบกำหนดวันนี้
+                        $loanMessages[] = [
+                            "loan_code" => $dataLoan->loan_code,
+                            "customer" => $dataLoan->loan_customer,
+                            "due_date" => dateThaiDM($tomorrow),
+                            "amount" => number_format($dataLoan->loan_payment_month, 2),
+                            "status" => "due_today",  // เพิ่มสถานะ
+                            "url" => 'https://land.evxspst.com/loan/detail' . '/' . $dataLoan->loan_code
+                        ];
                     } elseif ($date_sum >= $nofity_Day->token_overdue_loan && $nofity_Day->token_overdue_loan != 0) {
-                        $Message_Nofity = 'สินเชื่อ ' . $dataLoan->loan_code . "\n" .
-                            'ลูกค้า ' . $dataLoan->loan_customer . "\n" .
-                            'สถานที่ ' . $dataLoan->loan_address . "\n" .
-                            'ยอดชำระเงินประจำงวดที่ ' . $dataLoan->loan_period . "\n" .
-                            'วันครบกำหนด ' . dateThaiDM($tomorrow) . "\n" .
-                            'ยอดชำระ ' . number_format($dataLoan->loan_payment_month, 2) . ' บาท' . "\n" .
-                            'เกินกำหนดชำระ ' . $date_sum . ' วัน' . "\n" .
-                            'ชำระได้ที่ : ' . base_url('/loan/detail') . '/' . $dataLoan->loan_code;
+                        // กรณีเลยกำหนดชำระ
+                        $loanMessages[] = [
+                            "loan_code" => $dataLoan->loan_code,
+                            "customer" => $dataLoan->loan_customer,
+                            "due_date" => dateThaiDM($tomorrow),
+                            "amount" => number_format($dataLoan->loan_payment_month, 2),
+                            "status" => "overdue",  // เพิ่มสถานะ
+                            "overdue_days" => $date_sum, // จำนวนวันที่เลยกำหนด
+                            "url" => 'https://land.evxspst.com/loan/detail' . '/' . $dataLoan->loan_code
+                        ];
                     }
+                }
 
-                    if($Message_Nofity != ''){
-                    // ส่งข้อความผ่าน LINE API
-                    $response = send_line_message($token, $Message_Nofity);
-                    if ($response['status'] === 401) {
-                        log_message('info', 'Attempting to refresh LINE Access Token...');
-                        $newToken = get_line_access_token();
+                // ถ้ามีข้อความที่ต้องส่ง
+                if (!empty($loanMessages)) {
+                    // แบ่งข้อความออกเป็นหลายกลุ่ม หากข้อมูลมากเกินไป
+                    $chunkedMessages = array_chunk($loanMessages, 12); // แบ่งข้อมูลออกเป็นกลุ่มละ 5 รายการ
 
-                        if ($newToken) {
-                            $token = $newToken; // อัปเดต Token ใหม่
-                            $OverdueStatusModel->updateOverdueStatus([
-                                'token_loan' => $newToken
-                            ]);
+                    // ส่งข้อความแต่ละกลุ่ม
+                    foreach ($chunkedMessages as $messageGroup) {
+                        $messagePayload = $this->createFlexMessage($messageGroup);  // สร้าง Flex Message
+                        $response = send_line_message($token, $messagePayload); // ส่ง Flex Message
+                        // $payloadSize = strlen(json_encode($messagePayload));
+                        // px($response); exit();
 
-                            // ลองส่งข้อความอีกครั้งด้วย Token ใหม่
-                            $retryResponse = send_line_message($token, $Message_Nofity);
-                            if ($retryResponse['status'] !== 200) {
-                                log_message('error', 'Failed to send LINE message for loan code: ' . $dataLoan->loan_code);
+                        // ตรวจสอบกรณี Token หมดอายุ
+                        if ($response['status'] === 401) {
+                            log_message('info', 'Refreshing LINE Token...');
+                            $newToken = get_line_access_token();
+                            if ($newToken) {
+                                $token = $newToken;
+                                $OverdueStatusModel->updateOverdueStatus(['token_loan' => $newToken]);
+
+                                // พยายามส่งข้อความใหม่ด้วย Token ใหม่
+                                $retryResponse = send_line_message($token, $messagePayload);
+                                if ($retryResponse['status'] !== 200) {
+                                    log_message('error', 'Failed to send LINE message after refreshing token.');
+                                }
+                            } else {
+                                log_message('error', 'Failed to refresh LINE token.');
                             }
-                        } else {
-                            log_message('error', 'Failed to refresh LINE access token.');
+                        } elseif ($response['status'] !== 200) {
+                            log_message('error', 'Failed to send LINE message.');
                         }
-                    } elseif ($response['status'] !== 200) {
-                        log_message('error', 'Failed to send LINE message for loan code: ' . $dataLoan->loan_code);
-                    }
-                    sleep(1);
                     }
                 }
             }
         } catch (\Exception $e) {
-            echo $e->getMessage() . ' ' . $e->getLine();
+            log_message('error', 'Error in LoanStatus: ' . $e->getMessage() . ' on line ' . $e->getLine());
         }
+    }
+
+    private function createFlexMessage($loanMessages)
+    {
+        $bodyContents = [];
+    
+        foreach ($loanMessages as $index => $loan) {
+            $overdueText = null;
+            if ($loan['status'] === "overdue" && isset($loan['overdue_days'])) {
+                $overdueText = [
+                    "type" => "text", 
+                    "text" => "⚠️ เกินกำหนดชำระ: " . $loan['overdue_days'] . " วัน", 
+                    "size" => "sm", 
+                    "color" => "#FF0000",
+                    "weight" => "bold"
+                ];
+            }
+    
+            $loanContent = [];
+    
+            // Loan Code พร้อมลิงก์
+            if (isset($loan['loan_code'])) {
+                $loanContent[] = [
+                    "type" => "text",
+                    "text" => "สินเชื่อ: " . $loan['loan_code'],
+                    "weight" => "bold", 
+                    "size" => "lg",
+                    "color" => "#333333"
+                ];
+                $loanContent[] = [
+                    "type" => "text",
+                    "text" => "🔗 ชำระได้ที่นี่",
+                    "size" => "sm",
+                    "color" => "#0000EE",
+                    "action" => [
+                        "type" => "uri",
+                        "label" => "View Details",
+                        "uri" => $loan['url']
+                    ]
+                ];
+            }
+    
+            $loanContent[] = [
+                "type" => "separator",
+                "margin" => "md"
+            ];
+    
+            if (isset($loan['customer'])) {
+                $loanContent[] = [
+                    "type" => "text",
+                    "text" => "👤 ลูกค้า: " . $loan['customer'],
+                    "size" => "sm",
+                    "color" => "#444444"
+                ];
+            }
+    
+            if (isset($loan['due_date'])) {
+                $loanContent[] = [
+                    "type" => "text",
+                    "text" => "📅 วันครบกำหนด: " . $loan['due_date'],
+                    "size" => "sm",
+                    "color" => "#444444"
+                ];
+            }
+
+            if (isset($loan['amount'])) {
+                $loanContent[] = [
+                    "type" => "text",
+                    "text" => "💰 ยอดชำระ : " . $loan['amount'] . " บาท",
+                    "size" => "sm",
+                    "color" => "#444444"
+                ];
+            }
+    
+            if ($overdueText !== null) {
+                $loanContent[] = [
+                    "type" => "separator",
+                    "margin" => "md"
+                ];
+                $loanContent[] = $overdueText;
+            }
+    
+            // ✅ เพิ่มเส้นคั่นใหญ่ระหว่างสินเชื่อแต่ละรายการ
+            if ($index > 0) {
+                $bodyContents[] = [
+                    "type" => "separator",
+                    "margin" => "xl",
+                    "color" => "#AAAAAA"
+                ];
+            }
+    
+            $bodyContents[] = [
+                "type" => "box",
+                "layout" => "vertical",
+                "spacing" => "sm",
+                "paddingAll" => "10px",
+                "contents" => $loanContent,
+                "backgroundColor" => "#FFFFFF",
+                "cornerRadius" => "md"
+            ];
+        }
+    
+        return [
+            "type" => "flex",
+            "altText" => "📢 แจ้งเตือนสินเชื่อ",
+            "contents" => [
+                "type" => "bubble",
+                "body" => [
+                    "type" => "box",
+                    "layout" => "vertical",
+                    "contents" => $bodyContents,
+                    "paddingAll" => "10px",
+                    "backgroundColor" => "#F5F5F5"
+                ]
+            ]
+        ];
     }
 }

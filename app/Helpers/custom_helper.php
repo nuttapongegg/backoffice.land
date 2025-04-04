@@ -505,12 +505,15 @@ function send_line_message($token, $message)
 {
     $data = [
         'to' => 'C42b75bab9b01cb8e0a78d76002f81fe0', // ใส่ ID ของผู้ใช้หรือกลุ่ม
-        'messages' => [[
-            'type' => 'text',
-            'text' => $message
-        ]]
+        'messages' => [
+            [
+                'type' => 'flex', // ส่งข้อความเป็น Flex message
+                'altText' => 'แจ้งเตือนสินเชื่อ', // ข้อความสำรองสำหรับผู้ใช้ที่ไม่รองรับ Flex
+                'contents' => $message['contents']  // เนื้อหาของ Flex message
+            ]
+        ]
     ];
-
+// px($data);
     $headers = [
         'Content-Type: application/json',
         'Authorization: Bearer ' . $token
@@ -524,6 +527,9 @@ function send_line_message($token, $message)
 
     $result = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); // ดึง HTTP Status Code
+    if ($result === false) {
+        log_message('error', 'cURL Error: ' . curl_error($ch));
+    }
     curl_close($ch);
 
     // แปลงผลลัพธ์เป็น JSON
