@@ -3902,13 +3902,42 @@ class Loan extends BaseController
         $land_accounts = $this->SettingLandModel->getSettingLandAll();
         $datas = $this->LoanModel->getAllDataLoan();
 
+
+        $loan_summary_no_vat = 0;
+        $loan_payment_sum_installment = 0;
+        $loan_payment_month = 0;
+        $sum_installment = 0;
+
+        foreach ($datas as $data) {
+            if ($data->loan_summary_no_vat != '') {
+                $loan_summary_no_vat = $loan_summary_no_vat + $data->loan_summary_no_vat;
+            }
+
+            if ($data->loan_payment_sum_installment != '') {
+                $loan_payment_sum_installment = $loan_payment_sum_installment + $data->loan_payment_sum_installment;
+            }
+
+            if ($data->loan_status == 'ON_STATE') {
+                $loan_payment_month = $loan_payment_month + $data->loan_payment_month;
+                $sum_installment = $sum_installment + $data->loan_payment_sum_installment;
+            }
+        }
+
+        $datas_loan = [
+            'loan_summary_no_vat'   => $loan_summary_no_vat,
+            'loan_payment_sum_installment'   => $loan_payment_sum_installment,
+            'loan_payment_month'   => $loan_payment_month,
+            'sum_installment'   => $sum_installment
+        ];
+
+
         $status = 200;
         $response = [
             'code' => $status,
             'message' => "",
-            'data' =>$message_back,
+            'data' => $message_back,
             'data_close_loan' => $loan_close,
-            'data_loan_all' => $datas,
+            'data_loan_all' => $datas_loan,
             'real_investment_real' => $real_investment,
             'land_accounts' => $land_accounts
         ];
