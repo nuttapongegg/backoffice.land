@@ -369,8 +369,10 @@ if (!function_exists('numToThaiBath')) {
             }
         }
         $convert .= 'บาท';
-        if ($number[1] == '0' or $number[1] == '00' or
-            $number[1] == '') {
+        if (
+            $number[1] == '0' or $number[1] == '00' or
+            $number[1] == ''
+        ) {
             $convert .= 'ถ้วน';
         } else {
             $strlen = strlen($number[1]);
@@ -380,11 +382,15 @@ if (!function_exists('numToThaiBath')) {
                     if ($i == ($strlen - 1) and $n == 1) {
                         $convert
                             .= 'เอ็ด';
-                    } elseif ($i == ($strlen - 2) and
-                        $n == 2) {
+                    } elseif (
+                        $i == ($strlen - 2) and
+                        $n == 2
+                    ) {
                         $convert .= 'ยี่';
-                    } elseif ($i == ($strlen - 2) and
-                        $n == 1) {
+                    } elseif (
+                        $i == ($strlen - 2) and
+                        $n == 1
+                    ) {
                         $convert .= '';
                     } else {
                         $convert .= $txtnum1[$n];
@@ -517,25 +523,62 @@ function send_line_message($token, $message)
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $result = curl_exec($ch);
-
-    if (!$result) {
-        log_message('error', 'cURL Error in send_line_message: ' . curl_error($ch));
-        curl_close($ch);
-        return false; // ส่งข้อความล้มเหลว
-    }
-
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); // ดึง HTTP Status Code
     curl_close($ch);
 
     // แปลงผลลัพธ์เป็น JSON
     $response = json_decode($result, true);
 
-    // ตรวจสอบว่ามีข้อผิดพลาดใน Response หรือไม่
-    if (isset($response['message']) && strpos($response['message'], 'Invalid access token') !== false) {
-        log_message('error', 'LINE API Error: Invalid access token detected.');
-        return false; // Token ไม่ valid
+    // บันทึก Response และ HTTP Status Code เพื่อตรวจสอบ
+    log_message('info', 'LINE API Response: ' . print_r($response, true));
+    log_message('info', 'LINE API HTTP Status Code: ' . $httpCode);
+
+    return [
+        'status' => $httpCode, // ส่ง HTTP Status Code กลับ
+        'response' => $response // ส่ง Response กลับ
+    ];
+}
+
+function check_line_quota($token)
+{
+    $ch = curl_init("https://api.line.me/v2/bot/message/quota");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $token
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $result = curl_exec($ch);
+    curl_close($ch);
+
+    $response = json_decode($result, true);
+
+    if (isset($response['message'])) {
+        log_message('error', 'LINE API Error: ' . $response['message']);
+        return null;
     }
 
-    return true; // ส่งข้อความสำเร็จ
+    return $response; // คืนค่าโควตาที่เหลือ
+}
+
+function check_line_consumption($token)
+{
+    $ch = curl_init("https://api.line.me/v2/bot/message/quota/consumption");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $token
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $result = curl_exec($ch);
+    curl_close($ch);
+
+    $response = json_decode($result, true);
+
+    if (isset($response['message'])) {
+        log_message('error', 'LINE API Error: ' . $response['message']);
+        return null;
+    }
+
+    return $response; // คืนค่าจำนวนข้อความที่ใช้ไป
 }
 
 function get_line_access_token()
