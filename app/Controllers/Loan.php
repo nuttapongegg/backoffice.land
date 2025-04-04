@@ -13,6 +13,7 @@ use App\Models\CustomerModel;
 use App\Models\EmployeeModel;
 use App\Models\EmployeeLogModel;
 use App\Models\LoanModel;
+use App\Models\RealInvestmentModel;
 use App\Models\SettingLandModel;
 
 class Loan extends BaseController
@@ -22,6 +23,7 @@ class Loan extends BaseController
     private EmployeeLogModel $EmployeeLogModel;
     private LoanModel $LoanModel;
     private SettingLandModel $SettingLandModel;
+    private RealInvestmentModel $realInvestmentModel;
     private $http;
 
     private string $s3_bucket;
@@ -51,6 +53,7 @@ class Loan extends BaseController
         $this->EmployeeLogModel = new EmployeeLogModel();
         $this->LoanModel = new LoanModel();
         $this->SettingLandModel = new SettingLandModel();
+        $this->realInvestmentModel = new RealInvestmentModel();
         $this->http = new Client();
 
         // Environment Variables
@@ -3895,6 +3898,9 @@ class Loan extends BaseController
 
         $message_back = $this->LoanModel->getAllDataLoanOn();
         $loan_close = $this->LoanModel->DataLoanHistoryQueryAI();
+        $real_investment = $this->realInvestmentModel->getRealInvestmentAll();
+        $land_accounts = $this->SettingLandModel->getSettingLandAll();
+        $datas = $this->LoanModel->getAllDataLoan();
 
         $status = 200;
         $response = [
@@ -3902,6 +3908,9 @@ class Loan extends BaseController
             'message' => "",
             'data' =>$message_back,
             'data_close_loan' => $loan_close,
+            'data_loan_all' => $datas,
+            'real_investment_real' => $real_investment,
+            'land_accounts' => $land_accounts
         ];
 
         return $this->response
