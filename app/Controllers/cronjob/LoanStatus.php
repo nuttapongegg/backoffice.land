@@ -52,6 +52,7 @@ class LoanStatus extends BaseController
                         $loanMessages[] = [
                             "loan_code" => $dataLoan->loan_code,
                             "customer" => $dataLoan->loan_customer,
+                            "address" => $dataLoan->loan_address,
                             "due_date" => dateThaiDM($tomorrow),
                             "amount" => number_format($dataLoan->loan_payment_month, 2),
                             "status" => "due_today",  // เพิ่มสถานะ
@@ -62,6 +63,7 @@ class LoanStatus extends BaseController
                         $loanMessages[] = [
                             "loan_code" => $dataLoan->loan_code,
                             "customer" => $dataLoan->loan_customer,
+                            "address" => $dataLoan->loan_address,
                             "due_date" => dateThaiDM($tomorrow),
                             "amount" => number_format($dataLoan->loan_payment_month, 2),
                             "status" => "overdue",  // เพิ่มสถานะ
@@ -159,6 +161,15 @@ class LoanStatus extends BaseController
                 $loanContent[] = [
                     "type" => "text",
                     "text" => "👤 ลูกค้า: " . $loan['customer'],
+                    "size" => "sm",
+                    "color" => "#444444"
+                ];
+            }
+
+            if (isset($loan['address'])) {
+                $loanContent[] = [
+                    "type" => "text",
+                    "text" => "📍 สถานที่: " . $loan['address'],
                     "size" => "sm",
                     "color" => "#444444"
                 ];
