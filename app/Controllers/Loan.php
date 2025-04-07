@@ -3905,8 +3905,21 @@ class Loan extends BaseController
 
         $loan_summary_no_vat = 0;
         $loan_payment_sum_installment = 0;
+        $loan_summary_all = 0;
         $loan_payment_month = 0;
+
+        $principle = 0;
+        $investment = 0;
+        $return_funds = 0;
+
         $sum_installment = 0;
+        $summary_no_vat_ON_STATE = 0;
+        $summary_no_vat_CLOSE_STATE = 0;
+        $sum_land_account = 0;
+
+        foreach ($land_accounts as $land_account) {
+            $sum_land_account = $sum_land_account + $land_account->land_account_cash;
+        }
 
         foreach ($datas as $data) {
             if ($data->loan_summary_no_vat != '') {
@@ -3920,14 +3933,31 @@ class Loan extends BaseController
             if ($data->loan_status == 'ON_STATE') {
                 $loan_payment_month = $loan_payment_month + $data->loan_payment_month;
                 $sum_installment = $sum_installment + $data->loan_payment_sum_installment;
+                $summary_no_vat_ON_STATE = $summary_no_vat_ON_STATE + $data->loan_summary_no_vat;
+            }
+            if ($data->loan_status == 'CLOSE_STATE') {
+                $summary_no_vat_CLOSE_STATE = $summary_no_vat_CLOSE_STATE + $data->loan_summary_no_vat;
             }
         }
+
+        $summary_all = $loan_summary_all - $loan_payment_sum_installment;
+        if ($summary_all != 0) {
+            $return_funds = ($loan_payment_month / $summary_all) * 100;
+        }
+
+        $summary_net_assets = $summary_no_vat_ON_STATE + $sum_land_account;
 
         $datas_loan = [
             'loan_summary_no_vat'   => $loan_summary_no_vat,
             'loan_payment_sum_installment'   => $loan_payment_sum_installment,
             'loan_payment_month'   => $loan_payment_month,
             'sum_installment'   => $sum_installment
+        ];
+
+        $data_load_ON_STATE = [
+            'summary_no_vat_ON_STATE' => $summary_no_vat_ON_STATE,
+            'summary_no_vat_CLOSE_STATE' => $summary_no_vat_CLOSE_STATE,
+            'summary_net_assets' => $summary_net_assets
         ];
 
 
@@ -3938,6 +3968,7 @@ class Loan extends BaseController
             'data' => $message_back,
             'data_close_loan' => $loan_close,
             'data_loan_all' => $datas_loan,
+            'data_loan_summary_on_state' => $data_load_ON_STATE,
             'real_investment_real' => $real_investment,
             'land_accounts' => $land_accounts
         ];
