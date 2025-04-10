@@ -300,7 +300,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="mt-3 mb-3" style="text-align: right;">
+                                <div class="mt-1 mb-1" style="text-align: right;">
                                     <!-- <a href="javascript:void(0);" class="btn btn-outline-secondary" id="btnAiAutoCapture" style="display: none;">
                                         <i class="fas fa-camera"></i> ถ่ายรูป
                                     </a> -->
@@ -327,7 +327,7 @@
                                 </div>
                                 <?php $FORM_KEY = 'FORM_KEY_' . strtotime('now') . '_' . rand(10, 100); ?>
                                 <form method="POST" enctype="multipart/form-data" name="formPayloan" id="<?php echo $FORM_KEY; ?>" data-form-key="<?php echo $FORM_KEY; ?>" novalidate>
-                                    <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-5">รายละเอียดผู้ชำระ</p>
+                                    <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary">รายละเอียดผู้ชำระ</p>
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="row align-items-center">
