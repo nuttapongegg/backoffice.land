@@ -41,7 +41,7 @@ $routes->get('logout', 'Authentication::logout', ['filter' => 'employeeAuth']);
 //pdf
 $routes->get('pdf_loan/(:any)', 'PdfController::PDF_Loan/$1', ['filter' => 'employeeAuth']);
 $routes->get('pdf_installment_schedule/(:any)', 'PdfController::PDF_Installment_Schedule/$1', ['filter' => 'employeeAuth']);
-$routes->get('pdf_loan_receipt/(:any)', 'PdfController::PDF_Loan_Receipt/$1', ['filter' => 'employeeAuth']);
+$routes->get('pdf_loan_receipt/(:any)', 'PdfController::PDF_Loan_Receipt/$1');
 
 //สินเชื่อ loan
 $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
@@ -82,6 +82,15 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
 });
 
 $routes->get('api/list_ai', 'Loan::list_ai');
+
+$routes->group('loanpayment', function ($routes) {
+    $routes->get('detail/(:any)', 'Loan::loanPayment/$1');
+    $routes->get('detailForm/(:any)', 'Loan::detailForm/$1');
+    $routes->get('callInstallMent/(:any)', 'Loan::callInstallMent/$1');
+    $routes->get('tableListPayment/(:any)', 'Loan::getListPayment/$1');
+    $routes->post('addPaymentNoLogin', 'Loan::insertDataLoanPaymentNoLogin');
+    $routes->post('ocrInvoice', 'Loan::ocrInvoice');
+});
 
 // ตั้งค่า
 $routes->group('setting_land', ['filter' => 'employeeAuth'], function ($routes) {

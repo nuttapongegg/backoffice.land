@@ -56,7 +56,7 @@ class LoanStatus extends BaseController
                             "due_date" => dateThaiDM($tomorrow),
                             "amount" => number_format($dataLoan->loan_payment_month, 2),
                             "status" => "due_today",  // เพิ่มสถานะ
-                            "url" => 'https://land.evxspst.com/loan/detail' . '/' . $dataLoan->loan_code
+                            "url" => 'https://land.evxspst.com/loanpayment/detail' . '/' . $dataLoan->loan_code
                         ];
                     } elseif ($date_sum >= $nofity_Day->token_overdue_loan && $nofity_Day->token_overdue_loan != 0) {
                         // กรณีเลยกำหนดชำระ
@@ -68,7 +68,7 @@ class LoanStatus extends BaseController
                             "amount" => number_format($dataLoan->loan_payment_month, 2),
                             "status" => "overdue",  // เพิ่มสถานะ
                             "overdue_days" => $date_sum, // จำนวนวันที่เลยกำหนด
-                            "url" => 'https://land.evxspst.com/loan/detail' . '/' . $dataLoan->loan_code
+                            "url" => 'https://land.evxspst.com/loanpayment/detail' . '/' . $dataLoan->loan_code
                         ];
                     }
                 }

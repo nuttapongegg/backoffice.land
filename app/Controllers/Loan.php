@@ -16,6 +16,10 @@ use App\Models\LoanModel;
 use App\Models\RealInvestmentModel;
 use App\Models\SettingLandModel;
 
+use App\Models\OverdueStatusModel;
+
+use Smalot\PdfParser\Parser;
+
 class Loan extends BaseController
 {
     private CustomerModel $CustomerModel;
@@ -3977,5 +3981,609 @@ class Loan extends BaseController
             ->setStatusCode($status)
             ->setContentType('application/json')
             ->setJSON($response);
+    }
+
+    public function loanPayment($loanCode = null)
+    {
+        // $data['content'] = 'loan/loan_payment';
+        $data['title'] = 'ชำระสินเชื่อ';
+        $data['css_critical'] = '';
+        $data['js_critical'] = '';
+
+        $data['loanData'] = $this->LoanModel->getAllDataLoanByCode($loanCode);
+        $data['land_accounts'] = $this->SettingLandModel->getSettingLandAll();
+
+        echo view('loan/loan_payment', $data);
+    }
+
+    public function insertDataLoanPaymentNoLogin()
+    {
+        $OverdueStatusModel = new OverdueStatusModel();
+        $nofity_Day = $OverdueStatusModel->getOverdueStatusAll();
+
+        $buffer_datetime = date("Y-m-d H:i:s");
+        $payment_id = $this->request->getPost('payment_id');
+        $codeloan_hidden = $this->request->getPost('codeloan_hidden');
+        $payment_name = $this->request->getPost('payment_name');
+        $employee_name = $this->request->getPost('payment_employee_name');
+        $date_to_payment = $this->request->getPost('date_to_payment');
+        $payment_now = $this->request->getPost('payment_now');
+        $payment_type = $this->request->getPost('payment_type');
+        $installment_count = $this->request->getPost('installment_count');
+        $pay_sum = $this->request->getPost('pay_sum');
+        $customer_payment_type = 'โอน';
+        $file_payment = $this->request->getFile('file_payment');
+        $total_loan_payment = $this->request->getPost('total_loan_payment');
+        $account_id = $this->request->getPost('account_name');
+        $close_loan_payment = $this->request->getPost('close_loan_payment');
+
+        $imgFile = $this->request->getFile('imageFileInvoice');
+
+        // $status_payment = $this->request->getPost('status_payment');
+
+        $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
+        $fileName_img = $imgFile->getFilename();
+        if ($fileName_img !== "") {
+            $fileName_img = $codeloan_hidden . "_" . $imgFile->getRandomName();
+            $imgFile->move('uploads/loan_payment_img', $fileName_img);
+            $file_Path = 'uploads/loan_payment_img/' . $fileName_img;
+
+            try {
+
+                $s3Client = new S3Client([
+                    'version' => 'latest',
+                    'region'  => $this->s3_region,
+                    'endpoint' => $this->s3_endpoint,
+                    'use_path_style_endpoint' => false,
+                    'credentials' => [
+                        'key'    => $this->s3_key,
+                        'secret' => $this->s3_secret_key
+                    ]
+                ]);
+
+
+                $result = $s3Client->putObject([
+                    'Bucket' => $this->s3_bucket,
+                    'Key'    => 'uploads/loan_payment_img/' . $fileName_img,
+                    'Body'   => fopen($file_Path, 'r'),
+                    'ACL'    => 'public-read', // make file 'public'
+                ]);
+
+
+                if ($result['ObjectURL'] != "") {
+                    unlink('uploads/loan_payment_img/' . $fileName_img);
+                }
+            } catch (Aws\S3\Exception\S3Exception $e) {
+                echo $e->getMessage();
+            }
+        }
+
+        $data = $this->LoanModel->getAllDataLoanByCode($codeloan_hidden);
+
+        // $data_loan จำนวนงวด
+        // $data_loan_installment  งวดแรกแรกที่ทำการเพิ่มใหม่
+        // $add_year จำนวนปีใหม่
+        // $loan_installments จำนวนงวดทั้งหมดที่ทำการเพิ่มใหม่จนครบ
+        $data_loan =  $data->loan_payment_year_counter;
+        $data_loan =  $data_loan * 12;
+        $data_loan_installment =  $data_loan + 1;
+        $add_year = $data->loan_payment_year_counter + 1;
+        $loan_installments = $add_year * 12;
+
+        $create_payment = false;
+
+        if (($data_loan == $installment_count && $payment_type != 'CloseLoan')) {
+
+            $data_loan = [
+                'loan_payment_year_counter' => $add_year,
+                'loan_payment_sum_installment' => $pay_sum
+            ];
+
+            for ($index_installment = $data_loan_installment; $index_installment <= $loan_installments; $index_installment++) {
+
+                $add_load_payment_data = [
+                    'loan_code' => $codeloan_hidden,
+                    'loan_payment_amount' => $data->loan_payment_month,
+                    'loan_payment_installment' =>  $index_installment,
+                    'loan_payment_date_fix' =>  $data->loan_installment_date,
+                    // 'loan_payment_date' => $date_pay_loan,
+                    'created_at' => $buffer_datetime
+                ];
+
+                $this->LoanModel->insertpayment($add_load_payment_data);
+            }
+
+            $data_payment = [
+                // 'loan_code' => $codeloan_hidden,
+                'loan_payment_amount'  => $payment_now,
+                'loan_employee' => $employee_name,
+                'loan_payment_type' => $payment_type,
+                'loan_payment_pay_type' => $customer_payment_type,
+                // 'loan_payment_installment' =>  $installment_count,
+                'loan_payment_customer' => $payment_name,
+                'loan_payment_src' => $fileName_img,
+                'land_account_id' => $account_id,
+                'land_account_name' => $land_account_name->land_account_name,
+                'loan_payment_date' => $date_to_payment,
+                'updated_at' => $buffer_datetime
+            ];
+
+            $create_payment = $this->LoanModel->updateLoanPayment($data_payment, $payment_id);
+
+            $Loan_Staus = 'งวดที่ ' . $installment_count;
+        } elseif (($payment_type == 'CloseLoan')) {
+
+            $loan_payment = [
+                // 'loan_code' => $codeloan_hidden,
+                'loan_payment_amount'  => $payment_now,
+                'loan_employee' => $employee_name,
+                'loan_payment_type' => 'Installment',
+                'loan_payment_pay_type' => $customer_payment_type,
+                // 'loan_payment_installment' =>  $installment_count,
+                'loan_payment_customer' => $payment_name,
+                'loan_payment_src' => $fileName_img,
+                'land_account_id' => $account_id,
+                'land_account_name' => $land_account_name->land_account_name,
+                'loan_payment_date' => $date_to_payment,
+                'updated_at' => $buffer_datetime
+            ];
+
+            $close_payment = $this->LoanModel->updateLoanPayment($loan_payment, $payment_id);
+
+            $data_loan = [
+                'loan_close_payment' => $close_loan_payment,
+                'loan_status' => 'CLOSE_STATE',
+                'loan_date_close' => date("Y-m-d"),
+                'updated_at' => $buffer_datetime
+            ];
+
+            $data_close_payment = [
+                'loan_payment_amount'  => 0,
+                'loan_employee' => $employee_name,
+                'loan_payment_pay_type' => $customer_payment_type,
+                'loan_payment_customer' => $payment_name,
+                'loan_payment_src' => $fileName_img,
+                'loan_payment_date' => $date_to_payment,
+                'land_account_id' => $account_id,
+                'land_account_name' => $land_account_name->land_account_name,
+                'updated_at' => $buffer_datetime
+            ];
+
+            $create_close_payment = $this->LoanModel->updateLoanClosePayment($data_close_payment, $codeloan_hidden);
+
+            if ($create_close_payment) {
+                $data_payment = [
+                    'loan_payment_type' => 'Close',
+                    'loan_balance'  => 0
+                ];
+
+                $create_payment = $this->LoanModel->updateLoanPaymentClose($data_payment, $codeloan_hidden);
+            }
+
+            $Loan_Staus = 'ชำระปิดสินเชื่อ';
+        } else {
+
+            $data_loan = [
+                'loan_payment_sum_installment' => $pay_sum
+            ];
+
+            $data_payment = [
+                // 'loan_code' => $codeloan_hidden,
+                'loan_payment_amount'  => $payment_now,
+                'loan_employee' => $employee_name,
+                'loan_payment_type' => $payment_type,
+                'loan_payment_pay_type' => $customer_payment_type,
+                // 'loan_payment_installment' =>  $installment_count,
+                'loan_payment_customer' => $payment_name,
+                'loan_payment_src' => $fileName_img,
+                'land_account_id' => $account_id,
+                'land_account_name' => $land_account_name->land_account_name,
+                'loan_payment_date' => $date_to_payment,
+                'updated_at' => $buffer_datetime
+            ];
+
+            $create_payment = $this->LoanModel->updateLoanPayment($data_payment, $payment_id);
+
+            $Loan_Staus = 'งวดที่ ' . $installment_count;
+        }
+
+        if ($land_account_name != '') {
+            $land_account_cash_receipt = $land_account_name->land_account_cash + $payment_now;
+
+            $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
+                'land_account_cash' => $land_account_cash_receipt,
+                // 'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            $detail = 'ชำระสินเชื่อ ' . $codeloan_hidden . '(' . $Loan_Staus . ')';
+            $this->SettingLandModel->insertSettingLandReport([
+                'setting_land_id' => $account_id,
+                'setting_land_report_detail' => $detail,
+                'setting_land_report_money' => $payment_now,
+                'setting_land_report_note' => '',
+                'setting_land_report_account_balance' => $land_account_cash_receipt,
+                'employee_id' => 1,
+            ]);
+        }
+
+        $update_loan = $this->LoanModel->updateLoanSumPayment($data_loan, $codeloan_hidden);
+
+        if ($create_payment && $update_loan) {
+            if ($nofity_Day->token_loan_status == 1) {
+                $paymentData = [
+                    "loan_code" => $codeloan_hidden, // รหัสสินเชื่อ
+                    "customer" => $payment_name, // ชื่อลูกค้า
+                    "address" => $data->loan_address, // ที่อยู่ลูกค้า
+                    "amount" => $payment_now, // ยอดชำระ (จำนวนเงิน)
+                    "payment_date" => $date_to_payment, // วันที่ชำระ (ปัจจุบัน)
+                    "installment_count" => $installment_count,
+                    "image_url" =>  getenv('CDN_IMG') . '/uploads/loan_payment_img/' . $fileName_img, // URL ของรูปภาพ
+                ];
+
+                $token = $nofity_Day->token_loan;
+
+                // สร้างข้อมูลการชำระเงิน
+                $messagePayload = $this->createSinglePaymentMessage($paymentData);
+
+                // ส่งข้อความผ่าน LINE API
+                $response = send_line_message($token, $messagePayload);
+
+                // ตรวจสอบกรณี Token หมดอายุ
+                if ($response['status'] === 401) {
+                    log_message('info', 'Refreshing LINE Token...');
+                    $newToken = get_line_access_token();
+                    if ($newToken) {
+                        $token = $newToken;
+                        $OverdueStatusModel->updateOverdueStatus(['token_loan' => $newToken]);
+
+                        // พยายามส่งข้อความใหม่ด้วย Token ใหม่
+                        $retryResponse = send_line_message($token, $messagePayload);
+                        if ($retryResponse['status'] !== 200) {
+                            log_message('error', 'Failed to send LINE message after refreshing token.');
+                        }
+                    } else {
+                        log_message('error', 'Failed to refresh LINE token.');
+                    }
+                } elseif ($response['status'] !== 200) {
+                    log_message('error', 'Failed to send LINE message.');
+                }
+            }
+            return $this->response->setJSON([
+                'status' => 200,
+                'error' => false,
+                'message' => 'เพิ่มรายการสำเร็จ'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'status' => 200,
+                'error' => true,
+                'message' => 'เพิ่มรายการไม่สำเร็จ'
+            ]);
+        }
+    }
+
+    private function createSinglePaymentMessage($paymentData)
+    {
+        return [
+            "type" => "flex",
+            "altText" => "📢 แจ้งเตือนการชำระเงิน",
+            "contents" => [
+                "type" => "bubble",
+                "hero" => [
+                    "type" => "image", // ส่วนของรูปภาพ
+                    "url" => $paymentData['image_url'], // URL ของรูปภาพ
+                    "size" => "full", // ปรับขนาดเป็น full
+                    "aspectRatio" => "16:9", // เปลี่ยนอัตราส่วนเป็น 16:9
+                    "aspectMode" => "fit", // เปลี่ยนวิธีการแสดงเป็น fit
+                    "margin" => "md" // เพิ่มระยะห่างด้านบนและล่าง
+                ],
+                "body" => [
+                    "type" => "box",
+                    "layout" => "vertical",
+                    "contents" => [
+                        [
+                            "type" => "text",
+                            "text" => "ชำระสินเชื่อสำเร็จ ✅",
+                            "weight" => "bold",
+                            "size" => "xl",
+                            "color" => "#333333",
+                            "align" => "center" // จัดกึ่งกลาง
+                        ],
+                        [
+                            "type" => "separator",
+                            "margin" => "md",
+                            "color" => "#AAAAAA"
+                        ],
+                        [
+                            "type" => "box",
+                            "layout" => "horizontal",
+                            "margin" => "md",
+                            "contents" => [
+                                [
+                                    "type" => "text",
+                                    "text" => "📝 สินเชื่อ:",
+                                    "weight" => "bold",
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "flex" => 1
+                                ],
+                                [
+                                    "type" => "text",
+                                    "text" => $paymentData['loan_code'],
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "align" => "end",
+                                    "flex" => 2
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "box",
+                            "layout" => "horizontal",
+                            "margin" => "md",
+                            "contents" => [
+                                [
+                                    "type" => "text",
+                                    "text" => "🔢 งวดที่:",
+                                    "weight" => "bold",
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "flex" => 1
+                                ],
+                                [
+                                    "type" => "text",
+                                    "text" => $paymentData['installment_count'],
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "align" => "end",
+                                    "flex" => 2
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "box",
+                            "layout" => "horizontal",
+                            "margin" => "md",
+                            "contents" => [
+                                [
+                                    "type" => "text",
+                                    "text" => "👤 ลูกค้า:",
+                                    "weight" => "bold",
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "flex" => 1
+                                ],
+                                [
+                                    "type" => "text",
+                                    "text" => $paymentData['customer'],
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "align" => "end",
+                                    "flex" => 2
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "box",
+                            "layout" => "horizontal",
+                            "margin" => "md",
+                            "contents" => [
+                                [
+                                    "type" => "text",
+                                    "text" => "📍 สถานที่:",
+                                    "weight" => "bold",
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "flex" => 1
+                                ],
+                                [
+                                    "type" => "text",
+                                    "text" => $paymentData['address'],
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "align" => "end",
+                                    "flex" => 2
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "box",
+                            "layout" => "horizontal",
+                            "margin" => "md",
+                            "contents" => [
+                                [
+                                    "type" => "text",
+                                    "text" => "📅 วันที่ชำระ:",
+                                    "weight" => "bold",
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "flex" => 1
+                                ],
+                                [
+                                    "type" => "text",
+                                    "text" => dateThaiDM($paymentData['payment_date']),
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "align" => "end",
+                                    "flex" => 2
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "box",
+                            "layout" => "horizontal",
+                            "margin" => "md",
+                            "contents" => [
+                                [
+                                    "type" => "text",
+                                    "text" => "💰 ยอดชำระ:",
+                                    "weight" => "bold",
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "flex" => 1
+                                ],
+                                [
+                                    "type" => "text",
+                                    "text" => number_format($paymentData['amount'], 2) . " บาท",
+                                    "size" => "sm",
+                                    "color" => "#444444",
+                                    "align" => "end",
+                                    "flex" => 2
+                                ]
+                            ]
+                        ]
+                    ],
+                    "paddingAll" => "10px",
+                    "backgroundColor" => "#F5F5F5"
+                ],
+            ]
+        ];
+    }
+    public function ocrInvoice()
+    {
+        // ตรวจสอบไฟล์ที่อัปโหลด
+        $uploadedFile = $this->request->getFile('image');
+        if (!$uploadedFile->isValid() || !in_array($uploadedFile->getClientMimeType(), ['image/jpeg', 'image/png', 'application/pdf'])) {
+            return $this->response->setJSON([
+                'status' => 'fail',
+                'message' => 'กรุณาอัปโหลดไฟล์ที่เป็น JPEG, PNG หรือ PDF เท่านั้น'
+            ]);
+        }
+
+        // เช็ค Google API Key
+        $vision_api_key = getenv('GOOGLE_CLOUD_API_KEY');
+        if (!$vision_api_key) {
+            return $this->response->setJSON([
+                'status' => 'fail',
+                'message' => 'ไม่พบ API Key ในไฟล์ .env โปรดตรวจสอบการตั้งค่าของคุณ'
+            ]);
+        }
+
+        // กำหนดตำแหน่งไฟล์
+        $filePath = $uploadedFile->getTempName();
+        $ocrResults = [];
+
+        // ตรวจสอบและดำเนินการตามชนิดของไฟล์ (PDF หรือ รูปภาพ)
+        if ($uploadedFile->getClientMimeType() === 'application/pdf') {
+            // ใช้ฟังก์ชัน extractTextFromPdf ถ้าเป็น PDF
+            $ocrResults[] = $this->extractTextFromPdf($filePath);
+        } else {
+            // ถ้าเป็นไฟล์รูปภาพ ให้แปลงเป็น base64 และประมวลผลด้วย Google Vision API
+            $imageContent = base64_encode(file_get_contents($filePath));
+
+            // ประมวลผลข้อความ OCR จากแต่ละภาพ
+            $url = "https://vision.googleapis.com/v1/images:annotate?key=$vision_api_key";
+            $data = [
+                'requests' => [
+                    [
+                        'image' => ['content' => $imageContent],
+                        'features' => [['type' => 'DOCUMENT_TEXT_DETECTION']]
+                    ]
+                ]
+            ];
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode == 200) {
+                $result = json_decode($response, true);
+                $ocrResults[] = $result['responses'][0]['fullTextAnnotation']['text'] ?? '';
+            }
+        }
+
+        if (empty($ocrResults)) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'ไม่พบข้อความในไฟล์ หรือ API ไม่สามารถประมวลผลได้'
+            ]);
+        }
+
+        // รวมข้อความจากทุกหน้าของ PDF
+        $text = implode("\n", $ocrResults);
+
+        // เชื่อมต่อกับ OpenAI API
+        $openai_api_key = getenv('OPENAI_API_KEY');
+        if (!$openai_api_key) {
+            return $this->response->setJSON([
+                'status' => 'fail',
+                'message' => 'ไม่พบ OpenAI API Key ในไฟล์ .env โปรดตรวจสอบการตั้งค่าของคุณ'
+            ]);
+        }
+        // ตรงจำนวนเงินให้แปลงค่าเงินเป็น usd โดยอิงจากค่าเงินวันนี้
+
+        $openai_url = "https://api.openai.com/v1/chat/completions";
+        $prompt = "Input $text จาก Input จงแยกแยะข้อมูลชุดนี้โดยข้อมูลที่ต้องการออกมาคือ จำนวนเงิน, สกุลเงิน, วันที่
+                        เสร็จแล้วทำข้อมูลให้อยู่ในรูปแบบ json เท่านั้น โดยไม่ต้องเพิ่มคำอธิบายเพิ่มเติม
+                        นี่คือรูปแบบที่ฉันต้องการ {\"amount\":__,\"type\":__,\"date\":__}
+                        ในส่วนสกุลเงิน ตรวจสอบจำนวนเงินว่าเป็นเงินบาท เงินกีบ หรือ ดอลล่า หากเป็น บาท หรือ กีบ  เงินกีบ = LAK, เงินบาท = THB, เงินดอลล่า = USD
+                        ตรงจำนวนเงินให้ส่งกลับมาแค่จำนวนเงินเท่านั้น 
+                        **กติกา:**  
+                        - date ให้เลือกวันที่แรกที่พบในข้อมูล และแปลงเป็นฟอร์แมต YYYY-MM-DD
+                        - หากปีที่ระบุเป็น **พ.ศ.** (มากกว่า 2500) ให้แปลงเป็น **ค.ศ.** (โดยการลบ 543)
+                        - หากปีมีเพียงเลขสองหลัก:  
+                        - ถ้าปีนั้น **มากกว่าปีปัจจุบัน + 35 ปี** ให้ถือว่าเป็น **พ.ศ.** และแปลงเป็น **ค.ศ.** (ลบ 543) เช่น 68 → 2025  
+                        - มิฉะนั้น ให้ถือว่าเป็น **ค.ศ.** เช่น 40 → 2040
+                        - หากวันที่อยู่ในรูปแบบที่ไม่ชัดเจน เช่น 11-3.25 หรือ 11.3.25 ให้พิจารณาว่าเป็นปี 2025 เดือน 3 วันที่ 11 
+                        - รองรับหลายรูปแบบของวันที่ เช่น 11/03/2025, March 11, 2025, 2025-03-11 ฯลฯ
+                        - เลือก **วันที่แรกที่พบ** ในข้อมูลเท่านั้น
+                        - คืนค่าข้อมูลเป็น JSON เท่านั้น ห้ามมีคำอธิบายเพิ่มเติม";
+
+        $openai_data = [
+            'model' => 'gpt-4',
+            'messages' => [
+                ['role' => 'system', 'content' => 'คุณต้องส่งคืนเฉพาะ JSON เท่านั้น ห้ามเพิ่มคำอธิบายหรือข้อความใดๆ เพิ่มเติม'],
+                ['role' => 'user', 'content' => $prompt]
+            ],
+            'temperature' => 0
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $openai_url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $openai_api_key,
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($openai_data));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60); // เพิ่ม Timeout
+        $openai_response = curl_exec($ch);
+        $openai_http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($openai_http_code == 200) {
+            $openai_result = json_decode($openai_response, true);
+            $json_output = $openai_result['choices'][0]['message']['content'] ?? 'ไม่พบผลลัพธ์';
+
+            // ส่งข้อมูล JSON ที่พร้อมใช้งานไปยัง JavaScript
+            return $this->response->setJSON([
+                'status' => 'success',
+                'ocr_text' => $text,
+                'output' => $json_output,
+                'json_output' => json_decode($json_output, true) // แปลงเป็น array เพื่อใช้งานใน JS ได้ทันที
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'ไม่สามารถติดต่อ OpenAI API ได้',
+                'error' => json_decode($openai_response, true)
+            ]);
+        }
+    }
+
+    private function extractTextFromPdf($pdfFilePath)
+    {
+        // ใช้ Parser เพื่อดึงข้อความจาก PDF
+        $parser = new Parser();
+        $pdf = $parser->parseFile($pdfFilePath);
+        return $pdf->getText();
     }
 }
