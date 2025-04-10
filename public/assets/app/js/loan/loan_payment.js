@@ -11,7 +11,9 @@ var loan_installment_date = 0;
   let searchParams = window.location.pathname;
   var searchParams_ = searchParams.split("/loanpayment/detail/");
 
-  flatpickr("#date_to_payment", {});
+  flatpickr("#date_to_payment", {
+    disableMobile: true,
+  });
 
   loadLoan(searchParams_[1]);
   installmentTab();
@@ -230,7 +232,7 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
 });
 // ฟังก์ชันดำเนินการบันทึก
 function proceedLoanPayment(formData, form) {
-  
+
   let imageFileInvoice = document.querySelector("#imageFileInvoice");
 
   if (imageFileInvoice.files.length > 0) {

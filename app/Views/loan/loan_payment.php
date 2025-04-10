@@ -301,9 +301,9 @@
                                     </div>
                                 </div>
                                 <div class="mt-3 mb-3" style="text-align: right;">
-                                    <a href="javascript:void(0);" class="btn btn-outline-secondary" id="btnAiAutoCapture" style="display: none;">
+                                    <!-- <a href="javascript:void(0);" class="btn btn-outline-secondary" id="btnAiAutoCapture" style="display: none;">
                                         <i class="fas fa-camera"></i> ถ่ายรูป
-                                    </a>
+                                    </a> -->
                                     <a href="javascript:void(0);" class="btn btn-outline-primary" id="btnAiAutoSelect" style="display: none;">
                                         <i class="fab fa-reddit-alien"></i> ใช้ AI Auto Input
                                     </a>
