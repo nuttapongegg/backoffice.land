@@ -464,7 +464,7 @@
                                         </div>
                                     </div>
                                     <div id="bookingWrapperFormPaymentType">
-                                        <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-5">ข้อมูลการคำนวนรายการสินเชื่อ</p>
+                                        <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-2">ข้อมูลการคำนวนรายการสินเชื่อ</p>
                                         <div class="collapse" id="pay_sum_loan">
                                             <div class="row">
                                                 <div class="col-6" id="car_name">
