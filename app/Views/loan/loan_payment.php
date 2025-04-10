@@ -157,6 +157,19 @@
             width: 60px;
             height: 60px;
         }
+
+        .mobile-logo {
+            display: block !important;
+            max-width: 100px;
+            /* ปรับขนาดโลโก้ตามต้องการ */
+            height: auto;
+        }
+
+        @media (max-width: 768px) {
+            .responsive-logo {
+                display: block !important;
+            }
+        }
     </style>
     <script>
         window.addEventListener('DOMContentLoaded', (event) => {
@@ -203,23 +216,15 @@
             <!-- main-header -->
             <div class="main-header side-header sticky nav nav-item">
                 <div class=" main-container container-fluid">
-                    <div class="main-header-left">
-                        <div class="responsive-logo">
-                            <a href="javascript:void(0)" class="header-logo">
-                                <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo dark-logo-1" alt="logo">
-                            </a>
-                        </div>
-                        <div class="app-sidebar__toggle" data-bs-toggle="sidebar">
-                            <!-- <div class="icon"></div> -->
-                            <a class="open-toggle" href="javascript:void(0)"><i class="header-icon fe fe-align-left"></i></a>
-                            <a class="close-toggle" href="javascript:void(0)"><i class="header-icon fe fe-x"></i></a>
-                        </div>
-                        <div class="logo-horizontal">
-                            <a href="javascript:void(0)" class="header-logo">
-                                <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo dark-logo-1" alt="logo">
-                                <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo-1 dark-logo-1" alt="logo">
-                            </a>
-                        </div>
+                    <div class="responsive-logo">
+                        <a href="javascript:void(0)" class="header-logo">
+                            <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo dark-logo-1" alt="logo">
+                        </a>
+                    </div>
+                    <div class="logo-horizontal">
+                        <a href="javascript:void(0)" class="header-logo">
+                            <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo-1 dark-logo-1" alt="logo">
+                        </a>
                     </div>
                 </div>
             </div>
@@ -283,7 +288,6 @@
                 </div>
                 <!-- End Row -->
 
-
                 <!-- modal pay loan -->
                 <div class="modal fade" id="modalPayLoanNoLogin" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -336,7 +340,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="form-group">
-                                                        <input class="form-control" type="text" name="payment_name" id='payment_name' required>
+                                                        <input class="form-control" type="text" name="payment_name" id='payment_name' readonly required>
                                                         <input type="hidden" name="codeloan_hidden" id="codeloan_hidden">
                                                         <input type="hidden" name="payment_type" id="payment_type">
                                                         <input type="hidden" name="payment_id" id="payment_id">
@@ -351,39 +355,22 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="form-group">
-                                                        <input name="payment_employee_name" id="payment_employee_name" class="form-control" type="text" required>
+                                                        <input name="payment_employee_name" id="payment_employee_name" class="form-control" type="text" readonly required>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="row mt-3">
-                                            <div class="col-6">
-                                                <div class="collapse" id="installment_bar">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-md-4 tx-right">
-                                                            <label class="form-label mt-0">งวดที่</label>
-                                                        </div>
-                                                        <div class="col-md-8">
-                                                            <div class="input-group mb-3">
-                                                                <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" value="0" name="installment_count" id="installment_count" pattern="/^-?\d+\.?\d*$/" onkeypress="if(this.value.length==10) return false;" type="number" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
+                                    <div class="row mt-1">
+                                        <div class="col-6">
+                                            <div class="collapse" id="installment_bar">
                                                 <div class="row align-items-center">
                                                     <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">วันที่ชำระ</label>
+                                                        <label class="form-label mt-0">งวดที่</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <div class="input-group">
-                                                            <div class="input-group-text">
-                                                                <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-                                                            </div>
-                                                            <input type="text" class="form-control dateToBooking" name="date_to_payment" id="date_to_payment" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d'); ?>">
+                                                        <div class="input-group mb-3">
+                                                            <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" value="0" name="installment_count" id="installment_count" pattern="/^-?\d+\.?\d*$/" onkeypress="if(this.value.length==10) return false;" type="number" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -392,11 +379,28 @@
                                         <div class="col-6">
                                             <div class="row align-items-center">
                                                 <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">วันที่ชำระ</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group">
+                                                        <div class="input-group-text">
+                                                            <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                        </div>
+                                                        <input type="text" class="form-control dateToBooking" name="date_to_payment" id="date_to_payment" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d'); ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-1">
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
                                                     <label class="form-label mt-0" for="account_name">บัญชีสินเชื่อ <span class="tx-danger">*</span></label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="form-group">
-                                                        <select name="account_name" id='account_name' class="form-control custom-select" data-bs-placeholder="Select ..." required>
+                                                        <select name="account_name" id='account_name' class="form-control custom-select" data-bs-placeholder="Select ..." readonly required>
                                                             <?php if ($land_accounts) : ?>
                                                                 <?php foreach ($land_accounts as $land_account) { ?>
                                                                     <option value="<?php echo $land_account->id; ?>"><?php echo $land_account->land_account_name; ?></option>
@@ -426,40 +430,9 @@
                                             </div>
                                         </div>
                                         <div class="col-6 mb-2">
-
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <!-- <div class="col-6">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-4 tx-right">
-                                            <label class="form-label mt-0" for="customer_payment_type">ช่องทางการชำระ <span class="tx-danger">*</span></label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <select name="customer_payment_type" id="customer_payment_type" class="form-control form-select" data-bs-placeholder="Select ..." required>
-                                                    <option value="" style="color: #000;">เลือกการชำระ</option>
-                                                    <option value="โอน">โอน</option>
-                                                    <option value="เงินสด">เงินสด</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                        <!-- <div class="col-6">
-                                            <div class="collapse" id="bill_credit">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">หลักฐานการชำระ <span class="tx-danger">*</span></label>
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <div class="input-group">
-                                                            <input class="form-control" type="file" id="file_payment" name="file_payment">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> -->
                                         <div class="col-6">
                                         </div>
                                     </div>
@@ -508,7 +481,6 @@
             </div>
         </div>
         <!-- Sidebar-right-->
-
         <?php echo $this->include('/layouts/modal'); ?>
 
         <!-- Footer opened -->
@@ -520,7 +492,6 @@
             </div>
         </div>
         <!-- Footer closed -->
-
     </div>
     <!-- End Page -->
 

@@ -4020,9 +4020,12 @@ class Loan extends BaseController
         $imgFile = $this->request->getFile('imageFileInvoice');
 
         // $status_payment = $this->request->getPost('status_payment');
-
+        $fileName_img = '';
+    
         $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
-        $fileName_img = $imgFile->getFilename();
+        if($imgFile != ''){
+            $fileName_img = $imgFile->getFilename();
+        }
         if ($fileName_img !== "") {
             $fileName_img = $codeloan_hidden . "_" . $imgFile->getRandomName();
             $imgFile->move('uploads/loan_payment_img', $fileName_img);

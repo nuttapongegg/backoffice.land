@@ -301,7 +301,7 @@ function installmentTab() {
   $("#price_month").html("<font>" + payNow + "</font>");
   $("#payment_now").val(payNow);
 
-  $("#payment_now").attr("readonly", false);
+  $("#payment_now").attr("readonly", true);
 }
 
 function dataTablePaymentDetail() {
@@ -336,6 +336,29 @@ function dataTablePaymentDetail() {
           }
         }
       }
+
+      // ค้นหางวดถัดไปที่ต้องชำระ
+      let nextInstallment = null;
+      for (let i = 0; i < result.length; i++) {
+        if (
+          result[i].loan_payment_date === null &&
+          result[i].loan_payment_type === null
+        ) {
+          nextInstallment = result[i];
+          break; // หยุดลูปเมื่อเจองวดแรกที่ยังไม่ได้ชำระ
+        }
+      }
+
+      // หากพบงวดถัดไป ให้เปิด Modal อัตโนมัติ
+      if (nextInstallment) {
+        setTimeout(function () {
+          $("#modalPayLoanNoLogin").modal("show");
+          loadLoan(searchParams_[1] + "###" + nextInstallment.id_loan); // โหลดข้อมูลงวดถัดไป
+          $("#installment_bar").addClass("show");
+          installmentTab();
+        }, 500); // หน่วงเวลาเล็กน้อยเพื่อให้ DOM พร้อม
+      }
+
       tableCall(result);
     },
   });
@@ -657,7 +680,7 @@ $(document).ready(function () {
   }
 
   // ปุ่มเลือกไฟล์ ใช้ AI Auto Input
-  
+
   // ฟังก์ชันการทำงานอื่นๆ ตามเดิม
   $("#btnAiAutoCapture").on("click", function () {
     let fileInput = $("#imageFileInvoice");
@@ -759,27 +782,30 @@ $(document).ready(function () {
 
             let amount = jsonData.amount.toString().replace(/,/g, ""); // ลบจุลภาค
             amount = parseFloat(amount); // แปลงเป็นตัวเลข
-            
+
             if (jsonData.type === "USD") {
               amount_thb = (amount * 34.615).toFixed(2);
             } else if (jsonData.type === "LAK") {
-              amount_thb = (amount / 21745 * 34.615).toFixed(2); // แปลงจาก LAK เป็น USD แล้วค่อยแปลงเป็น THB
+              amount_thb = ((amount / 21745) * 34.615).toFixed(2); // แปลงจาก LAK เป็น USD แล้วค่อยแปลงเป็น THB
             } else {
               amount_thb = amount.toFixed(2); // ถ้าเป็น THB อยู่แล้ว ไม่ต้องแปลง
-            }            
+            }
 
             amount_thb = Number(amount_thb.replace(/[^0-9.-]+/g, ""));
 
             let sum_pay =
-            amount_thb + Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, ""));
-          
+              amount_thb +
+              Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, ""));
+
             $("#pay_sum").val(sum_pay);
 
             // แปลงวันที่ก่อนที่จะนำไปใส่ใน input
             let formattedDateImg = formatDateImg(jsonData.date);
             // เติมข้อมูลลงใน input
             $("input[id=payment_now]").val(amount_thb).addClass("is-valid");
-            $("input[id=date_to_payment]").val(formattedDateImg).addClass("is-valid");
+            $("input[id=date_to_payment]")
+              .val(formattedDateImg)
+              .addClass("is-valid");
             // $("input[id=formDate1]").val(formattedDateImg).addClass("is-valid");
           }
         }
