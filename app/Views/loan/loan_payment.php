@@ -308,8 +308,8 @@
                                     <!-- <a href="javascript:void(0);" class="btn btn-outline-secondary" id="btnAiAutoCapture" style="display: none;">
                                         <i class="fas fa-camera"></i> ถ่ายรูป
                                     </a> -->
-                                    <a href="javascript:void(0);" class="btn btn-outline-primary" id="btnAiAutoSelect" style="display: none;">
-                                        <i class="fab fa-reddit-alien"></i> ใช้ AI Auto Input
+                                    <a href="javascript:void(0);" class="btn btn-outline-primary" id="btnAiAutoSelect" style="display: none;font-size: 1rem;">
+                                        <i class="fe fe-file-plus" style="font-size: 1rem;"></i> เพิ่มหลักฐานการชำระ
                                     </a>
                                 </div>
                                 <div id="detectImageFormInvoice" style="display: none;">
@@ -386,7 +386,7 @@
                                                         <div class="input-group-text">
                                                             <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                         </div>
-                                                        <input type="text" class="form-control dateToBooking" name="date_to_payment" id="date_to_payment" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d'); ?>">
+                                                        <input type="text" class="form-control dateToBooking" name="date_to_payment" id="date_to_payment" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d'); ?>"disabled>
                                                     </div>
                                                 </div>
                                             </div>
@@ -400,7 +400,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="form-group">
-                                                        <select name="account_name" id='account_name' class="form-control custom-select" data-bs-placeholder="Select ..." readonly required>
+                                                        <select name="account_name" id='account_name' class="form-control custom-select" disabled data-bs-placeholder="Select ..."required>
                                                             <?php if ($land_accounts) : ?>
                                                                 <?php foreach ($land_accounts as $land_account) { ?>
                                                                     <option value="<?php echo $land_account->id; ?>"><?php echo $land_account->land_account_name; ?></option>
