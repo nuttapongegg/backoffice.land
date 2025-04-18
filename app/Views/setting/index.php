@@ -81,13 +81,10 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="row">
-                                    <div class="col-xl-12 col-md-12 mb-1">
-                                        <label for="token_Loan" class="form-label">Line Token แจ้งเตือนสถานะสินเชื่อเกินกำหนด &nbsp;&nbsp;<a href="https://www.smith.in.th/สร้าง-line-notify-สำหรับ-post-ลงกลุ่ม/" target="_blank"><i>(ดูวิธีได้รับ)</i></a></label>
-                                    </div>
-                                </div>
                                 <div class="row" style="margin-bottom: -25px;">
-                                    <div class="col-xl-11 col-md-12"> <input type="text" class="form-control" id="token_Loan" name="token_Loan" placeholder="Line Token"></div>
+                                    <div class="col-xl-11 col-md-12 mb-1">
+                                        <label for="token_Loan" class="form-label">Line แจ้งเตือนสถานะสินเชื่อเกินกำหนด &nbsp;&nbsp;</label>
+                                    </div>
                                     <div class="col-xl-1 col-md-12 mt-2">
                                         <label class="custom-control custom-checkbox custom-control-md" style="margin-left:-5px;">
                                             <input type="checkbox" class="custom-control-input" name="checkbox_Token_Loan" id="checkbox_Token_Loan">
@@ -95,6 +92,11 @@
                                         </label>
                                     </div>
                                 </div>
+                                <!-- <div class="row" style="margin-bottom: -25px;">
+                                    <div class="col-xl-11 col-md-12">
+                                        <input type="text" class="form-control" id="token_Loan" name="token_Loan" placeholder="Line Token">
+                                    </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>

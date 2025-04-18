@@ -685,9 +685,8 @@ class Setting extends BaseController
             } else {
                 $token_loan_status = 0;
             }
-
+            // 'token_loan' => $this->request->getVar('token_Loan'),
             $update = $OverdueStatusModel->updateOverdueStatus([
-                'token_loan' => $this->request->getVar('token_Loan'),
                 'token_overdue_loan' => $this->request->getVar('overdue_Loan'),
                 'token_loan_status' => $token_loan_status,
                 'updated_at' => date('Y-m-d H:i:s')

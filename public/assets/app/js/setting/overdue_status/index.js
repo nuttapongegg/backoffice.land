@@ -8,7 +8,7 @@ $(document).ready(function () {
             success: function (res) {
                 // let $data = res.data
                 $('#setting_Overdue_Status').modal('show');
-                $('#form_Setting_Overdue_Status #token_Loan').val(res.data.token_loan);
+                // $('#form_Setting_Overdue_Status #token_Loan').val(res.data.token_loan);
                 $('#form_Setting_Overdue_Status #overdue_Loan').val(res.data.token_overdue_loan);
                 if (res.data.token_loan_status == 1) {
                     $('#form_Setting_Overdue_Status #checkbox_Token_Loan').attr("checked", "checked");
