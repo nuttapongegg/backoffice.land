@@ -386,7 +386,7 @@
                                                         <div class="input-group-text">
                                                             <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                         </div>
-                                                        <input type="text" class="form-control dateToBooking" name="date_to_payment" id="date_to_payment" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d'); ?>"disabled>
+                                                        <input type="text" class="form-control dateToBooking" name="date_to_payment" id="date_to_payment" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d'); ?>">
                                                     </div>
                                                 </div>
                                             </div>

@@ -1,6 +1,10 @@
 (function ($) {
-  flatpickr("#date_to_loan", {});
-  flatpickr("#date_to_loan_pay_date", {});
+  flatpickr("#date_to_loan", {
+    disableMobile: true,
+  });
+  flatpickr("#date_to_loan_pay_date", {
+    disableMobile: true,
+  });
 
   callTableLoan();
   callTableLoanPayments();
