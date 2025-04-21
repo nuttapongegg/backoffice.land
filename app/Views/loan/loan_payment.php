@@ -400,7 +400,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="form-group">
-                                                        <select name="account_name" id='account_name' class="form-control custom-select" disabled data-bs-placeholder="Select ..."required>
+                                                        <select name="account_name" id='account_name' class="form-control custom-select"  data-bs-placeholder="Select ..."required>
                                                             <?php if ($land_accounts) : ?>
                                                                 <?php foreach ($land_accounts as $land_account) { ?>
                                                                     <option value="<?php echo $land_account->id; ?>"><?php echo $land_account->land_account_name; ?></option>
