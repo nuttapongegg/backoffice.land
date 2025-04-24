@@ -279,7 +279,7 @@
                                                 <div class="input-group-text">
                                                     <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                 </div>
-                                                <input type="text" class="form-control dateToBooking" name="date_to_loan_pay_date" id="date_to_loan_pay_date" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d'); ?>" required>
+                                                <input type="text" class="form-control dateToBooking" name="date_to_loan_pay_date" id="date_to_loan_pay_date" placeholder="เลือกวันที่" value="<?php echo date('Y-m-d', strtotime('+1 month')); ?>" required>
                                             </div>
                                         </div>
                                     </div>

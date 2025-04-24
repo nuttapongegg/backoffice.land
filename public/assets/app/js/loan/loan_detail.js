@@ -12,11 +12,17 @@ var loan_installment_date = 0;
   let searchParams = window.location.pathname;
   var searchParams_ = searchParams.split("/loan/detail/");
 
-  flatpickr("#date_to_loan", {});
+  flatpickr("#date_to_loan", {
+    disableMobile: true,
+  });
 
-  flatpickr("#date_to_loan_pay_date", {});
+  flatpickr("#date_to_loan_pay_date", {
+    disableMobile: true,
+  });
 
-  flatpickr("#date_to_payment", {});
+  flatpickr("#date_to_payment", {
+    disableMobile: true,
+  });
 
   $.ajax({
     url: serverUrl + "/loan/fetchOtherPicture/" + searchParams_[1],
