@@ -104,7 +104,8 @@
 <script src="<?php echo base_url('/assets/plugins/sidebar/sidebar.js'); ?>"></script>
 <script src="<?php echo base_url('/assets/plugins/sidebar/sidebar-custom.js'); ?>"></script>
 
-<script src="https://amiryxe.github.io/easy-number-separator/easy-number-separator.js"></script>
+<!-- <script src="https://amiryxe.github.io/easy-number-separator/easy-number-separator.js"></script> -->
+<script src="<?php echo base_url('/assets/plugins/easy-number-separator/easy-number-separator.js'); ?>"></script>
 
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
 <!-- <script src="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script> -->

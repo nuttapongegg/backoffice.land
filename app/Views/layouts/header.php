@@ -590,10 +590,9 @@
                                                     </div>
                                                 </div>
                                             </li>
+                                        </ul>
                                     </li>
                                     <li><a class="dropdown-item" href="<?php echo base_url('/logout'); ?>"><i class="fe fe-power"></i>ออกจากระบบ</a></li>
-                                </ul>
-                                </li>
                                 </ul>
                             </div>
                         </div>
