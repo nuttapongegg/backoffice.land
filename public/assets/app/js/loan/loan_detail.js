@@ -36,6 +36,15 @@ var loan_installment_date = 0;
   loadLoan(searchParams_[1]);
   installmentTab();
   dataTablePaymentDetail();
+
+  new SmartPhoto(".js-img-viewer", {
+    resizeStyle: "fit",
+  });
+
+  new SmartPhoto(".js-img-viewer-other", {
+    resizeStyle: "fit",
+  });
+
   $(".input-other-images").imageUploader();
 })(jQuery);
 
@@ -137,7 +146,7 @@ $("#loan_without_vat").keyup(function () {
 });
 
 $("#edit_loan_detail_btn").click(function () {
-  $("#edit_loan_detail_btn").text("กำลังแก้ไข");
+  $("#edit_loan_detail_btn").text("กำลังแก้ไข").prop("disabled", true); // 🔒 ปิดการคลิกซ้ำ
   let searchParams = window.location.pathname;
   var searchParams_ = searchParams.split("/loan/detail/");
 
@@ -162,7 +171,7 @@ $("#edit_loan_detail_btn").click(function () {
           fade: true,
           time: 300,
         });
-        $("#edit_loan_detail_btn").text("บันทึก");
+        $("#edit_loan_detail_btn").text("บันทึก").prop("disabled", false); // 🔓 เปิดใช้งานอีกครั้ง
       } else {
         notif({
           type: "success",
@@ -171,7 +180,7 @@ $("#edit_loan_detail_btn").click(function () {
           fade: true,
           time: 300,
         });
-        $("#edit_loan_detail_btn").text("บันทึก");
+        $("#edit_loan_detail_btn").text("บันทึก").prop("disabled", false); // 🔓 เปิดใช้งานอีกครั้ง
         loadLoan(searchParams_[1]);
       }
     },
@@ -246,7 +255,7 @@ $("#AddPicture").submit(function (e) {
   var searchParams_ = searchParams.split("/loan/detail/");
   e.preventDefault();
   const formData = new FormData(this);
-  $("#add_btn_picture").text("กำลังเพิ่มรูปภาพ...");
+  $("#add_btn_picture").text("กำลังเพิ่มรูปภาพ...").prop("disabled", true); // 🔒 ปิดการคลิกซ้ำ
   $.ajax({
     url: serverUrl + "/loan/insertDetailPiture/"+ searchParams_[1],
     method: "post",
@@ -270,7 +279,7 @@ $("#AddPicture").submit(function (e) {
           fade: true,
           time: 300,
         });
-        $("#add_btn_picture").text("เพิ่มรูปภาพ");
+        $("#add_btn_picture").text("เพิ่มรูปภาพ").prop("disabled", false); // 🔓 เปิดใช้งานอีกครั้ง
       }
     },
   });
@@ -593,7 +602,7 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
 });
 // ฟังก์ชันดำเนินการบันทึก
 function proceedLoanPayment(formData, form) {
-  $(".btn-add-loan-payment").text("กำลังบันทึก...");
+  $(".btn-add-loan-payment").text("กำลังบันทึก...").prop("disabled", true); // 🔒 ปิดการคลิกซ้ำ
   $.ajax({
     url: serverUrl + "/loan/addPayment",
     method: "post",
@@ -611,7 +620,7 @@ function proceedLoanPayment(formData, form) {
           fade: true,
           time: 300,
         });
-        $(".btn-add-loan-payment").text("บันทึก");
+        $(".btn-add-loan-payment").text("บันทึก").prop("disabled", false); // 🔓 เปิดใช้งานอีกครั้ง
       } else {
         notif({
           type: "success",
@@ -623,7 +632,7 @@ function proceedLoanPayment(formData, form) {
 
         form.parsley().reset();
         form[0].reset();
-        $(".btn-add-loan-payment").text("บันทึก");
+        $(".btn-add-loan-payment").text("บันทึก").prop("disabled", false); // 🔓 เปิดใช้งานอีกครั้ง
         $(".PaymentLoanType1").addClass("active");
         $(".PaymentLoanType2").removeClass("active");
         $("#modalPayLoan").modal("hide");
@@ -1100,6 +1109,8 @@ function parseMapLink(mapLink) {
 
 // When click add link
 $("body").on("click", "#btn_edit_link_map", function () {
+  let $btn = $(this); // เก็บปุ่มไว้ใช้งาน
+  $btn.prop("disabled", true).text("กำลังบันทึก..."); // 🔒 ป้องกันคลิกซ้ำ
   let searchParams = window.location.pathname;
   var searchParams_ = searchParams.split("/loan/detail/");
   var mapLink = $("#link_map").val().trim();
@@ -1137,13 +1148,16 @@ $("body").on("click", "#btn_edit_link_map", function () {
           }, 1500); // Wait for 1.5 seconds before reloading
         } else {
           alert("เกิดข้อผิดพลาด: " + response.message);
+          $btn.prop("disabled", false).text("บันทึกลิงก์แผนที่"); // 🔓 เปิดปุ่มอีกครั้ง
         }
       },
       error: function () {
         alert("ไม่สามารถบันทึกลิงก์ Map ได้ในขณะนี้");
+        $btn.prop("disabled", false).text("บันทึกลิงก์แผนที่"); // 🔓 เปิดปุ่มอีกครั้ง
       },
     });
   } else {
     alert("กรุณากรอกลิงก์ Map ก่อนทำการบันทึก");
+    $btn.prop("disabled", false).text("บันทึกลิงก์แผนที่"); // 🔓 เปิดปุ่มอีกครั้ง
   }
 });

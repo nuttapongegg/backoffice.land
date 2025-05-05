@@ -555,7 +555,7 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
 
   var loan_list = form.parsley();
   if (loan_list.isValid()) {
-    $(".btn-add-loan").text("กำลังบันทึก...");
+    $(".btn-add-loan").text("กำลังบันทึก...").prop("disabled", true); // 🔒 Disable ปุ่ม
     $.ajax({
       url: serverUrl + "/loan/addLoan",
       method: "post",
@@ -573,7 +573,7 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
             fade: true,
             time: 300,
           });
-          $(".btn-add-loan").text("บันทึก");
+          $(".btn-add-loan").text("บันทึก").prop("disabled", false); // 🔓 เปิดใช้งานปุ่มอีกครั้ง
         } else {
           notif({
             type: "success",
@@ -610,7 +610,7 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
           
           form.parsley().reset();
           form[0].reset();
-          $(".btn-add-loan").text("บันทึก");
+          $(".btn-add-loan").text("บันทึก").prop("disabled", false); // 🔓 เปิดใช้งานอีกครั้ง
           $("#modalAddLoan").modal("hide");
           callTableLoan();
         }
@@ -618,7 +618,7 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
     });
   } else {
     loan_list.validate();
-    $(".btn-add-loan").text("บันทึก");
+    $(".btn-add-loan").text("บันทึก").prop("disabled", false); // 🔓 เปิดใช้งานอีกครั้ง
   }
 });
 

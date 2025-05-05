@@ -34,6 +34,8 @@
     <!-- <link id="style" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" /> -->
     <link id="style" href="https://cdn.datatables.net/datetime/1.1.2/css/dataTables.dateTime.min.css" rel="stylesheet" />
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/smartphoto@1.1.0/css/smartphoto.min.css">
+
     <!-- Style css -->
     <link href="<?php echo base_url('/assets/css/style.css'); ?>" rel="stylesheet">
 
@@ -590,9 +592,10 @@
                                                     </div>
                                                 </div>
                                             </li>
+                                            <!-- </ul> -->
+                                            <li><a class="dropdown-item" href="<?php echo base_url('/logout'); ?>"><i class="fe fe-power"></i>ออกจากระบบ</a></li>
                                         </ul>
                                     </li>
-                                    <li><a class="dropdown-item" href="<?php echo base_url('/logout'); ?>"><i class="fe fe-power"></i>ออกจากระบบ</a></li>
                                 </ul>
                             </div>
                         </div>
