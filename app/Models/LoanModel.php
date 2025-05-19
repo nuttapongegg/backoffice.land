@@ -10,7 +10,7 @@ class LoanModel
     protected $column_order;
     protected $column_search;
     protected $order;
-    
+
     public function __construct()
     {
         $db = \Config\Database::connect();
@@ -412,6 +412,16 @@ class LoanModel
         return $builder->getResult();
     }
 
+    public function getOpenLoanMonthlySummary()
+    {
+        $sql = "SELECT SUM(loan_summary_no_vat) AS totalOpenLoan FROM loan
+        WHERE YEAR(loan.loan_date_promise) = YEAR(CURDATE()) AND MONTH(loan.loan_date_promise) = MONTH(CURDATE()) AND loan.loan_status != 'CANCEL_STATE' ORDER BY id DESC;
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getRow();
+    }
+
     public function getDataTablePaymentMonthCount($param)
     {
         $month = $param['month'];
@@ -793,6 +803,19 @@ class LoanModel
         return $builder->getResult();
     }
 
+    public function getDataLoanPaymentsDaily()
+    {
+        $sql = "SELECT setting_land_report.*, setting_land.land_account_name
+                FROM setting_land_report
+                JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
+                WHERE DATE(setting_land_report.created_at) = CURDATE()
+                ORDER BY setting_land_report.id ASC;
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
     public function getListLoanPaymentMonths($year)
     {
         $sql = "SELECT * , MONTH(created_at) as loan_created_payment
@@ -885,7 +908,7 @@ class LoanModel
 
         return $builder->getResult();
     }
-   
+
     public function getDataTableLoanClosePaymentMonthCount($param)
     {
         $month = $param['month'];
