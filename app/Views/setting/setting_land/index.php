@@ -53,32 +53,32 @@
                                             <?php foreach ($setting_lands as $setting_land) { ?>
                                                 <?php $i++ ?>
 
-                                            <tr id="<?php echo $setting_land->id; ?>">
-                                                <td><?php echo $i; ?></td>
-                                                <td>
-                                                    <div class="mb-2 mt-2">
-                                                        <a href="javascript:void(0);" id="ReportLandAccount" data-bs-toggle="modal" data-bs-target="#modalReportLandAccount" data-id="<?php echo $setting_land->id; ?>"><?php echo $setting_land->land_account_name; ?></a>
-                                                        <a href="javascript:void(0);" class="btn btn-outline-secondary btnAddLandAccountMinus float-end" style="margin-top: -6px;" data-id="<?php echo $setting_land->id; ?>"><i class="fa-solid fa-minus" id="addLandAccountMinus" name="addLandAccountMinus"></i></a>
-                                                        <a href="javascript:void(0);" class="btn btn-outline-success btnAddLandAccountPlus float-end me-2" style="margin-top: -6px;" data-id="<?php echo $setting_land->id; ?>"><i class="fa-solid fa-plus" id="addLandAccountPlus" name="addLandAccountPlus"></i></a>
-                                                        <a href="javascript:void(0);" class="btn btn-outline-primary btnTransferLandAccount float-end me-2" style="margin-top: -6px;" data-id="<?php echo $setting_land->id; ?>"><i class="fas fa-exchange-alt" id="transferLandAccount" name="transferLandAccount"></i></a>
-                                                    </div>
-                                                </td>
-                                                <td><?php echo number_format($setting_land->land_account_cash, 2); ?></td>
-                                                <td><?php echo datetime_compare($setting_land->created_at); ?></td>
-                                                <?php if ($setting_land->updated_at == '') {
-                                                    $updated = $setting_land->created_at;
-                                                } else {
-                                                    $updated = $setting_land->updated_at;
-                                                }
-                                                ?>
-                                                <td><?php echo dateThai($updated); ?></td>
-                                                <td name="bstable-actions">
-                                                    <div class="d-flex align-items-center" style="justify-content: center;">
-                                                        <button type="button" class="btn btn-primary-light btn-icon btnEditLandAccount me-2" data-id="<?php echo $setting_land->id; ?>"><i class="fe fe-edit"> </i></button>
-                                                        <button type="button" class="btn btn-danger-light btn-icon btnDeleteLandAccount" data-id="<?php echo $setting_land->id; ?>"><i class="fe fe-trash"></i></button>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                                <tr id="<?php echo $setting_land->id; ?>">
+                                                    <td><?php echo $i; ?></td>
+                                                    <td>
+                                                        <div class="mb-2 mt-2">
+                                                            <a href="javascript:void(0);" id="ReportLandAccount" data-bs-toggle="modal" data-bs-target="#modalReportLandAccount" data-id="<?php echo $setting_land->id; ?>"><?php echo $setting_land->land_account_name; ?></a>
+                                                            <a href="javascript:void(0);" class="btn btn-outline-secondary btnAddLandAccountMinus float-end" style="margin-top: -6px;" data-id="<?php echo $setting_land->id; ?>"><i class="fa-solid fa-minus" id="addLandAccountMinus" name="addLandAccountMinus"></i></a>
+                                                            <a href="javascript:void(0);" class="btn btn-outline-success btnAddLandAccountPlus float-end me-2" style="margin-top: -6px;" data-id="<?php echo $setting_land->id; ?>"><i class="fa-solid fa-plus" id="addLandAccountPlus" name="addLandAccountPlus"></i></a>
+                                                            <a href="javascript:void(0);" class="btn btn-outline-primary btnTransferLandAccount float-end me-2" style="margin-top: -6px;" data-id="<?php echo $setting_land->id; ?>"><i class="fas fa-exchange-alt" id="transferLandAccount" name="transferLandAccount"></i></a>
+                                                        </div>
+                                                    </td>
+                                                    <td><?php echo number_format($setting_land->land_account_cash, 2); ?></td>
+                                                    <td><?php echo datetime_compare($setting_land->created_at); ?></td>
+                                                    <?php if ($setting_land->updated_at == '') {
+                                                        $updated = $setting_land->created_at;
+                                                    } else {
+                                                        $updated = $setting_land->updated_at;
+                                                    }
+                                                    ?>
+                                                    <td><?php echo dateThai($updated); ?></td>
+                                                    <td name="bstable-actions">
+                                                        <div class="d-flex align-items-center" style="justify-content: center;">
+                                                            <button type="button" class="btn btn-primary-light btn-icon btnEditLandAccount me-2" data-id="<?php echo $setting_land->id; ?>"><i class="fe fe-edit"> </i></button>
+                                                            <button type="button" class="btn btn-danger-light btn-icon btnDeleteLandAccount" data-id="<?php echo $setting_land->id; ?>"><i class="fe fe-trash"></i></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                             <?php } ?>
                                         <?php endif; ?>
                                     </tbody>
@@ -87,17 +87,20 @@
                                             <th colspan="1">
                                                 <h5 class="mb-0">รวม</h5>
                                             </th>
-                                            <?php if (session('status_edit_in_land_account') == 1) {
+                                            <!-- <php if (session('status_edit_in_land_account') == 1) {
                                                 $sum_total_land_account = '<th colspan="5">
-                                                <h5 class="mb-0">'. number_format($sum_total, 2).'</h5>
+                                                <h5 class="mb-0">' . number_format($sum_total, 2) . '</h5>
                                             </th>';
                                             } else {
                                                 $sum_total_land_account = '<th colspan="4">
-                                                <h5 class="mb-0">'. number_format($sum_total, 2).'</h5>
+                                                <h5 class="mb-0">' . number_format($sum_total, 2) . '</h5>
                                             </th>';
                                             }
-                                            ?>
-                                            <?php echo $sum_total_land_account; ?>
+                                            ?> -->
+                                            <!-- <php echo $sum_total_land_account; ?> -->
+                                            <th colspan="5">
+                                                <h5 class="mb-0"><?php echo number_format($sum_total, 2)  ?></h5>
+                                            </th>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -413,11 +416,42 @@
 
                         <div class="form-group">
                             <div align="left">
-                                <label for="editRealInvestment" class="tx-15">เงินลงทุนจริง</label>
+                                <div class="row">
+                                    <label for="realInvestment">เงินลงทุนจริง</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="realInvestment" name="realInvestment" placeholder="เงินลงทุนจริง" value="<?php echo $real_investment->investment ?>">
+                                    </div>
+                                </div>
                             </div>
-                            <input type="text" class="form-control" id="editRealInvestment" name="editRealInvestment" placeholder="เงินลงทุนจริง" value="<?php echo $real_investment->investment ?>">
                         </div>
-                        <button type="submit" class="btn btn-primary btnSaveRealInvestment" role="button">ยืนยัน</button>
+                        <div class="form-group">
+                            <div align="left">
+                                <div class="row">
+                                    <label class="form-label">การดำเนินการ</label>
+                                    <div class="input-group">
+                                        <select id="unitEditRealInvestment" name="unitEditRealInvestment" class="form-control form-select" required>
+                                            <option value="แก้ไข">แก้ไข</option>
+                                            <option value="เพิ่ม">เพิ่ม</option>
+                                            <option value="ลบ">ลบ</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="editAmountGroup" class="form-group" style="display: none;">
+                            <div align="left">
+                                <div class="row">
+                                    <label for="editRealInvestment">จำนวนเงิน<span id="calculatedAmount" style="font-weight: normal; color: gray;"></span></label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="editRealInvestment" name="editRealInvestment" placeholder="จำนวนเงิน">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div style="display: flex; justify-content: center;">
+                            <button type="submit" class="btn btn-primary btn-block btnSaveRealInvestment" role="button">ยืนยัน</button>
+                        </div>
                     </form>
                 </div>
             </div>

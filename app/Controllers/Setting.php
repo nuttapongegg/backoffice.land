@@ -44,10 +44,24 @@ class Setting extends BaseController
             $response['success'] = 0;
             $response['message'] = '';
             $id = $this->request->getVar('RealInvestmentId');
+            $action = $this->request->getVar('unitEditRealInvestment');
+            $currentInvestment = floatval(str_replace(',', '', $this->request->getVar('realInvestment')));
+            $editAmount = floatval(str_replace(',', '', $this->request->getVar('editRealInvestment')));
+
+            // กำหนดยอดใหม่ตามประเภทการดำเนินการ
+            if ($action === 'เพิ่ม') {
+                $finalInvestment = $currentInvestment + $editAmount;
+            } elseif ($action === 'ลบ') {
+                $finalInvestment = $currentInvestment - $editAmount;
+            } else {
+                // แก้ไข → ใช้ค่าปัจจุบันเลย
+                $finalInvestment = $currentInvestment;
+            }
+
 
             // HANDLE REQUEST
             $update = $RealInvestmentModel->updateRealInvestmentByID($id, [
-                'investment' => $this->request->getVar('editRealInvestment'),
+                'investment' => $finalInvestment,
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
 
