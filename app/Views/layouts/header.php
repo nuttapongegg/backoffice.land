@@ -652,6 +652,19 @@
                                                                 } ?>" href="<?php echo base_url('/Maps'); ?>">Maps</a></li>
                                 </ul>
                             </li>
+                            <li class="side-item side-item-category">จัดการ</li>
+                            <li class="slide">
+                                <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
+                                    <i class="ionicon side-menu__icon icon ion-ios-calculator"></i>
+                                    <span class="side-menu__label">บัญชี</span><i class="angle fe fe-chevron-right"></i>
+                                </a>
+                                <ul class="slide-menu">
+                                    <li class="side-menu__label1"><a href="#">บัญชี</a></li>
+                                    <!-- <li><a class="slide-item selectDoc" href="#" data-bs-toggle="modal" data-bs-target="#docModal" data-doc-type="ใบสำคัญรับ">ใบสำคัญรับ</a></li> -->
+                                    <li><a class="slide-item selectDoc" href="#" data-bs-toggle="modal" data-bs-target="#docModal" data-doc-type="ใบสำคัญจ่าย">ใบสำคัญจ่าย</a></li>
+                                    <!-- class="disabled" -->
+                                </ul>
+                            </li>
                             <li class="slide">
                                 <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'setting_land' && service('uri')->getSegment(2) == 'index') {
                                                                         echo 'active';

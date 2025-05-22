@@ -414,20 +414,20 @@ function getPusher()
     );
 }
 
-//DocumentSetUp
-function getDocumentSetUp()
-{
-    $DocumentSetUpModel = new \App\Models\DocumentSetUpModel();
-    // $data['DocumentSetUp'] = $DocumentSetUpModel->getDocumentSetUpAll();
-    // print_r($data['DocumentSetUp']); exit();
-    return $data['DocumentSetUp'] = $DocumentSetUpModel->getDocumentSetUpAll();
-}
+// //DocumentSetUp
+// function getDocumentSetUp()
+// {
+//     $DocumentSetUpModel = new \App\Models\DocumentSetUpModel();
+//     // $data['DocumentSetUp'] = $DocumentSetUpModel->getDocumentSetUpAll();
+//     // print_r($data['DocumentSetUp']); exit();
+//     return $data['DocumentSetUp'] = $DocumentSetUpModel->getDocumentSetUpAll();
+// }
 
-//CashFlow
-function getCashFlow()
+//SettingLandModel
+function SettingLandModel()
 {
-    $CashFlowModel = new \App\Models\CashFlowModel();
-    return $data['cashflows'] = $CashFlowModel->getCashFlowAll();
+    $SettingLandModel = new \App\Models\SettingLandModel();
+    return $data['setting_lands'] = $SettingLandModel->getSettingLandAll();
 }
 
 //car_logger_store

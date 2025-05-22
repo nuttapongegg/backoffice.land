@@ -92,6 +92,24 @@ $routes->group('loanpayment', function ($routes) {
     $routes->post('ocrInvoice', 'Loan::ocrInvoice');
 });
 
+// ใบสำคัญ
+$routes->group('document', ['filter' => 'employeeAuth'], function ($routes) {
+    $routes->post('search', 'Document::search');
+    $routes->post('getLists', 'Document::getLists');
+    $routes->post('store', 'Document::store');
+    $routes->get('edit/(:any)', 'Document::edit/$1');
+    $routes->get('docNumber/(:any)', 'Document::docNumber/$1');
+    $routes->post('update', 'Document::update');
+    $routes->post('delete/(:any)', 'Document::delete/$1');
+    $routes->get('listTitle', 'Document::listTitle');
+    $routes->get('listDoc', 'Document::listDoc');
+    $routes->get('print/(:any)', 'Document::print/$1');
+    $routes->post('billHistory', 'Document::billHistory/$1');
+    $routes->post('aiscript/vehicle-registration-book', 'Document::aiScriptVehicleRegistrationBook');
+
+    $routes->post('ocrInvoice', 'Document::ocrInvoice');
+});
+
 // ตั้งค่า
 $routes->group('setting_land', ['filter' => 'employeeAuth'], function ($routes) {
     //index
