@@ -1020,7 +1020,8 @@ class Loan extends BaseController
             return $this->response->setJSON([
                 'status' => 200,
                 'error' => false,
-                'message' => 'เพิ่มรายการสำเร็จ'
+                'message' => 'เพิ่มรายการสำเร็จ',
+                'payment_type' => $payment_type
             ]);
         } else {
             return $this->response->setJSON([

@@ -216,13 +216,36 @@ function cancelLoan() {
               time: 300,
             });
           } else {
+            fetch('https://script.google.com/macros/s/AKfycbycISLS1BJQEBffMcirtCdxwnjLwSmTcmxsGlkx3NEMLrlPO8CJ_KQCloRbwHdifh_cGw/exec', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                loan_code: searchParams_[1],  // หมายเลข loan_code ที่ต้องการอัปเดต
+                action: 'delete',
+            }),
+              mode: 'no-cors'  // ใช้โหมด no-cors
+            })
+            .then(response => {
+              // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
+              // console.log('Request sent');
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+
             notif({
               type: "success",
               msg: "แก้ไขสินเชื่อสำเร็จ!",
               position: "right",
               fade: true,
-              time: 300,
+              time: 1400,
             });
+
+            setTimeout(function () {
+                window.location = '/loan/list'
+            }, 1 * 1500)
           }
         },
       });
@@ -622,6 +645,30 @@ function proceedLoanPayment(formData, form) {
         });
         $(".btn-add-loan-payment").text("บันทึก").prop("disabled", false); // 🔓 เปิดใช้งานอีกครั้ง
       } else {
+        if(response.payment_type == 'CloseLoan'){
+          let searchParams = window.location.pathname;
+          var searchParams_ = searchParams.split("/loan/detail/");
+          
+          fetch('https://script.google.com/macros/s/AKfycbycISLS1BJQEBffMcirtCdxwnjLwSmTcmxsGlkx3NEMLrlPO8CJ_KQCloRbwHdifh_cGw/exec', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              loan_code: searchParams_[1],  // หมายเลข loan_code ที่ต้องการอัปเดต
+              action: 'delete',
+          }),
+            mode: 'no-cors'  // ใช้โหมด no-cors
+          })
+          .then(response => {
+            // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
+            // console.log('Request sent');
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+        }
+
         notif({
           type: "success",
           msg: "จ่ายสินเชื่อสำเร็จ!",
