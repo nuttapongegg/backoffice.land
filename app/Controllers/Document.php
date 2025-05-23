@@ -302,9 +302,9 @@ class Document extends BaseController
             $docfile = $doc->doc_file;
             $file = $doc->filePath;
             $doc_price = $doc->price;
-            $doc_setting_land_name = $doc->land_account_name;
+            $doc_setting_land_name = $doc->cash_flow_name;
 
-            if ($doc->land_account_name != $landAccountName || $doc_price != str_replace(',', '', $this->request->getVar('price'))) {
+            if ($doc->cash_flow_name != $landAccountName || $doc_price != str_replace(',', '', $this->request->getVar('price'))) {
 
                 //ลบ setting_land ก่อนหน้า เพื่ออัพเดทใหม่
                 switch ($doc->doc_type) {
@@ -318,7 +318,7 @@ class Document extends BaseController
                                 ]);
 
                                 $detail = 'ลบใบสำคัญรับ' . '(' . $doc->title . ')';
-                                $note = 'ทำการแก้ไขรายการ ใบสำคัญรับ' . '(' . $doc->title . ') ทำการแก้ไขจากบัญชี ' . $doc->land_account_name . ' จำนวนเงิน ' . number_format($doc_price, 2) . ' แก้ไขเป็น บัญชี ' . $landAccountName . ' จำนวนเงิน ' . number_format(str_replace(',', '', $this->request->getVar('price')), 2);
+                                $note = 'ทำการแก้ไขรายการ ใบสำคัญรับ' . '(' . $doc->title . ') ทำการแก้ไขจากบัญชี ' . $doc->cash_flow_name . ' จำนวนเงิน ' . number_format($doc_price, 2) . ' แก้ไขเป็น บัญชี ' . $landAccountName . ' จำนวนเงิน ' . number_format(str_replace(',', '', $this->request->getVar('price')), 2);
                                 $this->SettingLandModel->insertSettingLandReport([
                                     'setting_land_id' => $settingland->id,
                                     'setting_land_report_detail' => $detail,
@@ -342,7 +342,7 @@ class Document extends BaseController
                                 ]);
 
                                 $detail = 'ลบใบสำคัญจ่าย' . '(' . $doc->title . ')';
-                                $note = 'แก้ไขรายการ ใบสำคัญจ่าย' . '(' . $doc->title . ') ทำการแก้ไขจากบัญชี ' . $doc->land_account_name . 'จำนวนเงิน ' . number_format($doc_price, 2) . ' แก้ไขเป็น บัญชี ' . $landAccountName . ' จำนวนเงิน ' . number_format(str_replace(',', '', $this->request->getVar('price')), 2);
+                                $note = 'แก้ไขรายการ ใบสำคัญจ่าย' . '(' . $doc->title . ') ทำการแก้ไขจากบัญชี ' . $doc->cash_flow_name . 'จำนวนเงิน ' . number_format($doc_price, 2) . ' แก้ไขเป็น บัญชี ' . $landAccountName . ' จำนวนเงิน ' . number_format(str_replace(',', '', $this->request->getVar('price')), 2);
                                 $this->SettingLandModel->insertSettingLandReport([
                                     'setting_land_id' => $settingland->id,
                                     'setting_land_report_detail' => $detail,
@@ -389,7 +389,7 @@ class Document extends BaseController
                 'doc_date' => $this->request->getVar('doc_date'),
                 'title' => $title->title,
                 'price' => str_replace(',', '', $this->request->getVar('price')),
-                'land_account_name' => $this->request->getVar('land_account_name'),
+                'cash_flow_name' => $this->request->getVar('land_account_name'),
                 'doc_file' => $docfile,
                 'filePath' => $file,
                 'note' => $this->request->getVar('note'),
@@ -398,7 +398,7 @@ class Document extends BaseController
 
             switch ($docType) {
                 case 'ใบสำคัญรับ':
-                    if ($doc->land_account_name != $landAccountName || $doc_price != str_replace(',', '', $this->request->getVar('price'))) {
+                    if ($doc->cash_flow_name != $landAccountName || $doc_price != str_replace(',', '', $this->request->getVar('price'))) {
                         foreach ($settinglands_edit as $settingland_edit) {
                             if ($landAccountName == $settingland_edit->land_account_name) {
                                 $price = str_replace(',', '', $this->request->getVar('price'));
@@ -409,7 +409,7 @@ class Document extends BaseController
                                     // 'updated_at' => date('Y-m-d H:i:s'),
                                 ]);
 
-                                $detail = 'เพิ่มรายการแก้ไขใบสำคัญรับ' . '(' . $title->title . ') แก้ไขจากบัญชี ' . $doc->land_account_name . 'จำนวนเงิน ' . number_format($doc_price, 2) . ' แก้ไขเป็น บัญชี ' . $landAccountName . ' จำนวนเงิน ' . number_format($price, 2);
+                                $detail = 'เพิ่มรายการแก้ไขใบสำคัญรับ' . '(' . $title->title . ') แก้ไขจากบัญชี ' . $doc->cash_flow_name . 'จำนวนเงิน ' . number_format($doc_price, 2) . ' แก้ไขเป็น บัญชี ' . $landAccountName . ' จำนวนเงิน ' . number_format($price, 2);
                                 $this->SettingLandModel->insertSettingLandReport([
                                     'setting_land_id' => $settingland_edit->id,
                                     'setting_land_report_detail' => $detail,
@@ -425,7 +425,7 @@ class Document extends BaseController
                     break;
 
                 case 'ใบสำคัญจ่าย':
-                    if ($doc->land_account_name != $landAccountName || $doc_price != str_replace(',', '', $this->request->getVar('price'))) {
+                    if ($doc->cash_flow_name != $landAccountName || $doc_price != str_replace(',', '', $this->request->getVar('price'))) {
                         foreach ($settinglands_edit as $settingland_edit) {
                             if ($landAccountName == $settingland_edit->land_account_name) {
                                 $price = str_replace(',', '', $this->request->getVar('price'));
@@ -436,7 +436,7 @@ class Document extends BaseController
                                     // 'updated_at' => date('Y-m-d H:i:s'),
                                 ]);
 
-                                $detail = 'เพิ่มรายการแก้ไขใบสำคัญจ่าย' . '(' . $title->title . ') แก้ไขจากบัญชี ' . $doc->land_account_name . 'จำนวนเงิน ' . number_format($doc_price, 2) . ' แก้ไขเป็น บัญชี ' . $landAccountName . ' จำนวนเงิน ' . number_format($price, 2);
+                                $detail = 'เพิ่มรายการแก้ไขใบสำคัญจ่าย' . '(' . $title->title . ') แก้ไขจากบัญชี ' . $doc->cash_flow_name . 'จำนวนเงิน ' . number_format($doc_price, 2) . ' แก้ไขเป็น บัญชี ' . $landAccountName . ' จำนวนเงิน ' . number_format($price, 2);
                                 $this->SettingLandModel->insertSettingLandReport([
                                     'setting_land_id' => $settingland_edit->id,
                                     'setting_land_report_detail' => $detail,
@@ -502,7 +502,7 @@ class Document extends BaseController
 
             //ลบ setting_land
             $doc_price = $document->price;
-            $doc_setting_land_name = $document->land_account_name;
+            $doc_setting_land_name = $document->cash_flow_name;
             switch ($document->doc_type) {
                 case 'ใบสำคัญรับ':
                     foreach ($settinglands as $settingland) {

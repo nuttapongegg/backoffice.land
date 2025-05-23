@@ -808,7 +808,7 @@ class LoanModel
         $sql = "SELECT setting_land_report.*, setting_land.land_account_name
                 FROM setting_land_report
                 JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
-                WHERE DATE(setting_land_report.created_at) = CURDATE()
+                WHERE DATE(setting_land_report.created_at) = CURDATE() AND setting_land_report_detail NOT LIKE '%ใบสำคัญ%'
                 ORDER BY setting_land_report.id ASC;
         ";
 

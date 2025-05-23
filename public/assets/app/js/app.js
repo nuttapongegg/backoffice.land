@@ -12,7 +12,7 @@ function select2Banks(data) {
 }
 
 $(document).ready(function () {
-    
+
   let timeleft = 29;
   let downloadTimer = setInterval(function () {
     if (timeleft <= 0) {
@@ -253,7 +253,7 @@ $(document).ready(function () {
 
               let $docPaymentType = $data.doc_payment_type,
                 $docPrice = $data.price,
-                $land_account_name = $data.land_account_name;
+                $land_account_name = $data.cash_flow_name;
 
               $form.find("input[name=doc_id]").val($data.id);
               $form.find("input[name=doc_type]").val($data.doc_type);
