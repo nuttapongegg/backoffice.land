@@ -40,6 +40,65 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <?php
+
+                                            $Month_Jan_Expenses = 0;
+                                            $Month_Feb_Expenses = 0;
+                                            $Month_Mar_Expenses = 0;
+                                            $Month_Apr_Expenses = 0;
+                                            $Month_May_Expenses = 0;
+                                            $Month_Jun_Expenses = 0;
+                                            $Month_Jul_Expenses = 0;
+                                            $Month_Aug_Expenses = 0;
+                                            $Month_Sep_Expenses = 0;
+                                            $Month_Oct_Expenses = 0;
+                                            $Month_Nov_Expenses = 0;
+                                            $Month_Dec_Expenses = 0;
+
+                                            foreach ($DocumentsPayMonths as $DocumentsPayMonth) {
+                                                switch ($DocumentsPayMonth->doc_month_pay) {
+                                                    case "1":
+                                                        $Month_Jan_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "2":
+                                                        $Month_Feb_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "3":
+                                                        $Month_Mar_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "4":
+                                                        $Month_Apr_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "5":
+                                                        $Month_May_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "6":
+                                                        $Month_Jun_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "7":
+                                                        $Month_Jul_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "8":
+                                                        $Month_Aug_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "9":
+                                                        $Month_Sep_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "10":
+                                                        $Month_Oct_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "11":
+                                                        $Month_Nov_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                    case "12":
+                                                        $Month_Dec_Expenses = $DocumentsPayMonth->doc_sum_pay;
+                                                        break;
+                                                }
+                                            }
+
+                                            $Month_Expenses_Sum = 0;
+                                            $Month_Expenses_Sum = $Month_Jan_Expenses + $Month_Feb_Expenses + $Month_Mar_Expenses + $Month_Apr_Expenses + $Month_May_Expenses + $Month_Jun_Expenses
+                                                + $Month_Jul_Expenses + $Month_Aug_Expenses + $Month_Sep_Expenses + $Month_Oct_Expenses + $Month_Nov_Expenses + $Month_Dec_Expenses;
+
                                             $Month_Jan_Payment_Month = 0;
                                             $Month_Feb_Payment_Month = 0;
                                             $Month_Mar_Payment_Month = 0;
@@ -96,49 +155,51 @@
                                                 }
                                             }
 
-                                            $Month_Diff_Payment_Sum = 0;
-                                            $Month_Diff_Payment_Sum = $Month_Jan_Payment_Month + $Month_Feb_Payment_Month + $Month_Mar_Payment_Month + $Month_Apr_Payment_Month + $Month_May_Payment_Month + $Month_Jun_Payment_Month
+                                            $Month_Diff_Payment = 0;
+                                            $Month_Diff_Payment = $Month_Jan_Payment_Month + $Month_Feb_Payment_Month + $Month_Mar_Payment_Month + $Month_Apr_Payment_Month + $Month_May_Payment_Month + $Month_Jun_Payment_Month
                                                 + $Month_Jul_Payment_Month + $Month_Aug_Payment_Month + $Month_Sep_Payment_Month + $Month_Oct_Payment_Month + $Month_Nov_Payment_Month + $Month_Dec_Payment_Month;
 
                                             $total_month = 0;
                                             switch (date('m')) {
                                                 case "1":
-                                                    $total_month = $Month_Jan_Payment_Month;
+                                                    $total_month = $Month_Jan_Payment_Month - $Month_Jan_Expenses;
                                                     break;
                                                 case "2":
-                                                    $total_month = $Month_Feb_Payment_Month;
+                                                    $total_month = $Month_Feb_Payment_Month - $Month_Feb_Expenses;
                                                     break;
                                                 case "3":
-                                                    $total_month = $Month_Mar_Payment_Month;
+                                                    $total_month = $Month_Mar_Payment_Month - $Month_Mar_Expenses;
                                                     break;
                                                 case "4":
-                                                    $total_month = $Month_Apr_Payment_Month;
+                                                    $total_month = $Month_Apr_Payment_Month - $Month_Apr_Expenses;
                                                     break;
                                                 case "5":
-                                                    $total_month = $Month_May_Payment_Month;
+                                                    $total_month = $Month_May_Payment_Month - $Month_May_Expenses;
                                                     break;
                                                 case "6":
-                                                    $total_month = $Month_Jun_Payment_Month;
+                                                    $total_month = $Month_Jun_Payment_Month - $Month_Jun_Expenses;
                                                     break;
                                                 case "7":
-                                                    $total_month = $Month_Jul_Payment_Month;
+                                                    $total_month = $Month_Jul_Payment_Month - $Month_Jul_Expenses;
                                                     break;
                                                 case "8":
-                                                    $total_month = $Month_Aug_Payment_Month;
+                                                    $total_month = $Month_Aug_Payment_Month - $Month_Aug_Expenses;
                                                     break;
                                                 case "9":
-                                                    $total_month = $Month_Sep_Payment_Month;
+                                                    $total_month = $Month_Sep_Payment_Month - $Month_Sep_Expenses;
                                                     break;
                                                 case "10":
-                                                    $total_month = $Month_Oct_Payment_Month;
+                                                    $total_month = $Month_Oct_Payment_Month - $Month_Oct_Expenses;
                                                     break;
                                                 case "11":
-                                                    $total_month = $Month_Nov_Payment_Month;
+                                                    $total_month = $Month_Nov_Payment_Month - $Month_Nov_Expenses;
                                                     break;
                                                 case "12":
-                                                    $total_month = $Month_Dec_Payment_Month;
+                                                    $total_month = $Month_Dec_Payment_Month - $Month_Dec_Expenses;
                                                     break;
                                             }
+
+                                            $Month_Diff_Payment_Sum = $Month_Diff_Payment - $Month_Expenses_Sum;
                                             ?>
 
                                             <div class="col-md-12 text-center">
@@ -523,7 +584,7 @@
     </div>
 </div>
 <!-- จบ ยอดชำระค่างวดจริง -->
- <!-- ยอดชำระปิดบัญชี -->
+<!-- ยอดชำระปิดบัญชี -->
 <div class="modal fade" id="modalLoanClosePaymentMonth" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
@@ -561,3 +622,42 @@
     </div>
 </div>
 <!-- จบ ยอดชำระปิดบัญชี -->
+
+<!-- ตารางยอดรายจ่าย -->
+<div class="modal fade" id="modalExpensesMonth" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="card-title">ตารางยอดค้างชำระ (เดือน)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModalExpensesMonth"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="#">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-nowrap border-bottom" id="DataTable_Expenses">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5px;">#</th>
+                                    <th style="width: 15px;">เลขที่</th>
+                                    <th style="width: 15px;">วันที่</th>
+                                    <th style="width: 20px;">รายการ</th>
+                                    <th style="width: 40px;">รายละเอียด</th>
+                                    <th style="width: 20px;">ชื่อบัญชี</th>
+                                    <th style="width: 20px;">จำนวนเงิน</th>
+                                    <th style="width: 10px;">ผู้ทำรายการ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                        <div style="display: flex; justify-content: center;">
+                            <button type="button" class="btn btn-primary " data-bs-dismiss="modal" aria-label="Close">ปิด</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- จบ ตารางยอดรายจ่าย -->

@@ -590,7 +590,7 @@ class DocumentModel
         $sql = "
         SELECT MONTH(documents.doc_date) as doc_month_pay,documents.doc_type ,SUM(price) as doc_sum_pay
         FROM documents
-        WHERE YEAR(documents.doc_date) = $year AND documents.doc_type = 'รายจ่าย'
+        WHERE YEAR(documents.doc_date) = $year AND documents.doc_type = 'ใบสำคัญจ่าย'
         GROUP BY MONTH(documents.doc_date), documents.doc_type
         ";
         $builder = $this->db->query($sql);
@@ -621,6 +621,72 @@ class DocumentModel
         FROM documents
         WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'รายจ่าย'
         ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDocumentsPayMonthCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+
+        $sql = "SELECT *
+        FROM documents
+        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+        ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDocumentsPayMonth($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $start = $param['start'];
+        $length = $param['length'];
+
+        $sql = "SELECT *
+        FROM documents
+        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+        ORDER BY documents.doc_date ASC LIMIT $start, $length";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDocumentsPayMonthSearch($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $search_value = $param['search_value'];
+        $start = $param['start'];
+        $length = $param['length'];
+
+        $sql = "SELECT *
+        FROM documents
+        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+        and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%')
+           OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%')) 
+           ORDER BY documents.doc_date ASC LIMIT $start, $length
+            ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDocumentsPayMonthSearchCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $search_value = $param['search_value'];
+        $sql = "SELECT *
+        FROM documents
+        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+        and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%')
+           OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%'))
+            ";
         $builder = $this->db->query($sql);
 
         return $builder->getResult();
