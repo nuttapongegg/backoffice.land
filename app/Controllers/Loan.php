@@ -1292,7 +1292,8 @@ class Loan extends BaseController
         $data['targeteds'] = $TargetedModel->getTargetedAll();
 
         $data['LoanPaymentMonths'] = $this->LoanModel->getListLoanPaymentMonths(date('Y'));
-        $data['DocumentsPayMonths'] = $this->DocumentModel->getDocumentspaymonth(date('Y'));
+        $data['DocumentsMonths'] = $this->DocumentModel->getrevenue(date('Y'));
+        $data['LoanProcessMonths'] = $this->LoanModel->getLoanProcessMonths(date('Y'));
 
         $data['content'] = 'loan/report_loan';
         $data['title'] = 'รายงานสินเชื่อ';
