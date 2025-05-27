@@ -1320,7 +1320,6 @@ class Loan extends BaseController
             $PaymentMonths = $this->LoanModel->getListPaymentMonths($data);
             $LoanPaymentMonths = $this->LoanModel->getListLoanPaymentMonths($data);
             $LoanClosePaymentMonths = $this->LoanModel->getListLoanClosePaymentMonths($data);
-            $DocumentsPayMonths = $this->DocumentModel->getDocumentspaymonth($data);
 
             $Month_Jan_Payment = 0;
             $Month_Feb_Payment = 0;
@@ -1732,60 +1731,6 @@ class Loan extends BaseController
                 }
             }
 
-            $Month_Jan_Expenses = 0;
-            $Month_Feb_Expenses = 0;
-            $Month_Mar_Expenses = 0;
-            $Month_Apr_Expenses = 0;
-            $Month_May_Expenses = 0;
-            $Month_Jun_Expenses = 0;
-            $Month_Jul_Expenses = 0;
-            $Month_Aug_Expenses = 0;
-            $Month_Sep_Expenses = 0;
-            $Month_Oct_Expenses = 0;
-            $Month_Nov_Expenses = 0;
-            $Month_Dec_Expenses = 0;
-
-            foreach ($DocumentsPayMonths as $DocumentsPayMonth) {
-                switch ($DocumentsPayMonth->doc_month_pay) {
-                    case "1":
-                        $Month_Jan_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "2":
-                        $Month_Feb_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "3":
-                        $Month_Mar_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "4":
-                        $Month_Apr_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "5":
-                        $Month_May_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "6":
-                        $Month_Jun_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "7":
-                        $Month_Jul_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "8":
-                        $Month_Aug_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "9":
-                        $Month_Sep_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "10":
-                        $Month_Oct_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "11":
-                        $Month_Nov_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                    case "12":
-                        $Month_Dec_Expenses = $DocumentsPayMonth->doc_sum_pay;
-                        break;
-                }
-            }
-
             $Month_Class_Jan = '';
             $Month_Class_Feb = '';
             $Month_Class_Mar = '';
@@ -1877,10 +1822,6 @@ class Loan extends BaseController
             $Month_Loan_Close_Payment_Sum = $Month_Jan_Loan_Close_Payment + $Month_Feb_Loan_Close_Payment + $Month_Mar_Loan_Close_Payment + $Month_Apr_Loan_Close_Payment + $Month_May_Loan_Close_Payment + $Month_Jun_Loan_Close_Payment
                 + $Month_Jul_Loan_Close_Payment + $Month_Aug_Loan_Close_Payment + $Month_Sep_Loan_Close_Payment + $Month_Oct_Loan_Close_Payment + $Month_Nov_Loan_Close_Payment + $Month_Dec_Loan_Close_Payment;
 
-            $Month_Expenses_Sum = 0;
-            $Month_Expenses_Sum = $Month_Jan_Expenses + $Month_Feb_Expenses + $Month_Mar_Expenses + $Month_Apr_Expenses + $Month_May_Expenses + $Month_Jun_Expenses
-                + $Month_Jul_Expenses + $Month_Aug_Expenses + $Month_Sep_Expenses + $Month_Oct_Expenses + $Month_Nov_Expenses + $Month_Dec_Expenses;
-
             $html =
                 '<div class="card-body">
                 <div class="table-responsive">
@@ -1894,7 +1835,6 @@ class Loan extends BaseController
                                 <th class="border-top-0 bg-black-03 tx-15 wd-14p tx-center">ชำระปิดบัญชี</th>
                                 <th class="border-top-0 bg-black-03 tx-15 wd-13p tx-center">ชำระค่างวด</th>
                                 <th class="border-top-0 bg-black-03 tx-15 wd-13p tx-center">ค้างชำระ</th>
-                                <th class="border-top-0 bg-black-03 tx-15 wd-13p tx-center">รายจ่าย</th>
                             </tr>
                             <tr class="' . $Month_Class_Jan . '">
                                 <td class="border-top-0 pt-4"><a>มกราคม</a></td>
@@ -1904,7 +1844,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="1" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Jan_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="01" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Jan_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="01" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jan_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="01" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Jan_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Feb . '">
                                 <td class="border-top-0 pt-4"><a>กุมภาพันธ์</a></td>
@@ -1914,7 +1853,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="2" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Feb_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="02" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Feb_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="02" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Feb_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="02" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Feb_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Mar . '">
                                 <td class="border-top-0 pt-4"><a>มีนาคม</a></td>
@@ -1924,7 +1862,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="3" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Mar_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="03" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Mar_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="03" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Mar_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="03" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Mar_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Apr . '">
                                 <td class="border-top-0 pt-4"><a>เมษายน</a></td>
@@ -1934,7 +1871,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="4" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Apr_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="04" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Apr_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="04" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Apr_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="04" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Apr_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_May . '">
                                 <td class="border-top-0 pt-4"><a>พฤษภาคม</a></td>
@@ -1944,7 +1880,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="5" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_May_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="05" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_May_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="05" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_May_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="05" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_May_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Jun . '">
                                 <td class="border-top-0 pt-4"><a>มิถุนายน</a></td>
@@ -1954,7 +1889,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="6" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Jun_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="06" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Jun_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="06" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jun_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="06" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Jun_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Jul . '">
                                 <td class="border-top-0 pt-4"><a>กรกฏาคม</a></td>
@@ -1964,7 +1898,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="7" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Jul_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="07" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Jul_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="07" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Jul_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="07" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Jul_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Aug . '">
                                 <td class="border-top-0 pt-4"><a>สิงหาคม</a></td>
@@ -1974,7 +1907,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="8" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Aug_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="08" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Aug_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="08" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Aug_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="08" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Aug_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Sep . '">
                                 <td class="border-top-0 pt-4"><a>กันยายน</a></td>
@@ -1984,7 +1916,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="9" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Sep_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="09" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Sep_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="09" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Sep_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="09" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Sep_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Oct . '">
                                 <td class="border-top-0 pt-4"><a>ตุลาคม</a></td>
@@ -1994,7 +1925,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Oct_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Oct_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Oct_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Oct_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Nov . '">
                                 <td class="border-top-0 pt-4"><a>พฤศจิกายน</a></td>
@@ -2004,7 +1934,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Nov_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Nov_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Nov_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Nov_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="' . $Month_Class_Dec . '">
                                 <td class="border-top-0 pt-4"><a>ธันวาคม</a></td>
@@ -2014,7 +1943,6 @@ class Loan extends BaseController
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">' . number_format($Month_Dec_Loan_Close_Payment, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Diff_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDiffPaymentMonth">' . number_format($Month_Dec_Diff_Payment_Month, 2) . '</a></td>
                                 <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_OverduePayment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalOverduePaymentMonth">' . number_format($Month_Dec_Overdue_Payment, 2) . '</a></td>
-                                <td class="border-top-0" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Dec_Expenses, 2) . '</a></td>
                             </tr>
                             <tr class="bg-primary">
                                 <td class="border-top-0 pt-4">
@@ -2037,9 +1965,6 @@ class Loan extends BaseController
                                 </td>
                                 <td class="border-top-0" style="text-align: right;">
                                     <p class="mb-0">' . number_format($Month_Overdue_Payment_Sum, 2) . '</p>
-                                </td>
-                                <td class="border-top-0" style="text-align: right;">
-                                    <p class="mb-0">' . number_format($Month_Expenses_Sum, 2) . '</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -2197,6 +2122,105 @@ class Loan extends BaseController
                 $datas->loan_payment_installment,
                 number_format($datas->loan_payment_amount, 2),
                 $datas->payment_date,
+            );
+        }
+
+        $json_data = array(
+            "draw" => intval($param['draw']),
+            "recordsTotal" => count($total_count),
+            "recordsFiltered" => count($total_count),
+            "data" => $data   // total data array
+        );
+
+        echo json_encode($json_data);
+    }
+
+    public function ajaxDataTableLoanProcess($id)
+    {
+        $LoanModel = new \App\Models\LoanModel();
+        $param['search_value'] = $_REQUEST['search']['value'];
+        $param['draw'] = $_REQUEST['draw'];
+        $param['start'] = $_REQUEST['start'];
+        $param['length'] = $_REQUEST['length'];
+        $param['month'] = $id;
+        $param['years'] = $_REQUEST['years'];
+
+        if (!empty($param['search_value'])) {
+            // count all data
+            $total_count = $LoanModel->getDataTableLoanProcessMonthSearchCount($param);
+
+            $data_month = $LoanModel->getDataTableLoanProcessMonthSearch($param);
+        } else {
+            // count all data
+            $total_count = $LoanModel->getDataTableLoanProcessMonthCount($param);
+
+            // get per page data
+            $data_month = $LoanModel->getDataTableLoanProcessMonth($param);
+        }
+
+        $i = 0;
+        $data = [];
+        foreach ($data_month as $datas) {
+            $sum = $datas->loan_payment_process + $datas->loan_tranfer + $datas->loan_tranfer;
+            $i++;
+            $data[] = array(
+                $i,
+                $datas->loan_code,
+                $datas->loan_employee,
+                number_format($datas->loan_payment_process, 2),
+                number_format($datas->loan_tranfer, 2),
+                number_format($datas->loan_payment_other, 2),
+                number_format($sum, 2),
+                $datas->loan_date_promise,
+            );
+        }
+
+        $json_data = array(
+            "draw" => intval($param['draw']),
+            "recordsTotal" => count($total_count),
+            "recordsFiltered" => count($total_count),
+            "data" => $data   // total data array
+        );
+
+        echo json_encode($json_data);
+    }
+
+    public function ajaxDataTableReceipt($id)
+    {
+        $DocumentModel = new \App\Models\DocumentModel();
+        $param['search_value'] = $_REQUEST['search']['value'];
+        $param['draw'] = $_REQUEST['draw'];
+        $param['start'] = $_REQUEST['start'];
+        $param['length'] = $_REQUEST['length'];
+        $param['month'] = $id;
+        $param['years'] = $_REQUEST['years'];
+
+        if (!empty($param['search_value'])) {
+            // count all data
+            $total_count = $DocumentModel->getDataTableDocumentsReceiptMonthSearchCount($param);
+
+            $data_month = $DocumentModel->getDataTableDocumentsReceiptMonthSearch($param);
+        } else {
+            // count all data
+            $total_count = $DocumentModel->getDataTableDocumentsReceiptMonthCount($param);
+
+            // get per page data
+            $data_month = $DocumentModel->getDataTableDocumentsReceiptMonth($param);
+        }
+
+        $i = 0;
+        $data = [];
+        foreach ($data_month as $datas) {
+            $i++;
+            $data[] = array(
+                $i,
+                $datas->doc_number,
+                $datas->doc_date,
+                $datas->title,
+                $datas->note,
+                $datas->cash_flow_name,
+                number_format($datas->price, 2),
+                $datas->username,
             );
         }
 
@@ -4149,7 +4173,7 @@ class Loan extends BaseController
 
         // $status_payment = $this->request->getPost('status_payment');
         $fileName_img = '';
-    
+
         $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
         if($imgFile != ''){
             $fileName_img = $imgFile->getFilename();
@@ -4716,5 +4740,682 @@ class Loan extends BaseController
         $parser = new Parser();
         $pdf = $parser->parseFile($pdfFilePath);
         return $pdf->getText();
+    }
+
+    // index
+    public function report_revenues()
+    {
+        // $DocumentModel = new \App\Models\DocumentModel();
+        // $data['profits'] = $DocumentModel->getrevenue(2022);
+        $data['content'] = 'loan/report_revenues';
+        $data['title'] = 'รายงานรายรับ/รายจ่าย';
+        $data['js_critical'] = '<script src="' . base_url('assets/app/js/loan/report_revenues.js') . '"></script>';
+        return view('app', $data);
+    }
+
+    public function ajaxTablesReportRevenues($data)
+    {
+        try {
+            // SET CONFIG
+            $status = 500;
+            $response['success'] = 0;
+            $response['message'] = '';
+
+            $DocumentModel = new \App\Models\DocumentModel();
+
+            $documentmonth = $DocumentModel->getrevenue($data);
+            $loanprocessmonths = $this->LoanModel->getLoanProcessMonths($data);
+
+            // เดือน1
+            $Month_Jan_Receipt = 0;
+            $Month_Jan_Expenses = 0;
+            $Month_Jan_Net = 0;
+            // เดือน2
+            $Month_Feb_Receipt = 0;
+            $Month_Feb_Expenses = 0;
+            $Month_Feb_Net = 0;
+            // เดือน3
+            $Month_Mar_Receipt = 0;
+            $Month_Mar_Expenses = 0;
+            $Month_Mar_Net = 0;
+            // เดือน4
+            $Month_Apr_Receipt = 0;
+            $Month_Apr_Expenses = 0;
+            $Month_Apr_Net = 0;
+            // เดือน5
+            $Month_May_Receipt = 0;
+            $Month_May_Expenses = 0;
+            $Month_May_Net = 0;
+            // เดือน6
+            $Month_Jun_Receipt = 0;
+            $Month_Jun_Expenses = 0;
+            $Month_Jun_Net = 0;
+            // เดือน7
+            $Month_Jul_Receipt = 0;
+            $Month_Jul_Expenses = 0;
+            $Month_Jul_Net = 0;
+            // เดือน8
+            $Month_Aug_Receipt = 0;
+            $Month_Aug_Expenses = 0;
+            $Month_Aug_Net = 0;
+            // เดือน9
+            $Month_Sep_Receipt = 0;
+            $Month_Sep_Expenses = 0;
+            $Month_Sep_Net = 0;
+            // เดือน10
+            $Month_Oct_Receipt = 0;
+            $Month_Oct_Expenses = 0;
+            $Month_Oct_Net = 0;
+            // เดือน11
+            $Month_Nov_Receipt = 0;
+            $Month_Nov_Expenses = 0;
+            $Month_Nov_Net = 0;
+            // เดือน12
+            $Month_Dec_Receipt = 0;
+            $Month_Dec_Expenses = 0;
+            $Month_Dec_Net = 0;
+
+            //คำนวนรายเดือน
+            foreach ($documentmonth as $doc_months) {
+                switch ($doc_months->doc_month) {
+                    case "1":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Jan_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Jan_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "2":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Feb_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Feb_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "3":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Mar_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Mar_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "4":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Apr_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Apr_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "5":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_May_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_May_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "6":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Jun_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Jun_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "7":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Jul_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Jul_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "8":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Aug_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Aug_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "9":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Sep_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Sep_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "10":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Oct_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Oct_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "11":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Nov_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Nov_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                    case "12":
+                        switch ($doc_months->doc_type) {
+                            case "ใบสำคัญรับ":
+                                $Month_Dec_Receipt = $doc_months->doc_sum_price;
+                                break;
+                            case "ใบสำคัญจ่าย":
+                                $Month_Dec_Expenses = $doc_months->doc_sum_price;
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            $Month_Jan_Process = 0;
+            $Month_Feb_Process = 0;
+            $Month_Mar_Process = 0;
+            $Month_Apr_Process = 0;
+            $Month_May_Process = 0;
+            $Month_Jun_Process = 0;
+            $Month_Jul_Process = 0;
+            $Month_Aug_Process = 0;
+            $Month_Sep_Process = 0;
+            $Month_Oct_Process = 0;
+            $Month_Nov_Process = 0;
+            $Month_Dec_Process = 0;
+
+            foreach ($loanprocessmonths as $loanprocessmonth) {
+                switch ($loanprocessmonth->loan_created_payment) {
+                    case "1":
+                        $Month_Jan_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "2":
+                        $Month_Feb_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "3":
+                        $Month_Mar_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "4":
+                        $Month_Apr_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "5":
+                        $Month_May_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "6":
+                        $Month_Jun_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "7":
+                        $Month_Jul_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "8":
+                        $Month_Aug_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "9":
+                        $Month_Sep_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "10":
+                        $Month_Oct_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "11":
+                        $Month_Nov_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                    case "12":
+                        $Month_Dec_Process = $loanprocessmonth->total_payment_process + $loanprocessmonth->total_tranfer + $loanprocessmonth->total_payment_other;
+                        break;
+                }
+            }
+
+            $Month_Jan_Receipt_Sum = 0;
+            $Month_Feb_Receipt_Sum = 0;
+            $Month_Mar_Receipt_Sum = 0;
+            $Month_Apr_Receipt_Sum = 0;
+            $Month_May_Receipt_Sum = 0;
+            $Month_Jun_Receipt_Sum = 0;
+            $Month_Jul_Receipt_Sum = 0;
+            $Month_Aug_Receipt_Sum = 0;
+            $Month_Sep_Receipt_Sum = 0;
+            $Month_Oct_Receipt_Sum = 0;
+            $Month_Nov_Receipt_Sum = 0;
+            $Month_Dec_Receipt_Sum = 0;
+
+            $Month_Jan_Receipt_Sum = ($Month_Jan_Process + $Month_Jan_Receipt);
+            $Month_Feb_Receipt_Sum = ($Month_Feb_Process + $Month_Feb_Receipt);
+            $Month_Mar_Receipt_Sum = ($Month_Mar_Process + $Month_Mar_Receipt);
+            $Month_Apr_Receipt_Sum = ($Month_Apr_Process + $Month_Apr_Receipt);
+            $Month_May_Receipt_Sum = ($Month_May_Process + $Month_May_Receipt);
+            $Month_Jun_Receipt_Sum = ($Month_Jun_Process + $Month_Jun_Receipt);
+            $Month_Jul_Receipt_Sum = ($Month_Jul_Process + $Month_Jul_Receipt);
+            $Month_Aug_Receipt_Sum = ($Month_Aug_Process + $Month_Aug_Receipt);
+            $Month_Sep_Receipt_Sum = ($Month_Sep_Process + $Month_Sep_Receipt);
+            $Month_Oct_Receipt_Sum = ($Month_Oct_Process + $Month_Oct_Receipt);
+            $Month_Nov_Receipt_Sum = ($Month_Nov_Process + $Month_Nov_Receipt);
+            $Month_Dec_Receipt_Sum = ($Month_Dec_Process + $Month_Dec_Receipt);
+
+            $Month_Jan_Net = $Month_Jan_Receipt_Sum - $Month_Jan_Expenses;
+            $Month_Feb_Net = $Month_Feb_Receipt_Sum - $Month_Feb_Expenses;
+            $Month_Mar_Net = $Month_Mar_Receipt_Sum - $Month_Mar_Expenses;
+            $Month_Apr_Net = $Month_Apr_Receipt_Sum - $Month_Apr_Expenses;
+            $Month_May_Net = $Month_May_Receipt_Sum - $Month_May_Expenses;
+            $Month_Jun_Net = $Month_Jun_Receipt_Sum - $Month_Jun_Expenses;
+            $Month_Jul_Net = $Month_Jul_Receipt_Sum - $Month_Jul_Expenses;
+            $Month_Aug_Net = $Month_Aug_Receipt_Sum - $Month_Aug_Expenses;
+            $Month_Sep_Net = $Month_Sep_Receipt_Sum - $Month_Sep_Expenses;
+            $Month_Oct_Net = $Month_Oct_Receipt_Sum - $Month_Oct_Expenses;
+            $Month_Nov_Net = $Month_Nov_Receipt_Sum - $Month_Nov_Expenses;
+            $Month_Dec_Net = $Month_Dec_Receipt_Sum - $Month_Dec_Expenses;
+
+            $Month_Sum_Net = 0;
+
+            $Month_Class_Jan = '';
+            $Month_Class_Feb = '';
+            $Month_Class_Mar = '';
+            $Month_Class_Apr = '';
+            $Month_Class_May = '';
+            $Month_Class_Jun = '';
+            $Month_Class_Jul = '';
+            $Month_Class_Aug = '';
+            $Month_Class_Sep = '';
+            $Month_Class_Oct = '';
+            $Month_Class_Nov = '';
+            $Month_Class_Dec = '';
+            $Month_Class_Dec = '';
+
+            if ($data === date('Y')) {
+                switch (date('m')) {
+                    case "1":
+                        $Month_Class_Jan = "bg-primary-transparent";
+                        break;
+                    case "2":
+                        $Month_Class_Feb = "bg-primary-transparent";
+                        break;
+                    case "3":
+                        $Month_Class_Mar = "bg-primary-transparent";
+                        break;
+                    case "4":
+                        $Month_Class_Apr = "bg-primary-transparent";
+                        break;
+                    case "5":
+                        $Month_Class_May = "bg-primary-transparent";
+                        break;
+                    case "6":
+                        $Month_Class_Jun = "bg-primary-transparent";
+                        break;
+                    case "7":
+                        $Month_Class_Jul = "bg-primary-transparent";
+                        break;
+                    case "8":
+                        $Month_Class_Aug = "bg-primary-transparent";
+                        break;
+                    case "9":
+                        $Month_Class_Sep = "bg-primary-transparent";
+                        break;
+                    case "10":
+                        $Month_Class_Oct = "bg-primary-transparent";
+                        break;
+                    case "11":
+                        $Month_Class_Nov = "bg-primary-transparent";
+                        break;
+                    case "12":
+                        $Month_Class_Dec = "bg-primary-transparent";
+                        break;
+                }
+            }
+            
+            // รายรับ(ค่าดำเนินการ)
+            $Month_Sum_Process = $Month_Jan_Process + $Month_Feb_Process + $Month_Mar_Process + $Month_Apr_Process
+                + $Month_May_Process + $Month_Jun_Process + $Month_Jul_Process + $Month_Aug_Process + $Month_Sep_Process
+                + $Month_Oct_Process + $Month_Nov_Process + $Month_Dec_Process;
+
+            // รายรับ(ใบสำคัญ)
+            $Month_Sum_Doc_Receipt = $Month_Jan_Receipt + $Month_Feb_Receipt + $Month_Mar_Receipt + $Month_Apr_Receipt
+                + $Month_May_Receipt + $Month_Jun_Receipt + $Month_Jul_Receipt + $Month_Aug_Receipt + $Month_Sep_Receipt
+                + $Month_Oct_Receipt + $Month_Nov_Receipt + $Month_Dec_Receipt;
+
+            // รายรับรวม
+            $Month_Sum_Receipt = $Month_Jan_Receipt_Sum + $Month_Feb_Receipt_Sum + $Month_Mar_Receipt_Sum + $Month_Apr_Receipt_Sum
+                + $Month_May_Receipt_Sum + $Month_Jun_Receipt_Sum + $Month_Jul_Receipt_Sum + $Month_Aug_Receipt_Sum + $Month_Sep_Receipt_Sum
+                + $Month_Oct_Receipt_Sum + $Month_Nov_Receipt_Sum + $Month_Dec_Receipt_Sum;
+
+            // รายจ่ายรวม
+            $Month_Sum_Expenses = $Month_Jan_Expenses + $Month_Feb_Expenses + $Month_Mar_Expenses + $Month_Apr_Expenses
+                + $Month_May_Expenses + $Month_Jun_Expenses + $Month_Jul_Expenses + $Month_Aug_Expenses + $Month_Sep_Expenses
+                + $Month_Oct_Expenses + $Month_Nov_Expenses + $Month_Dec_Expenses;
+
+            // กำไรรวม
+            $Month_Sum_Net = $Month_Jan_Net + $Month_Feb_Net + $Month_Mar_Net + $Month_Apr_Net
+                + $Month_May_Net + $Month_Jun_Net + $Month_Jul_Net + $Month_Aug_Net + $Month_Sep_Net
+                + $Month_Oct_Net + $Month_Nov_Net + $Month_Dec_Net;
+
+            if ($Month_Jan_Net < 0) {
+                $Month_Jan_Color = "tx-danger";
+                $Month_Jan_Net = number_format($Month_Jan_Net, 2);
+            } elseif ($Month_Jan_Net > 0) {
+                $Month_Jan_Color = "tx-success";
+                $Month_Jan_Net = '+' . number_format($Month_Jan_Net, 2);
+            } else {
+                $Month_Jan_Color = "";
+                $Month_Jan_Net = number_format($Month_Jan_Net, 2);
+            }
+
+            if ($Month_Feb_Net < 0) {
+                $Month_Feb_Color = "tx-danger";
+                $Month_Feb_Net = number_format($Month_Feb_Net, 2);
+            } elseif ($Month_Feb_Net > 0) {
+                $Month_Feb_Color = "tx-success";
+                $Month_Feb_Net = '+' . number_format($Month_Feb_Net, 2);
+            } else {
+                $Month_Feb_Color = "";
+                $Month_Feb_Net = number_format($Month_Feb_Net, 2);
+            }
+
+            if ($Month_Mar_Net < 0) {
+                $Month_Mar_Color = "tx-danger";
+                $Month_Mar_Net = number_format($Month_Mar_Net, 2);
+            } elseif ($Month_Mar_Net > 0) {
+                $Month_Mar_Color = "tx-success";
+                $Month_Mar_Net = '+' . number_format($Month_Mar_Net, 2);
+            } else {
+                $Month_Mar_Color = "";
+                $Month_Mar_Net = number_format($Month_Mar_Net, 2);
+            }
+
+            if ($Month_Apr_Net < 0) {
+                $Month_Apr_Color = "tx-danger";
+                $Month_Apr_Net = number_format($Month_Apr_Net, 2);
+            } elseif ($Month_Apr_Net > 0) {
+                $Month_Apr_Color = "tx-success";
+                $Month_Apr_Net = '+' . number_format($Month_Apr_Net, 2);
+            } else {
+                $Month_Apr_Color = "";
+                $Month_Apr_Net = number_format($Month_Apr_Net, 2);
+            }
+
+            if ($Month_May_Net < 0) {
+                $Month_May_Color = "tx-danger";
+                $Month_May_Net = number_format($Month_May_Net, 2);
+            } elseif ($Month_May_Net > 0) {
+                $Month_May_Color = "tx-success";
+                $Month_May_Net = '+' . number_format($Month_May_Net, 2);
+            } else {
+                $Month_May_Color = "";
+                $Month_May_Net = number_format($Month_May_Net, 2);
+            }
+
+            if ($Month_Jun_Net < 0) {
+                $Month_Jun_Color = "tx-danger";
+                $Month_Jun_Net = number_format($Month_Jun_Net, 2);
+            } elseif ($Month_Jun_Net > 0) {
+                $Month_Jun_Color = "tx-success";
+                $Month_Jun_Net = '+' . number_format($Month_Jun_Net, 2);
+            } else {
+                $Month_Jun_Color = "";
+                $Month_Jun_Net = number_format($Month_Jun_Net, 2);
+            }
+
+            if ($Month_Jul_Net < 0) {
+                $Month_Jul_Color = "tx-danger";
+                $Month_Jul_Net = number_format($Month_Jul_Net, 2);
+            } elseif ($Month_Jul_Net > 0) {
+                $Month_Jul_Color = "tx-success";
+                $Month_Jul_Net = '+' . number_format($Month_Jul_Net, 2);
+            } else {
+                $Month_Jul_Color = "";
+                $Month_Jul_Net = number_format($Month_Jul_Net, 2);
+            }
+
+            if ($Month_Aug_Net < 0) {
+                $Month_Aug_Color = "tx-danger";
+                $Month_Aug_Net = number_format($Month_Aug_Net, 2);
+            } elseif ($Month_Aug_Net > 0) {
+                $Month_Aug_Color = "tx-success";
+                $Month_Aug_Net = '+' . number_format($Month_Aug_Net, 2);
+            } else {
+                $Month_Aug_Color = "";
+                $Month_Aug_Net = number_format($Month_Aug_Net, 2);
+            }
+
+            if ($Month_Sep_Net < 0) {
+                $Month_Sep_Color = "tx-danger";
+                $Month_Sep_Net = number_format($Month_Sep_Net, 2);
+            } elseif ($Month_Sep_Net > 0) {
+                $Month_Sep_Color = "tx-success";
+                $Month_Sep_Net = '+' . number_format($Month_Sep_Net, 2);
+            } else {
+                $Month_Sep_Color = "";
+                $Month_Sep_Net = number_format($Month_Sep_Net, 2);
+            }
+
+            if ($Month_Oct_Net < 0) {
+                $Month_Oct_Color = "tx-danger";
+                $Month_Oct_Net = number_format($Month_Oct_Net, 2);
+            } elseif ($Month_Oct_Net > 0) {
+                $Month_Oct_Color = "tx-success";
+                $Month_Oct_Net = '+' . number_format($Month_Oct_Net, 2);
+            } else {
+                $Month_Oct_Color = "";
+                $Month_Oct_Net = number_format($Month_Oct_Net, 2);
+            }
+
+            if ($Month_Nov_Net < 0) {
+                $Month_Nov_Color = "tx-danger";
+                $Month_Nov_Net = number_format($Month_Nov_Net, 2);
+            } elseif ($Month_Nov_Net > 0) {
+                $Month_Nov_Color = "tx-success";
+                $Month_Nov_Net = '+' . number_format($Month_Nov_Net, 2);
+            } else {
+                $Month_Nov_Color = "";
+                $Month_Nov_Net = number_format($Month_Nov_Net, 2);
+            }
+
+            if ($Month_Dec_Net < 0) {
+                $Month_Dec_Color = "tx-danger";
+                $Month_Dec_Net = number_format($Month_Dec_Net, 2);
+            } elseif ($Month_Dec_Net > 0) {
+                $Month_Dec_Color = "tx-success";
+                $Month_Dec_Net = '+' . number_format($Month_Dec_Net, 2);
+            } else {
+                $Month_Dec_Color = "";
+                $Month_Dec_Net = number_format($Month_Dec_Net, 2);
+            }
+
+            if ($Month_Sum_Net < 0) {
+                $Month_Sum_Net = number_format($Month_Sum_Net, 2);
+            } elseif ($Month_Sum_Net > 0) {
+                $Month_Sum_Net = ' +' . number_format($Month_Sum_Net, 2);
+            } else {
+                $Month_Sum_Net = number_format($Month_Sum_Net, 2);
+            }
+
+            $html =
+                '<div class="card-body">
+                    <div class="table-responsive border radius-4 mg-t-5">
+                        <table class="table mb-0 border-0">
+                            <thead>
+                                <tr>
+                                    <th class="wd-25p">เดือน</th>
+                                    <th class="tx-right wd-15p">รายรับ(ค่าดำเนินการ)</th>
+                                    <th class="tx-right wd-15p">รายรับ(ใบสำคัญรับ)</th>
+                                    <th class="tx-right wd-15p">รายรับ(รวม)</th>
+                                    <th class="tx-right wd-15p">รายจ่าย</th>
+                                    <th class="tx-right wd-15p">กำไร</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="' . $Month_Class_Jan . ' ">
+                                    <td>มกราคม</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="01" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Jan_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="01" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Jan_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Jan_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="01" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Jan_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Jan_Color . '">' . $Month_Jan_Net . '</span></td>
+                                </tr>
+                                <tr class="' . $Month_Class_Feb . '">
+                                    <td>กุมภาพันธ์</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="02" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Feb_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="02" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Feb_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Feb_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="02" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Feb_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Feb_Color . '">' . $Month_Feb_Net . '</span></td>
+                                    
+                                </tr>
+                                <tr class="' . $Month_Class_Mar . '">
+                                    <td>มีนาคม</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="03" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Mar_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="03" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Mar_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Mar_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="03" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Mar_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Mar_Color . '">' . $Month_Mar_Net . '</span></td>
+                                    
+                                </tr>
+                                <tr class="' . $Month_Class_Apr . '">
+                                    <td>เมษายน</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="04" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Apr_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="04" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Apr_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Apr_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="04" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Apr_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Apr_Color . '">' . $Month_Apr_Net . '</span></td>
+                                    
+                                </tr>
+                                <tr class="' . $Month_Class_May . '">
+                                    <td>พฤษภาคม</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="05" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_May_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="05" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_May_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_May_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="05" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_May_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_May_Color . '">' . $Month_May_Net . '</span></td>
+                                    
+                                </tr>
+                                <tr class="' . $Month_Class_Jun . '">
+                                    <td>มิถุนายน</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="06" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Jun_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="06" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Jun_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Jun_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="06" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Jun_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Jun_Color . '">' . $Month_Jun_Net . '</span></td>
+                                    
+                                </tr>
+                                <tr class="' . $Month_Class_Jul . '">
+                                    <td>กรกฎาคม</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="07" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Jul_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="07" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Jul_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Jul_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="07" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Jul_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Jul_Color . '">' . $Month_Jul_Net . '</span></td>
+                                    
+                                </tr>
+                                <tr class="' . $Month_Class_Aug . '">
+                                    <td>สิงหาคม</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="08" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Aug_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="08" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Aug_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Aug_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="08" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Aug_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Aug_Color . '">' . $Month_Aug_Net . '</span></td>
+                                   
+                                </tr>
+                                <tr class="' . $Month_Class_Sep . '">
+                                    <td>กันยายน</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="09" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Sep_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="09" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Sep_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Sep_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="09" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Sep_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Sep_Color . '">' . $Month_Sep_Net . '</span></td>
+                                    
+                                </tr>
+                                <tr class="' . $Month_Class_Oct . '">
+                                    <td>ตุลาคม</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Oct_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Oct_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Oct_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="10" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Oct_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Oct_Color . '">' . $Month_Oct_Net . '</span></td>
+                                    
+                                </tr>
+                                <tr class="' . $Month_Class_Nov . '">
+                                    <td>พฤศจิกายน</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Nov_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Nov_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Nov_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="11" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Nov_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Nov_Color . '">' . $Month_Nov_Net . '</span></td>
+                                    
+                                </tr>
+                                <tr class="' . $Month_Class_Dec . '">
+                                    <td>ธันวาคม</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">' . number_format($Month_Dec_Process, 2) . '</a></td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Receipt" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalReceiptMonth">' . number_format($Month_Dec_Receipt, 2) . '</a></td>
+                                    <td class="tx-right">' . number_format($Month_Dec_Receipt_Sum, 2) . '</td>
+                                    <td class="tx-right" style="text-align: right;"><a href="javascript:void(0);" data-id="12" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">' . number_format($Month_Dec_Expenses, 2) . '</a></td>
+                                    <td class="tx-right"><span class="' . $Month_Dec_Color . '">' . $Month_Dec_Net . '</span></td>
+                                    
+                                </tr>
+                                <tr class="bg-primary">
+                                    <td colspan="1"></td>
+                                    <td class="tx-right" colspan="1">
+                                        <h6 class="tx-uppercase mb-0"><B>รายรับ(ค่าดำเนินการ)&nbsp;&nbsp;' . number_format($Month_Sum_Process, 2) . '</B></h6>
+                                    </td>
+                                    <td class="tx-right" colspan="1">
+                                        <h6 class="tx-uppercase mb-0"><B>รายรับ(ใบสำคัญรับ)&nbsp;&nbsp;' . number_format($Month_Sum_Doc_Receipt, 2) . '</B></h6>
+                                    </td>
+                                    <td class="tx-right" colspan="1">
+                                        <h6 class="tx-uppercase mb-0"><B>รายรับรวม&nbsp;&nbsp;' . number_format($Month_Sum_Receipt, 2) . '</B></h6>
+                                    </td>
+                                    <td class="tx-right" colspan="1">
+                                        <h6 class="tx-uppercase mb-0"><B>รายจ่ายรวม&nbsp;&nbsp;' . number_format($Month_Sum_Expenses, 2) . '</B></h6>
+                                    </td>
+                                    <td class="tx-right colspan="1">
+                                        <h6 class="tx-uppercase mb-0"><B>กำไรรวมสุทธิ&nbsp;&nbsp;' . $Month_Sum_Net . '</B></h6>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                     </div>
+                </div>
+                    ';
+
+
+
+            $response['data'] = $html;
+
+            $status = 200;
+            $response['success'] = 1;
+            $response['message'] = '';
+
+            return $this->response
+                ->setStatusCode($status)
+                ->setContentType('application/json')
+                ->setJSON($response);
+        } catch (\Exception $e) {
+            echo $e->getMessage() . ' ' . $e->getLine();
+        }
     }
 }

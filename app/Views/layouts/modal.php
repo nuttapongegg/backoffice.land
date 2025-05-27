@@ -59,7 +59,7 @@
                     <div class="panel tabs-style5 w-fit-content mx-auto">
                         <div class="panel-head">
                             <ul class="nav nav-tabs bg-white">
-                                <!-- <li class="nav-item tabDocType"><a class="nav-link tx-14 font-weight-semibold tabDocType1" data-bs-toggle="tab" href="#tabDocType1" data-doc-type="ใบสำคัญรับ">ใบสำคัญรับ</a></li> -->
+                                <li class="nav-item tabDocType"><a class="nav-link tx-14 font-weight-semibold tabDocType1" data-bs-toggle="tab" href="#tabDocType1" data-doc-type="ใบสำคัญรับ">ใบสำคัญรับ</a></li>
                                 <li class="nav-item tabDocType"><a class="nav-link tx-14 font-weight-semibold tabDocType2" data-bs-toggle="tab" href="#tabDocType2" data-doc-type="ใบสำคัญจ่าย">ใบสำคัญจ่าย</a></li>
                             </ul>
                         </div>

@@ -647,6 +647,9 @@
                                     <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'report_loan') {
                                                                     echo 'active';
                                                                 } ?>" href="<?php echo base_url('/loan/report_loan'); ?>">รายงานสินเชื่อ</a></li>
+                                    <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'report_revenues') {
+                                                                    echo 'active';
+                                                                } ?>" href="<?php echo base_url('/loan/report_revenues'); ?>">รายงานรายรับ/รายจ่าย</a></li>
                                     <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'Maps') {
                                                                     echo 'active';
                                                                 } ?>" href="<?php echo base_url('/Maps'); ?>">Maps</a></li>
@@ -660,7 +663,7 @@
                                 </a>
                                 <ul class="slide-menu">
                                     <li class="side-menu__label1"><a href="#">บัญชี</a></li>
-                                    <!-- <li><a class="slide-item selectDoc" href="#" data-bs-toggle="modal" data-bs-target="#docModal" data-doc-type="ใบสำคัญรับ">ใบสำคัญรับ</a></li> -->
+                                    <li><a class="slide-item selectDoc" href="#" data-bs-toggle="modal" data-bs-target="#docModal" data-doc-type="ใบสำคัญรับ">ใบสำคัญรับ</a></li>
                                     <li><a class="slide-item selectDoc" href="#" data-bs-toggle="modal" data-bs-target="#docModal" data-doc-type="ใบสำคัญจ่าย">ใบสำคัญจ่าย</a></li>
                                     <!-- class="disabled" -->
                                 </ul>

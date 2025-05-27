@@ -808,7 +808,7 @@ class LoanModel
         $sql = "SELECT setting_land_report.*, setting_land.land_account_name
                 FROM setting_land_report
                 JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
-                WHERE DATE(setting_land_report.created_at) = CURDATE() AND setting_land_report_detail NOT LIKE '%ใบสำคัญ%'
+                WHERE DATE(setting_land_report.created_at) = CURDATE()
                 ORDER BY setting_land_report.id ASC;
         ";
 
@@ -827,6 +827,22 @@ class LoanModel
         $builder = $this->db->query($sql);
         return $builder->getResult();
     }
+
+    public function getLoanProcessMonths($year)
+    {
+        $sql = "SELECT MONTH(loan_date_promise) as loan_created_payment ,
+        SUM(loan_payment_process) AS total_payment_process,
+        SUM(loan_tranfer) AS total_tranfer,
+        SUM(loan_payment_other) AS total_payment_other
+        FROM loan
+        WHERE YEAR(loan_date_promise) = $year AND loan.loan_status != 'CANCEL_STATE'
+        GROUP BY MONTH(loan_date_promise)
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
 
     public function getListLoanClosePaymentMonths($year)
     {
@@ -1043,5 +1059,75 @@ class LoanModel
         $builder->where("loan_status = 'CLOSE_STATE'");
         $builder->orderBy("loan_code", "DESC");
         return $builder->get()->getResult();
+    }
+
+        public function getDataTableLoanProcessMonthCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+
+        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(loan_date_promise) AS loan_date_promise
+        FROM loan
+        WHERE YEAR(loan_date_promise) = $years AND MONTH(loan_date_promise) = $month AND loan.loan_status != 'CANCEL_STATE'
+        AND (loan_payment_process != 0 OR loan_tranfer != 0 OR loan_payment_other != 0)
+        ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableLoanProcessMonth($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $start = $param['start'];
+        $length = $param['length'];
+
+        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(loan_date_promise) AS loan_date_promise
+        FROM loan
+        WHERE YEAR(loan_date_promise) = $years AND MONTH(loan_date_promise) = $month AND loan.loan_status != 'CANCEL_STATE' 
+        AND (loan_payment_process != 0 OR loan_tranfer != 0 OR loan_payment_other != 0)
+        ORDER BY loan_date_promise ASC LIMIT $start, $length";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableLoanProcessMonthSearch($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $search_value = $param['search_value'];
+        $start = $param['start'];
+        $length = $param['length'];
+
+        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(loan_date_promise) AS loan_date_promise
+        FROM loan
+        WHERE YEAR(loan_date_promise) = $years AND MONTH(loan_date_promise) = $month AND loan.loan_status != 'CANCEL_STATE' 
+        AND (loan_payment_process != 0 OR loan_tranfer != 0 OR loan_payment_other != 0)
+        AND ((loan_code like '%" . $search_value . "%') OR (loan_employee like '%" . $search_value . "%') OR (loan_payment_process like '%" . $search_value . "%')
+           OR (loan_tranfer like '%" . $search_value . "%') OR (loan_payment_other like '%" . $search_value . "%') OR (loan_date_promise like '%" . $search_value . "%')) 
+           ORDER BY loan_date_promise ASC LIMIT $start, $length
+            ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableLoanProcessMonthSearchCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $search_value = $param['search_value'];
+        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(loan_date_promise) AS loan_date_promise
+        FROM loan
+        WHERE YEAR(loan_date_promise) = $years AND MONTH(loan_date_promise) = $month AND loan.loan_status != 'CANCEL_STATE' 
+        AND (loan_payment_process != 0 OR loan_tranfer != 0 OR loan_payment_other != 0)
+        AND ((loan_code like '%" . $search_value . "%') OR (loan_employee like '%" . $search_value . "%') OR (loan_payment_process like '%" . $search_value . "%')
+           OR (loan_tranfer like '%" . $search_value . "%') OR (loan_payment_other like '%" . $search_value . "%') OR (loan_date_promise like '%" . $search_value . "%'))
+            ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
     }
 }

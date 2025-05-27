@@ -68,6 +68,8 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->get('ajaxdatatablepayment/(:any)', 'Loan::ajaxDataTablePayment/$1');
     $routes->get('ajaxdatatableloan/(:any)', 'Loan::ajaxDataTableLoan/$1');
     $routes->get('ajaxdatatableoverduepayment/(:any)', 'Loan::ajaxDataTableOverduePayment/$1');
+    $routes->get('ajaxdatatableprocess/(:any)', 'Loan::ajaxDataTableLoanProcess/$1');
+    $routes->get('ajaxdatatablereceipt/(:any)', 'Loan::ajaxDataTableReceipt/$1');
     $routes->get('ajaxdatatableexpenses/(:any)', 'Loan::ajaxDataTableExpenses/$1');
     $routes->get('ajaxdatatablediffpayment/(:any)', 'Loan::ajaxDataTableDiffPayment/$1');
     $routes->get('ajax-graphloan/(:any)', 'Loan::ajaxGraphLoan/$1');
@@ -80,6 +82,9 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->get('ajaxdatatableloanclosepayment/(:any)', 'Loan::ajaxDataTableLoanClosePayment/$1');
     $routes->post('save_maplink/(:any)', 'Loan::saveMapLink/$1');
     $routes->post('update_deed_status', 'Loan::updateDeedStatus');
+
+    $routes->get('report_revenues', 'Loan::report_revenues');
+    $routes->get('ajax-tablesreportrevenues/(:any)', 'Loan::ajaxTablesReportRevenues/$1');
 });
 
 $routes->get('api/list_ai', 'Loan::list_ai');

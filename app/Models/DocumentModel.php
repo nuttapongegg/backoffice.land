@@ -600,9 +600,9 @@ class DocumentModel
 
     public function getrevenue($year)
     {
-        $sql = "SELECT MONTH(doc_date) as profit_month , doc_type , SUM(price) as profit_sum_price
+        $sql = "SELECT MONTH(doc_date) as doc_month , doc_type , SUM(price) as doc_sum_price
         FROM `documents`
-        WHERE YEAR(documents.doc_date) = $year AND (doc_type = 'ใบสำคัญรับ' OR doc_type = 'ใบสำคัญจ่าย' OR doc_type = 'ใบส่วนลด')
+        WHERE YEAR(documents.doc_date) = $year AND (doc_type = 'ใบสำคัญรับ' OR doc_type = 'ใบสำคัญจ่าย')
         GROUP BY MONTH(doc_date), doc_type
         ORDER BY MONTH(doc_date)";
 
@@ -732,6 +732,72 @@ class DocumentModel
                 FROM documents
                 WHERE DATE(documents.created_at) = CURDATE()";
 
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDocumentsReceiptMonthCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+
+        $sql = "SELECT *
+        FROM documents
+        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญรับ'
+        ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDocumentsReceiptMonth($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $start = $param['start'];
+        $length = $param['length'];
+
+        $sql = "SELECT *
+        FROM documents
+        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญรับ'
+        ORDER BY documents.doc_date ASC LIMIT $start, $length";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDocumentsReceiptMonthSearch($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $search_value = $param['search_value'];
+        $start = $param['start'];
+        $length = $param['length'];
+
+        $sql = "SELECT *
+        FROM documents
+        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญรับ'
+        and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%')
+           OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%')) 
+           ORDER BY documents.doc_date ASC LIMIT $start, $length
+            ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDataTableDocumentsReceiptMonthSearchCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+        $search_value = $param['search_value'];
+        $sql = "SELECT *
+        FROM documents
+        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญรับ'
+        and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%')
+           OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%'))
+            ";
         $builder = $this->db->query($sql);
 
         return $builder->getResult();

@@ -70,7 +70,7 @@ class LoanSendDailySummary extends BaseController
                     // คำนวณยอดรวม
                     foreach ($loanMessages as $item) {
                         $amountNumber = floatval(str_replace(',', '', $item['amount']));
-                        if (strpos($item['detail'], 'เปิดสินเชื่อ') !== false || strpos($item['detail'], 'ลบสินเชื่อ LOA') !== false || strpos($item['detail'], 'ลบเงินออกจากบัญชี') !== false) {
+                        if (strpos($item['detail'], 'เปิดสินเชื่อ') !== false || strpos($item['detail'], 'ลบสินเชื่อ LOA') !== false || strpos($item['detail'], 'ลบเงินออกจากบัญชี') !== false || (strpos($item['detail'], 'ใบสำคัญจ่าย') !== false && strpos($item['detail'], 'ลบใบสำคัญจ่าย') === false) || strpos($item['detail'], 'ลบใบสำคัญรับ') !== false) {
                             $totalAmountOut += $amountNumber;
                         } else {
                             $totalAmountIn += $amountNumber;
@@ -95,7 +95,7 @@ class LoanSendDailySummary extends BaseController
                         } else {
                             $messagePayload = $this->createDailySummaryMessage($messageGroup, $cashBalance, $loanOpen, false);
                         }
-
+                        
                         // $messagePayload = $this->createDailySummaryMessage($messageGroup);  // สร้าง Flex Message
                         $response = send_line_message($token, $messagePayload); // ส่ง Flex Message
                         // $payloadSize = strlen(json_encode($messagePayload));
@@ -142,7 +142,9 @@ class LoanSendDailySummary extends BaseController
             if (
                 strpos($item['detail'], 'เปิดสินเชื่อ') !== false ||
                 strpos($item['detail'], 'ลบสินเชื่อ LOA') !== false ||
-                strpos($item['detail'], 'ลบเงินออกจากบัญชี') !== false
+                strpos($item['detail'], 'ลบเงินออกจากบัญชี') !== false ||
+                (strpos($item['detail'], 'ใบสำคัญจ่าย') !== false && strpos($item['detail'], 'ลบใบสำคัญจ่าย') === false) ||
+                strpos($item['detail'], 'ลบใบสำคัญรับ') !== false
             ) {
                 // เงินออก - สีแดง
                 $colorAmount = "#C62828";
