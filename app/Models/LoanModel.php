@@ -1066,9 +1066,9 @@ class LoanModel
         $month = $param['month'];
         $years = $param['years'];
 
-        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(loan_date_promise) AS loan_date_promise
+        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(created_at) AS created_at
         FROM loan
-        WHERE YEAR(loan_date_promise) = $years AND MONTH(loan_date_promise) = $month AND loan.loan_status != 'CANCEL_STATE'
+        WHERE YEAR(created_at) = $years AND MONTH(created_at) = $month AND loan.loan_status != 'CANCEL_STATE'
         AND (loan_payment_process != 0 OR loan_tranfer != 0 OR loan_payment_other != 0)
         ";
         $builder = $this->db->query($sql);
@@ -1083,11 +1083,11 @@ class LoanModel
         $start = $param['start'];
         $length = $param['length'];
 
-        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(loan_date_promise) AS loan_date_promise
+        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(created_at) AS created_at
         FROM loan
-        WHERE YEAR(loan_date_promise) = $years AND MONTH(loan_date_promise) = $month AND loan.loan_status != 'CANCEL_STATE' 
+        WHERE YEAR(created_at) = $years AND MONTH(created_at) = $month AND loan.loan_status != 'CANCEL_STATE' 
         AND (loan_payment_process != 0 OR loan_tranfer != 0 OR loan_payment_other != 0)
-        ORDER BY loan_date_promise ASC LIMIT $start, $length";
+        ORDER BY created_at ASC LIMIT $start, $length";
         $builder = $this->db->query($sql);
 
         return $builder->getResult();
@@ -1101,13 +1101,13 @@ class LoanModel
         $start = $param['start'];
         $length = $param['length'];
 
-        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(loan_date_promise) AS loan_date_promise
+        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(created_at) AS created_at
         FROM loan
-        WHERE YEAR(loan_date_promise) = $years AND MONTH(loan_date_promise) = $month AND loan.loan_status != 'CANCEL_STATE' 
+        WHERE YEAR(created_at) = $years AND MONTH(created_at) = $month AND loan.loan_status != 'CANCEL_STATE' 
         AND (loan_payment_process != 0 OR loan_tranfer != 0 OR loan_payment_other != 0)
         AND ((loan_code like '%" . $search_value . "%') OR (loan_employee like '%" . $search_value . "%') OR (loan_payment_process like '%" . $search_value . "%')
-           OR (loan_tranfer like '%" . $search_value . "%') OR (loan_payment_other like '%" . $search_value . "%') OR (loan_date_promise like '%" . $search_value . "%')) 
-           ORDER BY loan_date_promise ASC LIMIT $start, $length
+           OR (loan_tranfer like '%" . $search_value . "%') OR (loan_payment_other like '%" . $search_value . "%') OR (created_at like '%" . $search_value . "%')) 
+           ORDER BY created_at ASC LIMIT $start, $length
             ";
         $builder = $this->db->query($sql);
 
@@ -1119,12 +1119,12 @@ class LoanModel
         $month = $param['month'];
         $years = $param['years'];
         $search_value = $param['search_value'];
-        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(loan_date_promise) AS loan_date_promise
+        $sql = "SELECT loan_code , loan_employee , loan_payment_process , loan_tranfer , loan_payment_other , DATE(created_at) AS created_at
         FROM loan
-        WHERE YEAR(loan_date_promise) = $years AND MONTH(loan_date_promise) = $month AND loan.loan_status != 'CANCEL_STATE' 
+        WHERE YEAR(created_at) = $years AND MONTH(created_at) = $month AND loan.loan_status != 'CANCEL_STATE' 
         AND (loan_payment_process != 0 OR loan_tranfer != 0 OR loan_payment_other != 0)
         AND ((loan_code like '%" . $search_value . "%') OR (loan_employee like '%" . $search_value . "%') OR (loan_payment_process like '%" . $search_value . "%')
-           OR (loan_tranfer like '%" . $search_value . "%') OR (loan_payment_other like '%" . $search_value . "%') OR (loan_date_promise like '%" . $search_value . "%'))
+           OR (loan_tranfer like '%" . $search_value . "%') OR (loan_payment_other like '%" . $search_value . "%') OR (created_at like '%" . $search_value . "%'))
             ";
         $builder = $this->db->query($sql);
 

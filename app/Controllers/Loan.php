@@ -2171,7 +2171,7 @@ class Loan extends BaseController
                 number_format($datas->loan_tranfer, 2),
                 number_format($datas->loan_payment_other, 2),
                 number_format($sum, 2),
-                $datas->loan_date_promise,
+                $datas->created_at,
             );
         }
 
