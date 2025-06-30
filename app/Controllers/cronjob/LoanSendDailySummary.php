@@ -217,7 +217,7 @@ class LoanSendDailySummary extends BaseController
         if ($isLastGroup) {
 
             // กำหนดเป้าหมายยอดสินเชื่อ 50 ล้านบาท
-            $goal = 50000000; // 50,000,000 บาท
+            $goal = 60000000; // 60,000,000 บาท
 
             // คำนวณเปอร์เซ็นต์ความคืบหน้าของยอดสินเชื่อที่เปิดบัญชีแล้ว
             $progressPercent = ($goal > 0) ? ($loanOpen / $goal) * 100 : 0;
@@ -273,7 +273,7 @@ class LoanSendDailySummary extends BaseController
                                 "contents" => [
                                     [
                                         "type" => "text",
-                                        "text" => "เป้าหมาย 50,000,000.00 บาท",
+                                        "text" => "เป้าหมาย 60,000,000.00 บาท",
                                         "size" => "xs",
                                         "color" => "#999999",
                                         "flex" => 6,
