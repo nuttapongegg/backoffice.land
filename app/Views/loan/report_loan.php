@@ -35,7 +35,137 @@
                 <div class="row">
                     <div class="col-xl-8">
                         <div class="row">
-                            <div class="col-xl-6">
+                            <div class="col-xl-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <?php
+                                            $Month_Jan_Loan = 0;
+                                            $Month_Feb_Loan = 0;
+                                            $Month_Mar_Loan = 0;
+                                            $Month_Apr_Loan = 0;
+                                            $Month_May_Loan = 0;
+                                            $Month_Jun_Loan = 0;
+                                            $Month_Jul_Loan = 0;
+                                            $Month_Aug_Loan = 0;
+                                            $Month_Sep_Loan = 0;
+                                            $Month_Oct_Loan = 0;
+                                            $Month_Nov_Loan = 0;
+                                            $Month_Dec_Loan = 0;
+
+                                            foreach ($OpenLoanMonths as $OpenLoanMonth) {
+                                                switch ($OpenLoanMonth->loan_month) {
+                                                    case "1":
+                                                        $Month_Jan_Loan = $Month_Jan_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "2":
+                                                        $Month_Feb_Loan = $Month_Feb_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "3":
+                                                        $Month_Mar_Loan = $Month_Mar_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "4":
+                                                        $Month_Apr_Loan = $Month_Apr_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "5":
+                                                        $Month_May_Loan = $Month_May_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "6":
+                                                        $Month_Jun_Loan = $Month_Jun_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "7":
+                                                        $Month_Jul_Loan = $Month_Jul_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "8":
+                                                        $Month_Aug_Loan = $Month_Aug_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "9":
+                                                        $Month_Sep_Loan = $Month_Sep_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "10":
+                                                        $Month_Oct_Loan = $Month_Oct_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "11":
+                                                        $Month_Nov_Loan = $Month_Nov_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                    case "12":
+                                                        $Month_Dec_Loan = $Month_Dec_Loan + $OpenLoanMonth->loan_summary_no_vat;
+                                                        break;
+                                                }
+                                            }
+
+                                            $total_open_loan_month = 0;
+                                            switch (date('m')) {
+                                                case "1":
+                                                    $total_open_loan_month = $Month_Jan_Loan;
+                                                    break;
+                                                case "2":
+                                                    $total_open_loan_month = $Month_Feb_Loan;
+                                                    break;
+                                                case "3":
+                                                    $total_open_loan_month = $Month_Mar_Loan;
+                                                    break;
+                                                case "4":
+                                                    $total_open_loan_month = $Month_Apr_Loan;
+                                                    break;
+                                                case "5":
+                                                    $total_open_loan_month = $Month_May_Loan;
+                                                    break;
+                                                case "6":
+                                                    $total_open_loan_month = $Month_Jun_Loan;
+                                                    break;
+                                                case "7":
+                                                    $total_open_loan_month = $Month_Jul_Loan;
+                                                    break;
+                                                case "8":
+                                                    $total_open_loan_month = $Month_Aug_Loan;
+                                                    break;
+                                                case "9":
+                                                    $total_open_loan_month = $Month_Sep_Loan;
+                                                    break;
+                                                case "10":
+                                                    $total_open_loan_month = $Month_Oct_Loan;
+                                                    break;
+                                                case "11":
+                                                    $total_open_loan_month = $Month_Nov_Loan;
+                                                    break;
+                                                case "12":
+                                                    $total_open_loan_month = $Month_Dec_Loan;
+                                                    break;
+                                            }
+                                            ?>
+
+                                            <div class="col-md-12 text-center">
+                                                <button type="button" class="btn btn-outline-primary mb-3 float-end btnEditOpenLoanTargetedMonth" data-bs-toggle="modal" data-bs-target="#modalEditOpenLoanTargetedMonth"> <i class="fa-solid fa-plus"></i>เป้าหมาย</button>
+                                                <div align="center" class="ms-5">
+                                                    <div class="rounded-circle ht-60 wd-60 bg-light bg-light d-flex align-items-center justify-content-center ms-5">
+                                                        <div class="ht-50 wd-50 rounded-circle bg-primary d-flex align-items-center justify-content-center"> <i class="ti-money tx-17 text-white"></i> </div>
+                                                    </div>
+                                                </div>
+                                                <h4 class="tx-18 font-weight-semibold my-1">ยอดเปิดสินเชื่อ <?php echo number_format($total_open_loan_month, 2) ?></h4>
+                                                <h4 class="tx-18 font-weight-semibold my-1">(ยอดเปิดสินเชื่อเดือนปัจจุบัน)</h4>
+                                                <?php $Sum_Open_Loan_percent = $total_open_loan_month * 100 / $targeteds->open_loan_target; ?>
+                                                <?php if ($Sum_Open_Loan_percent < 0) {
+                                                    $open_Loan_Color = "bg-danger-transparent tx-danger";
+                                                    $open_Loan_profit = number_format($Sum_Open_Loan_percent, 2) . '%';
+                                                } elseif ($Sum_Open_Loan_percent > 0) {
+                                                    $open_Loan_Color = "bg-success-transparent tx-success";
+                                                    $open_Loan_profit = '+' . number_format($Sum_Open_Loan_percent, 2) . '%';
+                                                } else {
+                                                    $open_Loan_Color = "";
+                                                    $open_Loan_profit = number_format($Sum_Open_Loan_percent, 2) . '%';
+                                                } ?>
+                                                <p class="tx-14 mb-1"><span class="<?php echo $open_Loan_Color ?>"><?php echo $open_Loan_profit ?></span> of target</p>
+                                                <p class="tx-13 text-start" style="margin-bottom: 8px;">เป้าหมาย ( <?php echo number_format($total_open_loan_month, 2) ?> / <?php echo number_format($targeteds->open_loan_target, 2) ?>)</p>
+                                                <div class="progress progress-style ht-5 mt-2">
+                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="78" style="width:<?php echo number_format($Sum_Open_Loan_percent, 2) . "%" ?>"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="row">
@@ -414,7 +544,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-6">
+                            <div class="col-xl-4">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="row">
@@ -513,6 +643,33 @@
 
 </div>
 <!-- /main-content -->
+ <div align="center">
+    <div class="modal fade" id="modalEditOpenLoanTargetedMonth" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row col-xl-12">
+                        <h7 class="modal-title">ตั้งค่าเป้าหมายเปิดสินเชื่อต่อเดือน</h7>
+                    </div>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="updateTargetedMonth" name="updateTargetedMonth" action="#">
+                        <input type="hidden" name="TargetedId" id="TargetedId" value="<?php echo $targeteds->id ?>" />
+
+                        <div class="form-group">
+                            <div align="left">
+                                <label for="editTargeted" class="tx-15">เป้าหมาย</label>
+                            </div>
+                            <input type="text" class="form-control" id="editOpenLoanTargetedMonth" name="editOpenLoanTargetedMonth" placeholder="เป้าหมาย" value="<?php echo $targeteds->open_loan_target ?>">
+                        </div>
+                        <button type="submit" class="btn btn-primary btnSaveOpenLoanTargetedMonth" role="button">ยืนยัน</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div align="center">
     <div class="modal fade" id="modalEditTargetedMonth" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">

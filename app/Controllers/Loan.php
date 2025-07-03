@@ -1294,6 +1294,7 @@ class Loan extends BaseController
         $data['LoanPaymentMonths'] = $this->LoanModel->getListLoanPaymentMonths(date('Y'));
         $data['DocumentsMonths'] = $this->DocumentModel->getrevenue(date('Y'));
         $data['LoanProcessMonths'] = $this->LoanModel->getLoanProcessMonths(date('Y'));
+        $data['OpenLoanMonths'] = $this->LoanModel->getOpenLoan(date('Y'));
 
         $data['content'] = 'loan/report_loan';
         $data['title'] = 'รายงานสินเชื่อ';
@@ -3750,6 +3751,59 @@ class Loan extends BaseController
             'error' => false,
             'message' => $datas
         ]);
+    }
+
+    //updateOpenLoanTargetedMonth
+    public function updateOpenLoanTargetedMonth()
+    {
+        $TargetedModel = new \App\Models\TargetedModel();
+
+        try {
+            // SET CONFIG
+            $status = 500;
+            $response['success'] = 0;
+            $response['message'] = '';
+            $id = $this->request->getVar('TargetedId');
+
+            // HANDLE REQUEST
+            $update = $TargetedModel->updateTargetedByID($id, [
+                'open_loan_target' => $this->request->getVar('editOpenLoanTargetedMonth'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($update) {
+
+                // pusherEdit
+                $pusher = getPusher();
+                $pusher->trigger('color_Status', 'event', [
+                    'img' => '/uploads/img/' . session()->get('thumbnail') != '' ? session()->get('thumbnail') : 'nullthumbnail.png',
+                    'event' => 'status_Yellow',
+                    'title' => session()->get('username') . " : " . 'ทำการแก้ไขเป้าหมายเปิดสินเชื่อต่อเดือน'
+                ]);
+
+                logger_store([
+                    'employee_id' => session()->get('employeeID'),
+                    'username' => session()->get('username'),
+                    'event' => 'อัพเดท',
+                    'detail' => '[อัพเดท] เป้าหมายเปิดสินเชื่อต่อเดือน',
+                    'ip' => $this->request->getIPAddress()
+                ]);
+                $status = 200;
+                $response['success'] = 1;
+                $response['message'] = 'แก้ไข เป้าหมายเปิดสินเชื่อต่อเดือน สำเร็จ';
+            } else {
+                $status = 200;
+                $response['success'] = 0;
+                $response['message'] = 'แก้ไข เป้าหมายเปิดสินเชื่อต่อเดือน ไม่สำเร็จ';
+            }
+
+            return $this->response
+                ->setStatusCode($status)
+                ->setContentType('application/json')
+                ->setJSON($response);
+        } catch (\Exception $e) {
+            echo $e->getMessage() . ' ' . $e->getLine();
+        }
     }
 
     //updateTargetedMonth

@@ -76,6 +76,91 @@ $(document).ready(function () {
         });
     };
 
+    //modalEditOpenLoanTargetedMonth
+    let $modalEditOpenLoanTargetedMonth = $("#modalEditOpenLoanTargetedMonth")
+    let $formEditOpenLoanTargetedMonth = $modalEditOpenLoanTargetedMonth.find('form')
+
+    $formEditOpenLoanTargetedMonth
+        // บันทึกข้อมูล
+        .on('click', '.btnSaveOpenLoanTargetedMonth', function (e) {
+            e.preventDefault()
+
+            let $me = $(this)
+
+            $me.attr('disabled', true)
+
+            let formData = new FormData($formEditOpenLoanTargetedMonth[0])
+
+            formData.append('content', $formEditOpenLoanTargetedMonth.find('.ql-editor').html())
+
+            $.ajax({
+                type: "POST",
+                url: '/loan/update-openloantargetedmonth',
+                data: formData,
+                processData: false,
+                contentType: false,
+            }).done(function (res) {
+
+                if (res.success = 1) {
+
+                    Swal.fire({
+                        text: "แก้ไข เป้าหมายเปิดสินเชื่อต่อเดือน สำเร็จ",
+                        icon: "success",
+                        buttonsStyling: false,
+                        confirmButtonText: "ตกลง",
+                        customClass: {
+                            confirmButton: "btn btn-primary"
+                        }
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            setTimeout(function () {
+                                window.location = '/loan/report_loan'
+                            }, 1 * 1500)
+                        }
+                    })
+
+                    setTimeout(function () {
+                        window.location = '/loan/report_loan'
+                    }, 1 * 1500)
+                }
+
+                // กรณี: Server มีการตอบกลับ แต่ไม่สำเร็จ
+                else {
+                    // Show error message.
+                    Swal.fire({
+                        text: res.message,
+                        icon: "error",
+                        buttonsStyling: false,
+                        confirmButtonText: "ตกลง",
+                        customClass: {
+                            confirmButton: "btn btn-primary"
+                        }
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            // LANDING_PROMOTION.reloadPage()
+                        }
+                    })
+
+                    $me.attr('disabled', false)
+                }
+
+            }).fail(function (context) {
+                let messages = context.responseJSON?.messages || 'ไม่สามารถบันทึกได้ กรุณาลองใหม่อีกครั้ง หรือติดต่อผู้ให้บริการ'
+                // Show error message.
+                Swal.fire({
+                    text: messages,
+                    icon: "error",
+                    buttonsStyling: false,
+                    confirmButtonText: "ตกลง",
+                    customClass: {
+                        confirmButton: "btn btn-primary"
+                    }
+                })
+
+                $me.attr('disabled', false)
+            })
+        });
+
     //modalEditTargeted
     let $modalEditTargetedMonth = $("#modalEditTargetedMonth")
     let $formEditTargetedMonth = $modalEditTargetedMonth.find('form')

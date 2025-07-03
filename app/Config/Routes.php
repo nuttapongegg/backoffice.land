@@ -75,6 +75,7 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->get('ajax-graphloan/(:any)', 'Loan::ajaxGraphLoan/$1');
     $routes->get('ajax-summarizereportloan/(:any)', 'Loan::ajaxSummarizeReportLoan/$1');
     $routes->get('ajaxdatareportloanmonth/(:any)', 'Loan::ajaxDataReportLoanMonth/$1');
+    $routes->post('update-openloantargetedmonth', 'Loan::updateOpenLoanTargetedMonth');
     $routes->post('update-targetedmonth', 'Loan::updateTargetedMonth');
     $routes->post('update-targeted', 'Loan::updateTargeted');
     $routes->get('tableLoanPayments', 'Loan::FetchAllLoanPayments');

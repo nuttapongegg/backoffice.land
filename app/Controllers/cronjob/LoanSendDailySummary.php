@@ -26,6 +26,8 @@ class LoanSendDailySummary extends BaseController
         $land_accounts = $SettingLandModel->getSettingLandAll();
 
         $OpenLoans = $LoanModel->getOpenLoanMonthlySummary();
+        $TargetedModel = new \App\Models\TargetedModel();
+        $targeteds = $TargetedModel->getTargetedAll();
 
         try {
 
@@ -89,13 +91,14 @@ class LoanSendDailySummary extends BaseController
                                 [
                                     'totalItems' => $totalItems,
                                     'totalAmountIn' => $totalAmountIn,
-                                    'totalAmountOut' => $totalAmountOut
+                                    'totalAmountOut' => $totalAmountOut,
+                                    'goal' => floatval($targeteds->open_loan_target)
                                 ]
                             );
                         } else {
                             $messagePayload = $this->createDailySummaryMessage($messageGroup, $cashBalance, $loanOpen, false);
                         }
-                        
+
                         // $messagePayload = $this->createDailySummaryMessage($messageGroup);  // สร้าง Flex Message
                         $response = send_line_message($token, $messagePayload); // ส่ง Flex Message
                         // $payloadSize = strlen(json_encode($messagePayload));
@@ -217,7 +220,7 @@ class LoanSendDailySummary extends BaseController
         if ($isLastGroup) {
 
             // กำหนดเป้าหมายยอดสินเชื่อ 50 ล้านบาท
-            $goal = 60000000; // 60,000,000 บาท
+            $goal = floatval($summary['goal'] ?? 0);
 
             // คำนวณเปอร์เซ็นต์ความคืบหน้าของยอดสินเชื่อที่เปิดบัญชีแล้ว
             $progressPercent = ($goal > 0) ? ($loanOpen / $goal) * 100 : 0;
