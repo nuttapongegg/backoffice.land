@@ -139,7 +139,7 @@
                                                 <button type="button" class="btn btn-outline-primary mb-3 float-end btnEditOpenLoanTargetedMonth" data-bs-toggle="modal" data-bs-target="#modalEditOpenLoanTargetedMonth"> <i class="fa-solid fa-plus"></i>เป้าหมาย</button>
                                                 <div align="center" class="ms-5">
                                                     <div class="rounded-circle ht-60 wd-60 bg-light bg-light d-flex align-items-center justify-content-center ms-5">
-                                                        <div class="ht-50 wd-50 rounded-circle bg-primary d-flex align-items-center justify-content-center"> <i class="ti-money tx-17 text-white"></i> </div>
+                                                        <div class="ht-50 wd-50 rounded-circle bg-primary d-flex align-items-center justify-content-center"> <i class="fa fa-book tx-17 text-white"></i> </div>
                                                     </div>
                                                 </div>
                                                 <h4 class="tx-18 font-weight-semibold my-1">ยอดเปิดสินเชื่อ <?php echo number_format($total_open_loan_month, 2) ?></h4>
@@ -643,14 +643,12 @@
 
 </div>
 <!-- /main-content -->
- <div align="center">
-    <div class="modal fade" id="modalEditOpenLoanTargetedMonth" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+<div align="center">
+    <div class="modal fade" id="modalEditOpenLoanTargetedMonth" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <div class="row col-xl-12">
-                        <h7 class="modal-title">ตั้งค่าเป้าหมายเปิดสินเชื่อต่อเดือน</h7>
-                    </div>
+                    <h7 class="modal-title">ตั้งค่าเป้าหมายเปิดสินเชื่อต่อเดือน</h7>
                     <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
@@ -675,9 +673,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <div class="row col-xl-12">
-                        <h7 class="modal-title">ตั้งค่าเป้าหมายต่อเดือน</h7>
-                    </div>
+                    <h7 class="modal-title">ตั้งค่าเป้าหมายต่อเดือน</h7>
                     <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
@@ -703,9 +699,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <div class="row col-xl-12">
-                        <h7 class="modal-title">ตั้งค่าเป้าหมาย</h7>
-                    </div>
+                    <h7 class="modal-title">ตั้งค่าเป้าหมาย</h7>
                     <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
