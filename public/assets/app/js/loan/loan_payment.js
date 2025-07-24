@@ -13,6 +13,7 @@ var loan_installment_date = 0;
 
   flatpickr("#date_to_payment", {
     disableMobile: true,
+    clickOpens: false
   });
 
   loadLoan(searchParams_[1]);
@@ -803,9 +804,12 @@ $(document).ready(function () {
             let formattedDateImg = formatDateImg(jsonData.date);
             // เติมข้อมูลลงใน input
             $("input[id=payment_now]").val(amount_thb).addClass("is-valid");
-            $("input[id=date_to_payment]")
-              .val(formattedDateImg)
-              .addClass("is-valid");
+
+            // วันที่ ที่ได้จาก ai
+            // $("input[id=date_to_payment]")
+            //   .val(formattedDateImg)
+            //   .addClass("is-valid");
+
             // $("input[id=formDate1]").val(formattedDateImg).addClass("is-valid");
           }
         }

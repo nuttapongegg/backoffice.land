@@ -414,10 +414,10 @@ $(document).ready(function () {
             $me.attr("disabled", true);
 
             let formData = new FormData($form[0]);
-            let imageFileInvoice = document.querySelector("#imageFileInvoice");
+            let imageFileInvoiceDoc = document.querySelector("#imageFileInvoiceDoc");
 
-            if (imageFileInvoice.files.length > 0) {
-              formData.append("imageFileInvoice", imageFileInvoice.files[0]);
+            if (imageFileInvoiceDoc.files.length > 0) {
+              formData.append("imageFileInvoiceDoc", imageFileInvoiceDoc.files[0]);
             }
             let $url = "";
             if ($form.find("input[name=doc_id]").val() != "") {
@@ -573,48 +573,48 @@ $(document).ready(function () {
 
   if (isIos()) {
     // แสดงปุ่มทั้ง 2 ปุ่ม (ถ่ายรูปและเลือกไฟล์) สำหรับ iOS
-    $("#btnAiAutoCapture").show();
-    $("#btnAiAutoSelect").show();
+    $("#btnAiAutoCaptureDoc").show();
+    $("#btnAiAutoSelectDoc").show();
   } else {
     // แสดงแค่ปุ่มเลือกไฟล์ที่สามารถถ่ายภาพได้ในอุปกรณ์อื่นๆ
-    $("#btnAiAutoCapture").hide();
-    $("#btnAiAutoSelect").show();
+    $("#btnAiAutoCaptureDoc").hide();
+    $("#btnAiAutoSelectDoc").show();
   }
 
   // ปุ่มเลือกไฟล์ ใช้ AI Auto Input
   // ฟังก์ชันการทำงานอื่นๆ ตามเดิม
-  $("#btnAiAutoCapture").on("click", function () {
-    let fileInput = $("#imageFileInvoice");
+  $("#btnAiAutoCaptureDoc").on("click", function () {
+    let fileInput = $("#imageFileInvoiceDoc");
     fileInput.val(""); // เคลียร์ค่าเก่า เพื่อให้สามารถเลือกไฟล์ใหม่ได้
     fileInput.attr("capture", "environment"); // บังคับให้ใช้กล้องหลัง
     fileInput.click();
   });
 
-  $("#btnAiAutoSelect").on("click", function () {
-    let fileInput = $("#imageFileInvoice");
+  $("#btnAiAutoSelectDoc").on("click", function () {
+    let fileInput = $("#imageFileInvoiceDoc");
     fileInput.removeAttr("capture"); // เอา capture ออกเพื่อให้เลือกไฟล์ได้
     fileInput.click();
   });
 
   // เมื่อเลือกไฟล์หรือถ่ายรูป
-  $("#imageFileInvoice").on("change", function () {
+  $("#imageFileInvoiceDoc").on("change", function () {
     const fileInvoice = this.files[0];
     if (!fileInvoice) return;
 
     const fileType = fileInvoice.type;
-    $("#detectImageFormInvoice").show();
+    $("#detectImageFormInvoiceDoc").show();
 
     if (fileType === "application/pdf") {
       const fileURL = URL.createObjectURL(fileInvoice);
-      $("#pdfPreviewInvoice").attr("src", fileURL).show();
-      $("#imagePreviewInvoice").hide();
+      $("#pdfPreviewInvoiceDoc").attr("src", fileURL).show();
+      $("#imagePreviewInvoiceDoc").hide();
     } else if (fileType.startsWith("image/")) {
       const readerInvoice = new FileReader();
       readerInvoice.onload = function (e) {
-        $("#imagePreviewInvoice").attr("src", e.target.result).show();
+        $("#imagePreviewInvoiceDoc").attr("src", e.target.result).show();
       };
       readerInvoice.readAsDataURL(fileInvoice);
-      $("#pdfPreviewInvoice").hide();
+      $("#pdfPreviewInvoiceDoc").hide();
     }
   });
 
@@ -649,8 +649,8 @@ $(document).ready(function () {
   }
 
   // เมื่อคลิกปุ่ม 'ยืนยัน'
-  $("#btnAiAutoInputInvoiceSubmit").on("click", function () {
-    let fileInput = document.querySelector("#imageFileInvoice");
+  $("#btnAiAutoInputInvoiceDocSubmit").on("click", function () {
+    let fileInput = document.querySelector("#imageFileInvoiceDoc");
 
     if (!fileInput.files.length) return; // ถ้ายังไม่ได้เลือกไฟล์ ให้ return ออกไปเลย
 
@@ -659,7 +659,7 @@ $(document).ready(function () {
     formData.append("image", fileInvoice);
 
     // แสดง loading
-    $("#btnAiAutoInputInvoiceSubmit")
+    $("#btnAiAutoInputInvoiceDocSubmit")
       .prop("disabled", true)
       .html('<i class="fa fa-spinner fa-spin"></i> กำลังประมวลผล');
 
@@ -670,12 +670,12 @@ $(document).ready(function () {
       processData: false,
       contentType: false,
       success: function (response) {
-        $("#btnAiAutoInputInvoiceSubmit")
+        $("#btnAiAutoInputInvoiceDocSubmit")
           .prop("disabled", false)
           .html("ยืนยัน");
 
         if (response.status === "success") {
-          $("#detectImageFormInvoice").hide(); // ซ่อนฟอร์มเมื่ออัปโหลดเสร็จ
+          $("#detectImageFormInvoiceDoc").hide(); // ซ่อนฟอร์มเมื่ออัปโหลดเสร็จ
 
           if (response.json_output) {
             let jsonData = response.json_output;
@@ -708,7 +708,7 @@ $(document).ready(function () {
         }
       },
       error: function () {
-        $("#btnAiAutoInputInvoiceSubmit")
+        $("#btnAiAutoInputInvoiceDocSubmit")
           .prop("disabled", false)
           .html("ยืนยัน");
       },
@@ -716,11 +716,11 @@ $(document).ready(function () {
   });
 
   // เมื่อคลิกปุ่ม 'ยกเลิก'
-  $("#btnAiAutoInputInvoiceClear").on("click", function () {
-    $("#detectImageFormInvoice").hide(); // ซ่อนฟอร์ม
-    $("#imageFileInvoice").val(""); // รีเซ็ต input file
-    $("#imagePreviewInvoice").attr("src", "").hide(); // ซ่อนภาพ preview
-    $("#pdfPreviewInvoice").attr("src", "").hide(); // ซ่อน PDF preview
+  $("#btnAiAutoInputInvoiceDocClear").on("click", function () {
+    $("#detectImageFormInvoiceDoc").hide(); // ซ่อนฟอร์ม
+    $("#imageFileInvoiceDoc").val(""); // รีเซ็ต input file
+    $("#imagePreviewInvoiceDoc").attr("src", "").hide(); // ซ่อนภาพ preview
+    $("#pdfPreviewInvoiceDoc").attr("src", "").hide(); // ซ่อน PDF preview
   });
 });
 

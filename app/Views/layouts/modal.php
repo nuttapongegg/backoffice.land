@@ -65,27 +65,27 @@
                         </div>
                     </div>
                     <div class="mt-3 mb-3" style="text-align: right;">
-                        <a href="javascript:void(0);" class="btn btn-outline-secondary" id="btnAiAutoCapture" style="display: none;">
+                        <a href="javascript:void(0);" class="btn btn-outline-secondary" id="btnAiAutoCaptureDoc" style="display: none;">
                             <i class="fas fa-camera"></i> ถ่ายรูป
                         </a>
-                        <a href="javascript:void(0);" class="btn btn-outline-primary" id="btnAiAutoSelect" style="display: none;">
+                        <a href="javascript:void(0);" class="btn btn-outline-primary" id="btnAiAutoSelectDoc" style="display: none;">
                             <i class="fab fa-reddit-alien"></i> ใช้ AI Auto Input
                         </a>
                     </div>
-                    <div id="detectImageFormInvoice" style="display: none;">
+                    <div id="detectImageFormInvoiceDoc" style="display: none;">
                         <div class="row">
                             <div class="col text-center">
                                 <!-- แสดงตัวอย่างภาพ -->
-                                <img id="imagePreviewInvoice" width="17%" class="img-thumbnail" style="display: none;" /><br>
+                                <img id="imagePreviewInvoiceDoc" width="17%" class="img-thumbnail" style="display: none;" /><br>
                                 <!-- แสดงตัวอย่าง PDF -->
-                                <iframe id="pdfPreviewInvoice" style="display: none;" width="100%" height="400px"></iframe><br>
-                                <button type="button" class="btn btn-outline-danger btn-rounded mt-3" id="btnAiAutoInputInvoiceClear">ยกเลิก</button>
-                                <button type="submit" class="btn btn-success btn-rounded mt-3" id="btnAiAutoInputInvoiceSubmit">ยืนยัน</button>
+                                <iframe id="pdfPreviewInvoiceDoc" style="display: none;" width="100%" height="400px"></iframe><br>
+                                <button type="button" class="btn btn-outline-danger btn-rounded mt-3" id="btnAiAutoInputInvoiceDocClear">ยกเลิก</button>
+                                <button type="submit" class="btn btn-success btn-rounded mt-3" id="btnAiAutoInputInvoiceDocSubmit">ยืนยัน</button>
                             </div>
                         </div>
                         <div>
                             <!-- input file ที่รองรับทั้งการเลือกไฟล์และการถ่ายภาพจากกล้องมือถือ -->
-                            <input type="file" class="custom-file-input" id="imageFileInvoice" name="imageFileInvoice" accept="image/*,application/pdf" style="display: none;" />
+                            <input type="file" class="custom-file-input" id="imageFileInvoiceDoc" name="imageFileInvoiceDoc" accept="image/*,application/pdf" style="display: none;" />
                         </div>
                         <hr>
                     </div>

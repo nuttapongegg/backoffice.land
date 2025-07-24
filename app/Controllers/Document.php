@@ -149,8 +149,8 @@ class Document extends BaseController
                 $file = $this->ddoo_upload_file($this->request->getFile('file'));
             }
 
-            if (isset($_FILES['imageFileInvoice']) && $_FILES['imageFileInvoice']['name'] != '') {
-                $imgFile = $this->ddoo_upload_file($this->request->getFile('imageFileInvoice'));
+            if (isset($_FILES['imageFileInvoiceDoc']) && $_FILES['imageFileInvoiceDoc']['name'] != '') {
+                $imgFile = $this->ddoo_upload_file($this->request->getFile('imageFileInvoiceDoc'));
             }
 
             $data = [
@@ -378,9 +378,9 @@ class Document extends BaseController
                 $file = $this->ddoo_upload_file($this->request->getFile('file'));
             }
 
-            if (isset($_FILES['imageFileInvoice']) && $_FILES['imageFileInvoice']['name'] != '') {
+            if (isset($_FILES['imageFileInvoiceDoc']) && $_FILES['imageFileInvoiceDoc']['name'] != '') {
                 // ถ้ามีการอัปโหลดไฟล์ใหม่ ใช้ไฟล์ที่อัปโหลด
-                $docfile = $this->ddoo_upload_file($this->request->getFile('imageFileInvoice'));
+                $docfile = $this->ddoo_upload_file($this->request->getFile('imageFileInvoiceDoc'));
             }
 
             $data = [
@@ -990,13 +990,14 @@ class Document extends BaseController
 
         // ตรงจำนวนเงินให้แปลงค่าเงินเป็น usd โดยอิงจากค่าเงินวันนี้
         $openai_url = "https://api.openai.com/v1/chat/completions";
-        $prompt = "Input $text จาก Input จงแยกแยะข้อมูลชุดนี้โดยข้อมูลที่ต้องการออกมาคือ จำนวนเงิน, สกุลเงิน, วันที่
+        $prompt = "Input $text จาก Input จงแยกแยะข้อมูลชุดนี้โดยข้อมูลที่ต้องการออกมาคือ จำนวนเงิน, สกุลเงิน, วันที่, เวลา
                         เสร็จแล้วทำข้อมูลให้อยู่ในรูปแบบ json เท่านั้น โดยไม่ต้องเพิ่มคำอธิบายเพิ่มเติม
-                        นี่คือรูปแบบที่ฉันต้องการ {\"amount\":__,\"type\":__,\"date\":__}
+                        นี่คือรูปแบบที่ฉันต้องการ {\"amount\":__,\"type\":__,\"date\":__,\"time\":__}
                         ในส่วนสกุลเงิน ตรวจสอบจำนวนเงินว่าเป็นเงินบาท เงินกีบ หรือ ดอลล่า หากเป็น บาท หรือ กีบ  เงินกีบ = LAK, เงินบาท = THB, เงินดอลล่า = USD
                         ตรงจำนวนเงินให้ส่งกลับมาแค่จำนวนเงินเท่านั้น 
                         
                         **กติกา:**
+                        - time ให้อยู่ในรูปแบบ H:i ถ้าไม่พบเวลาในข้อมูล ให้ส่งค่าว่าง ''
                         **amount**:
                         - ให้ดึงเฉพาะตัวเลขจำนวนเงินที่แสดงสุดท้ายในข้อมูล (หมายถึงจำนวนเงินที่ต้องชำระ หรือยอดรวมสุดท้าย)  
                         
