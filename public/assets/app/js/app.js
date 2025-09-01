@@ -1,14 +1,20 @@
 function select2Banks(data) {
+  if (!data.id) {
+    return data.text;
+  }
 
-    if (!data.id) { return data.text; }
+  if (data.id == "เลือกธนาคาร") {
+    return data.text;
+  }
 
-    if (data.id == 'เลือกธนาคาร') { return data.text; }
-
-    var $data = $(
-        '<span class="d-flex align-items-center"><img src="../assets/img/banks/ic-' + data.element.dataset.icon + '.png" class="rounded-circle avatar-xs me-1" /> '
-        + data.text + '</span>'
-    );
-    return $data;
+  var $data = $(
+    '<span class="d-flex align-items-center"><img src="../assets/img/banks/ic-' +
+      data.element.dataset.icon +
+      '.png" class="rounded-circle avatar-xs me-1" /> ' +
+      data.text +
+      "</span>"
+  );
+  return $data;
 }
 
 $(document).ready(function () {
@@ -125,7 +131,7 @@ $(document).ready(function () {
         separator: ",",
       });
     },
-
+    
 
     // จัดการฟอร์มใบสำคัญเมื่อเปิด
     docOpenForm($docType) {
@@ -266,7 +272,9 @@ $(document).ready(function () {
                 selector: ".price",
                 separator: ",",
               });
-              $form.find("select[name=land_account_name]").val($land_account_name);
+              $form
+                .find("select[name=land_account_name]")
+                .val($land_account_name);
               $form.find("input[name=note]").val($data.note);
               if ($data.filePath != "") {
                 $form.find(".dropify-preview").css("display", "block");
@@ -414,10 +422,15 @@ $(document).ready(function () {
             $me.attr("disabled", true);
 
             let formData = new FormData($form[0]);
-            let imageFileInvoiceDoc = document.querySelector("#imageFileInvoiceDoc");
+            let imageFileInvoiceDoc = document.querySelector(
+              "#imageFileInvoiceDoc"
+            );
 
             if (imageFileInvoiceDoc.files.length > 0) {
-              formData.append("imageFileInvoiceDoc", imageFileInvoiceDoc.files[0]);
+              formData.append(
+                "imageFileInvoiceDoc",
+                imageFileInvoiceDoc.files[0]
+              );
             }
             let $url = "";
             if ($form.find("input[name=doc_id]").val() != "") {
@@ -674,7 +687,15 @@ $(document).ready(function () {
           .prop("disabled", false)
           .html("ยืนยัน");
 
-        if (response.status === "success") {
+        if (response.status === "duplicate") {
+          Swal.fire({
+            icon: "warning",
+            title: "ข้อมูลซ้ำ",
+            text: response.message,
+            confirmButtonText: "ตกลง",
+          });
+          return;
+        } else if (response.status === "success") {
           $("#detectImageFormInvoiceDoc").hide(); // ซ่อนฟอร์มเมื่ออัปโหลดเสร็จ
 
           if (response.json_output) {
@@ -699,6 +720,9 @@ $(document).ready(function () {
             $("input[name=price]").val(amount_thb).addClass("is-valid");
             $("input[id=formDate]").val(formattedDateImg).addClass("is-valid");
             // $("input[id=formDate1]").val(formattedDateImg).addClass("is-valid");
+            $("input[name=doc_file_date]").val(jsonData.date).addClass("is-valid");
+            $("input[name=doc_file_time]").val(jsonData.time).addClass("is-valid");
+            $("input[name=doc_file_price]").val(jsonData.amount).addClass("is-valid");
 
             easyNumberSeparator({
               selector: ".price",

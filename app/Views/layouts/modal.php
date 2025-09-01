@@ -94,6 +94,9 @@
                     <form action="#" name="formDoc" id="<?php echo $FORM_KEY; ?>" data-form-key="<?php echo $FORM_KEY; ?>">
                         <input type="hidden" name="doc_type">
                         <input type="hidden" name="doc_id">
+                        <input type="hidden" name="doc_file_date">
+                        <input type="hidden" name="doc_file_time">
+                        <input type="hidden" name="doc_file_price">
                         <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary">ข้อมูลพื้นฐาน</p>
                         <div class="form-group mb-0">
                             <div class="row row-sm">

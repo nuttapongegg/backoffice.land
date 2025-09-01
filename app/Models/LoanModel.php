@@ -1061,7 +1061,7 @@ class LoanModel
         return $builder->get()->getResult();
     }
 
-        public function getDataTableLoanProcessMonthCount($param)
+    public function getDataTableLoanProcessMonthCount($param)
     {
         $month = $param['month'];
         $years = $param['years'];
@@ -1129,5 +1129,20 @@ class LoanModel
         $builder = $this->db->query($sql);
 
         return $builder->getResult();
+    }
+
+    public function checkDuplicate($amount, $date, $time)
+    {
+        $sql = "
+        SELECT id
+        FROM loan_payment
+        WHERE payment_file_price = ?
+          AND payment_file_date = ?
+          AND payment_file_time = ?
+        LIMIT 1
+    ";
+
+        $builder = $this->db->query($sql, [$amount, $date, $time]);
+        return $builder->getRow();
     }
 }

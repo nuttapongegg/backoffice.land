@@ -802,4 +802,19 @@ class DocumentModel
 
         return $builder->getResult();
     }
+
+    public function checkDuplicate($amount, $date, $time)
+    {
+        $sql = "
+        SELECT id
+        FROM documents
+        WHERE doc_file_price = ?
+          AND doc_file_date = ?
+          AND doc_file_time = ?
+        LIMIT 1
+    ";
+
+        $builder = $this->db->query($sql, [$amount, $date, $time]);
+        return $builder->getRow();
+    }
 }

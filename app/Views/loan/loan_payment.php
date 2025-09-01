@@ -331,6 +331,9 @@
                                 </div>
                                 <?php $FORM_KEY = 'FORM_KEY_' . strtotime('now') . '_' . rand(10, 100); ?>
                                 <form method="POST" enctype="multipart/form-data" name="formPayloan" id="<?php echo $FORM_KEY; ?>" data-form-key="<?php echo $FORM_KEY; ?>" novalidate>
+                                    <input type="hidden" name="payment_file_date">
+                                    <input type="hidden" name="payment_file_time">
+                                    <input type="hidden" name="payment_file_price">
                                     <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary">รายละเอียดผู้ชำระ</p>
                                     <div class="row">
                                         <div class="col-6">
@@ -400,7 +403,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="form-group">
-                                                        <select name="account_name" id='account_name' class="form-control custom-select"  data-bs-placeholder="Select ..."required>
+                                                        <select name="account_name" id='account_name' class="form-control custom-select"  data-bs-placeholder="Select ..." required>
                                                             <?php if ($land_accounts) : ?>
                                                                 <?php foreach ($land_accounts as $land_account) { ?>
                                                                     <option value="<?php echo $land_account->id; ?>"><?php echo $land_account->land_account_name; ?></option>

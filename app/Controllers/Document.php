@@ -127,9 +127,12 @@ class Document extends BaseController
             $docType = $this->request->getVar('doc_type');
             $landAccountName = $this->request->getVar('land_account_name');
             $inputTitle = $this->request->getVar('title');
+            $docFileDate = $this->request->getVar('doc_file_date');
+            $docFileTime = $this->request->getVar('doc_file_time');
+            $docFilePrice = $this->request->getVar('doc_file_price');
             $file = '';
             $imgFile = '';
-
+            
             // เช็ครายการว่ามีในดาต้าเบสหรือป่าว ถ้ามีนำมาใช้งาน
             $title = $this->DocumentTitleListModel->getDocumentTitleListByDocTypeAndTitle($docType, $inputTitle);
             $settinglands =  $this->SettingLandModel->getSettingLandAll();
@@ -163,6 +166,9 @@ class Document extends BaseController
                 'employee_id' => session()->get('employeeID'),
                 'username' => session()->get('username'),
                 'doc_file' => $imgFile,
+                'doc_file_date' => $docFileDate,
+                'doc_file_time' => $docFileTime,
+                'doc_file_price' => $docFilePrice,
                 'filePath' => $file,
                 'note' => $this->request->getVar('note'),
             ];
@@ -217,10 +223,10 @@ class Document extends BaseController
                     }
                     break;
             }
-            
+
             $create = $this->DocumentModel->insertDocument($data);
             if ($create) {
-                
+
                 // //pusher add
                 // $pusher = getPusher();
                 // $pusher->trigger('color_Status', 'event', [
@@ -1043,6 +1049,20 @@ class Document extends BaseController
         if ($openai_http_code == 200) {
             $openai_result = json_decode($openai_response, true);
             $json_output = $openai_result['choices'][0]['message']['content'] ?? 'ไม่พบผลลัพธ์';
+
+            $jsonArr = json_decode($json_output, true);
+            $amount = $jsonArr['amount'] ?? null;
+            $date   = $jsonArr['date'] ?? null;
+            $time   = $jsonArr['time'] ?? null;
+
+            $exists = $this->DocumentModel->checkDuplicate($amount, $date, $time);
+
+            if ($exists) {
+                return $this->response->setJSON([
+                    'status' => 'duplicate',
+                    'message' => 'ไฟล์นี้เคยถูกบันทึกแล้ว กรุณาเปลี่ยนไฟล์ใหม่'
+                ]);
+            }
 
             // ส่งข้อมูล JSON ที่พร้อมใช้งานไปยัง JavaScript
             return $this->response->setJSON([

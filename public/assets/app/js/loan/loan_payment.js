@@ -13,7 +13,7 @@ var loan_installment_date = 0;
 
   flatpickr("#date_to_payment", {
     disableMobile: true,
-    clickOpens: false
+    clickOpens: false,
   });
 
   loadLoan(searchParams_[1]);
@@ -233,7 +233,7 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
 });
 // ฟังก์ชันดำเนินการบันทึก
 function proceedLoanPayment(formData, form) {
-
+  
   let imageFileInvoice = document.querySelector("#imageFileInvoice");
 
   if (imageFileInvoice.files.length > 0) {
@@ -774,7 +774,15 @@ $(document).ready(function () {
           .prop("disabled", false)
           .html("ยืนยัน");
 
-        if (response.status === "success") {
+        if (response.status === "duplicate") {
+          Swal.fire({
+            icon: "warning",
+            title: "ข้อมูลซ้ำ",
+            text: response.message,
+            confirmButtonText: "ตกลง",
+          });
+          return;
+        } else if (response.status === "success") {
           $("#detectImageFormInvoice").hide(); // ซ่อนฟอร์มเมื่ออัปโหลดเสร็จ
 
           if (response.json_output) {
@@ -805,6 +813,15 @@ $(document).ready(function () {
             // เติมข้อมูลลงใน input
             $("input[id=payment_now]").val(amount_thb).addClass("is-valid");
 
+            $("input[name=payment_file_date]")
+              .val(jsonData.date)
+              .addClass("is-valid");
+            $("input[name=payment_file_time]")
+              .val(jsonData.time)
+              .addClass("is-valid");
+            $("input[name=payment_file_price]")
+              .val(jsonData.amount)
+              .addClass("is-valid");
             // วันที่ ที่ได้จาก ai
             // $("input[id=date_to_payment]")
             //   .val(formattedDateImg)

@@ -4226,11 +4226,14 @@ class Loan extends BaseController
 
         $imgFile = $this->request->getFile('imageFileInvoice');
 
+        $paymentFileDate = $this->request->getVar('payment_file_date');
+        $paymentFileTime = $this->request->getVar('payment_file_time');
+        $paymentFilePrice = $this->request->getVar('payment_file_price');
         // $status_payment = $this->request->getPost('status_payment');
         $fileName_img = '';
 
         $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
-        if($imgFile != ''){
+        if ($imgFile != '') {
             $fileName_img = $imgFile->getFilename();
         }
         if ($fileName_img !== "") {
@@ -4312,6 +4315,9 @@ class Loan extends BaseController
                 // 'loan_payment_installment' =>  $installment_count,
                 'loan_payment_customer' => $payment_name,
                 'loan_payment_src' => $fileName_img,
+                'payment_file_date' => $paymentFileDate,
+                'payment_file_time' => $paymentFileTime,
+                'payment_file_price' => $paymentFilePrice,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
                 'loan_payment_date' => $date_to_payment,
@@ -4332,6 +4338,9 @@ class Loan extends BaseController
                 // 'loan_payment_installment' =>  $installment_count,
                 'loan_payment_customer' => $payment_name,
                 'loan_payment_src' => $fileName_img,
+                'payment_file_date' => $paymentFileDate,
+                'payment_file_time' => $paymentFileTime,
+                'payment_file_price' => $paymentFilePrice,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
                 'loan_payment_date' => $date_to_payment,
@@ -4353,6 +4362,9 @@ class Loan extends BaseController
                 'loan_payment_pay_type' => $customer_payment_type,
                 'loan_payment_customer' => $payment_name,
                 'loan_payment_src' => $fileName_img,
+                'payment_file_date' => $paymentFileDate,
+                'payment_file_time' => $paymentFileTime,
+                'payment_file_price' => $paymentFilePrice,
                 'loan_payment_date' => $date_to_payment,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
@@ -4386,6 +4398,9 @@ class Loan extends BaseController
                 // 'loan_payment_installment' =>  $installment_count,
                 'loan_payment_customer' => $payment_name,
                 'loan_payment_src' => $fileName_img,
+                'payment_file_date' => $paymentFileDate,
+                'payment_file_time' => $paymentFileTime,
+                'payment_file_price' => $paymentFilePrice,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
                 'loan_payment_date' => $date_to_payment,
@@ -4774,6 +4789,20 @@ class Loan extends BaseController
             $openai_result = json_decode($openai_response, true);
             $json_output = $openai_result['choices'][0]['message']['content'] ?? 'ไม่พบผลลัพธ์';
 
+            $jsonArr = json_decode($json_output, true);
+            $amount = $jsonArr['amount'] ?? null;
+            $date   = $jsonArr['date'] ?? null;
+            $time   = $jsonArr['time'] ?? null;
+
+            $exists = $this->LoanModel->checkDuplicate($amount, $date, $time);
+
+            if ($exists) {
+                return $this->response->setJSON([
+                    'status' => 'duplicate',
+                    'message' => 'ไฟล์นี้เคยถูกบันทึกแล้ว กรุณาเปลี่ยนไฟล์ใหม่'
+                ]);
+            }
+
             // ส่งข้อมูล JSON ที่พร้อมใช้งานไปยัง JavaScript
             return $this->response->setJSON([
                 'status' => 'success',
@@ -5146,7 +5175,7 @@ class Loan extends BaseController
                         break;
                 }
             }
-            
+
             // รายรับ(ค่าดำเนินการ)
             $Month_Sum_Process = $Month_Jan_Process + $Month_Feb_Process + $Month_Mar_Process + $Month_Apr_Process
                 + $Month_May_Process + $Month_Jun_Process + $Month_Jul_Process + $Month_Aug_Process + $Month_Sep_Process
