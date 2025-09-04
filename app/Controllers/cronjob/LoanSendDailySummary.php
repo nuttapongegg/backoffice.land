@@ -276,7 +276,7 @@ class LoanSendDailySummary extends BaseController
                                 "contents" => [
                                     [
                                         "type" => "text",
-                                        "text" => "เป้าหมาย 60,000,000.00 บาท",
+                                        "text" => "เป้าหมาย ".number_format($goal, 2)." บาท",
                                         "size" => "xs",
                                         "color" => "#999999",
                                         "flex" => 6,
