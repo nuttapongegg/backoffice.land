@@ -35,7 +35,7 @@
         </div>
         <!-- /breadcrumb -->
         <div>
-            <div class="col-xxl-12 col-xl-12" id="summarizeLoan">
+            <div class="col-xxl-12 col-xl-12" id="summarizeFinx">
             </div>
             <div class="col-lg-12">
                 <div class="card mt-3">
@@ -45,9 +45,9 @@
                                 <div id="count_car"></div>
                                 <!-- <div id="count_loan_on" style="color: #FF8800;">สินเชื่อ 0 ราย</div> -->
                             </div>
-                            <div>
-                                <a href="javascript:void(0);" class="btn btn-outline-primary Loan_open text-center" data-bs-toggle="modal" data-bs-target="#modalAddLoan"><i class="fa-solid fa-plus text-center" id="addStockCar" name="addStockCar"></i>&nbsp;&nbsp;เพิ่มสินเชื่อ</a>
-                            </div>
+                            <!-- <div>
+                                <a href="javascript:void(0);" class="btn btn-outline-primary Finx_open text-center" data-bs-toggle="modal" data-bs-target="#modalAddFinx"><i class="fa-solid fa-plus text-center" id="addStockCar" name="addStockCar"></i>&nbsp;&nbsp;เพิ่มสินเชื่อ</a>
+                            </div> -->
                         </div>
                     </div>
                     <div class="card-body">
@@ -57,7 +57,7 @@
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
                                     <div class="table-responsive double-scroll">
-                                        <table class="table table-bordered text-nowrap border-bottom" id="tableLoanOn">
+                                        <table class="table table-bordered text-nowrap border-bottom" id="tableFinxOn">
                                             <thead>
                                                 <tr>
                                                     <th class="wd-5p">#</th>
@@ -116,46 +116,6 @@
                     <div class="card-header">
                         <div class="card-title justify-content-between d-flex">
                             <div>
-                                <div class="tx-primary tx-18" id="count_car">รายการชำระสินเชื่อ</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-wrap">
-                            <div class="mb-0 navbar navbar-expand-lg navbar-nav-right responsive-navbar navbar-dark p-0">
-                            </div>
-                            <div class="panel tabs-style1">
-                                <div class="panel-body">
-                                    <div class="table-responsive double-scroll">
-                                        <table class="table table-bordered text-nowrap border-bottom" id="tableLoanPayments">
-                                            <thead>
-                                                <tr>
-                                                    <th class="wd-5p text-center">#</th>
-                                                    <th class="wd-35p text-center">รายการ</th>
-                                                    <th class="wd-15p text-center">จำนวนเงิน</th>
-                                                    <th class="wd-45p text-center">รายละเอียด</th>
-                                                    <th class="wd-15p text-center">ผู้ทำรายการ</th>
-                                                    <th class="wd-15p text-center">ชื่อบัญชีรับชำระ</th>
-                                                    <th class="wd-15p text-center">จำนวนเงินในบัญชี</th>
-                                                    <th class="wd-25p text-center">วันที่ชำระ</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- End Row -->
-            </div>
-            <div class="col-lg-12">
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <div class="card-title justify-content-between d-flex">
-                            <div>
                                 <div id="count_car_history"></div>
                             </div>
                         </div>
@@ -167,7 +127,7 @@
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
                                     <div class="table-responsive double-scroll">
-                                        <table class="table table-bordered text-nowrap border-bottom" id="tableLoanClose">
+                                        <table class="table table-bordered text-nowrap border-bottom" id="tableFinxClose">
                                             <thead>
                                                 <tr>
                                                     <th class="wd-5p">#</th>
@@ -218,19 +178,19 @@
                 </div>
                 <!-- End Row -->
             </div>
-            <div id="SummarizeLoan" class="card mt-3">
+            <div id="SummarizeFinx" class="card mt-3">
             </div>
         </div>
 
 
-        <div class="modal fade" id="modalAddLoan" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="modalAddFinx" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
             <input type="hidden" name="carStockDetailBuySaleNoVat" id="carStockDetailBuySaleNoVat" value="" />
             <input type="hidden" name="carStockDetailBuySaleDow" id="carStockDetailBuySaleDow" value="" />
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">เปิดสินเชื่อ</h5>
-                        <button type="button" class="btn-close modalAddLoanClose"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" class="btn-close modalAddFinxClose"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
                         <div class="panel tabs-style5 w-fit-content mx-auto">
@@ -242,7 +202,7 @@
                             </div>
                         </div>
                         <?php $FORM_KEY = 'FORM_KEY_' . strtotime('now') . '_' . rand(10, 100); ?>
-                        <form method="POST" enctype="multipart/form-data" name="formAddLoan" id="<?php echo $FORM_KEY; ?>" data-form-key="<?php echo $FORM_KEY; ?>" novalidate>
+                        <form method="POST" enctype="multipart/form-data" name="formAddFinx" id="<?php echo $FORM_KEY; ?>" data-form-key="<?php echo $FORM_KEY; ?>" novalidate>
                             <input type="hidden" name="loan_type" value="เงินสด">
                             <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-5">ข้อมูลพื้นฐาน</p>
                             <div class="row mb-3">

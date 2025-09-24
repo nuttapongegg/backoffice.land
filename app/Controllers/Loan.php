@@ -9,7 +9,7 @@ use App\Models\RebuildModel;
 use Aws\S3\S3Client;
 use \GuzzleHttp\Client;
 
-use App\Models\CustomerModel;
+use App\Models\LoanCustomerModel;
 use App\Models\EmployeeModel;
 use App\Models\EmployeeLogModel;
 use App\Models\LoanModel;
@@ -22,7 +22,7 @@ use Smalot\PdfParser\Parser;
 
 class Loan extends BaseController
 {
-    private CustomerModel $CustomerModel;
+    private LoanCustomerModel $LoanCustomerModel;
     private EmployeeModel $EmployeeModel;
     private EmployeeLogModel $EmployeeLogModel;
     private LoanModel $LoanModel;
@@ -53,7 +53,7 @@ class Loan extends BaseController
         */
 
         // Model
-        $this->CustomerModel = new CustomerModel();
+        $this->LoanCustomerModel = new LoanCustomerModel();
         $this->EmployeeModel = new EmployeeModel();
         $this->EmployeeLogModel = new EmployeeLogModel();
         $this->LoanModel = new LoanModel();
@@ -440,6 +440,16 @@ class Loan extends BaseController
         $loan_address = $this->request->getPost('loan_address');
         $loan_number = $this->request->getPost('loan_number');
         $employee_name = $this->request->getPost('employee_name');
+
+        $customer_fullname = $this->request->getPost('fullname') ?? '';
+        $customer_phone = $this->request->getPost('phone') ?? '';
+        $customer_card_id = $this->request->getPost('card_id') ?? '';
+        $customer_email = $this->request->getPost('customer_email') ?? '';
+        $customer_birthday = $this->request->getPost('birthday') ?? '';
+        $customer_gender = $this->request->getPost('gender') ?? '';
+        $customer_address = $this->request->getPost('address') ?? '';
+        $imageFile = $this->request->getFile('imageFile');
+
         $loan_area = $this->request->getPost('loan_area');
         $date_to_loan = $this->request->getPost('date_to_loan');
         $date_to_loan_pay_date = $this->request->getPost('date_to_loan_pay_date');
@@ -455,6 +465,96 @@ class Loan extends BaseController
         $really_pay_loan = $this->request->getPost('really_pay_loan');
 
         $data = $this->LoanModel->getAllDataLoanByCode($loan_code);
+
+        // ดึงข้อมูลลูกค้าปัจจุบัน
+        $dataLoanCustomer = $this->LoanCustomerModel->getCustomerByLoanCode($loan_code);
+
+        // รับไฟล์จาก request
+        $imageFile = $this->request->getFile('imageFile');
+        $nameImageFile = $dataLoanCustomer->img ?? null; // ค่าเริ่มต้นใช้รูปเก่า
+
+        if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
+            // ถ้ามีรูปใหม่อัพโหลดเข้ามา
+            $newFileName = $loan_code . "_" . $imageFile->getRandomName();
+            $imageFile->move('uploads/loan_customer_img', $newFileName);
+            $file_Path = 'uploads/loan_customer_img/' . $newFileName;
+
+            try {
+                $s3Client = new S3Client([
+                    'version' => 'latest',
+                    'region'  => $this->s3_region,
+                    'endpoint' => $this->s3_endpoint,
+                    'use_path_style_endpoint' => false,
+                    'credentials' => [
+                        'key'    => $this->s3_key,
+                        'secret' => $this->s3_secret_key
+                    ]
+                ]);
+
+                $result = $s3Client->putObject([
+                    'Bucket' => $this->s3_bucket,
+                    'Key'    => 'uploads/loan_customer_img/' . $newFileName,
+                    'Body'   => fopen($file_Path, 'r'),
+                    'ACL'    => 'public-read',
+                ]);
+
+                if (!empty($result['ObjectURL'])) {
+                    // ลบไฟล์ local หลังอัพโหลดเสร็จ
+                    unlink($file_Path);
+
+                    // ถ้ามีรูปเก่าแล้วอัพเดท → ลบรูปเก่าออกจาก S3 ด้วย
+                    if (!empty($dataLoanCustomer->img)) {
+                        try {
+                            $s3Client->deleteObject([
+                                'Bucket' => $this->s3_bucket,
+                                'Key'    => 'uploads/loan_customer_img/' . $dataLoanCustomer->img,
+                            ]);
+                        } catch (Aws\S3\Exception\S3Exception $e) {
+                            log_message('error', 'S3 delete error: ' . $e->getMessage());
+                        }
+                    }
+
+                    // อัพเดทรูปใหม่ในตัวแปร
+                    $nameImageFile = $newFileName;
+                }
+            } catch (Aws\S3\Exception\S3Exception $e) {
+                log_message('error', 'S3 upload error: ' . $e->getMessage());
+            }
+        }
+
+        if ($customer_card_id != '') {
+            $customer_card_id = str_replace('-', '', $customer_card_id);
+        }
+
+        if ($customer_birthday != '') {
+            $replaceBirthday = str_replace('/', '-', $customer_birthday);
+            if ($replaceBirthday !== false) {
+                $date = strtotime($replaceBirthday);
+                $customer_birthday = date('Y-m-d', $date);
+            }
+        }
+
+        // เตรียมข้อมูลลูกค้า
+        $loan_customer = [
+            'loan_code'          => $loan_code,
+            'customer_fullname'  => $customer_fullname,
+            'customer_phone'     => $customer_phone,
+            'customer_birthday'  => $customer_birthday,
+            'customer_card_id'   => $customer_card_id,
+            'customer_email'     => $customer_email,
+            'customer_gender'    => $customer_gender,
+            'customer_address'   => $customer_address,
+            'img'                => $nameImageFile,
+        ];
+
+        // ถ้ามีข้อมูลแล้ว → update
+        if ($dataLoanCustomer) {
+            $loan_customer['updated_at'] = $buffer_datetime;
+            $this->LoanCustomerModel->updateLoanCustomerByLoanCode($loan_code, $loan_customer);
+        } else {
+            // ถ้าไม่มีข้อมูล → insert
+            $this->LoanCustomerModel->insertLoanCustomer($loan_customer);
+        }
 
         $loan_list = [
             'loan_customer' => $customer_name,

@@ -1,4 +1,3 @@
-<input type="hidden" value="<?php echo session()->get('employee_position_name'); ?>" name="employee_position_name">
 <!-- main-content -->
 <div class="main-content app-content">
     <style>

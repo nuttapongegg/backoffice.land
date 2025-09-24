@@ -46,6 +46,7 @@ class Authentication extends BaseController
                                 'username' => $employee->username,
                                 'employee_fullname' => $employee->name, // ชื่อพนักงาน
                                 'employee_nickname' => $employee->nickname,
+                                'positionID' => $employee->position_id,
                                 'thumbnail' => $employee->thumbnail,
                                 'isEmployeeLoggedIn' => true,
                                 'login_detail_id' => $employeeloginDetailID,

@@ -95,9 +95,10 @@ class LoanModel
 
     public function getAllDataLoanByCode($loan_code)
     {
-        $sql = "SELECT * ,
+        $sql = "SELECT loan.* , loan_customer.customer_fullname,loan_customer.customer_phone,loan_customer.customer_birthday,loan_customer.customer_card_id,loan_customer.customer_email,loan_customer.customer_gender,loan_customer.customer_address,
         (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period 
         FROM loan
+        left join loan_customer on  loan.loan_code = loan_customer.loan_code
         WHERE loan.loan_code = '$loan_code' ORDER BY loan.id DESC
         ";
 
@@ -164,7 +165,7 @@ class LoanModel
     }
 
 
-    public function updateLoanPaymentClose($data,$code)
+    public function updateLoanPaymentClose($data, $code)
     {
         $builder_payment = $this->db->table('loan_payment');
         $builder_payment_status = $builder_payment->where('loan_code', $code)->update($data);
@@ -172,11 +173,11 @@ class LoanModel
         return $builder_payment_status ? true : false;
     }
 
-    public function updateLoanClosePayment($data,$code)
+    public function updateLoanClosePayment($data, $code)
     {
         $builder_payment = $this->db->table('loan_payment');
 
-        $where ="loan_code = '$code' AND loan_payment_type IS NULL";
+        $where = "loan_code = '$code' AND loan_payment_type IS NULL";
 
         $builder_payment_status = $builder_payment->where($where)->update($data);
 
@@ -1144,5 +1145,461 @@ class LoanModel
 
         $builder = $this->db->query($sql, [$amount, $date, $time]);
         return $builder->getRow();
+    }
+
+    public function getAllDataFinxOn()
+    {
+        $sql = "SELECT * ,
+        (SELECT COUNT(loan_payment_type) FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code) AS loan_payment_type,
+        (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date,
+        (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
+        (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period,
+        TIMESTAMPDIFF(MONTH,(SELECT DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_period - 1) MONTH)  FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code),CURDATE()) AS loan_overdue
+        FROM loan
+        WHERE loan.loan_status = 'ON_STATE' AND loan.loan_type = 'เงินสด'
+        ORDER BY loan.id DESC
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+
+    public function _getAllDataFinxHistory($post_data)
+    {
+        $builder = $this->DataFinxHistoryQuery($post_data);
+
+        // นำ Builder ที่ได้มาลิมิต จาก Length ของ Datable ที่ส่งมา
+        if ($post_data['length'] != -1) {
+            $builder->limit($post_data['length'], $post_data['start']);
+        }
+
+        // ส่งข้อมูลออกไป
+        return $builder->get()->getResult();
+    }
+
+    private function DataFinxHistoryQuery($post_data)
+    {
+
+        // Builder นี้ดัดแปลงจากคิวรี่ข้างบน
+        $builder = $this->db->table('loan');
+        $builder->select(" 
+         loan.loan_code,
+         loan.loan_customer,
+         loan.loan_address, 
+         loan.loan_employee, 
+         loan.loan_number,
+         loan.loan_area,
+         loan.loan_date_close,
+         loan.loan_date_promise,
+         loan.loan_summary_no_vat,
+         loan.loan_payment_sum_installment,
+         loan.loan_payment_year_counter,
+         loan.loan_payment_interest,
+         loan.loan_payment_month,
+         loan.loan_payment_process,
+         loan.loan_type,
+         loan.loan_tranfer,
+         loan.loan_payment_other,
+         loan.loan_status,
+         loan.loan_remnark,
+         loan.loan_summary_all,
+         loan.loan_sum_interest,
+         loan.loan_close_payment,
+         (SELECT COUNT(loan_payment_type) FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code) AS loan_payment_type,
+         (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
+         (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date
+        ");
+        $builder->where("loan_status = 'CLOSE_STATE'");
+        $builder->where("loan_type = 'เงินสด'");
+
+        $i = 0;
+        // loop searchable columns
+        foreach ($this->column_search as $item) {
+
+            // if datatable send POST for search
+            if ($post_data['search']['value']) {
+
+                // first loop
+                if ($i === 0) {
+                    // open bracket
+                    $builder->groupStart();
+                    $builder->like($item, $post_data['search']['value']);
+                } else {
+                    $builder->orLike($item, $post_data['search']['value']);
+                }
+
+                // last loop
+                if (count($this->column_search) - 1 == $i) {
+                    $builder->like($item, $post_data['search']['value']);
+                    // close bracket
+                    $builder->groupEnd();
+                }
+            }
+
+            $i++;
+        }
+
+        // มีการ order เข้ามา
+        if (isset($post_data['order'])) {
+            $builder->orderBy($this->column_order[$post_data['order']['0']['column']], $post_data['order']['0']['dir']);
+        }
+
+        // Default
+        else if (isset($this->order)) {
+            $order = $this->order;
+            $builder->orderBy(key($order), $order[key($order)]);
+        }
+
+        // Debug คิวรี่ที่ได้
+        // px($builder->getCompiledSelect());
+
+        return $builder;
+    }
+
+    public function getAllDataFinxHistoryFilter()
+    {
+
+        $sql = "
+        SELECT * FROM loan
+        WHERE loan.loan_status = 'CLOSE_STATE' AND loan.loan_type = 'เงินสด'
+        ORDER BY loan.id DESC
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function countAllDataFinxHistory()
+    {
+
+        $sql = "
+        SELECT count(loan.id) AS count_data FROM loan
+        WHERE loan.loan_status = 'CLOSE_STATE' AND loan.loan_type = 'เงินสด'
+        ORDER BY loan.id DESC
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getAllDataFinx()
+    {
+        $sql = "
+        SELECT *
+        FROM loan
+        WHERE loan.loan_status != 'CANCEL_STATE' AND loan.loan_type = 'เงินสด'
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getOpenLoanFinx($year)
+    {
+        $sql = "SELECT * , MONTH(loan.loan_date_promise) as loan_month FROM loan
+        WHERE YEAR(loan.loan_date_promise) = $year AND loan.loan_status != 'CANCEL_STATE' AND loan.loan_type = 'เงินสด'
+        ORDER BY id DESC
+        ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getListLoanFinxClosePaymentMonths($year)
+    {
+        $sql = "
+        SELECT 
+            loan.*,
+            MONTH(loan.loan_date_close) AS loan_date_close_month
+        FROM loan
+        WHERE YEAR(loan.loan_date_close) = $year 
+          AND loan.loan_type = 'เงินสด'
+        ORDER BY loan.id DESC
+    ";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getDataTableLoaFinxClosePaymentMonthCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+
+        $sql = "SELECT COUNT(*) as total
+            FROM loan
+            WHERE YEAR(loan.loan_date_close) = $years 
+              AND MONTH(loan.loan_date_close) = $month 
+              AND loan.loan_type = 'เงินสด'";
+
+        $builder = $this->db->query($sql);
+        return $builder->getRow()->total; // ✅ return count จริง
+    }
+
+    public function getDataTableLoanFinxClosePaymentMonth($param)
+    {
+        $month        = $param['month'];
+        $years        = $param['years'];
+        $start        = $param['start'];
+        $length       = $param['length'];
+        $order_column = $param['order_column'] ?? 'loan.loan_date_close';
+        $order_dir    = $param['order_dir'] ?? 'DESC';
+
+        $sql = "SELECT loan.*, loan_customer.customer_fullname
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_close) = $years 
+              AND MONTH(loan.loan_date_close) = $month 
+              AND loan.loan_type = 'เงินสด'
+            ORDER BY $order_column $order_dir
+            LIMIT $start, $length";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getDataTableLoanFinxClosePaymentMonthSearch($param)
+    {
+        $month        = $param['month'];
+        $years        = $param['years'];
+        $search_value = $param['search_value'];
+        $start        = $param['start'];
+        $length       = $param['length'];
+        $order_column = $param['order_column'] ?? 'loan.loan_date_close';
+        $order_dir    = $param['order_dir'] ?? 'DESC';
+
+        $sql = "SELECT loan.*, loan_customer.customer_fullname
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_close) = $years 
+              AND MONTH(loan.loan_date_close) = $month 
+              AND loan.loan_type = 'เงินสด'
+              AND (
+                loan.loan_code LIKE '%$search_value%'
+                OR loan_customer.customer_fullname LIKE '%$search_value%'
+                OR loan.loan_employee LIKE '%$search_value%'
+                OR loan.loan_close_payment LIKE '%$search_value%'
+                OR loan.loan_date_close LIKE '%$search_value%'
+              )
+            ORDER BY $order_column $order_dir
+            LIMIT $start, $length";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getDataTableLoanFinxClosePaymentMonthSearchCount($param)
+    {
+        $month        = $param['month'];
+        $years        = $param['years'];
+        $search_value = $param['search_value'];
+
+        $sql = "SELECT COUNT(*) as total
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_close) = $years 
+              AND MONTH(loan.loan_date_close) = $month 
+              AND loan.loan_type = 'เงินสด'
+              AND (
+                loan.loan_code LIKE '%$search_value%'
+                OR loan_customer.customer_fullname LIKE '%$search_value%'
+                OR loan.loan_employee LIKE '%$search_value%'
+                OR loan.loan_close_payment LIKE '%$search_value%'
+                OR loan.loan_date_close LIKE '%$search_value%'
+              )";
+
+        $builder = $this->db->query($sql);
+        return $builder->getRow()->total; // ✅ return count จริง
+    }
+
+    public function getDataTableLoanFinxPaymentMonthCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+
+        $sql = "SELECT COUNT(*) as total
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_close) = $years 
+              AND MONTH(loan.loan_date_close) = $month 
+              AND loan.loan_type = 'เงินสด'";
+
+        $builder = $this->db->query($sql);
+        return $builder->getRow()->total; // ✅ return count จริง
+    }
+
+    public function getDataTableLoanFinxPaymentMonth($param)
+    {
+        $month        = $param['month'];
+        $years        = $param['years'];
+        $start        = $param['start'];
+        $length       = $param['length'];
+        $order_column = $param['order_column'] ?? 'loan.loan_date_close';
+        $order_dir    = $param['order_dir'] ?? 'DESC';
+
+        $sql = "SELECT loan.*, loan_customer.customer_fullname, 
+                   (loan.loan_close_payment * 0.03) AS loan_payment_3percent
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_close) = $years 
+              AND MONTH(loan.loan_date_close) = $month 
+              AND loan.loan_type = 'เงินสด'
+            ORDER BY $order_column $order_dir
+            LIMIT $start, $length";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getDataTableLoanFinxPaymentMonthSearch($param)
+    {
+        $month        = $param['month'];
+        $years        = $param['years'];
+        $search_value = $param['search_value'];
+        $start        = $param['start'];
+        $length       = $param['length'];
+        $order_column = $param['order_column'] ?? 'loan.loan_date_close';
+        $order_dir    = $param['order_dir'] ?? 'DESC';
+
+        $sql = "SELECT loan.*, loan_customer.customer_fullname, 
+                   (loan.loan_close_payment * 0.03) AS loan_payment_3percent
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_close) = $years 
+              AND MONTH(loan.loan_date_close) = $month 
+              AND loan.loan_type = 'เงินสด'
+              AND (
+                loan.loan_code LIKE '%$search_value%' 
+                OR loan_customer.customer_fullname LIKE '%$search_value%' 
+                OR loan.loan_employee LIKE '%$search_value%' 
+                OR (loan.loan_close_payment * 0.03) LIKE '%$search_value%'
+                OR loan.loan_date_close LIKE '%$search_value%'
+              )
+            ORDER BY $order_column $order_dir
+            LIMIT $start, $length";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getDataTableLoanFinxPaymentMonthSearchCount($param)
+    {
+        $month        = $param['month'];
+        $years        = $param['years'];
+        $search_value = $param['search_value'];
+
+        $sql = "SELECT COUNT(*) as total
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_close) = $years 
+              AND MONTH(loan.loan_date_close) = $month 
+              AND loan.loan_type = 'เงินสด'
+              AND (
+                loan.loan_code LIKE '%$search_value%' 
+                OR loan_customer.customer_fullname LIKE '%$search_value%' 
+                OR loan.loan_employee LIKE '%$search_value%' 
+                OR (loan.loan_close_payment * 0.03) LIKE '%$search_value%'
+                OR loan.loan_date_close LIKE '%$search_value%'
+              )";
+
+        $builder = $this->db->query($sql);
+        return $builder->getRow()->total; // ✅ return count จริง
+    }
+
+    public function getDataTableOpenLoanFinxMonthCount($param)
+    {
+        $month = $param['month'];
+        $years = $param['years'];
+
+        $sql = "SELECT COUNT(*) as total
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_promise) = $years 
+              AND MONTH(loan.loan_date_promise) = $month 
+              AND loan.loan_status != 'CANCEL_STATE' 
+              AND loan.loan_type = 'เงินสด'";
+
+        $builder = $this->db->query($sql);
+        return $builder->getRow()->total ?? 0;
+    }
+
+    public function getDataTableOpenLoanFinxMonth($param)
+    {
+        $month       = $param['month'];
+        $years       = $param['years'];
+        $start       = $param['start'];
+        $length      = $param['length'];
+        $order_col   = $param['order_column'];
+        $order_dir   = $param['order_dir'];
+
+        $sql = "SELECT loan.*, DATE_FORMAT(loan.loan_date_promise , '%Y-%m-%d') as loan_date  
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_promise) = $years 
+              AND MONTH(loan.loan_date_promise) = $month 
+              AND loan.loan_status != 'CANCEL_STATE' 
+              AND loan.loan_type = 'เงินสด'
+            ORDER BY $order_col $order_dir
+            LIMIT $start, $length";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getDataTableOpenLoanFinxMonthSearch($param)
+    {
+        $month        = $param['month'];
+        $years        = $param['years'];
+        $search_value = $param['search_value'];
+        $start        = $param['start'];
+        $length       = $param['length'];
+        $order_col    = $param['order_column'];
+        $order_dir    = $param['order_dir'];
+
+        $sql = "SELECT loan.*, DATE_FORMAT(loan.loan_date_promise , '%Y-%m-%d') as loan_date  
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_promise) = $years 
+              AND MONTH(loan.loan_date_promise) = $month 
+              AND loan.loan_status != 'CANCEL_STATE' 
+              AND loan.loan_type = 'เงินสด'
+              AND (
+                loan.loan_code LIKE '%$search_value%' 
+                OR loan.loan_employee LIKE '%$search_value%'
+                OR loan_customer.customer_fullname LIKE '%$search_value%'
+                OR loan.loan_summary_no_vat LIKE '%$search_value%'
+                OR loan.loan_date_promise LIKE '%$search_value%'
+              )
+            ORDER BY $order_col $order_dir
+            LIMIT $start, $length";
+
+        $builder = $this->db->query($sql);
+        return $builder->getResult();
+    }
+
+    public function getDataTableOpenLoanFinxMonthSearchCount($param)
+    {
+        $month        = $param['month'];
+        $years        = $param['years'];
+        $search_value = $param['search_value'];
+
+        $sql = "SELECT COUNT(*) as total
+            FROM loan
+            LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
+            WHERE YEAR(loan.loan_date_promise) = $years 
+              AND MONTH(loan.loan_date_promise) = $month 
+              AND loan.loan_status != 'CANCEL_STATE' 
+              AND loan.loan_type = 'เงินสด'
+              AND (
+                loan.loan_code LIKE '%$search_value%' 
+                OR loan.loan_employee LIKE '%$search_value%'
+                OR loan_customer.customer_fullname LIKE '%$search_value%'
+                OR loan.loan_summary_no_vat LIKE '%$search_value%'
+                OR loan.loan_date_promise LIKE '%$search_value%'
+              )";
+
+        $builder = $this->db->query($sql);
+        return $builder->getRow()->total ?? 0;
     }
 }

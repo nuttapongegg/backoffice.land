@@ -88,6 +88,20 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->get('ajax-tablesreportrevenues/(:any)', 'Loan::ajaxTablesReportRevenues/$1');
 });
 
+//สินเชื่อ Finx
+$routes->group('finx', ['filter' => 'employeeAuth'], function ($routes) {
+    $routes->get('list', 'Finx::list');
+    $routes->get('tableFinxOn', 'Finx::fetchAllFinxOn');
+    $routes->post('tableFinxHistory', 'Finx::finxHistory');
+    $routes->post('ajax-summarizeFinx', 'Finx::ajaxSummarizeFinx');
+
+    $routes->get('report_finx', 'Finx::report_finx');
+    $routes->get('ajax-tablesreportfinx/(:any)', 'Finx::ajaxTablesReportFinx/$1');
+    $routes->get('ajaxdatatableopenloanfinx/(:any)', 'Finx::ajaxDataTableOpenLoanFinx/$1');
+    $routes->get('ajaxdatatableloanfinxpayment/(:any)', 'Finx::ajaxDataTableLoanFinxPayment/$1');
+    $routes->get('ajaxdatatableloanfinxclosepayment/(:any)', 'Finx::ajaxDataTableLoanFinxClosePayment/$1');
+});
+
 $routes->get('api/list_ai', 'Loan::list_ai');
 
 $routes->group('loanpayment', function ($routes) {

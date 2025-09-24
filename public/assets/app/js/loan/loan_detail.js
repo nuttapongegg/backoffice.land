@@ -56,7 +56,6 @@ function dateDiff(date_now, date_stock) {
   return '<font style="color: #FEAD00;"> ' + result + " วัน </font>";
 }
 
-
 function loadLoan(loanCode) {
   var loanCode_ = loanCode.split("###");
   $.ajax({
@@ -72,6 +71,18 @@ function loadLoan(loanCode) {
       $("#loan_address").val(response.message.loan_address);
       $("#loan_number").val(response.message.loan_number);
       $("#loan_area").val(response.message.loan_area);
+
+      $("#fullname").val(response.message.customer_fullname);
+      $("#phone").val(response.message.customer_phone);
+      $("#card_id").val(response.message.customer_card_id);
+      $(".cardIDMask").mask("9-9999-99999-99-9");
+      $("#customer_email").val(response.message.customer_email);
+      $("#birthday").val(
+        moment(response.message.customer_birthday).format("DD/MM/YYYY")
+      );
+      $(".dateMask").mask("99/99/9999");
+      $("#gender").val(response.message.customer_gender);
+      $("#address").val(response.message.customer_address);
 
       $("#date_to_loan").val(response.message.loan_date_promise);
       $("#date_to_loan_pay_date").val(response.message.loan_installment_date);
@@ -92,6 +103,14 @@ function loadLoan(loanCode) {
       $("#loan_code").val(response.message.loan_code);
 
       $("#link_map").val(response.message.link_map);
+
+      let loanAmount = Number(response.message.loan_summary_no_vat);
+      let loanInterest = (loanAmount * 0.03).toFixed(2);
+      let totalLoan = (loanAmount + parseFloat(loanInterest)).toFixed(2);
+
+      $("#loan_amount").val(loanAmount.toFixed(2)); // ✅ เงินต้น ไม่มี comma
+      $("#loan_interest_amount").val(loanInterest); // ✅ ดอกเบี้ย ไม่มี comma
+      $("#total_loan_amount").val(totalLoan); // ✅ รวมทั้งหมด ไม่มี comma
 
       loan_stock_name = response.message.loan_stock_name;
 
@@ -125,7 +144,7 @@ function loadLoan(loanCode) {
   });
 
   $.ajax({
-    url: serverUrl + "/loan/callInstallMent/" + loanCode_[1],
+    url: serverUrl + "/loan/callInstallMent/" + loanCode_[0],
     method: "get",
     success: function (response) {
       let installMentCount = parseInt(
@@ -153,6 +172,11 @@ $("#edit_loan_detail_btn").click(function () {
   let divLoan = $("#detail_loan");
   let formUpDateLoan = divLoan.find("form").attr("id");
   var formData = new FormData(document.getElementById(formUpDateLoan));
+
+  let imageFile = $("#imageFile")[0].files[0];
+  if (imageFile) {
+    formData.append("imageFile", imageFile);
+  }
 
   $.ajax({
     url: serverUrl + "/loan/updateLoan",
@@ -216,24 +240,27 @@ function cancelLoan() {
               time: 300,
             });
           } else {
-            fetch('https://script.google.com/macros/s/AKfycbycISLS1BJQEBffMcirtCdxwnjLwSmTcmxsGlkx3NEMLrlPO8CJ_KQCloRbwHdifh_cGw/exec', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                loan_code: searchParams_[1],  // หมายเลข loan_code ที่ต้องการอัปเดต
-                action: 'delete',
-            }),
-              mode: 'no-cors'  // ใช้โหมด no-cors
-            })
-            .then(response => {
-              // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
-              // console.log('Request sent');
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
+            fetch(
+              "https://script.google.com/macros/s/AKfycbycISLS1BJQEBffMcirtCdxwnjLwSmTcmxsGlkx3NEMLrlPO8CJ_KQCloRbwHdifh_cGw/exec",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  loan_code: searchParams_[1], // หมายเลข loan_code ที่ต้องการอัปเดต
+                  action: "delete",
+                }),
+                mode: "no-cors", // ใช้โหมด no-cors
+              }
+            )
+              .then((response) => {
+                // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
+                // console.log('Request sent');
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
 
             notif({
               type: "success",
@@ -244,8 +271,8 @@ function cancelLoan() {
             });
 
             setTimeout(function () {
-                window.location = '/loan/list'
-            }, 1 * 1500)
+              window.location = "/loan/list";
+            }, 1 * 1500);
           }
         },
       });
@@ -280,7 +307,7 @@ $("#AddPicture").submit(function (e) {
   const formData = new FormData(this);
   $("#add_btn_picture").text("กำลังเพิ่มรูปภาพ...").prop("disabled", true); // 🔒 ปิดการคลิกซ้ำ
   $.ajax({
-    url: serverUrl + "/loan/insertDetailPiture/"+ searchParams_[1],
+    url: serverUrl + "/loan/insertDetailPiture/" + searchParams_[1],
     method: "post",
     data: formData,
     contentType: false,
@@ -358,7 +385,6 @@ $("#payment_interest").keyup(function () {
 });
 
 $("#charges_process").keyup(function () {
-
   let $transfer = $("#charges_transfer").val(),
     $etc = $("#charges_etc").val(),
     $process = $("#charges_process").val(),
@@ -376,7 +402,6 @@ $("#charges_process").keyup(function () {
 });
 
 $("#charges_etc").keyup(function () {
-  
   let $transfer = $("#charges_transfer").val(),
     $etc = $("#charges_etc").val(),
     $process = $("#charges_process").val(),
@@ -394,7 +419,6 @@ $("#charges_etc").keyup(function () {
 });
 
 $("#charges_transfer").keyup(function () {
-
   let $transfer = $("#charges_transfer").val(),
     $etc = $("#charges_etc").val(),
     $process = $("#charges_process").val(),
@@ -528,13 +552,11 @@ $("#payment_now").keyup(function () {
   pay_now = Number(pay_now.replace(/[^0-9.-]+/g, ""));
 
   let sum_pay =
-    pay_now +
-    Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, ""));
+    pay_now + Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, ""));
 
   $("#pay_sum").val(sum_pay);
 
   $("#close_loan_payment").val(pay_now);
-
 });
 
 $(document).delegate(".btn-add-loan-payment", "click", function (e) {
@@ -557,7 +579,7 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
 
   let overdueColor;
   if (overdue_days === 0) {
-    overdueColor ="tx-success"; // สีเขียวสำหรับวันที่เกินกำหนด = 0
+    overdueColor = "tx-success"; // สีเขียวสำหรับวันที่เกินกำหนด = 0
   } else if (overdue_days >= 1 && overdue_days <= 90) {
     overdueColor = "tx-secondary"; // สีเหลืองสำหรับวันที่เกินกำหนด 1-90 วัน
   } else {
@@ -645,28 +667,31 @@ function proceedLoanPayment(formData, form) {
         });
         $(".btn-add-loan-payment").text("บันทึก").prop("disabled", false); // 🔓 เปิดใช้งานอีกครั้ง
       } else {
-        if(response.payment_type == 'CloseLoan'){
+        if (response.payment_type == "CloseLoan") {
           let searchParams = window.location.pathname;
           var searchParams_ = searchParams.split("/loan/detail/");
-          
-          fetch('https://script.google.com/macros/s/AKfycbycISLS1BJQEBffMcirtCdxwnjLwSmTcmxsGlkx3NEMLrlPO8CJ_KQCloRbwHdifh_cGw/exec', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              loan_code: searchParams_[1],  // หมายเลข loan_code ที่ต้องการอัปเดต
-              action: 'delete',
-          }),
-            mode: 'no-cors'  // ใช้โหมด no-cors
-          })
-          .then(response => {
-            // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
-            // console.log('Request sent');
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+
+          fetch(
+            "https://script.google.com/macros/s/AKfycbycISLS1BJQEBffMcirtCdxwnjLwSmTcmxsGlkx3NEMLrlPO8CJ_KQCloRbwHdifh_cGw/exec",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                loan_code: searchParams_[1], // หมายเลข loan_code ที่ต้องการอัปเดต
+                action: "delete",
+              }),
+              mode: "no-cors", // ใช้โหมด no-cors
+            }
+          )
+            .then((response) => {
+              // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
+              // console.log('Request sent');
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
         }
 
         notif({
@@ -1090,7 +1115,7 @@ function download(item) {
   };
 }
 
-function downloadOther(item){
+function downloadOther(item) {
   let searchParams = window.location.pathname;
   var searchParams_ = searchParams.split("/loan/detail/");
   $.ajax({
@@ -1099,7 +1124,7 @@ function downloadOther(item){
     success: function (response) {
       upics = [];
       $.each(response.message, function (index, item) {
-        if(item.picture_loan_src != null || item.picture_loan_src != "") {
+        if (item.picture_loan_src != null || item.picture_loan_src != "") {
           upics.push(
             CDN_IMG + "/uploads/loan_img_other/" + item.picture_loan_src
           );
@@ -1120,7 +1145,8 @@ function parseMapLink(mapLink) {
   const decimalPattern = /^([-+]?\d*\.\d+),\s*([-+]?\d*\.\d+)$/;
 
   // รูปแบบที่ 2: "15°17'10.6"N 104°53'08.2"E"
-  const dmsPattern = /(\d+)[°\u00B0](\d+)'(\d*\.\d+|\d+)"([NS]),?\s*(\d+)[°\u00B0](\d+)'(\d*\.\d+|\d+)"([EW])/;
+  const dmsPattern =
+    /(\d+)[°\u00B0](\d+)'(\d*\.\d+|\d+)"([NS]),?\s*(\d+)[°\u00B0](\d+)'(\d*\.\d+|\d+)"([EW])/;
 
   // ตรวจสอบรูปแบบแรก (แบบทศนิยม)
   let match = mapLink.match(decimalPattern);
@@ -1144,10 +1170,10 @@ function parseMapLink(mapLink) {
 
       // คำนวณ latitude และ longitude ในรูปแบบทศนิยม
       lat = latDegree + latMinute / 60 + latSecond / 3600;
-      if (latDirection === 'S') lat = -lat;
+      if (latDirection === "S") lat = -lat;
 
       lng = lngDegree + lngMinute / 60 + lngSecond / 3600;
-      if (lngDirection === 'W') lng = -lng;
+      if (lngDirection === "W") lng = -lng;
     }
   }
 
@@ -1170,25 +1196,28 @@ $("body").on("click", "#btn_edit_link_map", function () {
         if (response.success) {
           let parsedCoords = parseMapLink(mapLink);
 
-          fetch('https://script.google.com/macros/s/AKfycbycISLS1BJQEBffMcirtCdxwnjLwSmTcmxsGlkx3NEMLrlPO8CJ_KQCloRbwHdifh_cGw/exec', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              loan_code: searchParams_[1],  // หมายเลข loan_code ที่ต้องการอัปเดต
-              latitude: parsedCoords.latitude,  // ค่าใหม่ของ latitude
-              longitude: parsedCoords.longitude,  // ค่าใหม่ของ longitude
-            }),
-            mode: 'no-cors'  // ใช้โหมด no-cors
-          })
-          .then(response => {
-            // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
-            // console.log('Request sent');
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+          fetch(
+            "https://script.google.com/macros/s/AKfycbycISLS1BJQEBffMcirtCdxwnjLwSmTcmxsGlkx3NEMLrlPO8CJ_KQCloRbwHdifh_cGw/exec",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                loan_code: searchParams_[1], // หมายเลข loan_code ที่ต้องการอัปเดต
+                latitude: parsedCoords.latitude, // ค่าใหม่ของ latitude
+                longitude: parsedCoords.longitude, // ค่าใหม่ของ longitude
+              }),
+              mode: "no-cors", // ใช้โหมด no-cors
+            }
+          )
+            .then((response) => {
+              // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
+              // console.log('Request sent');
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
 
           setTimeout(function () {
             location.reload(); // Reload the page
@@ -1207,4 +1236,196 @@ $("body").on("click", "#btn_edit_link_map", function () {
     alert("กรุณากรอกลิงก์ Map ก่อนทำการบันทึก");
     $btn.prop("disabled", false).text("บันทึกลิงก์แผนที่"); // 🔓 เปิดปุ่มอีกครั้ง
   }
+});
+$(document).ready(function () {
+  // ✅ ตรวจสอบว่าเป็น iOS หรือไม่
+  function isIos() {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
+  if (isIos()) {
+    $("#btnAiAutoInputCapture").show();
+    $("#btnAiAutoInput").show();
+  } else {
+    $("#btnAiAutoInputCapture").hide();
+    $("#btnAiAutoInput").show();
+  }
+
+  // ซ่อนฟอร์ม OCR ทุกครั้งที่โหลดหน้า
+  $("#detectImageForm").hide();
+
+  // ปุ่มเลือกไฟล์
+  $("#btnAiAutoInput").on("click", function () {
+    $("#imageFile").click();
+  });
+
+  // ปุ่มถ่ายรูป (iOS)
+  $("#btnAiAutoInputCapture").on("click", function () {
+    $("<input>")
+      .attr({
+        type: "file",
+        accept: "image/*",
+        capture: "camera",
+      })
+      .on("change", function () {
+        if (this.files && this.files[0]) {
+          $("#detectImageForm").show();
+          setImagePreviewFromFile(this.files[0]);
+        }
+      })
+      .click();
+  });
+
+  // เมื่อเลือกไฟล์แล้ว แสดงฟอร์ม OCR
+  $("#imageFile").on("change", function () {
+    if (this.files && this.files[0]) {
+      $("#detectImageForm").show();
+      setImagePreview();
+    }
+  });
+
+  // ปุ่มยกเลิก
+  $("#btnAiAutoInputClear").on("click", function () {
+    $("#detectImageForm").hide();
+    $("#imageFile").val("");
+    $("#imagePreview").attr("src", "");
+  });
+
+  const imageFile = document.querySelector("#imageFile");
+  const imagePreview = document.querySelector("#imagePreview");
+
+  const setImagePreview = async () => {
+    const imageBase64String = await getImageBase64String();
+    imagePreview.setAttribute("src", imageBase64String);
+  };
+
+  const setImagePreviewFromFile = async (file) => {
+    const base64 = await toBase64(file);
+    imagePreview.setAttribute("src", base64);
+  };
+
+  // ฟังก์ชัน OCR
+  const detectImage = async () => {
+    let $form = $("#customerSection");
+
+    $("#btnAiAutoInputClear").addClass("disabled");
+    $("#btnAiAutoInputSubmit").addClass("disabled");
+
+    const imageBase64String = await getImageBase64String();
+    const data = {
+      requests: [
+        {
+          image: { content: imageBase64String.replace(/^data:.+;base64,/, "") },
+          features: [{ type: "TEXT_DETECTION" }],
+        },
+      ],
+    };
+
+    const url =
+      "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyDT3NjLzefkMDT1-UJMMdAjDH0J5BUqspA";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    let resData = "";
+    const jsonResponse = await response.json();
+    for (const value of jsonResponse.responses) {
+      resData = value.fullTextAnnotation?.text || "";
+    }
+
+    const bundleData = {};
+    resData.split("\n").forEach((row, index, arr) => {
+      let items = row.split(" ");
+
+      // เลขบัตรประชาชน
+      const digits = items.join("").replace(/\D/g, "");
+      const matchID = digits.match(/\d{13}/);
+      if (matchID) bundleData.cardNumber = matchID[0];
+
+      // ชื่อ-นามสกุล
+      if (row.includes("ชื่อตัวและชื่อสกุล")) {
+        bundleData.prename = items[1];
+        bundleData.firstname = items[2];
+        bundleData.lastname = items[3];
+      }
+
+      // วันเกิด
+      if (row.includes("Date of Birth")) {
+        bundleData.birthDate = `${items[3]} ${items[4]} ${items[5]}`;
+      }
+
+      // ที่อยู่
+      if (row.includes("ที่อยู่")) {
+        bundleData.address = `${items.join(" ")} ${arr[index + 1]}`;
+      }
+    });
+
+    if (bundleData.prename) {
+      bundleData.gender = ["น.ส.", "นางสาว", "นาง", "เด็กหญิง"].includes(
+        bundleData.prename
+      )
+        ? "หญิง"
+        : "ชาย";
+    }
+
+    // ✅ ใส่ค่าลงฟอร์ม + ไฮไลท์ valid
+    if (bundleData.firstname || bundleData.lastname) {
+      let $inputName = $form.find("input[name=fullname]");
+      $inputName.val(`${bundleData.firstname} ${bundleData.lastname}`);
+      $inputName.removeClass("is-invalid").addClass("is-valid");
+    }
+
+    if (bundleData.cardNumber) {
+      let $inputCardID = $form.find("input[name=card_id]");
+      $inputCardID.val(bundleData.cardNumber);
+      $inputCardID.removeClass("is-invalid").addClass("is-valid");
+      $(".cardIDMask").mask("9-9999-99999-99-9");
+    }
+
+    if (bundleData.birthDate) {
+      let d = new Date(bundleData.birthDate);
+      let a = moment(d).format("DD/MM/YYYY");
+      if (a !== "Invalid date") {
+        let $inputBirthday = $form.find("input[name=birthday]");
+        $inputBirthday.val(a);
+        $inputBirthday.removeClass("is-invalid").addClass("is-valid");
+        $(".dateMask").mask("99/99/9999");
+      }
+    }
+
+    if (bundleData.gender) {
+      let $inputGender = $form.find("select[name=gender]");
+      $inputGender.val(bundleData.gender);
+      $inputGender.removeClass("is-invalid").addClass("is-valid");
+    }
+
+    if (bundleData.address) {
+      let $inputAddress = $form.find("textarea[name=address]");
+      $inputAddress.val(bundleData.address);
+      $inputAddress.removeClass("is-invalid").addClass("is-valid");
+    }
+
+    $("#detectImageForm").hide();
+    $("#btnAiAutoInputClear").removeClass("disabled");
+    $("#btnAiAutoInputSubmit").removeClass("disabled");
+  };
+
+  const getImageBase64String = async () => {
+    return await toBase64(imageFile.files[0]);
+  };
+
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
+  // กดบันทึก
+  $("#btnAiAutoInputSubmit").on("click", function () {
+    detectImage();
+  });
 });

@@ -676,6 +676,25 @@
                                     <span class="side-menu__label">ตั้งค่า</span>
                                 </a>
                             </li>
+                            <?php if (session()->get('positionID') == 0) { ?>
+                                <li class="slide">
+                                    <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'finx') {
+                                                                            echo 'active';
+                                                                        } ?>" data-bs-toggle="slide" href="javascript:void(0)" id="other_menu">
+                                        <i class="ionicon side-menu__icon fas fa-hand-holding-usd"></i>
+                                        <span class="side-menu__label">Finx</span><i class="angle fe fe-chevron-right"></i>
+                                    </a>
+                                    <ul class="slide-menu">
+                                        <li class="side-menu__label1"><a href="<?php echo base_url('/finx/list'); ?>">Finx</a></li>
+                                        <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'finx' && service('uri')->getSegment(2) == 'list') {
+                                                                        echo 'active';
+                                                                    } ?>" href="<?php echo base_url('/finx/list'); ?>">รายการสินเชื่อ</a></li>
+                                        <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'finx' && service('uri')->getSegment(2) == 'report_finx') {
+                                                                        echo 'active';
+                                                                    } ?>" href="<?php echo base_url('/finx/report_finx'); ?>">รายงานสินเชื่อ</a></li>
+                                    </ul>
+                                </li>
+                            <?php } ?>
                         </ul>
                         <div class="slide-right" id="slide-right">
                             <svg fill="#7b8191" width="24" height="24" viewBox="0 0 24 24">
