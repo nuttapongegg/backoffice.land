@@ -144,7 +144,7 @@ function loadLoan(loanCode) {
   });
 
   $.ajax({
-    url: serverUrl + "/loan/callInstallMent/" + loanCode_[0],
+    url: serverUrl + "/loan/callInstallMent/" + loanCode_[1],
     method: "get",
     success: function (response) {
       let installMentCount = parseInt(
