@@ -676,7 +676,7 @@
                                     <span class="side-menu__label">ตั้งค่า</span>
                                 </a>
                             </li>
-                            <?php if (session()->get('positionID') == 0) { ?>
+                            <!-- <php if (session()->get('positionID') == 0) { ?> -->
                                 <li class="slide">
                                     <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'finx') {
                                                                             echo 'active';
@@ -694,7 +694,7 @@
                                                                     } ?>" href="<?php echo base_url('/finx/report_finx'); ?>">รายงานสินเชื่อ</a></li>
                                     </ul>
                                 </li>
-                            <?php } ?>
+                            <!-- <php } ?> -->
                         </ul>
                         <div class="slide-right" id="slide-right">
                             <svg fill="#7b8191" width="24" height="24" viewBox="0 0 24 24">

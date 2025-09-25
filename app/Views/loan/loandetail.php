@@ -27,10 +27,10 @@
                             <ul class="nav nav-pills main-nav-column">
                                 <li class="nav-item" id="detail_car_name"><a class="nav-link thumb active" data-bs-toggle="tab" href="#detail_loan"><i class="fe fe-home"></i> รายละเอียดสินเชื่อ</a></li>
                                 <li class="nav-item" id="contract_loan"><a class="nav-link thumb pdf_loan" id='<?php echo $loanData->loan_code; ?>' data-bs-toggle="tab" href="#"><i class="fa fa-clipboard"></i> หนังสือสัญญากู้เงิน</a></li>
-                                <?php if (session()->get('positionID') != 0) { ?>
+                                <!-- <php if (session()->get('positionID') != 0) { ?> -->
                                     <li class="nav-item" id="table_loan"><a class="nav-link thumb pdf_installment_schedule" id='<?php echo $loanData->loan_code; ?>' data-bs-toggle="tab" href="#"><i class="far fa-newspaper"></i> ตารางการผ่อนชำระ</a></li>
                                     <li class="nav-item" id="pay_loan"><a class="nav-link thumb" data-bs-toggle="tab" href="#payment_loan"><i class="fab fa-cc-stripe"></i> ชำระสินเชื่อ</a></li>
-                                <?php } ?>
+                                <!-- <php } ?> -->
                                 <li class="nav-item car_cancel_btn"><a class="nav-link thumb" id='<?php echo $loanData->loan_code; ?>' href="javascript:cancelLoan(this.id);"><i class="fa fa-trash"></i> ยกเลิกสินเชื่อ</a></li>
                             </ul>
                         </div>
@@ -303,7 +303,7 @@
                                     $posID = session()->get('positionID');
                                     ?>
                                     <!-- ฟอร์มสำหรับ positionID == 2 -->
-                                    <div class="<?= $posID == 0 ? '' : 'd-none' ?>">
+                                    <!-- <div class="<= $posID == 0 ? '' : 'd-none' ?>"> -->
                                         <p class="font-weight-semibold tx-17 pb-2 border-bottom-dashed tx-primary mt-1">ข้อมูลสินเชื่อ</p>
                                         <div class="row">
                                             <div class="col-6"></div>
@@ -349,11 +349,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    <!-- </div> -->
 
 
                                     <!-- ฟอร์มสำหรับ positionID != 2 -->
-                                    <div class="<?= $posID != 0 ? '' : 'd-none' ?>">
+                                    <!-- <div class="<= $posID != 0 ? '' : 'd-none' ?>"> -->
                                         <p class="font-weight-semibold tx-17 pb-2 border-bottom-dashed tx-primary mt-1">ข้อมูลการคำนวนรายการสินเชื่อ</p>
                                         <div class="row">
                                             <div class="col-6" id="car_name"></div>
@@ -529,7 +529,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    <!-- </div> -->
 
                                     <div align="right">
                                         <div class="form-group mb-2 mt-2" id="btn_edit_detail_">

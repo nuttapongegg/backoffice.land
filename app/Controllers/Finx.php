@@ -320,9 +320,7 @@ class Finx extends BaseController
         $TargetedModel = new \App\Models\TargetedModel();
         $data['targeteds'] = $TargetedModel->getTargetedAll();
 
-        $data['LoanPaymentMonths'] = $this->LoanModel->getListLoanPaymentMonths(date('Y'));
-        $data['DocumentsMonths'] = $this->DocumentModel->getrevenue(date('Y'));
-        $data['LoanProcessMonths'] = $this->LoanModel->getLoanProcessMonths(date('Y'));
+        $data['LoanClosePaymentMonths'] = $this->LoanModel->getListLoanFinxClosePaymentMonths(date('Y'));
         $data['OpenLoanMonths'] = $this->LoanModel->getOpenLoanFinx(date('Y'));
 
         $data['content'] = 'finx/report_finx';
@@ -404,10 +402,10 @@ class Finx extends BaseController
                             <tbody>
                                 <tr>
                                     <th class="border-top-0 bg-black-03 br-bs-5 br-ts-5 tx-15 wd-30p">เดือน</th>
-                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-center">เปิดสินเชื่อ</th>
-                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-center">รับชำระ</th>
-                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-center">ชำระค่างวดจริง</th>
-                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-center">ชำระปิดบัญชี</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">เปิดสินเชื่อ</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">ยอดรวม</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">ชำระดอกเบี้ย</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">ชำระปิดบัญชี</th>
                                 </tr>';
 
             // loop เดือนทั้งหมด

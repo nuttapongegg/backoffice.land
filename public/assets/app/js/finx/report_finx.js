@@ -3,7 +3,7 @@ $(document).ready(function () {
     var date = new Date();
     slow_report_loan(date.getFullYear());
     slowgraphloan(date.getFullYear());
-    slowsummarizeloan(date.getFullYear());
+    // slowsummarizeloan(date.getFullYear());
 
     $("#datepicker").datepicker({
         format: "yyyy",
@@ -17,7 +17,7 @@ $(document).ready(function () {
         if (lastValue !== e.target.value) {
             slow_report_loan(e.target.value);
             slowgraphloan(e.target.value);
-            slowsummarizeloan(e.target.value);
+            // slowsummarizeloan(e.target.value);
             lastValue = e.target.value;
         }
     })
@@ -57,24 +57,25 @@ $(document).ready(function () {
             error: function (res) { }
         });
     };
-    function slowsummarizeloan(data) {
-        $.ajax({
-            type: 'GET',
-            url: `/loan/ajax-summarizereportloan/` + data,
-            contentType: 'application/json; charset=utf-8',
-            success: function (res) {
-                if (res.success) {
+    
+    // function slowsummarizeloan(data) {
+    //     $.ajax({
+    //         type: 'GET',
+    //         url: `/loan/ajax-summarizereportloan/` + data,
+    //         contentType: 'application/json; charset=utf-8',
+    //         success: function (res) {
+    //             if (res.success) {
 
-                    let $data = res.data
-                    $("#summarizeloan").hide().html($data).fadeIn('slow')
+    //                 let $data = res.data
+    //                 $("#summarizeloan").hide().html($data).fadeIn('slow')
 
-                } else {
+    //             } else {
 
-                }
-            },
-            error: function (res) { }
-        });
-    };
+    //             }
+    //         },
+    //         error: function (res) { }
+    //     });
+    // };
 
     $('body').on('click', '#Month_Open_Loan', function () {
         var Month_id = $(this).attr('data-id');
