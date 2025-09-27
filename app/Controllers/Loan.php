@@ -4329,6 +4329,7 @@ class Loan extends BaseController
         $paymentFileDate = $this->request->getVar('payment_file_date');
         $paymentFileTime = $this->request->getVar('payment_file_time');
         $paymentFilePrice = $this->request->getVar('payment_file_price');
+        $paymentFileRefNo = $this->request->getVar('payment_file_ref_no');
         // $status_payment = $this->request->getPost('status_payment');
         $fileName_img = '';
 
@@ -4417,6 +4418,7 @@ class Loan extends BaseController
                 'loan_payment_src' => $fileName_img,
                 'payment_file_date' => $paymentFileDate,
                 'payment_file_time' => $paymentFileTime,
+                'payment_file_ref_no' => $paymentFileRefNo,
                 'payment_file_price' => $paymentFilePrice,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
@@ -4440,6 +4442,7 @@ class Loan extends BaseController
                 'loan_payment_src' => $fileName_img,
                 'payment_file_date' => $paymentFileDate,
                 'payment_file_time' => $paymentFileTime,
+                'payment_file_ref_no' => $paymentFileRefNo,
                 'payment_file_price' => $paymentFilePrice,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
@@ -4464,6 +4467,7 @@ class Loan extends BaseController
                 'loan_payment_src' => $fileName_img,
                 'payment_file_date' => $paymentFileDate,
                 'payment_file_time' => $paymentFileTime,
+                'payment_file_ref_no' => $paymentFileRefNo,
                 'payment_file_price' => $paymentFilePrice,
                 'loan_payment_date' => $date_to_payment,
                 'land_account_id' => $account_id,
@@ -4500,6 +4504,7 @@ class Loan extends BaseController
                 'loan_payment_src' => $fileName_img,
                 'payment_file_date' => $paymentFileDate,
                 'payment_file_time' => $paymentFileTime,
+                'payment_file_ref_no' => $paymentFileRefNo,
                 'payment_file_price' => $paymentFilePrice,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
@@ -4764,6 +4769,7 @@ class Loan extends BaseController
             ]
         ];
     }
+
     public function ocrInvoice()
     {
         // ตรวจสอบไฟล์ที่อัปโหลด
@@ -4845,12 +4851,13 @@ class Loan extends BaseController
         // ตรงจำนวนเงินให้แปลงค่าเงินเป็น usd โดยอิงจากค่าเงินวันนี้
 
         $openai_url = "https://api.openai.com/v1/chat/completions";
-        $prompt = "Input $text จาก Input จงแยกแยะข้อมูลชุดนี้โดยข้อมูลที่ต้องการออกมาคือ จำนวนเงิน, สกุลเงิน, วันที่, เวลา
+        $prompt = "Input $text จาก Input จงแยกแยะข้อมูลชุดนี้โดยข้อมูลที่ต้องการออกมาคือ จำนวนเงิน, สกุลเงิน, วันที่, เวลา, และเลขที่รายการ (ref_no)
                         เสร็จแล้วทำข้อมูลให้อยู่ในรูปแบบ json เท่านั้น โดยไม่ต้องเพิ่มคำอธิบายเพิ่มเติม
-                        นี่คือรูปแบบที่ฉันต้องการ {\"amount\":__,\"type\":__,\"date\":__,\"time\":__}
+                        นี่คือรูปแบบที่ฉันต้องการ {\"amount\":__,\"type\":__,\"date\":__,\"time\":__,\"ref_no\":__}
                         ในส่วนสกุลเงิน ตรวจสอบจำนวนเงินว่าเป็นเงินบาท เงินกีบ หรือ ดอลล่า หากเป็น บาท หรือ กีบ  เงินกีบ = LAK, เงินบาท = THB, เงินดอลล่า = USD
                         ตรงจำนวนเงินให้ส่งกลับมาแค่จำนวนเงินเท่านั้น 
-                        **กติกา:**  
+                        **กติกา:** 
+                        - ref_no ให้ค้นหาคำว่า เลขที่รายการ
                         - time ให้อยู่ในรูปแบบ H:i ถ้าไม่พบเวลาในข้อมูล ให้ส่งค่าว่าง ''
                         - date ให้เลือกวันที่แรกที่พบในข้อมูล และแปลงเป็นฟอร์แมต YYYY-MM-DD
                         - หากปีที่ระบุเป็น **พ.ศ.** (มากกว่า 2500) ให้แปลงเป็น **ค.ศ.** (โดยการลบ 543)
@@ -4893,8 +4900,19 @@ class Loan extends BaseController
             $amount = $jsonArr['amount'] ?? null;
             $date   = $jsonArr['date'] ?? null;
             $time   = $jsonArr['time'] ?? null;
+            $ref_no = trim($jsonArr['ref_no'] ?? '');
 
-            $exists = $this->LoanModel->checkDuplicate($amount, $date, $time);
+            // normalize amount → บังคับให้มีทศนิยม 2 หลัก
+            if ($amount !== null) {
+                $amount = number_format((float)$amount, 2, '.', ''); // 75000 → 75000.00
+            }
+
+            // normalize time → ถ้าเป็น H:i ให้เติม :00
+            if ($time && strlen($time) === 5) {
+                $time .= ':00'; // 11:41 → 11:41:00
+            }
+            
+            $exists = $this->LoanModel->checkDuplicate($amount, $date, $time, $ref_no);
 
             if ($exists) {
                 return $this->response->setJSON([

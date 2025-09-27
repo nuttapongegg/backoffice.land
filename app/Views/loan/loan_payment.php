@@ -333,6 +333,7 @@
                                 <form method="POST" enctype="multipart/form-data" name="formPayloan" id="<?php echo $FORM_KEY; ?>" data-form-key="<?php echo $FORM_KEY; ?>" novalidate>
                                     <input type="hidden" name="payment_file_date">
                                     <input type="hidden" name="payment_file_time">
+                                    <input type="hidden" name="payment_file_ref_no">
                                     <input type="hidden" name="payment_file_price">
                                     <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary">รายละเอียดผู้ชำระ</p>
                                     <div class="row">

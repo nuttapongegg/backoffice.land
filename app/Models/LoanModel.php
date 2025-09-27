@@ -1132,19 +1132,20 @@ class LoanModel
         return $builder->getResult();
     }
 
-    public function checkDuplicate($amount, $date, $time)
+    public function checkDuplicate($amount, $date, $time, $ref_no)
     {
         $sql = "
         SELECT id
         FROM loan_payment
-        WHERE payment_file_price = ?
-          AND payment_file_date = ?
-          AND payment_file_time = ?
+        WHERE payment_file_price   = ?
+          AND payment_file_date    = ?
+          AND payment_file_time    = ?
+          AND payment_file_ref_no  = ?
         LIMIT 1
     ";
 
-        $builder = $this->db->query($sql, [$amount, $date, $time]);
-        return $builder->getRow();
+        $res = $this->db->query($sql, [$amount, $date, $time, $ref_no]);
+        return $res->getRow();
     }
 
     public function getAllDataFinxOn()
