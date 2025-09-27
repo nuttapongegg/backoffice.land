@@ -563,12 +563,19 @@ class LoanModel
 
     public function getOtherByCode($code)
     {
-        $sql = "SELECT * FROM  picture_loan_other WHERE loan_code = '$code'
-        ORDER BY id DESC
-        ";
+        $sql = "SELECT id, picture_loan_src AS src, 'loan_payment_img' AS path 
+            FROM picture_loan_other 
+            WHERE loan_code = ?
+            ORDER BY id DESC";
+        return $this->db->query($sql, [$code])->getResult();
+    }
 
-        $builder = $this->db->query($sql);
-        return $builder->getResult();
+    public function getCustomerImgByCode($code)
+    {
+        $sql = "SELECT id, img AS src, 'loan_customer_img' AS path
+            FROM loan_customer
+            WHERE loan_code = ? AND img IS NOT NULL AND img != ''";
+        return $this->db->query($sql, [$code])->getResult();
     }
 
     public function deleteOtherPiture($id)
@@ -578,12 +585,20 @@ class LoanModel
         return $builder;
     }
 
-    public function dowloadPictureOther($code)
+    public function getPictureLoanOther($code)
     {
-        $sql = "SELECT picture_loan_src
-         FROM `picture_loan_other` WHERE loan_code = '$code'";
-        $builder = $this->db->query($sql);
-        return $builder->getResult();
+        $sql = "SELECT picture_loan_src AS src, 'loan_payment_img' AS path
+            FROM picture_loan_other
+            WHERE loan_code = ?";
+        return $this->db->query($sql, [$code])->getResult();
+    }
+
+    public function getLoanCustomerImg($code)
+    {
+        $sql = "SELECT img AS src, 'loan_customer_img' AS path
+            FROM loan_customer
+            WHERE loan_code = ? AND img IS NOT NULL AND img != ''";
+        return $this->db->query($sql, [$code])->getResult();
     }
 
     public function getOverdueListPayments($year)
@@ -1132,19 +1147,20 @@ class LoanModel
         return $builder->getResult();
     }
 
-    public function checkDuplicate($amount, $date, $time)
+    public function checkDuplicate($amount, $date, $time, $ref_no)
     {
         $sql = "
         SELECT id
         FROM loan_payment
-        WHERE payment_file_price = ?
-          AND payment_file_date = ?
-          AND payment_file_time = ?
+        WHERE payment_file_price   = ?
+          AND payment_file_date    = ?
+          AND payment_file_time    = ?
+          AND payment_file_ref_no  = ?
         LIMIT 1
     ";
 
-        $builder = $this->db->query($sql, [$amount, $date, $time]);
-        return $builder->getRow();
+        $res = $this->db->query($sql, [$amount, $date, $time, $ref_no]);
+        return $res->getRow();
     }
 
     public function getAllDataFinxOn()

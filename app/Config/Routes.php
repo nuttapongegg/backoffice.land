@@ -86,6 +86,7 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
 
     $routes->get('report_revenues', 'Loan::report_revenues');
     $routes->get('ajax-tablesreportrevenues/(:any)', 'Loan::ajaxTablesReportRevenues/$1');
+    $routes->post('ocrCustomer', 'Loan::ocrCustomer');
 });
 
 //สินเชื่อ Finx

@@ -1118,19 +1118,19 @@ function download(item) {
 function downloadOther(item) {
   let searchParams = window.location.pathname;
   var searchParams_ = searchParams.split("/loan/detail/");
+
   $.ajax({
     url: serverUrl + "/loan/dowloadPictureOther/" + searchParams_[1],
     method: "get",
     success: function (response) {
-      upics = [];
+      let upics = [];
       $.each(response.message, function (index, item) {
-        if (item.picture_loan_src != null || item.picture_loan_src != "") {
-          upics.push(
-            CDN_IMG + "/uploads/loan_img_other/" + item.picture_loan_src
-          );
+        if (item.src && item.src !== "") {
+          upics.push(CDN_IMG + "/uploads/" + item.path + "/" + item.src);
         }
       });
 
+      // โหลดไฟล์ทั้งหมด
       for (var i in upics) {
         download(upics[i]);
       }
@@ -1237,6 +1237,7 @@ $("body").on("click", "#btn_edit_link_map", function () {
     $btn.prop("disabled", false).text("บันทึกลิงก์แผนที่"); // 🔓 เปิดปุ่มอีกครั้ง
   }
 });
+
 $(document).ready(function () {
   // ✅ ตรวจสอบว่าเป็น iOS หรือไม่
   function isIos() {
@@ -1259,6 +1260,9 @@ $(document).ready(function () {
     $("#imageFile").click();
   });
 
+  // เก็บไฟล์ที่มาจากการถ่ายรูป (กรณีสร้าง input แบบ dynamic)
+  let _capturedFile = null;
+
   // ปุ่มถ่ายรูป (iOS)
   $("#btnAiAutoInputCapture").on("click", function () {
     $("<input>")
@@ -1269,6 +1273,7 @@ $(document).ready(function () {
       })
       .on("change", function () {
         if (this.files && this.files[0]) {
+          _capturedFile = this.files[0]; // เก็บไฟล์ไว้ใช้ตอน OCR
           $("#detectImageForm").show();
           setImagePreviewFromFile(this.files[0]);
         }
@@ -1278,6 +1283,7 @@ $(document).ready(function () {
 
   // เมื่อเลือกไฟล์แล้ว แสดงฟอร์ม OCR
   $("#imageFile").on("change", function () {
+    _capturedFile = null; // ถ้าเลือกไฟล์จาก input ปกติ ให้เคลียร์ไฟล์จากกล้อง
     if (this.files && this.files[0]) {
       $("#detectImageForm").show();
       setImagePreview();
@@ -1289,6 +1295,7 @@ $(document).ready(function () {
     $("#detectImageForm").hide();
     $("#imageFile").val("");
     $("#imagePreview").attr("src", "");
+    _capturedFile = null;
   });
 
   const imageFile = document.querySelector("#imageFile");
@@ -1304,116 +1311,139 @@ $(document).ready(function () {
     imagePreview.setAttribute("src", base64);
   };
 
-  // ฟังก์ชัน OCR
   const detectImage = async () => {
     let $form = $("#customerSection");
 
     $("#btnAiAutoInputClear").addClass("disabled");
     $("#btnAiAutoInputSubmit").addClass("disabled");
 
-    const imageBase64String = await getImageBase64String();
-    const data = {
-      requests: [
-        {
-          image: { content: imageBase64String.replace(/^data:.+;base64,/, "") },
-          features: [{ type: "TEXT_DETECTION" }],
+    try {
+      const imageBase64String = await getImageBase64String();
+      const pureBase64 = imageBase64String.replace(/^data:.+;base64,/, "");
+
+      const csrfName = $("meta[name='csrf_name']").attr("content");
+      const csrfHash = $("meta[name='csrf_hash']").attr("content");
+
+      const postData = { image_base64: pureBase64 };
+      if (csrfName && csrfHash) postData[csrfName] = csrfHash;
+
+      $.ajax({
+        url: "/loan/ocrCustomer",
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(postData),
+        success: function (res) {
+          if (res.status !== "success") {
+            alert(res.message || "OCR error");
+            return;
+          }
+
+          let resData = res.text || "";
+
+          const bundleData = {};
+          resData.split("\n").forEach((row, index, arr) => {
+            let items = row.split(" ");
+
+            // เลขบัตรประชาชน
+            const digits = items.join("").replace(/\D/g, "");
+            const matchID = digits.match(/\d{13}/);
+            if (matchID) bundleData.cardNumber = matchID[0];
+
+            // ชื่อ-นามสกุล
+            if (row.includes("ชื่อตัวและชื่อสกุล")) {
+              bundleData.prename = items[1];
+              bundleData.firstname = items[2];
+              bundleData.lastname = items[3];
+            }
+
+            // วันเกิด
+            if (row.includes("Date of Birth")) {
+              bundleData.birthDate = `${items[3]} ${items[4]} ${items[5]}`;
+            }
+
+            // ที่อยู่
+            if (row.includes("ที่อยู่")) {
+              bundleData.address = `${items.join(" ")} ${arr[index + 1] || ""}`;
+            }
+          });
+
+          if (bundleData.prename) {
+            bundleData.gender = ["น.ส.", "นางสาว", "นาง", "เด็กหญิง"].includes(
+              bundleData.prename
+            )
+              ? "หญิง"
+              : "ชาย";
+          }
+
+          // ✅ ใส่ค่าลงฟอร์ม + ไฮไลท์ valid (เหมือนเดิม)
+          if (bundleData.firstname || bundleData.lastname) {
+            let $inputName = $form.find("input[name=fullname]");
+            $inputName
+              .val(`${bundleData.firstname || ""} ${bundleData.lastname || ""}`.trim())
+              .removeClass("is-invalid")
+              .addClass("is-valid");
+          }
+
+          if (bundleData.cardNumber) {
+            let $inputCardID = $form.find("input[name=card_id]");
+            $inputCardID
+              .val(bundleData.cardNumber)
+              .removeClass("is-invalid")
+              .addClass("is-valid");
+            $(".cardIDMask").mask("9-9999-99999-99-9");
+          }
+
+          if (bundleData.birthDate) {
+            let d = new Date(bundleData.birthDate);
+            let a = moment(d).format("DD/MM/YYYY");
+            if (a !== "Invalid date") {
+              let $inputBirthday = $form.find("input[name=birthday]");
+              $inputBirthday
+                .val(a)
+                .removeClass("is-invalid")
+                .addClass("is-valid");
+              $(".dateMask").mask("99/99/9999");
+            }
+          }
+
+          if (bundleData.gender) {
+            let $inputGender = $form.find("select[name=gender]");
+            $inputGender.val(bundleData.gender).removeClass("is-invalid").addClass("is-valid");
+          }
+
+          if (bundleData.address) {
+            let $inputAddress = $form.find("textarea[name=address]");
+            $inputAddress
+              .val(bundleData.address)
+              .removeClass("is-invalid")
+              .addClass("is-valid");
+          }
         },
-      ],
-    };
-
-    const url =
-      "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyDT3NjLzefkMDT1-UJMMdAjDH0J5BUqspA";
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    let resData = "";
-    const jsonResponse = await response.json();
-    for (const value of jsonResponse.responses) {
-      resData = value.fullTextAnnotation?.text || "";
+        error: function (xhr) {
+          console.error(xhr.responseText || xhr.statusText);
+          alert("ไม่สามารถทำ OCR ได้ กรุณาลองใหม่ภายหลัง");
+        },
+        complete: function () {
+          $("#detectImageForm").hide();
+          $("#btnAiAutoInputClear").removeClass("disabled");
+          $("#btnAiAutoInputSubmit").removeClass("disabled");
+        },
+      });
+    } catch (err) {
+      console.error(err);
+      alert("ไม่สามารถทำ OCR ได้ กรุณาลองใหม่ภายหลัง");
+      $("#detectImageForm").hide();
+      $("#btnAiAutoInputClear").removeClass("disabled");
+      $("#btnAiAutoInputSubmit").removeClass("disabled");
     }
-
-    const bundleData = {};
-    resData.split("\n").forEach((row, index, arr) => {
-      let items = row.split(" ");
-
-      // เลขบัตรประชาชน
-      const digits = items.join("").replace(/\D/g, "");
-      const matchID = digits.match(/\d{13}/);
-      if (matchID) bundleData.cardNumber = matchID[0];
-
-      // ชื่อ-นามสกุล
-      if (row.includes("ชื่อตัวและชื่อสกุล")) {
-        bundleData.prename = items[1];
-        bundleData.firstname = items[2];
-        bundleData.lastname = items[3];
-      }
-
-      // วันเกิด
-      if (row.includes("Date of Birth")) {
-        bundleData.birthDate = `${items[3]} ${items[4]} ${items[5]}`;
-      }
-
-      // ที่อยู่
-      if (row.includes("ที่อยู่")) {
-        bundleData.address = `${items.join(" ")} ${arr[index + 1]}`;
-      }
-    });
-
-    if (bundleData.prename) {
-      bundleData.gender = ["น.ส.", "นางสาว", "นาง", "เด็กหญิง"].includes(
-        bundleData.prename
-      )
-        ? "หญิง"
-        : "ชาย";
-    }
-
-    // ✅ ใส่ค่าลงฟอร์ม + ไฮไลท์ valid
-    if (bundleData.firstname || bundleData.lastname) {
-      let $inputName = $form.find("input[name=fullname]");
-      $inputName.val(`${bundleData.firstname} ${bundleData.lastname}`);
-      $inputName.removeClass("is-invalid").addClass("is-valid");
-    }
-
-    if (bundleData.cardNumber) {
-      let $inputCardID = $form.find("input[name=card_id]");
-      $inputCardID.val(bundleData.cardNumber);
-      $inputCardID.removeClass("is-invalid").addClass("is-valid");
-      $(".cardIDMask").mask("9-9999-99999-99-9");
-    }
-
-    if (bundleData.birthDate) {
-      let d = new Date(bundleData.birthDate);
-      let a = moment(d).format("DD/MM/YYYY");
-      if (a !== "Invalid date") {
-        let $inputBirthday = $form.find("input[name=birthday]");
-        $inputBirthday.val(a);
-        $inputBirthday.removeClass("is-invalid").addClass("is-valid");
-        $(".dateMask").mask("99/99/9999");
-      }
-    }
-
-    if (bundleData.gender) {
-      let $inputGender = $form.find("select[name=gender]");
-      $inputGender.val(bundleData.gender);
-      $inputGender.removeClass("is-invalid").addClass("is-valid");
-    }
-
-    if (bundleData.address) {
-      let $inputAddress = $form.find("textarea[name=address]");
-      $inputAddress.val(bundleData.address);
-      $inputAddress.removeClass("is-invalid").addClass("is-valid");
-    }
-
-    $("#detectImageForm").hide();
-    $("#btnAiAutoInputClear").removeClass("disabled");
-    $("#btnAiAutoInputSubmit").removeClass("disabled");
   };
 
   const getImageBase64String = async () => {
-    return await toBase64(imageFile.files[0]);
+    // ใช้ไฟล์จาก _capturedFile ถ้ามี ไม่งั้นใช้ไฟล์จาก #imageFile
+    const file = _capturedFile || imageFile.files[0];
+    if (!file) throw new Error("no file selected");
+    return await toBase64(file);
   };
 
   const toBase64 = (file) =>
@@ -1426,6 +1456,8 @@ $(document).ready(function () {
 
   // กดบันทึก
   $("#btnAiAutoInputSubmit").on("click", function () {
+    // กันกดรัว ๆ ระหว่างรอ
+    if ($(this).hasClass("disabled")) return;
     detectImage();
   });
 });

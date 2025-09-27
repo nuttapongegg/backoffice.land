@@ -187,6 +187,14 @@ class Loan extends BaseController
         $total_loan_interest = $this->request->getPost('total_loan_interest');
         $loan_type = $this->request->getVar('loan_type');
 
+        $customer_fullname = $this->request->getPost('fullname') ?? '';
+        $customer_phone = $this->request->getPost('phone') ?? '';
+        $customer_card_id = $this->request->getPost('card_id') ?? '';
+        $customer_email = $this->request->getPost('customer_email') ?? '';
+        $customer_birthday = $this->request->getPost('birthday') ?? '';
+        $customer_gender = $this->request->getPost('gender') ?? '';
+        $customer_address = $this->request->getPost('address') ?? '';
+
         $loan_running_code = '';
         $buffer_loan_code = 0;
         $loan_running_codes = $this->LoanModel->getCodeLoank();
@@ -234,6 +242,70 @@ class Loan extends BaseController
 
 
         $create_loan = $this->LoanModel->insertLoanList($loan_list, $loan_running);
+
+        // รับไฟล์จาก request
+        $imageFile = $this->request->getFile('imageFile');
+        $nameImageFile = null;
+
+        if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
+            $newFileName = $loan_running_code . "_" . $imageFile->getRandomName();
+            $imageFile->move('uploads/loan_customer_img', $newFileName);
+            $file_Path = 'uploads/loan_customer_img/' . $newFileName;
+
+            try {
+                $s3Client = new S3Client([
+                    'version' => 'latest',
+                    'region'  => $this->s3_region,
+                    'endpoint' => $this->s3_endpoint,
+                    'use_path_style_endpoint' => false,
+                    'credentials' => [
+                        'key'    => $this->s3_key,
+                        'secret' => $this->s3_secret_key
+                    ]
+                ]);
+
+                $result = $s3Client->putObject([
+                    'Bucket' => $this->s3_bucket,
+                    'Key'    => 'uploads/loan_customer_img/' . $newFileName,
+                    'Body'   => fopen($file_Path, 'r'),
+                    'ACL'    => 'public-read',
+                ]);
+
+                if (!empty($result['ObjectURL'])) {
+                    unlink($file_Path);
+                    $nameImageFile = $newFileName; // เก็บชื่อไฟล์ไว้บันทึกใน DB
+                }
+            } catch (Aws\S3\Exception\S3Exception $e) {
+                log_message('error', 'S3 upload error: ' . $e->getMessage());
+            }
+        }
+
+        if ($customer_card_id != '') {
+            $customer_card_id = str_replace('-', '', $customer_card_id);
+        }
+
+        if ($customer_birthday != '') {
+            $replaceBirthday = str_replace('/', '-', $customer_birthday);
+            if ($replaceBirthday !== false) {
+                $date = strtotime($replaceBirthday);
+                $customer_birthday = date('Y-m-d', $date);
+            }
+        }
+
+        // เตรียมข้อมูลลูกค้า
+        $loan_customer = [
+            'loan_code'          => $loan_running_code,
+            'customer_fullname'  => $customer_fullname,
+            'customer_phone'     => $customer_phone,
+            'customer_birthday'  => $customer_birthday,
+            'customer_card_id'   => $customer_card_id,
+            'customer_email'     => $customer_email,
+            'customer_gender'    => $customer_gender,
+            'customer_address'   => $customer_address,
+            'img'                => $nameImageFile,
+        ];
+
+        $this->LoanCustomerModel->insertLoanCustomer($loan_customer);
 
         $count_installment = 0;
         $installment = 0;
@@ -448,7 +520,6 @@ class Loan extends BaseController
         $customer_birthday = $this->request->getPost('birthday') ?? '';
         $customer_gender = $this->request->getPost('gender') ?? '';
         $customer_address = $this->request->getPost('address') ?? '';
-        $imageFile = $this->request->getFile('imageFile');
 
         $loan_area = $this->request->getPost('loan_area');
         $date_to_loan = $this->request->getPost('date_to_loan');
@@ -3767,27 +3838,50 @@ class Loan extends BaseController
     public function fetchOtherPicture($code = null)
     {
         $other_picture_datas = $this->LoanModel->getOtherByCode($code);
+        $customer_picture_datas = $this->LoanModel->getCustomerImgByCode($code);
+
+        // รวมผลลัพธ์ทั้ง 2
+        $all_pictures = array_merge($other_picture_datas, $customer_picture_datas);
+
         $data = '';
 
-        if ($other_picture_datas) {
+        if ($all_pictures) {
+            foreach ($all_pictures as $pic) {
+                $deleteBtn = '';
 
-            foreach ($other_picture_datas as $other_picture_data) {
+                // ถ้า path เป็น loan_payment_img (มาจาก picture_loan_other) ให้มีปุ่มลบ
+                if ($pic->path === 'loan_payment_img') {
+                    $deleteBtn = '
+                    <a id="' . $pic->id . '===' . $pic->src . '" 
+                       href="javascript:;" 
+                       onclick="deleteOtherPicture(this.id);" 
+                       class="btn btn-circle-sm btn-primary flex-center me-0 mb-0">
+                        <i class="fe fe-trash tx-12"></i>
+                    </a>';
+                }
 
                 $data .= '
             <div class="col-sm-12 col-md-2" style="text-align: center;">
              <div class="brick">
                <div class="file-attach file-attach-lg">
                     <div class="mb-1 border br-5 pos-relative overflow-hidden">
-                    <img src="' . $this->s3_cdn_img . "/uploads/loan_payment_img/" . $other_picture_data->picture_loan_src . '" class="br-5" alt="doc">
-                        <div class="btn-list attach-options v-center d-flex flex-column">
-                            <a id="' . $other_picture_data->id . '===' . $other_picture_data->picture_loan_src . '" href="javascript:;" onclick="deleteOtherPicture(this.id);" class="btn btn-circle-sm btn-primary flex-center me-0 mb-0"><i class="fe fe-trash tx-12"></i></a>
-                            <a href="' . $this->s3_cdn_img . "/uploads/loan_payment_img/" . $other_picture_data->picture_loan_src . '" class="btn btn-circle-sm btn-success flex-center me-0 mb-0 mg-t-3 js-img-viewer-other" data-caption="รูปอื่นๆ" data-id="other"><i class="fe fe-eye tx-12" style=" z-index: 9999;position: fixed;"></i><img src="' . $this->s3_cdn_img . "/uploads/loan_payment_img/" . $other_picture_data->picture_loan_src . '" alt=""  style="z-index: 1;  filter: blur(10px);position: fixed;" /></a>
+                        <img src="' . $this->s3_cdn_img . "/uploads/" . $pic->path . "/" . $pic->src . '" class="br-5" alt="doc">
+                        <div class="btn-list attach-options v-center d-flex flex-column">'
+                    . $deleteBtn . '
+                            <a href="' . $this->s3_cdn_img . "/uploads/" . $pic->path . "/" . $pic->src . '" 
+                               class="btn btn-circle-sm btn-success flex-center me-0 mb-0 mg-t-3 js-img-viewer-other" 
+                               data-caption="รูปอื่นๆ" data-id="other">
+                                <i class="fe fe-eye tx-12" style="z-index: 9999; position: fixed;"></i>
+                                <img src="' . $this->s3_cdn_img . "/uploads/" . $pic->path . "/" . $pic->src . '" 
+                                     alt=""  
+                                     style="z-index: 1; filter: blur(10px); position: fixed;" />
+                            </a>
                         </div>
                     </div> 
                 </div>
+             </div>
             </div>
-            </div>
-                ';
+            ';
             }
 
             return $this->response->setJSON([
@@ -3844,7 +3938,9 @@ class Loan extends BaseController
 
     public function dowloadPictureOther($code)
     {
-        $datas = $this->LoanModel->dowloadPictureOther($code);
+        $datas1 = $this->LoanModel->getPictureLoanOther($code);
+        $datas2 = $this->LoanModel->getLoanCustomerImg($code);
+        $datas = array_merge($datas1, $datas2);
 
         return $this->response->setJSON([
             'status' => 200,
@@ -4329,6 +4425,7 @@ class Loan extends BaseController
         $paymentFileDate = $this->request->getVar('payment_file_date');
         $paymentFileTime = $this->request->getVar('payment_file_time');
         $paymentFilePrice = $this->request->getVar('payment_file_price');
+        $paymentFileRefNo = $this->request->getVar('payment_file_ref_no');
         // $status_payment = $this->request->getPost('status_payment');
         $fileName_img = '';
 
@@ -4417,6 +4514,7 @@ class Loan extends BaseController
                 'loan_payment_src' => $fileName_img,
                 'payment_file_date' => $paymentFileDate,
                 'payment_file_time' => $paymentFileTime,
+                'payment_file_ref_no' => $paymentFileRefNo,
                 'payment_file_price' => $paymentFilePrice,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
@@ -4440,6 +4538,7 @@ class Loan extends BaseController
                 'loan_payment_src' => $fileName_img,
                 'payment_file_date' => $paymentFileDate,
                 'payment_file_time' => $paymentFileTime,
+                'payment_file_ref_no' => $paymentFileRefNo,
                 'payment_file_price' => $paymentFilePrice,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
@@ -4464,6 +4563,7 @@ class Loan extends BaseController
                 'loan_payment_src' => $fileName_img,
                 'payment_file_date' => $paymentFileDate,
                 'payment_file_time' => $paymentFileTime,
+                'payment_file_ref_no' => $paymentFileRefNo,
                 'payment_file_price' => $paymentFilePrice,
                 'loan_payment_date' => $date_to_payment,
                 'land_account_id' => $account_id,
@@ -4500,6 +4600,7 @@ class Loan extends BaseController
                 'loan_payment_src' => $fileName_img,
                 'payment_file_date' => $paymentFileDate,
                 'payment_file_time' => $paymentFileTime,
+                'payment_file_ref_no' => $paymentFileRefNo,
                 'payment_file_price' => $paymentFilePrice,
                 'land_account_id' => $account_id,
                 'land_account_name' => $land_account_name->land_account_name,
@@ -4764,6 +4865,7 @@ class Loan extends BaseController
             ]
         ];
     }
+
     public function ocrInvoice()
     {
         // ตรวจสอบไฟล์ที่อัปโหลด
@@ -4845,12 +4947,13 @@ class Loan extends BaseController
         // ตรงจำนวนเงินให้แปลงค่าเงินเป็น usd โดยอิงจากค่าเงินวันนี้
 
         $openai_url = "https://api.openai.com/v1/chat/completions";
-        $prompt = "Input $text จาก Input จงแยกแยะข้อมูลชุดนี้โดยข้อมูลที่ต้องการออกมาคือ จำนวนเงิน, สกุลเงิน, วันที่, เวลา
+        $prompt = "Input $text จาก Input จงแยกแยะข้อมูลชุดนี้โดยข้อมูลที่ต้องการออกมาคือ จำนวนเงิน, สกุลเงิน, วันที่, เวลา, และเลขที่รายการ (ref_no)
                         เสร็จแล้วทำข้อมูลให้อยู่ในรูปแบบ json เท่านั้น โดยไม่ต้องเพิ่มคำอธิบายเพิ่มเติม
-                        นี่คือรูปแบบที่ฉันต้องการ {\"amount\":__,\"type\":__,\"date\":__,\"time\":__}
+                        นี่คือรูปแบบที่ฉันต้องการ {\"amount\":__,\"type\":__,\"date\":__,\"time\":__,\"ref_no\":__}
                         ในส่วนสกุลเงิน ตรวจสอบจำนวนเงินว่าเป็นเงินบาท เงินกีบ หรือ ดอลล่า หากเป็น บาท หรือ กีบ  เงินกีบ = LAK, เงินบาท = THB, เงินดอลล่า = USD
                         ตรงจำนวนเงินให้ส่งกลับมาแค่จำนวนเงินเท่านั้น 
-                        **กติกา:**  
+                        **กติกา:** 
+                        - ref_no ให้ค้นหาคำว่า เลขที่รายการ
                         - time ให้อยู่ในรูปแบบ H:i ถ้าไม่พบเวลาในข้อมูล ให้ส่งค่าว่าง ''
                         - date ให้เลือกวันที่แรกที่พบในข้อมูล และแปลงเป็นฟอร์แมต YYYY-MM-DD
                         - หากปีที่ระบุเป็น **พ.ศ.** (มากกว่า 2500) ให้แปลงเป็น **ค.ศ.** (โดยการลบ 543)
@@ -4893,8 +4996,19 @@ class Loan extends BaseController
             $amount = $jsonArr['amount'] ?? null;
             $date   = $jsonArr['date'] ?? null;
             $time   = $jsonArr['time'] ?? null;
+            $ref_no = trim($jsonArr['ref_no'] ?? '');
 
-            $exists = $this->LoanModel->checkDuplicate($amount, $date, $time);
+            // normalize amount → บังคับให้มีทศนิยม 2 หลัก
+            if ($amount !== null) {
+                $amount = number_format((float)$amount, 2, '.', ''); // 75000 → 75000.00
+            }
+
+            // normalize time → ถ้าเป็น H:i ให้เติม :00
+            if ($time && strlen($time) === 5) {
+                $time .= ':00'; // 11:41 → 11:41:00
+            }
+
+            $exists = $this->LoanModel->checkDuplicate($amount, $date, $time, $ref_no);
 
             if ($exists) {
                 return $this->response->setJSON([
@@ -5602,5 +5716,70 @@ class Loan extends BaseController
         } catch (\Exception $e) {
             echo $e->getMessage() . ' ' . $e->getLine();
         }
+    }
+
+    public function ocrCustomer()
+    {
+        $json = $this->request->getJSON(true);
+        $imageBase64 = $json['image_base64'] ?? null;
+
+        if (empty($imageBase64)) {
+            return $this->response->setJSON([
+                'status'  => 'fail',
+                'message' => 'Missing image_base64'
+            ]);
+        }
+
+        $vision_api_key = getenv('GOOGLE_CLOUD_API_KEY');
+        if (!$vision_api_key) {
+            return $this->response->setJSON([
+                'status'  => 'fail',
+                'message' => 'ไม่พบ API Key ในไฟล์ .env (GOOGLE_CLOUD_API_KEY)'
+            ]);
+        }
+
+        $url  = "https://vision.googleapis.com/v1/images:annotate?key={$vision_api_key}";
+        $data = [
+            'requests' => [[
+                'image' => ['content' => $imageBase64],
+                'features' => [['type' => 'TEXT_DETECTION']],
+            ]]
+        ];
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $url,
+            CURLOPT_POST           => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+            CURLOPT_POSTFIELDS     => json_encode($data),
+            CURLOPT_TIMEOUT        => 30,
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'ไม่สามารถติดต่อ Google Vision API ได้',
+                'error'   => json_decode($response, true)
+            ]);
+        }
+
+        $result = json_decode($response, true);
+        $text   = $result['responses'][0]['fullTextAnnotation']['text'] ?? '';
+
+        if ($text === '') {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'OCR ไม่พบบทความ'
+            ]);
+        }
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'text'   => $text
+        ]);
     }
 }
