@@ -547,8 +547,20 @@ class Loan extends BaseController
         if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
             // ถ้ามีรูปใหม่อัพโหลดเข้ามา
             $newFileName = $loan_code . "_" . $imageFile->getRandomName();
-            $imageFile->move('uploads/loan_customer_img', $newFileName);
-            $file_Path = 'uploads/loan_customer_img/' . $newFileName;
+
+            // path ปลายทางแบบ absolute
+            $uploadPath = FCPATH . 'uploads/loan_customer_img';
+
+            // ถ้าโฟลเดอร์ยังไม่มี ให้สร้างก่อน
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // ย้ายไฟล์ไปเก็บในโฟลเดอร์
+            $imageFile->move($uploadPath, $newFileName);
+
+            // path ของไฟล์ที่ย้ายแล้ว
+            $file_Path = $uploadPath . '/' . $newFileName;
 
             try {
                 $s3Client = new S3Client([
@@ -592,6 +604,7 @@ class Loan extends BaseController
                 log_message('error', 'S3 upload error: ' . $e->getMessage());
             }
         }
+
 
         if ($customer_card_id != '') {
             $customer_card_id = str_replace('-', '', $customer_card_id);
