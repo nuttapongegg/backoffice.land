@@ -187,6 +187,14 @@ class Loan extends BaseController
         $total_loan_interest = $this->request->getPost('total_loan_interest');
         $loan_type = $this->request->getVar('loan_type');
 
+        $customer_fullname = $this->request->getPost('fullname') ?? '';
+        $customer_phone = $this->request->getPost('phone') ?? '';
+        $customer_card_id = $this->request->getPost('card_id') ?? '';
+        $customer_email = $this->request->getPost('customer_email') ?? '';
+        $customer_birthday = $this->request->getPost('birthday') ?? '';
+        $customer_gender = $this->request->getPost('gender') ?? '';
+        $customer_address = $this->request->getPost('address') ?? '';
+
         $loan_running_code = '';
         $buffer_loan_code = 0;
         $loan_running_codes = $this->LoanModel->getCodeLoank();
@@ -234,6 +242,70 @@ class Loan extends BaseController
 
 
         $create_loan = $this->LoanModel->insertLoanList($loan_list, $loan_running);
+
+        // รับไฟล์จาก request
+        $imageFile = $this->request->getFile('imageFile');
+        $nameImageFile = null;
+
+        if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
+            $newFileName = $loan_running_code . "_" . $imageFile->getRandomName();
+            $imageFile->move('uploads/loan_customer_img', $newFileName);
+            $file_Path = 'uploads/loan_customer_img/' . $newFileName;
+
+            try {
+                $s3Client = new S3Client([
+                    'version' => 'latest',
+                    'region'  => $this->s3_region,
+                    'endpoint' => $this->s3_endpoint,
+                    'use_path_style_endpoint' => false,
+                    'credentials' => [
+                        'key'    => $this->s3_key,
+                        'secret' => $this->s3_secret_key
+                    ]
+                ]);
+
+                $result = $s3Client->putObject([
+                    'Bucket' => $this->s3_bucket,
+                    'Key'    => 'uploads/loan_customer_img/' . $newFileName,
+                    'Body'   => fopen($file_Path, 'r'),
+                    'ACL'    => 'public-read',
+                ]);
+
+                if (!empty($result['ObjectURL'])) {
+                    unlink($file_Path);
+                    $nameImageFile = $newFileName; // เก็บชื่อไฟล์ไว้บันทึกใน DB
+                }
+            } catch (Aws\S3\Exception\S3Exception $e) {
+                log_message('error', 'S3 upload error: ' . $e->getMessage());
+            }
+        }
+
+        if ($customer_card_id != '') {
+            $customer_card_id = str_replace('-', '', $customer_card_id);
+        }
+
+        if ($customer_birthday != '') {
+            $replaceBirthday = str_replace('/', '-', $customer_birthday);
+            if ($replaceBirthday !== false) {
+                $date = strtotime($replaceBirthday);
+                $customer_birthday = date('Y-m-d', $date);
+            }
+        }
+
+        // เตรียมข้อมูลลูกค้า
+        $loan_customer = [
+            'loan_code'          => $loan_running_code,
+            'customer_fullname'  => $customer_fullname,
+            'customer_phone'     => $customer_phone,
+            'customer_birthday'  => $customer_birthday,
+            'customer_card_id'   => $customer_card_id,
+            'customer_email'     => $customer_email,
+            'customer_gender'    => $customer_gender,
+            'customer_address'   => $customer_address,
+            'img'                => $nameImageFile,
+        ];
+
+        $this->LoanCustomerModel->insertLoanCustomer($loan_customer);
 
         $count_installment = 0;
         $installment = 0;
@@ -448,7 +520,6 @@ class Loan extends BaseController
         $customer_birthday = $this->request->getPost('birthday') ?? '';
         $customer_gender = $this->request->getPost('gender') ?? '';
         $customer_address = $this->request->getPost('address') ?? '';
-        $imageFile = $this->request->getFile('imageFile');
 
         $loan_area = $this->request->getPost('loan_area');
         $date_to_loan = $this->request->getPost('date_to_loan');
@@ -4911,7 +4982,7 @@ class Loan extends BaseController
             if ($time && strlen($time) === 5) {
                 $time .= ':00'; // 11:41 → 11:41:00
             }
-            
+
             $exists = $this->LoanModel->checkDuplicate($amount, $date, $time, $ref_no);
 
             if ($exists) {

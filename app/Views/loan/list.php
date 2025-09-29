@@ -83,7 +83,7 @@
                                                     <th class="wd-30p text-center">จำนวนงวด</th>
                                                     <th class="wd-30p text-center">ดอกเบี้ย</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
-                                                    
+
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -244,7 +244,7 @@
                         <?php $FORM_KEY = 'FORM_KEY_' . strtotime('now') . '_' . rand(10, 100); ?>
                         <form method="POST" enctype="multipart/form-data" name="formAddLoan" id="<?php echo $FORM_KEY; ?>" data-form-key="<?php echo $FORM_KEY; ?>" novalidate>
                             <input type="hidden" name="loan_type" value="เงินสด">
-                            <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-5">ข้อมูลพื้นฐาน</p>
+                            <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-2">ข้อมูลพื้นฐาน</p>
                             <div class="row mb-3">
                                 <div class="col-6">
                                 </div>
@@ -288,7 +288,7 @@
                                 <div class="col-6">
                                     <div class="row align-items-center">
                                         <div class="col-md-4 tx-right">
-                                            <label class="form-label mt-0">ชื่อลูกค้า <span class="tx-danger">*</span></label>
+                                            <label class="form-label mt-2">ชื่อลูกค้า <span class="tx-danger">*</span></label>
                                         </div>
                                         <div class="col-md-8">
                                             <div class="input-group">
@@ -383,8 +383,136 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div id="customerSection">
+                                <p class="font-weight-semibold tx-17 pb-2 border-bottom-dashed mt-2 tx-primary">ข้อมูลลูกค้า</p>
+
+                                <!-- ปุ่ม AI Auto Input -->
+                                <div class="mt-2" style="text-align: right;">
+                                    <a href="javascript:void(0);" class="btn btn-outline-primary" id="btnAiAutoInputCapture" style="display:none;">
+                                        📷 ถ่ายรูป
+                                    </a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-primary" id="btnAiAutoInput">
+                                        📂 เลือกไฟล์
+                                    </a>
+                                </div>
+
+                                <!-- ฟอร์ม OCR -->
+                                <div id="detectImageForm" style="display:none;">
+                                    <div class="row">
+                                        <div class="col text-center">
+                                            <img id="imagePreview" width="32%" class="img-thumbnail" /><br>
+                                            <button type="button" class="btn btn-outline-danger btn-rounded mt-3" id="btnAiAutoInputClear">ยกเลิก</button>
+                                            <button type="button" class="btn btn-success btn-rounded mt-3" id="btnAiAutoInputSubmit">บันทึก</button>
+                                        </div>
+                                    </div>
+                                    <div style="display:none;">
+                                        <input type="file" id="imageFile" accept="image/*" />
+                                    </div>
+                                    <hr>
+                                </div>
+
+                                <!-- ฟอร์มข้อมูลลูกค้า -->
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4 tx-right">
+                                                <label class="form-label mt-0">ชื่อ-นามสกุล <span class="tx-danger">*</span></label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="fullname" name="fullname">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4 tx-right">
+                                                <label class="form-label mt-0">เบอร์ติดต่อ <span class="tx-danger">*</span></label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="phone" name="phone">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4 tx-right">
+                                                <label class="form-label mt-0">เลขบัตรประชาชน <span class="tx-danger">*</span></label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <input class="form-control cardIDMask" placeholder="_-____-_____-__-_" type="text" id="card_id" name="card_id">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4 tx-right">
+                                                <label class="form-label mt-0">อีเมล</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <input class="form-control" placeholder="อีเมล" type="text" id="customer_email" name="customer_email">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4 tx-right">
+                                                <label class="form-label mt-0">วัน/เดือน/ปีเกิด<span class="tx-danger">*</span></label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <input class="form-control dateMask" placeholder="__/__/____" type="text" id="birthday" name="birthday">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4 tx-right">
+                                                <label class="form-label mt-0">เพศ<span class="tx-danger">*</span></label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <select name="gender" id="gender" class="form-control form-select">
+                                                        <option value="">-- เลือกเพศ --</option>
+                                                        <option value="ชาย">ชาย</option>
+                                                        <option value="หญิง">หญิง</option>
+                                                        <option value="เพศทางเลือก">เพศทางเลือก</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-2 tx-right">
+                                                <label class="form-label mt-0">ที่อยู่<span class="tx-danger">*</span></label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <div class="form-group">
+                                                    <textarea class="form-control" rows="2" name="address" id="address"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div id="bookingWrapperFormPaymentType">
-                                <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-5">ข้อมูลการคำนวนรายการสินเชื่อ</p>
+                                <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-2">ข้อมูลการคำนวนรายการสินเชื่อ</p>
                                 <div class="row">
                                     <div class="col-md-6">
                                     </div>
@@ -476,7 +604,7 @@
                                 </div>
                             </div>
                             <div id="other_cash">
-                                <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-5">ค่าใช้จ่ายอื่น ๆ</p>
+                                <p class="font-weight-semibold tx-15 pb-2 border-bottom-dashed tx-primary mt-2">ค่าใช้จ่ายอื่น ๆ</p>
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="row align-items-center">
