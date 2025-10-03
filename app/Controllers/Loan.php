@@ -3838,27 +3838,50 @@ class Loan extends BaseController
     public function fetchOtherPicture($code = null)
     {
         $other_picture_datas = $this->LoanModel->getOtherByCode($code);
+        $customer_picture_datas = $this->LoanModel->getCustomerImgByCode($code);
+
+        // รวมผลลัพธ์ทั้ง 2
+        $all_pictures = array_merge($other_picture_datas, $customer_picture_datas);
+
         $data = '';
 
-        if ($other_picture_datas) {
+        if ($all_pictures) {
+            foreach ($all_pictures as $pic) {
+                $deleteBtn = '';
 
-            foreach ($other_picture_datas as $other_picture_data) {
+                // ถ้า path เป็น loan_payment_img (มาจาก picture_loan_other) ให้มีปุ่มลบ
+                if ($pic->path === 'loan_payment_img') {
+                    $deleteBtn = '
+                    <a id="' . $pic->id . '===' . $pic->src . '" 
+                       href="javascript:;" 
+                       onclick="deleteOtherPicture(this.id);" 
+                       class="btn btn-circle-sm btn-primary flex-center me-0 mb-0">
+                        <i class="fe fe-trash tx-12"></i>
+                    </a>';
+                }
 
                 $data .= '
             <div class="col-sm-12 col-md-2" style="text-align: center;">
              <div class="brick">
                <div class="file-attach file-attach-lg">
                     <div class="mb-1 border br-5 pos-relative overflow-hidden">
-                    <img src="' . $this->s3_cdn_img . "/uploads/loan_payment_img/" . $other_picture_data->picture_loan_src . '" class="br-5" alt="doc">
-                        <div class="btn-list attach-options v-center d-flex flex-column">
-                            <a id="' . $other_picture_data->id . '===' . $other_picture_data->picture_loan_src . '" href="javascript:;" onclick="deleteOtherPicture(this.id);" class="btn btn-circle-sm btn-primary flex-center me-0 mb-0"><i class="fe fe-trash tx-12"></i></a>
-                            <a href="' . $this->s3_cdn_img . "/uploads/loan_payment_img/" . $other_picture_data->picture_loan_src . '" class="btn btn-circle-sm btn-success flex-center me-0 mb-0 mg-t-3 js-img-viewer-other" data-caption="รูปอื่นๆ" data-id="other"><i class="fe fe-eye tx-12" style=" z-index: 9999;position: fixed;"></i><img src="' . $this->s3_cdn_img . "/uploads/loan_payment_img/" . $other_picture_data->picture_loan_src . '" alt=""  style="z-index: 1;  filter: blur(10px);position: fixed;" /></a>
+                        <img src="' . $this->s3_cdn_img . "/uploads/" . $pic->path . "/" . $pic->src . '" class="br-5" alt="doc">
+                        <div class="btn-list attach-options v-center d-flex flex-column">'
+                    . $deleteBtn . '
+                            <a href="' . $this->s3_cdn_img . "/uploads/" . $pic->path . "/" . $pic->src . '" 
+                               class="btn btn-circle-sm btn-success flex-center me-0 mb-0 mg-t-3 js-img-viewer-other" 
+                               data-caption="รูปอื่นๆ" data-id="other">
+                                <i class="fe fe-eye tx-12" style="z-index: 9999; position: fixed;"></i>
+                                <img src="' . $this->s3_cdn_img . "/uploads/" . $pic->path . "/" . $pic->src . '" 
+                                     alt=""  
+                                     style="z-index: 1; filter: blur(10px); position: fixed;" />
+                            </a>
                         </div>
                     </div> 
                 </div>
+             </div>
             </div>
-            </div>
-                ';
+            ';
             }
 
             return $this->response->setJSON([
@@ -3915,7 +3938,9 @@ class Loan extends BaseController
 
     public function dowloadPictureOther($code)
     {
-        $datas = $this->LoanModel->dowloadPictureOther($code);
+        $datas1 = $this->LoanModel->getPictureLoanOther($code);
+        $datas2 = $this->LoanModel->getLoanCustomerImg($code);
+        $datas = array_merge($datas1, $datas2);
 
         return $this->response->setJSON([
             'status' => 200,

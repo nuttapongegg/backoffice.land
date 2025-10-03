@@ -563,12 +563,19 @@ class LoanModel
 
     public function getOtherByCode($code)
     {
-        $sql = "SELECT * FROM  picture_loan_other WHERE loan_code = '$code'
-        ORDER BY id DESC
-        ";
+        $sql = "SELECT id, picture_loan_src AS src, 'loan_payment_img' AS path 
+            FROM picture_loan_other 
+            WHERE loan_code = ?
+            ORDER BY id DESC";
+        return $this->db->query($sql, [$code])->getResult();
+    }
 
-        $builder = $this->db->query($sql);
-        return $builder->getResult();
+    public function getCustomerImgByCode($code)
+    {
+        $sql = "SELECT id, img AS src, 'loan_customer_img' AS path
+            FROM loan_customer
+            WHERE loan_code = ? AND img IS NOT NULL AND img != ''";
+        return $this->db->query($sql, [$code])->getResult();
     }
 
     public function deleteOtherPiture($id)
@@ -578,12 +585,20 @@ class LoanModel
         return $builder;
     }
 
-    public function dowloadPictureOther($code)
+    public function getPictureLoanOther($code)
     {
-        $sql = "SELECT picture_loan_src
-         FROM `picture_loan_other` WHERE loan_code = '$code'";
-        $builder = $this->db->query($sql);
-        return $builder->getResult();
+        $sql = "SELECT picture_loan_src AS src, 'loan_img_other' AS path
+            FROM picture_loan_other
+            WHERE loan_code = ?";
+        return $this->db->query($sql, [$code])->getResult();
+    }
+
+    public function getLoanCustomerImg($code)
+    {
+        $sql = "SELECT img AS src, 'loan_customer_img' AS path
+            FROM loan_customer
+            WHERE loan_code = ? AND img IS NOT NULL AND img != ''";
+        return $this->db->query($sql, [$code])->getResult();
     }
 
     public function getOverdueListPayments($year)

@@ -1118,19 +1118,19 @@ function download(item) {
 function downloadOther(item) {
   let searchParams = window.location.pathname;
   var searchParams_ = searchParams.split("/loan/detail/");
+
   $.ajax({
     url: serverUrl + "/loan/dowloadPictureOther/" + searchParams_[1],
     method: "get",
     success: function (response) {
-      upics = [];
+      let upics = [];
       $.each(response.message, function (index, item) {
-        if (item.picture_loan_src != null || item.picture_loan_src != "") {
-          upics.push(
-            CDN_IMG + "/uploads/loan_img_other/" + item.picture_loan_src
-          );
+        if (item.src && item.src !== "") {
+          upics.push(CDN_IMG + "/uploads/" + item.path + "/" + item.src);
         }
       });
 
+      // โหลดไฟล์ทั้งหมด
       for (var i in upics) {
         download(upics[i]);
       }
