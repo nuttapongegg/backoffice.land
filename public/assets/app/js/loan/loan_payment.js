@@ -822,6 +822,9 @@ $(document).ready(function () {
             $("input[name=payment_file_price]")
               .val(jsonData.amount)
               .addClass("is-valid");
+            $("input[name=payment_file_ref_no]")
+              .val(jsonData.ref_no)
+              .addClass("is-valid");
             // วันที่ ที่ได้จาก ai
             // $("input[id=date_to_payment]")
             //   .val(formattedDateImg)
