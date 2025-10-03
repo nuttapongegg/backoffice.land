@@ -587,7 +587,7 @@ class LoanModel
 
     public function getPictureLoanOther($code)
     {
-        $sql = "SELECT picture_loan_src AS src, 'loan_img_other' AS path
+        $sql = "SELECT picture_loan_src AS src, 'loan_payment_img' AS path
             FROM picture_loan_other
             WHERE loan_code = ?";
         return $this->db->query($sql, [$code])->getResult();
