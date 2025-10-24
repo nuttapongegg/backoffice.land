@@ -68,7 +68,7 @@ function callTableFinxHistory() {
       // loan_payment_date_fix วันเริ่มชำระ เปลี่ยนเป็น  loan_date_promise วันที่ขอสินเชื่อ
       {
         data: "loan_date_promise",
-        targets: 13,
+        targets: 12,
         render: function (data, type, row, meta) {
           if (type == "display") {
             const date = new Date(data["loan_date_promise"]);
@@ -129,15 +129,6 @@ function callTableFinxHistory() {
       },
       {
         data: null,
-        className: "text-center",
-        render: function (data, type, row, meta) {
-          return (
-            "<font>" + data["loan_payment_year_counter"] + " ปี" + "</font>"
-          );
-        },
-      },
-      {
-        data: null,
         render: function (data, type, row, meta) {
           if (data["loan_status"] == "ON_STATE") {
             return "<font class='tx-success'>กำลังผ่อนชำระ</font>";
@@ -174,54 +165,6 @@ function callTableFinxHistory() {
         data: null,
       },
       {
-        data: null,
-        className: "text-right",
-        render: function (data, type, row, meta) {
-          return "<font>" + data["loan_payment_interest"] + " %" + "</font>";
-        },
-      },
-      {
-        data: null,
-        className: "text-center",
-        render: function (data, type, row, meta) {
-          var installment = data["loan_payment_year_counter"] * 12;
-          return "<font>" + installment + "</font>";
-        },
-      },
-      {
-        data: "loan_payment_type",
-        orderable: false,
-        className: "text-center",
-      },
-      {
-        data: null,
-        className: "text-right",
-        render: function (data, type, row, meta) {
-          return (
-            "<font>" +
-            new Intl.NumberFormat().format(
-              Number(data["loan_payment_month"]).toFixed(2)
-            ) +
-            "</font>"
-          );
-        },
-      },
-      {
-        data: null,
-        orderable: false,
-        className: "text-right",
-        render: function (data, type, row, meta) {
-          var summary_all =
-            data["loan_sum_interest"] - data["loan_payment_sum_installment"];
-
-          return (
-            "<font>" +
-            new Intl.NumberFormat().format(Number(summary_all).toFixed(2)) +
-            "</font>"
-          );
-        },
-      },
-      {
         data: "loan_remnark",
       },
     ],
@@ -249,15 +192,8 @@ function callTableFinxHistory() {
       };
 
       // Total over this page
-      var Total_payment_month = api
-        .column(17, { page: "current" })
-        .data()
-        .reduce(function (a, b) {
-          return intVal(a) + intVal(b.loan_payment_month); // Handle formatted numbers
-        }, 0);
-
       Total_close_payment = api
-        .column(12, { page: "current" })
+        .column(11, { page: "current" })
         .data()
         .reduce(function (a, b) {
           return intVal(a) + intVal(b.loan_close_payment);
@@ -271,25 +207,20 @@ function callTableFinxHistory() {
         }, 0);
 
       Total_payment_sum_installment = api
-        .column(11, { page: "current" })
+        .column(10, { page: "current" })
         .data()
         .reduce(function (a, b) {
           return intVal(a) + Number(b.loan_summary_no_vat) * 0.03;
         }, 0);
 
       // Update footer
-      number_payment_month = parseFloat(Total_payment_month).toFixed(2);
-      $(api.column(17).footer()).html(
-        Number(number_payment_month).toLocaleString()
-      );
-
       number_close_payment = parseFloat(Total_close_payment).toFixed(2);
-      $(api.column(12).footer()).html(
+      $(api.column(11).footer()).html(
         Number(number_close_payment).toLocaleString()
       );
 
       number_payment_sum_installment = parseFloat(Total_payment_sum_installment).toFixed(2);
-      $(api.column(11).footer()).html(
+      $(api.column(10).footer()).html(
         Number(number_payment_sum_installment).toLocaleString()
       );
 

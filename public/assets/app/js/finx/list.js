@@ -181,6 +181,7 @@ function callAutoloenTable(data) {
       },
       {
         data: null,
+        className: "text-center",
         render: function (data, type, row, meta) {
           if (data["loan_status"] == "ON_STATE") {
             const date = new Date(data["loan_payment_date_fix"]);
@@ -230,80 +231,11 @@ function callAutoloenTable(data) {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
-          if (data["loan_status"] == "ON_STATE") {
-            const date = new Date(data["loan_payment_date_fix"]);
-            const newDate = new Date(
-              date.setMonth(date.getMonth() + (data["loan_period"] - 1))
-            );
+          // คำนวณ 3% ของ loan_summary_no_vat
+          let value = (Number(data["loan_summary_no_vat"]) * 0.03).toFixed(2);
 
-            const daysPassed = Math.floor(
-              (Date.now() - newDate) / (1000 * 60 * 60 * 24)
-            );
-            var installment = data["loan_payment_year_counter"] * 12;
-            const remaining_installments =
-              installment - data["loan_payment_type"];
-
-            if (daysPassed > 0) {
-              const loan_overdue =
-                Number(data["loan_overdue"].replace(/[^0-9.-]+/g, "")) + 1;
-              const overdue_months = Math.min(
-                loan_overdue,
-                remaining_installments
-              );
-              const loan_overdue_sum =
-                overdue_months * data["loan_payment_month"];
-              // var loan_overdue_sum =
-              //   data["loan_payment_month"] * (loan_overdue);
-              return (
-                "<font class='tx-danger'>" +
-                new Intl.NumberFormat().format(
-                  Number(loan_overdue_sum).toFixed(2)
-                ) +
-                "</font>"
-              );
-            } else {
-              return "<font>-</font>";
-            }
-          }
-        },
-      },
-      {
-        data: null,
-        className: "text-right",
-        render: function (data, type, row, meta) {
-          return (
-            "<font class='tx-success'>" +
-            new Intl.NumberFormat().format(
-              Number(data["loan_payment_sum_installment"]).toFixed(2)
-            ) +
-            "</font>"
-          );
-        },
-      },
-      {
-        data: null,
-        className: "text-right",
-        render: function (data, type, row, meta) {
-          var summary_all =
-            data["loan_sum_interest"] - data["loan_payment_sum_installment"];
-          return (
-            "<font>" +
-            new Intl.NumberFormat().format(Number(summary_all).toFixed(2)) +
-            "</font>"
-          );
-        },
-      },
-      {
-        data: null,
-        className: "text-right",
-        render: function (data, type, row, meta) {
-          return (
-            "<font>" +
-            new Intl.NumberFormat().format(
-              Number(data["loan_payment_month"]).toFixed(2)
-            ) +
-            "</font>"
-          );
+          // แสดงผลแบบมี comma
+          return "<font>" + new Intl.NumberFormat().format(value) + "</font>";
         },
       },
       {
@@ -386,34 +318,6 @@ function callAutoloenTable(data) {
         className: "text-center",
       },
       {
-        data: null,
-        className: "text-center",
-        render: function (data, type, row, meta) {
-          return (
-            "<font>" + data["loan_payment_year_counter"] + " ปี" + "</font>"
-          );
-        },
-      },
-      {
-        data: "loan_payment_type",
-        className: "text-center",
-      },
-      {
-        data: null,
-        className: "text-center",
-        render: function (data, type, row, meta) {
-          var installment = data["loan_payment_year_counter"] * 12;
-          return "<font>" + installment + "</font>";
-        },
-      },
-      {
-        data: null,
-        className: "text-right",
-        render: function (data, type, row, meta) {
-          return "<font>" + data["loan_payment_interest"] + " %" + "</font>";
-        },
-      },
-      {
         data: "loan_remnark",
       },
     ],
@@ -437,22 +341,11 @@ function callAutoloenTable(data) {
       };
 
       // Total over this page
-      var Total_payment_month = api
-        .column(15, { page: "current" })
+      var Total_summary_no_vat_finx = api
+        .column(12, { page: "current" })
         .data()
         .reduce(function (a, b) {
-          return intVal(a) + intVal(b.loan_payment_month); // Handle formatted numbers
-        }, 0);
-
-      Total_sum_remaining_payment = api
-        .column(14, { page: "current" })
-        .data()
-        .reduce(function (a, b) {
-          return (
-            intVal(a) +
-            (intVal(b.loan_sum_interest) -
-              intVal(b.loan_payment_sum_installment))
-          );
+          return intVal(a) + Number(b.loan_summary_no_vat) * 0.03; // Handle formatted numbers
         }, 0);
 
       Total_summary_no_vat = api
@@ -462,64 +355,10 @@ function callAutoloenTable(data) {
           return intVal(a) + intVal(b.loan_summary_no_vat);
         }, 0);
 
-      Total_loanOverdueSum = api
-        .column(12, { page: "current" })
-        .data()
-        .reduce(function (a, b) {
-          const date = new Date(b.loan_payment_date_fix);
-          const newDate = new Date(
-            date.setMonth(date.getMonth() + (b.loan_period - 1))
-          );
-
-          const daysPassed = Math.floor(
-            (Date.now() - newDate) / (1000 * 60 * 60 * 24)
-          );
-
-          if (daysPassed > 0) {
-            const loanPaymentMonth = intVal(b.loan_payment_month);
-            const loanOverdue = intVal(b.loan_overdue);
-
-            // คำนวณยอดรวม
-            const loanOverdueSum = loanPaymentMonth * (loanOverdue + 1);
-
-            // เพิ่มผลรวมลงใน total
-            return a + loanOverdueSum;
-          } else {
-            // หากไม่เกินกำหนดคืน total เดิม
-            return a;
-          }
-        }, 0);
-
-      Total_payment_sum_installment = api
-        .column(13, { page: "current" })
-        .data()
-        .reduce(function (a, b) {
-          return intVal(a) + intVal(b.loan_payment_sum_installment);
-        }, 0);
-
       // Update footer
-      number_payment_month = parseFloat(Total_payment_month).toFixed(2);
-      $(api.column(15).footer()).html(
-        Number(number_payment_month).toLocaleString()
-      );
-
-      number_sum_remaining_payment = parseFloat(
-        Total_sum_remaining_payment
-      ).toFixed(2);
-      $(api.column(14).footer()).html(
-        Number(number_sum_remaining_payment).toLocaleString()
-      );
-
-      number_payment_sum_installment = parseFloat(
-        Total_payment_sum_installment
-      ).toFixed(2);
-      $(api.column(13).footer()).html(
-        Number(number_payment_sum_installment).toLocaleString()
-      );
-
-      number_loanOverdueSum = parseFloat(Total_loanOverdueSum).toFixed(2);
+      number_summary_no_vat_finx = parseFloat(Total_summary_no_vat_finx).toFixed(2);
       $(api.column(12).footer()).html(
-        Number(number_loanOverdueSum).toLocaleString()
+        Number(number_summary_no_vat_finx).toLocaleString()
       );
 
       number_summary_no_vat = parseFloat(Total_summary_no_vat).toFixed(2);

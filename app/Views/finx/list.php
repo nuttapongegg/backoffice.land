@@ -69,19 +69,12 @@
                                                     <th class="wd-30p text-center">โฉนด</th>
                                                     <th class="wd-20p text-center">วันที่ขอสินเชื่อ</th>
                                                     <th class="wd-40p text-center">วงเงิน</th>
-                                                    <th class="wd-20p text-center">ชำระทุกวันที</th>
+                                                    <th class="wd-20p text-center">ชำระวันที</th>
                                                     <th class="wd-30p text-center">สถานะ</th>
                                                     <th class="wd-30p text-center">เกินกำหนดชำระ</th>
-                                                    <th class="wd-30p text-center">ยอดค้างชำระ</th>
-                                                    <th class="wd-30p text-center">ชำระแล้วเป็นเงิน</th>
-                                                    <th class="wd-30p text-center">เงินที่ต้องชำระคงเหลือ</th>
-                                                    <th class="wd-30p text-center">งวดละ</th>
+                                                    <th class="wd-30p text-center">ยอดดอกเบี้ย</th>
                                                     <th class="wd-20p text-center">เครดิต</th>
                                                     <th class="wd-20p text-center">ประเภทสินเชื่อ</th>
-                                                    <th class="wd-30p text-center">ระยะเวลาการผ่อน</th>
-                                                    <th class="wd-30p text-center">ชำระแล้ว</th>
-                                                    <th class="wd-30p text-center">จำนวนงวด</th>
-                                                    <th class="wd-30p text-center">ดอกเบี้ย</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
                                                     
                                                 </tr>
@@ -96,10 +89,7 @@
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th colspan="3" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th colspan="7" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="3" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -139,17 +129,10 @@
                                                     <th class="wd-20p text-center">วันที่ปิดสินเชื่อ</th>
                                                     <th class="wd-20p text-center">ประเภทสินเชื่อ</th>
                                                     <th class="wd-40p text-center">วงเงิน</th>
-                                                    <th class="wd-30p text-center">ระยะเวลาการผ่อน</th>
                                                     <th class="wd-30p text-center">สถานะ</th>
                                                     <th class="wd-30p text-center">ชำระแล้วเป็นเงิน</th>
                                                     <th class="wd-30p text-center">ยอดชำระปิดสินเชื่อ</th>
                                                     <th class="wd-20p text-center">วันที่ขอสินเชื่อ</th>
-                                                    <!-- <th class="wd-20p text-center">วันเริ่มชำระ</th> -->
-                                                    <th class="wd-30p text-center">ดอกเบี้ย</th>
-                                                    <th class="wd-30p text-center">จำนวนงวด</th>
-                                                    <th class="wd-30p text-center">ชำระแล้ว</th>
-                                                    <th class="wd-30p text-center">งวดละ</th>
-                                                    <th class="wd-30p text-center">เงินที่ต้องชำระคงเหลือ</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
                                                 </tr>
                                             </thead>
@@ -161,10 +144,8 @@
                                                         <h6 class="tx-left mt-2"><b>รวม</b></h6>
                                                     </th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th colspan="2" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="1" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th colspan="4" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th colspan="2" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                 </tr>
