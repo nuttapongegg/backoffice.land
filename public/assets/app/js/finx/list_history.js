@@ -87,6 +87,7 @@ function callTableFinxHistory() {
     columns: [
       {
         data: null,
+        orderable: false,
         render: function (data, type, row, meta) {
           return meta.row + meta.settings._iDisplayStart + 1;
         },
@@ -141,11 +142,11 @@ function callTableFinxHistory() {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
-          // คำนวณ 3% ของ loan_summary_no_vat
-          let value = (Number(data["loan_summary_no_vat"]) * 0.03).toFixed(2);
-
-          // แสดงผลแบบมี comma
-          return "<font>" + new Intl.NumberFormat().format(value) + "</font>";
+          return (
+            "<font>" +
+            new Intl.NumberFormat().format(Number(data["installment_3pct"]).toFixed(2)) +
+            "</font>"
+          );
         },
       },
       {
@@ -206,11 +207,11 @@ function callTableFinxHistory() {
           return intVal(a) + intVal(b.loan_summary_no_vat);
         }, 0);
 
-      Total_payment_sum_installment = api
+      Total_installment_3pct = api
         .column(10, { page: "current" })
         .data()
         .reduce(function (a, b) {
-          return intVal(a) + Number(b.loan_summary_no_vat) * 0.03;
+          return intVal(a) + intVal(b.installment_3pct);
         }, 0);
 
       // Update footer
@@ -219,9 +220,11 @@ function callTableFinxHistory() {
         Number(number_close_payment).toLocaleString()
       );
 
-      number_payment_sum_installment = parseFloat(Total_payment_sum_installment).toFixed(2);
+      number_installment_3pct = parseFloat(
+        Total_installment_3pct
+      ).toFixed(2);
       $(api.column(10).footer()).html(
-        Number(number_payment_sum_installment).toLocaleString()
+        Number(number_installment_3pct).toLocaleString()
       );
 
       number_summary_no_vat = parseFloat(Total_summary_no_vat).toFixed(2);

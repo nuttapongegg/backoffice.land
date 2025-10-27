@@ -138,19 +138,20 @@ class Finx extends BaseController
 
     public function finxHistory()
     {
-        $datas_loan = $this->LoanModel->_getAllDataFinxHistory($_POST);
+        $post = $this->request->getPost();
 
-        $datas_count = $this->LoanModel->countAllDataFinxHistory();
-
-        $filter = $this->LoanModel->getAllDataFinxHistoryFilter();
+        $rows            = $this->LoanModel->_getAllDataFinxHistory($post);
+        $recordsTotal    = (int) $this->LoanModel->countAllDataFinxHistory();
+        $recordsFiltered = (int) $this->LoanModel->countFilteredDataFinxHistory($post);
 
         return $this->response->setJSON([
-            'draw' => $_POST['draw'],
-            'recordsTotal' => $datas_count,
-            'recordsFiltered' => count($filter),
-            "data" => $datas_loan,
+            'draw'            => (int)($post['draw'] ?? 1),
+            'recordsTotal'    => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data'            => $rows,
         ]);
     }
+
 
     public function ajaxSummarizeFinx()
     {
@@ -188,16 +189,15 @@ class Finx extends BaseController
                     $loan_summary_no_vat = $loan_summary_no_vat + $data->loan_summary_no_vat;
                 }
 
-                if ($data->loan_payment_sum_installment != '') {
-                    $loan_payment_sum_installment = $loan_payment_sum_installment + $data->loan_payment_sum_installment;
-                }
+                // if ($data->loan_payment_sum_installment != '') {
+                //     $loan_payment_sum_installment = $loan_payment_sum_installment + $data->loan_payment_sum_installment;
+                // }
 
                 if ($data->loan_summary_all != '') {
                     $loan_summary_all = $loan_summary_all + $data->loan_summary_all;
                 }
 
                 if ($data->loan_status == 'ON_STATE') {
-                    $loan_payment_month = $loan_payment_month + $data->loan_payment_month;
                     $sum_installment = $sum_installment + $data->loan_payment_sum_installment;
                     $summary_no_vat_ON_STATE = $summary_no_vat_ON_STATE + $data->loan_summary_no_vat;
                 }
@@ -207,10 +207,9 @@ class Finx extends BaseController
                 }
             }
 
-            $summary_all = $loan_summary_all - $loan_payment_sum_installment;
-            if ($summary_all != 0) {
-                $return_funds = ($loan_payment_month / $summary_all) * 100;
-            }
+            $loan_payment_month = $summary_no_vat_ON_STATE * 0.03;
+
+            $installment_3pct = $loan_summary_no_vat * 0.03;
 
             $summary_net_assets = $summary_no_vat_ON_STATE + $sum_land_account;
 
@@ -228,7 +227,7 @@ class Finx extends BaseController
                         <div class="card text-center">
                             <div class="card-body">
                                 <div>ชำระแล้ว</div>
-                                <div class="font-weight-semibold mb-1 tx-secondary">' . number_format($loan_payment_sum_installment, 2) . '</div>
+                                <div class="font-weight-semibold mb-1 tx-secondary">' . number_format($installment_3pct, 2) . '</div>
                             </div>
                         </div>
                     </div>

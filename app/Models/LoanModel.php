@@ -11,6 +11,10 @@ class LoanModel
     protected $column_search;
     protected $order;
 
+    protected $column_order_finx;
+    protected $column_search_finx;
+    protected $order_finx;
+
     public function __construct()
     {
         $db = \Config\Database::connect();
@@ -61,6 +65,41 @@ class LoanModel
 
         // Set default order
         $this->order = array('loan.loan_code' => 'DESC');
+
+        // ให้ index ตรงกับ DataTables columns เดิมของคุณ
+        $this->column_order_finx = [
+            null,
+            'loan.loan_code',
+            'loan_customer',
+            'loan_address',
+            'loan.loan_area',
+            'loan.loan_number',
+            'loan.loan_date_close',
+            'loan.loan_type',
+            'loan.loan_summary_no_vat',
+            'loan.loan_status',
+            'installment_3pct',
+            'loan.loan_close_payment',
+            'loan.loan_date_promise',
+            'loan.loan_remnark'
+        ];
+
+        $this->column_search_finx = [
+            'loan.loan_code',
+            'loan_customer',
+            'loan_address',
+            'loan.loan_area',
+            'loan.loan_number',
+            'loan.loan_date_close',
+            'loan.loan_type',
+            'loan.loan_summary_no_vat',
+            'installment_3pct',
+            'loan.loan_close_payment',
+            'loan.loan_date_promise',
+            'loan.loan_remnark'
+        ];
+
+        $this->order_finx = array('loan.loan_code' => 'DESC');
     }
 
     public function getAllDataLoanOn()
@@ -1209,20 +1248,11 @@ class LoanModel
          loan.loan_date_close,
          loan.loan_date_promise,
          loan.loan_summary_no_vat,
-         loan.loan_payment_sum_installment,
-         loan.loan_payment_year_counter,
-         loan.loan_payment_interest,
-         loan.loan_payment_month,
-         loan.loan_payment_process,
          loan.loan_type,
-         loan.loan_tranfer,
-         loan.loan_payment_other,
          loan.loan_status,
          loan.loan_remnark,
-         loan.loan_summary_all,
-         loan.loan_sum_interest,
          loan.loan_close_payment,
-         (SELECT COUNT(loan_payment_type) FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code) AS loan_payment_type,
+        (loan.loan_summary_no_vat * 0.03) AS installment_3pct,
          (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
          (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date
         ");
@@ -1231,39 +1261,58 @@ class LoanModel
 
         $i = 0;
         // loop searchable columns
-        foreach ($this->column_search as $item) {
+        // ----- SEARCH -----
+        // ----- SEARCH (fixed, no ESCAPE '!') -----
+        if (!empty($post_data['search']['value'])) {
+            $search = $post_data['search']['value'];
 
-            // if datatable send POST for search
-            if ($post_data['search']['value']) {
+            // หนีอักขระสำหรับ LIKE ให้ปลอดภัย แต่เราไม่ใช้ ESCAPE clause
+            $kw = $this->db->escapeLikeString($search); // จะหนี %, _ ฯลฯ ให้
 
-                // first loop
-                if ($i === 0) {
-                    // open bracket
-                    $builder->groupStart();
-                    $builder->like($item, $post_data['search']['value']);
+            $builder->groupStart();
+            $first = true;
+
+            foreach ($this->column_search_finx as $item) {
+
+                // สร้างเงื่อนไขดิบ (raw) ต่อกรณีปกติ vs คอลัมน์คำนวณ
+                if ($item === 'installment_3pct') {
+                    // คอลัมน์คำนวณ 3%: ใช้ CAST(...) LIKE '%$kw%'
+                    $raw = "CAST(loan.loan_summary_no_vat * 0.03 AS CHAR) LIKE '%{$kw}%'";
                 } else {
-                    $builder->orLike($item, $post_data['search']['value']);
+                    // ฟิลด์ปกติ: ครอบด้วย backtick ให้เรียบร้อย
+                    // หมายเหตุ: $item ของคุณมีทั้ง 'loan.loan_code' และ alias ('loan_customer') ได้
+                    if (strpos($item, '.') !== false) {
+                        [$tbl, $col] = explode('.', $item, 2);
+                        $raw = "`{$tbl}`.`{$col}` LIKE '%{$kw}%'";
+                    } else {
+                        $raw = "`{$item}` LIKE '%{$kw}%'";
+                    }
                 }
 
-                // last loop
-                if (count($this->column_search) - 1 == $i) {
-                    $builder->like($item, $post_data['search']['value']);
-                    // close bracket
-                    $builder->groupEnd();
+                if ($first) {
+                    $builder->where($raw, null, false);  // false = ไม่ escape ซ้ำ
+                    $first = false;
+                } else {
+                    $builder->orWhere($raw, null, false); // ติด OR ต่อท้าย
                 }
             }
-
-            $i++;
+            $builder->groupEnd();
         }
 
-        // มีการ order เข้ามา
+        // ----- ORDER -----
         if (isset($post_data['order'])) {
-            $builder->orderBy($this->column_order[$post_data['order']['0']['column']], $post_data['order']['0']['dir']);
-        }
+            $colIdx = $post_data['order'][0]['column'];
+            $dir    = $post_data['order'][0]['dir'];
+            $col    = $this->column_order_finx[$colIdx] ?? null;
 
-        // Default
-        else if (isset($this->order)) {
-            $order = $this->order;
+            if ($col === 'installment_3pct') {
+                // sort ด้วยสูตร 3% โดยไม่ escape
+                $builder->orderBy("(loan.loan_summary_no_vat * 0.03)", $dir, false);
+            } elseif (!empty($col)) {
+                $builder->orderBy($col, $dir);
+            }
+        } elseif (isset($this->order_finx)) {
+            $order = $this->order_finx;
             $builder->orderBy(key($order), $order[key($order)]);
         }
 
@@ -1273,30 +1322,48 @@ class LoanModel
         return $builder;
     }
 
-    public function getAllDataFinxHistoryFilter()
+    public function countAllDataFinxHistory(): int
     {
-
-        $sql = "
-        SELECT * FROM loan
-        WHERE loan.loan_status = 'CLOSE_STATE' AND loan.loan_type = 'เงินสด'
-        ORDER BY loan.id DESC
-        ";
-
-        $builder = $this->db->query($sql);
-        return $builder->getResult();
+        return $this->db->table('loan')
+            ->where('loan.loan_status', 'CLOSE_STATE')
+            ->where('loan.loan_type', 'เงินสด')
+            ->countAllResults();
     }
 
-    public function countAllDataFinxHistory()
+    /**
+     * จำนวนหลังค้นหา (int) ตรงกับเงื่อนไขใน _getAllDataFinxHistory()
+     */
+    public function countFilteredDataFinxHistory(array $post): int
     {
+        $builder = $this->db->table('loan');
 
-        $sql = "
-        SELECT count(loan.id) AS count_data FROM loan
-        WHERE loan.loan_status = 'CLOSE_STATE' AND loan.loan_type = 'เงินสด'
-        ORDER BY loan.id DESC
-        ";
+        // base where
+        $builder->where('loan.loan_status', 'CLOSE_STATE')
+            ->where('loan.loan_type', 'เงินสด');
 
-        $builder = $this->db->query($sql);
-        return $builder->getResult();
+        // search เหมือนด้านบน
+        $search = trim($post['search']['value'] ?? '');
+        if ($search !== '') {
+            $kw = $this->db->escapeLikeString($search);
+
+            $builder->groupStart();
+            foreach ($this->column_search_finx as $item) {
+                if ($item === 'installment_3pct') {
+                    $builder->orWhere("CAST(loan.loan_summary_no_vat * 0.03 AS CHAR) LIKE '%{$kw}%'", null, false);
+                } else {
+                    if (strpos($item, '.') !== false) {
+                        [$tbl, $col] = explode('.', $item, 2);
+                        $raw = "`{$tbl}`.`{$col}` LIKE '%{$kw}%'";
+                    } else {
+                        $raw = "`{$item}` LIKE '%{$kw}%'";
+                    }
+                    $builder->orWhere($raw, null, false);
+                }
+            }
+            $builder->groupEnd();
+        }
+
+        return $builder->countAllResults();
     }
 
     public function getAllDataFinx()
