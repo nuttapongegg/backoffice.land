@@ -86,6 +86,7 @@ class Document extends BaseController
                     <button data-bs-toggle="dropdown" class="btn btn-primary mb-1 btn-sm">จัดการ <i class="icon ion-ios-arrow-down tx-11 mg-s-3"></i></button>
                     <div class="dropdown-menu">
                         <a href="javascript:void(0)" class="dropdown-item btnEdit" data-doc-type-="' . $document->doc_type . '" data-doc-id="' . hashidsEncrypt($document->id) . '"><i class="fe fe-edit"></i> แก้ไขข้อมูล</a>
+                        <a href="javascript:void(0)" class="dropdown-item btnPrint" data-doc-type-="' . $document->doc_type . '" data-doc-id="' . hashidsEncrypt($document->id) . '"><i class="fa-solid fa-print"></i> สั่งพิมพ์</a>
                         ' . $doc_file . '
                         ' . $filePath . '
                         <a href="javascript:void(0)" class="dropdown-item btnDelete" data-doc-type-="' . $document->doc_type . '" data-doc-id="' . hashidsEncrypt($document->id) . '" data-url="' . base_url('/document/delete/' . hashidsEncrypt($document->id)) . '" data-document-number="' . $document->doc_number . '"><i class="fe fe-trash"></i> ลบข้อมูล</a>

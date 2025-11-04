@@ -42,6 +42,10 @@ $routes->get('logout', 'Authentication::logout', ['filter' => 'employeeAuth']);
 $routes->get('pdf_loan/(:any)', 'PdfController::PDF_Loan/$1', ['filter' => 'employeeAuth']);
 $routes->get('pdf_installment_schedule/(:any)', 'PdfController::PDF_Installment_Schedule/$1', ['filter' => 'employeeAuth']);
 $routes->get('pdf_loan_receipt/(:any)', 'PdfController::PDF_Loan_Receipt/$1');
+$routes->get('pdf_doc_pay/(:any)', 'PdfController::PDF_Doc_Pay/$1', ['filter' => 'employeeAuth']);
+$routes->get('pdf_loan_pay/(:any)/(:any)', 'PdfController::pdf_Loan_Pay/$1/$2', ['filter' => 'employeeAuth']);
+$routes->get('pdf_finx_receipt/(:any)/(:any)', 'PdfController::pdf_Finx_Receipt/$1/$2', ['filter' => 'employeeAuth']);
+$routes->get('pdf_finx/(:any)', 'PdfController::PDF_Finx/$1', ['filter' => 'employeeAuth']);
 
 //สินเชื่อ loan
 $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {

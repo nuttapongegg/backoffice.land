@@ -144,7 +144,9 @@ function callTableFinxHistory() {
         render: function (data, type, row, meta) {
           return (
             "<font>" +
-            new Intl.NumberFormat().format(Number(data["installment_3pct"]).toFixed(2)) +
+            new Intl.NumberFormat().format(
+              Number(data["installment_3pct"]).toFixed(2)
+            ) +
             "</font>"
           );
         },
@@ -167,6 +169,23 @@ function callTableFinxHistory() {
       },
       {
         data: "loan_remnark",
+      },
+      {
+        orderable: false,
+        data: null,
+        render: function (data, type, row) {
+          var id;
+          if (data["loan_code"] != "") {
+            id = data["loan_code"];
+          } else {
+            id = "-";
+          }
+          return (
+            '<div class="d-flex align-items-center"><button type="button" class="btn btn-primary-light btn-icon pdf_kleanx ms-1" id="' +
+            data["loan_code"] +
+            '" onclick="reportFinxPrint(this.id)"><i class="fe fe-printer"> </i></button></div>'
+          );
+        },
       },
     ],
     drawCallback: function (settings, data, start, end, max, total, pre) {
@@ -220,9 +239,7 @@ function callTableFinxHistory() {
         Number(number_close_payment).toLocaleString()
       );
 
-      number_installment_3pct = parseFloat(
-        Total_installment_3pct
-      ).toFixed(2);
+      number_installment_3pct = parseFloat(Total_installment_3pct).toFixed(2);
       $(api.column(10).footer()).html(
         Number(number_installment_3pct).toLocaleString()
       );
@@ -234,4 +251,14 @@ function callTableFinxHistory() {
     },
     bFilter: true,
   });
+}
+
+function reportFinxPrint(id) {
+  let url = `${serverUrl}/pdf_finx/` + id;
+
+  window.open(
+    url,
+    "Doc",
+    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=1024,height=900,top=10,left=500"
+  );
 }

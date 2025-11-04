@@ -342,6 +342,7 @@ class Finx extends BaseController
 
             $OpenLoans = $this->LoanModel->getOpenLoanFinx($data);
             $LoanClosePaymentMonths = $this->LoanModel->getListLoanFinxClosePaymentMonths($data);
+            $DocumentsPayYears = $this->DocumentModel->getDocumentsPayYear($data);
 
             // กำหนดค่าเริ่มต้น 0 ทั้ง 12 เดือน
             $Month_Open_Loan = array_fill(1, 12, 0);
@@ -376,6 +377,17 @@ class Finx extends BaseController
                 }
             }
 
+            // กำหนดค่าเริ่มต้น 0 ทั้ง 12 เดือน
+            $Month_Doc_Pay_Years = array_fill(1, 12, 0);
+
+            // รวมยอดเปิดสินเชื่อตามเดือน
+            foreach ($DocumentsPayYears as $DocumentsPayYear) {
+                $month = (int)$DocumentsPayYear->doc_date_month;
+                if ($month >= 1 && $month <= 12) {
+                    $Month_Doc_Pay_Years[$month] += $DocumentsPayYear->price;
+                }
+            }
+
             // กำหนดค่าเริ่มต้น class ของแต่ละเดือน
             $Month_Class = array_fill(1, 12, '');
 
@@ -390,7 +402,7 @@ class Finx extends BaseController
             $Month_Open_Loan_Sum = array_sum($Month_Open_Loan);
             $Month_Loan_Payment_Sum = array_sum($Month_Loan_Payment);
             $Month_Loan_Close_Payment_Sum = array_sum($Month_Loan_Close_Payment);
-
+            $Month_Doc_Pay_Years_Sum = array_sum($Month_Doc_Pay_Years);
             // ---------------- HTML ----------------
             $html =
                 '<div class="card-body">
@@ -398,11 +410,14 @@ class Finx extends BaseController
                         <table class="table border-0 mb-0">
                             <tbody>
                                 <tr>
-                                    <th class="border-top-0 bg-black-03 br-bs-5 br-ts-5 tx-15 wd-30p">เดือน</th>
+                                    <th class="border-top-0 bg-black-03 br-bs-5 br-ts-5 tx-15 wd-15p">เดือน</th>
                                     <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">เปิดสินเชื่อ</th>
                                     <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">ยอดรวม</th>
                                     <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">ชำระดอกเบี้ย</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-5p tx-right"></th>
                                     <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">ชำระปิดบัญชี</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">รายจ่าย</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-5p tx-right"></th>
                                 </tr>';
 
             // loop เดือนทั้งหมด
@@ -434,9 +449,29 @@ class Finx extends BaseController
                         <a href="javascript:void(0);" data-id="' . $m . '" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">'
                     . number_format($Month_Loan_Payment[$m], 2) . '</a>
                     </td>
+                    <td class="border-top-0 p-0">
+                        <div class="d-flex justify-content-center align-items-center" style="height:100%;">
+                            <button type="button" class="btn btn-primary-light btn-icon pdf_finx_receipt"
+                                data-month="' . $m . '" data-year="' . $data . '">
+                                <i class="fe fe-printer"></i>
+                            </button>
+                        </div>
+                    </td>
                     <td class="border-top-0" style="text-align: right;">
                         <a href="javascript:void(0);" data-id="' . $m . '" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">'
                     . number_format($Month_Loan_Close_Payment[$m], 2) . '</a>
+                    </td>
+                    <td class="border-top-0" style="text-align: right;">
+                        <a href="javascript:void(0);" data-id="' . $m . '" id="Month_Doc_Pay_Month" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDocumentsPayMonth">'
+                    . number_format($Month_Doc_Pay_Years[$m], 2) . '</a>
+                    </td>
+                    <td class="border-top-0 p-0">
+                        <div class="d-flex justify-content-center align-items-center" style="height:100%;">
+                            <button type="button" class="btn btn-primary-light btn-icon pdf_loan_pay"
+                                data-month="' . $m . '" data-year="' . $data . '">
+                                <i class="fe fe-printer"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>';
             }
@@ -456,8 +491,17 @@ class Finx extends BaseController
                                 <td class="border-top-0" style="text-align: right;">
                                     <p class="mb-0">' . number_format($Month_Loan_Payment_Sum, 2) . '</p>
                                 </td>
+                                <td class="border-top-0">
+                                    <p class="mb-0"></p>
+                                </td>
                                 <td class="border-top-0" style="text-align: right;">
                                     <p class="mb-0">' . number_format($Month_Loan_Close_Payment_Sum, 2) . '</p>
+                                </td>
+                                <td class="border-top-0" style="text-align: right;">
+                                    <p class="mb-0">' . number_format($Month_Doc_Pay_Years_Sum, 2) . '</p>
+                                </td>
+                                <td class="border-top-0">
+                                    <p class="mb-0"></p>
                                 </td>
                             </tr>
                         </tbody>

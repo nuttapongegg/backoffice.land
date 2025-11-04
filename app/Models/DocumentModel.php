@@ -617,9 +617,20 @@ class DocumentModel
         $years = $param['years'];
 
         $sql = "
-        SELECT DATE_FORMAT(documents.doc_date, '%d-%m-%Y') as formatted_date ,documents.doc_type , documents.price , documents.title
+        SELECT DATE_FORMAT(documents.doc_date, '%d-%m-%Y') as formatted_date ,documents.doc_type , documents.price , documents.title, documents.note, documents.doc_number
         FROM documents
-        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'รายจ่าย'
+        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+        ";
+        $builder = $this->db->query($sql);
+
+        return $builder->getResult();
+    }
+
+    public function getDocumentsPayYear($year)
+    {
+        $sql = "SELECT * , MONTH(documents.doc_date) as doc_date_month
+        FROM documents
+        WHERE YEAR(documents.doc_date) = $year AND documents.doc_type = 'ใบสำคัญจ่าย'
         ";
         $builder = $this->db->query($sql);
 
@@ -694,7 +705,7 @@ class DocumentModel
 
     public function getDocumentID($id)
     {
-        $sql = "SELECT *,DATE_FORMAT(documents.doc_date, '%d/%m/%Y') as formatted_date_doc,DATE_FORMAT(documents.cheque_bank_date, '%d/%m/%Y') as formatted_date_rebate
+        $sql = "SELECT *,DATE_FORMAT(documents.doc_date, '%d/%m/%Y') as formatted_date_doc
         FROM documents
         WHERE documents.id = $id
         ";

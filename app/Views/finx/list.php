@@ -134,6 +134,7 @@
                                                     <th class="wd-30p text-center">ยอดชำระปิดสินเชื่อ</th>
                                                     <th class="wd-20p text-center">วันที่ขอสินเชื่อ</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
+                                                    <th class="wd-30p text-center"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
