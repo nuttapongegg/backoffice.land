@@ -43,13 +43,13 @@
             <th style="font-size: 2px;"></th>
         </tr>
         <table>
-            <tr>
-                <th width="99%" style="font-size: 8px;border-bottom-style: solid;"></th>
-            </tr>
-            <tr>
-                <th style="font-size: 5px;"></th>
-            </tr>
             <thead>
+                <tr>
+                    <th width="99%" style="font-size: 8px;border-bottom-style: solid;"></th>
+                </tr>
+                <tr>
+                    <th style="font-size: 5px;"></th>
+                </tr>
                 <tr>
                     <th width="5%" style="text-align:center;">#</th>
                     <th width="12%" style="text-align:center;">เลขที่ใบสำคัญ</th>
@@ -58,13 +58,13 @@
                     <th width="27%" style="text-align:center;">หมายเหตุ</th>
                     <th width="15%" style="text-align:right;">จำนวนเงิน</th>
                 </tr>
+                <tr>
+                    <th width="99%" style="font-size: 2px;border-bottom-style: solid;"></th>
+                </tr>
+                <tr>
+                    <th style="font-size: 5px;"></th>
+                </tr>
             </thead>
-            <tr>
-                <th width="99%" style="font-size: 2px;border-bottom-style: solid;"></th>
-            </tr>
-            <tr>
-                <th style="font-size: 5px;"></th>
-            </tr>
             <?php $i = 0;
             $sumpay = 0;
             foreach ($documentpay as $docpay) {
@@ -75,7 +75,7 @@
                     <th width="12%" style="text-align:center;"><?php echo $docpay->doc_number ?></th>
                     <th width="15%" style="text-align:center;"><?php echo $docpay->formatted_date ?></th>
                     <th width="25%"><?php echo $docpay->title ?></th>
-                    <th width="27%"><?php echo !empty($docpay->note) ? $docpay->note : '-'?></th>
+                    <th width="27%"><?php echo !empty($docpay->note) ? $docpay->note : '-' ?></th>
                     <th width="15%" style="text-align:right;"><?php echo number_format($docpay->price, 2) ?></th>
                 </tr>
             <?php } ?>

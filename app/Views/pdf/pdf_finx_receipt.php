@@ -43,13 +43,13 @@
             <th style="font-size: 2px;"></th>
         </tr>
         <table>
-            <tr>
-                <th width="99%" style="font-size: 8px;border-bottom-style: solid;"></th>
-            </tr>
-            <tr>
-                <th style="font-size: 5px;"></th>
-            </tr>
             <thead>
+                <tr>
+                    <th width="99%" style="font-size: 8px;border-bottom-style: solid;"></th>
+                </tr>
+                <tr>
+                    <th style="font-size: 5px;"></th>
+                </tr>
                 <tr>
                     <th width="4%" style="text-align:center;">#</th>
                     <th width="10%" style="text-align:center;">เลขที่สินเชื่อ</th>
@@ -58,13 +58,13 @@
                     <th width="37%" style="text-align:center;">ชื่อสถานที่</th>
                     <th width="15%" style="text-align:right;">จำนวนเงิน</th>
                 </tr>
+                <tr>
+                    <th width="99%" style="font-size: 2px;border-bottom-style: solid;"></th>
+                </tr>
+                <tr>
+                    <th style="font-size: 5px;"></th>
+                </tr>
             </thead>
-            <tr>
-                <th width="99%" style="font-size: 2px;border-bottom-style: solid;"></th>
-            </tr>
-            <tr>
-                <th style="font-size: 5px;"></th>
-            </tr>
             <?php $i = 0;
             $sumpay = 0;
             foreach ($finxpayments as $finxpayment) {
