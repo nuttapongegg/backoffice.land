@@ -13,7 +13,7 @@ class pdfFinxReceipt extends TCPDF
         // Logo
         // $image_file = getenv('CDN_IMG').'/uploads/img/' . $data['website']->logo;
         // $image_file = 'https://stock.psnkp.co/assets/img/up2cars_dark.jpg';
-        $image_file = 'https://land.evxspst.com/assets/img/logo.png';
+        $image_file = 'https://evxspst.sgp1.cdn.digitaloceanspaces.com/uploads/img/infinityX.png';
         /**
          * width : 50
          */
@@ -25,14 +25,13 @@ class pdfFinxReceipt extends TCPDF
         // Title
         try {
             // ฟอนต์ thsarabun ขนาด 22 (ใหญ่ขึ้น)
-            $this->SetFont('thsarabun', '', 20);
-            $this->Cell(0, 5, 'บริษัท  EVX AUTO IMPORT', 0, 1, 'R');
+            $this->SetFont('thsarabun', 'B', 22);
+            $this->Cell(199, 5, 'บริษัท อินฟินิตเอ็กซ์ ไทย จํากัด', 0, 1, 'R');
 
             // ขนาดปกติ 15 สำหรับบรรทัดต่อ ๆ ไป
-            $this->SetFont('thsarabun', '', 15);
-            $this->Cell(0, 3, 'ที่อยู่  99/99 LAO PRD', 0, 1, 'R');
-            $this->Cell(0, 3, 'เลขที่ผู้เสียภาษี 1-2345-67890-12-3', 0, 1, 'R');
-            $this->Cell(0, 3, 'เบอร์โทรศัพท์  +668500000', 0, 1, 'R');
+            $this->SetFont('thsarabun', '', 13);
+            $this->Cell(199, 3, 'ที่อยู่ 11/2 ซอย เลี่ยงเมือง1 ถนนเลี่ยงเมือง ตําบลในเมือง', 0, 1, 'R');
+            $this->Cell(199, 3, 'อําเภอเมืองอุบลราชธานี จังหวัดอุบลราชธานี 34000', 0, 1, 'R');
 
         } catch (\Exception $e) {
             echo $e->getMessage() . ' ' . $e->getLine();

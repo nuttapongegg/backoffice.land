@@ -56,6 +56,18 @@
                             </div>
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
+                                    <div class="row justify-content-end">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-text">
+                                                        <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="daterange_finx" placeholder="เริ่มหาวันที่ ถึง วันที่ (กรณีว่าง จะดึงข้อมูลทั้งหมด)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive double-scroll">
                                         <table class="table table-bordered text-nowrap border-bottom" id="tableFinxOn">
                                             <thead>
@@ -76,7 +88,7 @@
                                                     <th class="wd-20p text-center">เครดิต</th>
                                                     <th class="wd-20p text-center">ประเภทสินเชื่อ</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
-                                                    
+
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -116,6 +128,18 @@
                             </div>
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
+                                    <div class="row justify-content-end">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-text">
+                                                        <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="daterange_finx_close" placeholder="เริ่มหาวันที่ ถึง วันที่ (กรณีว่าง จะดึงข้อมูลทั้งหมด)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive double-scroll">
                                         <table class="table table-bordered text-nowrap border-bottom" id="tableFinxClose">
                                             <thead>

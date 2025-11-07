@@ -127,7 +127,9 @@ class Finx extends BaseController
 
     public function fetchAllFinxOn()
     {
-        $data_loanOn = $this->LoanModel->getAllDataFinxOn();
+        $date = $this->request->getGet('date') ?? '';
+
+        $data_loanOn = $this->LoanModel->getAllDataFinxOn($date);
 
         return $this->response->setJSON([
             'status' => 200,
@@ -139,7 +141,8 @@ class Finx extends BaseController
     public function finxHistory()
     {
         $post = $this->request->getPost();
-
+        // $param['data'] = $_REQUEST['date'] ?? '';
+        // px($post);
         $rows            = $this->LoanModel->_getAllDataFinxHistory($post);
         $recordsTotal    = (int) $this->LoanModel->countAllDataFinxHistory();
         $recordsFiltered = (int) $this->LoanModel->countFilteredDataFinxHistory($post);

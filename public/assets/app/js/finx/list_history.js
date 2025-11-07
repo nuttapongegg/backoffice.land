@@ -2,9 +2,19 @@
   callTableFinxHistory();
 })(jQuery);
 
+$(document).ready(function () {
+  flatpickr("#daterange_finx_close", {
+    mode: "range",
+    dateFormat: "Y-m-d",
+    onChange: function (selectedDates) {
+      tableFinxClose.ajax.reload();
+    },
+  });
+});
+
 function callTableFinxHistory() {
   $("#tableFinxClose").DataTable().clear().destroy();
-  tableStock = $("#tableFinxClose").DataTable({
+  tableFinxClose = $("#tableFinxClose").DataTable({
     responsive: false,
     oLanguage: {
       // sInfo: "กำลังแสดง หน้า _PAGE_ ใน _PAGES_",
@@ -31,6 +41,12 @@ function callTableFinxHistory() {
       type: "POST",
       url: serverUrl + "/finx/tableFinxHistory",
       data: function (d) {
+        const $date = $("#daterange_finx_close").val();
+        if ($date !== "") {
+          d.date = $date;
+        } else {
+          d.date = "";
+        }
         return d;
       },
     },

@@ -135,7 +135,8 @@ class LoanModel
     public function getAllDataLoanByCode($loan_code)
     {
         $sql = "SELECT loan.* , loan_customer.customer_fullname,loan_customer.customer_phone,loan_customer.customer_birthday,loan_customer.customer_card_id,loan_customer.customer_email,loan_customer.customer_gender,loan_customer.customer_address,
-            DATE_FORMAT(loan.loan_date_close, '%d-%m-%Y') as formatted_date,
+            DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') as formatted_date,
+            DATE_FORMAT(loan.loan_date_promise, '%d/%m/%Y') as formatted_ate_promise,
             (loan.loan_close_payment * 0.03) AS loan_payment_3percent,
             (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period 
             FROM loan
@@ -1204,8 +1205,24 @@ class LoanModel
         return $res->getRow();
     }
 
-    public function getAllDataFinxOn()
+    public function getAllDataFinxOn($date)
     {
+        if ($date) {
+            $dateExplode = explode(" to ", $date);
+            if (array_key_exists(1, $dateExplode)) {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[1];
+            } else {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[0];
+            }
+        }
+        $whereDate = '';
+
+        if (!empty($date)) {
+            $whereDate = "AND loan .loan_date_promise >= '$dateStart' AND loan .loan_date_promise <= '$dateEnd'";
+        }
+
         $sql = "SELECT * ,
         (SELECT COUNT(loan_payment_type) FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code) AS loan_payment_type,
         (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date,
@@ -1213,11 +1230,13 @@ class LoanModel
         (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period,
         TIMESTAMPDIFF(MONTH,(SELECT DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_period - 1) MONTH)  FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code),CURDATE()) AS loan_overdue
         FROM loan
-        WHERE loan.loan_status = 'ON_STATE' AND loan.loan_type = 'เงินสด'
+        WHERE loan.loan_status = 'ON_STATE' AND loan.loan_type = 'เงินสด' {$whereDate}
         ORDER BY loan.id DESC
         ";
 
         $builder = $this->db->query($sql);
+
+
         return $builder->getResult();
     }
 
@@ -1237,6 +1256,18 @@ class LoanModel
 
     private function DataFinxHistoryQuery($post_data)
     {
+        $date = $post_data['date'] ?? '';
+
+        if ($date) {
+            $dateExplode = explode(" to ", $date);
+            if (array_key_exists(1, $dateExplode)) {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[1];
+            } else {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[0];
+            }
+        }
 
         // Builder นี้ดัดแปลงจากคิวรี่ข้างบน
         $builder = $this->db->table('loan');
@@ -1258,8 +1289,16 @@ class LoanModel
          (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
          (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date
         ");
+
         $builder->where("loan_status = 'CLOSE_STATE'");
         $builder->where("loan_type = 'เงินสด'");
+
+        if (!empty($date)) {
+            $builder->where("loan.loan_date_close >=", $dateStart);
+            $builder->where("loan.loan_date_close <=", $dateEnd);
+        }
+        // $builder->where("loan.loan_date_close >= '$dateStart'");
+        // $builder->where("loan.loan_date_close <= '$dateEnd'");
 
         $i = 0;
         // loop searchable columns
@@ -1337,11 +1376,30 @@ class LoanModel
      */
     public function countFilteredDataFinxHistory(array $post): int
     {
+        $date = $post['date'] ?? '';
+
+        if ($date) {
+            $dateExplode = explode(" to ", $date);
+            if (array_key_exists(1, $dateExplode)) {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[1];
+            } else {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[0];
+            }
+        }
+
         $builder = $this->db->table('loan');
+
 
         // base where
         $builder->where('loan.loan_status', 'CLOSE_STATE')
             ->where('loan.loan_type', 'เงินสด');
+
+        if (!empty($date)) {
+            $builder->where("loan.loan_date_close >=", $dateStart);
+            $builder->where("loan.loan_date_close <=", $dateEnd);
+        }
 
         // search เหมือนด้านบน
         $search = trim($post['search']['value'] ?? '');

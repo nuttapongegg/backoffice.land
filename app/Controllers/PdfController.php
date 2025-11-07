@@ -240,7 +240,7 @@ class PdfController extends BaseController
         $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
         // set margins
-        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP + 13, PDF_MARGIN_RIGHT);
+        $pdf->SetMargins(PDF_MARGIN_LEFT - 11, PDF_MARGIN_TOP + 13, PDF_MARGIN_RIGHT - 10);
         $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
         $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
@@ -321,7 +321,7 @@ class PdfController extends BaseController
         $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
         // set margins
-        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP + 13, PDF_MARGIN_RIGHT);
+        $pdf->SetMargins(PDF_MARGIN_LEFT - 11, PDF_MARGIN_TOP + 13, PDF_MARGIN_RIGHT - 10);
         $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
         $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
@@ -398,7 +398,7 @@ class PdfController extends BaseController
         $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
         // set margins
-        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP + 13, PDF_MARGIN_RIGHT);
+        $pdf->SetMargins(PDF_MARGIN_LEFT - 11, PDF_MARGIN_TOP + 13, PDF_MARGIN_RIGHT - 10);
         $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
         $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
@@ -457,7 +457,7 @@ class PdfController extends BaseController
         $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
         // set margins
-        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP + 13, PDF_MARGIN_RIGHT);
+        $pdf->SetMargins(PDF_MARGIN_LEFT - 11, PDF_MARGIN_TOP + 13, PDF_MARGIN_RIGHT - 10);
         $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
         $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
@@ -470,7 +470,7 @@ class PdfController extends BaseController
         // set default font subsetting mode
         $pdf->setFontSubsetting(true);
 
-        $pdf->SetFont('thsarabun', '', 14, '', true);
+        $pdf->SetFont('thsarabun', '', 12, '', true);
 
         // Add a page
         // This method has several options, check the source code documentation for more information.

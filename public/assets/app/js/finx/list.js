@@ -6,17 +6,34 @@
     disableMobile: true,
   });
 
-  callTableFinx();
-
+  // callTableFinx();
 })(jQuery);
+
+$(document).ready(function () {
+  flatpickr("#daterange_finx", {
+    mode: "range",
+    dateFormat: "Y-m-d",
+    disableMobile: true,
+    onChange: function () {
+      callTableFinx();
+    },
+  });
+  
+  callTableFinx();
+});
+
 var count_loan = 0;
 
 function callTableFinx() {
   $("#tableFinxOn").DataTable().clear().destroy();
+
+  const date = $("#daterange_finx").val() || "";
+
   $.ajax({
     url: serverUrl + "/finx/tableFinxOn",
     dataType: "json",
     type: "get",
+    data: { date: date },
     success: function (response) {
       var result = JSON.parse(response.message);
       result.forEach(statusFinx);
@@ -167,7 +184,7 @@ function callAutoloenTable(data) {
         orderable: false,
         render: function (data, type, row) {
           let checked = data == 1 ? "checked" : "";
-          return `<input type="checkbox" class="row-check" data-id="${row.loan_code}" ${checked}>`;  // ใช้ row.loan_code ในการแทนค่า data-id
+          return `<input type="checkbox" class="row-check" data-id="${row.loan_code}" ${checked}>`; // ใช้ row.loan_code ในการแทนค่า data-id
         },
       },
       {
@@ -356,7 +373,9 @@ function callAutoloenTable(data) {
         }, 0);
 
       // Update footer
-      number_summary_no_vat_finx = parseFloat(Total_summary_no_vat_finx).toFixed(2);
+      number_summary_no_vat_finx = parseFloat(
+        Total_summary_no_vat_finx
+      ).toFixed(2);
       $(api.column(12).footer()).html(
         Number(number_summary_no_vat_finx).toLocaleString()
       );
@@ -365,7 +384,6 @@ function callAutoloenTable(data) {
       $(api.column(8).footer()).html(
         Number(number_summary_no_vat).toLocaleString()
       );
-
     },
     bFilter: true,
   });
@@ -422,30 +440,33 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
           });
 
           // ส่งข้อมูลไปยัง Google Sheets ผ่าน GAS
-          fetch('https://script.google.com/macros/s/AKfycby09PegXsfb_1SF7mZbyyAdY_zygCj6Cq8cuzcPdtPubcUETmEY5EsvZPl-KL5Jj1Lo/exec', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              loan_code: response.loan_code,
-              latitude: " ", //ตอนส่งไปต้องมีค่าไป
-              longitude: " ", //ตอนส่งไปต้องมีค่าไป
-              customer_name: response.customer_name,
-              loan_number: response.loan_number,
-              loan_area: response.loan_area,
-              loan_without_vat: response.loan_without_vat,
-            }),
-            mode: 'no-cors'  // ใช้โหมด no-cors
-          })
-          .then(response => {
-            // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
-            // console.log('Request sent');
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
-          
+          fetch(
+            "https://script.google.com/macros/s/AKfycby09PegXsfb_1SF7mZbyyAdY_zygCj6Cq8cuzcPdtPubcUETmEY5EsvZPl-KL5Jj1Lo/exec",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                loan_code: response.loan_code,
+                latitude: " ", //ตอนส่งไปต้องมีค่าไป
+                longitude: " ", //ตอนส่งไปต้องมีค่าไป
+                customer_name: response.customer_name,
+                loan_number: response.loan_number,
+                loan_area: response.loan_area,
+                loan_without_vat: response.loan_without_vat,
+              }),
+              mode: "no-cors", // ใช้โหมด no-cors
+            }
+          )
+            .then((response) => {
+              // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
+              // console.log('Request sent');
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+
           form.parsley().reset();
           form[0].reset();
           $(".btn-add-loan").text("บันทึก").prop("disabled", false); // 🔓 เปิดใช้งานอีกครั้ง
