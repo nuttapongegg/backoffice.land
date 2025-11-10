@@ -135,6 +135,7 @@ class LoanModel
     public function getAllDataLoanByCode($loan_code)
     {
         $sql = "SELECT loan.* , loan_customer.customer_fullname,loan_customer.customer_phone,loan_customer.customer_birthday,loan_customer.customer_card_id,loan_customer.customer_email,loan_customer.customer_gender,loan_customer.customer_address,
+            ROW_NUMBER() OVER (ORDER BY loan.loan_date_close ASC) AS seq,
             DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') as formatted_date,
             DATE_FORMAT(loan.loan_date_close, '%Y%m%d') as inv_date,
             DATE_FORMAT(loan.loan_date_promise, '%d/%m/%Y') as formatted_ate_promise,
@@ -1752,14 +1753,18 @@ class LoanModel
         $month        = $param['month'];
         $years        = $param['years'];
 
-        $sql = "SELECT loan.*, loan_customer.customer_fullname,
-                DATE_FORMAT(loan.loan_date_close, '%d-%m-%Y') as formatted_date,
+        $sql = "SELECT loan.*, loan_customer.customer_fullname,loan_customer.customer_phone,loan_customer.customer_birthday,loan_customer.customer_card_id,loan_customer.customer_email,loan_customer.customer_gender,loan_customer.customer_address,
+                ROW_NUMBER() OVER (ORDER BY loan.loan_date_close ASC) AS seq,
+                DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') as formatted_date,
+                DATE_FORMAT(loan.loan_date_close, '%Y%m%d') as inv_date,
+                DATE_FORMAT(loan.loan_date_promise, '%d/%m/%Y') as formatted_ate_promise,
                 (loan.loan_close_payment * 0.03) AS loan_payment_3percent
             FROM loan
             LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
             WHERE YEAR(loan.loan_date_close) = $years 
               AND MONTH(loan.loan_date_close) = $month 
-              AND loan.loan_type = 'เงินสด'";
+              AND loan.loan_type = 'เงินสด'
+            ORDER BY loan.loan_date_close ASC";
 
         $builder = $this->db->query($sql);
         return $builder->getResult();

@@ -617,7 +617,7 @@ class DocumentModel
         $years = $param['years'];
 
         $sql = "
-        SELECT DATE_FORMAT(documents.doc_date, '%d-%m-%Y') as formatted_date ,documents.doc_type , documents.price , documents.title, documents.note, documents.doc_number
+        SELECT DATE_FORMAT(documents.doc_date, '%d-%m-%Y') as formatted_date_doc ,documents.doc_type , documents.price , documents.title, documents.note, documents.doc_number
         FROM documents
         WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
         ";

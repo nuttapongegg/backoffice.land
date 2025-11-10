@@ -146,7 +146,10 @@
                                             <div class="inL">&nbsp;&nbsp;เลขที่ใบกำกับภาษี<br><span class="sub">&nbsp;&nbsp;&nbsp;Tax Invoice No.</span></div>
                                         </td>
                                         <td class="value" width="57%" valign="middle" align="right">
-                                            <div class="inR"><?php echo $finx->loan_code.$finx->inv_date ?>001&nbsp;&nbsp;</div>
+                                            <div class="inR">
+                                                <?php echo $finx->loan_code . $finx->inv_date . str_pad($finx->seq, 3, '0', STR_PAD_LEFT); ?>&nbsp;
+                                            </div>
+                                            <!-- <div class="inR"><php echo $finx->loan_code.$finx->inv_date.$finx->seq ?>&nbsp;&nbsp;</div> -->
                                         </td>
                                     </tr>
                                 </table>
@@ -191,10 +194,7 @@
             </tr>
         </table>
         <tr>
-            <th style="font-size: 8px;"></th>
-        </tr>
-        <tr>
-            <th style="font-size: 5px;"></th>
+            <th style="font-size: 15px;"></th>
         </tr>
         <tr>
             <th width="60%"><B style="font-size: 22px; color: #3F51B5;">รายการ / List</B></th>
