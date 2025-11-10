@@ -253,7 +253,7 @@ class PdfController extends BaseController
         // set default font subsetting mode
         $pdf->setFontSubsetting(true);
 
-        $pdf->SetFont('thsarabun', '', 12, '', true);
+        $pdf->SetFont('thsarabun', '', 11, '', true);
 
         // Add a page
         // This method has several options, check the source code documentation for more information.
@@ -300,7 +300,7 @@ class PdfController extends BaseController
         $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM - 10);
         $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
         $pdf->setFontSubsetting(true);
-        $pdf->SetFont('thsarabun', '', 12, '', true);
+        $pdf->SetFont('thsarabun', '', 11, '', true);
 
         // --------- สำคัญ: ไม่ AddPage ล่วงหน้า ---------
 
@@ -367,7 +367,7 @@ class PdfController extends BaseController
         $pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM - 10);
         $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
         $pdf->setFontSubsetting(true);
-        $pdf->SetFont('thsarabun', '', 12, '', true);
+        $pdf->SetFont('thsarabun', '', 11, '', true);
 
         // แปลงผลลัพธ์ให้เป็น array ปกติ (กันเคสที่ได้เป็น ResultInterface)
         if ($list instanceof \CodeIgniter\Database\ResultInterface) {
@@ -446,7 +446,7 @@ class PdfController extends BaseController
         // set default font subsetting mode
         $pdf->setFontSubsetting(true);
 
-        $pdf->SetFont('thsarabun', '', 12, '', true);
+        $pdf->SetFont('thsarabun', '', 11, '', true);
 
         // Add a page
         // This method has several options, check the source code documentation for more information.

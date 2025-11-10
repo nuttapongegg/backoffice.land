@@ -112,13 +112,13 @@
         </style>
         <table class="wrap" cellpadding="0" cellspacing="0">
             <tr>
-                <td width="34%" valign="top" style="height:140px;">
+                <td width="38%" valign="top" style="height:140px;">
                 </td>
 
                 <td width="1%"></td>
 
                 <!-- ตารางขวา -->
-                <td width="64%" valign="top">
+                <td width="60%" valign="top">
                     <table class="grid2" cellpadding="0" cellspacing="0">
                         <tr>
                             <td width="49%" class="cell"><table class="inner" cellpadding="0" cellspacing="0">

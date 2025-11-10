@@ -113,10 +113,10 @@
         </style>
         <table class="wrap" cellpadding="0" cellspacing="0">
             <tr>
-                <td width="34%" valign="top" style="height:140px;"><div class="card" style="border:1px solid #ddd; border-radius:10px; padding:20px 12px 20px 12px; line-height:16px;">
+                <td width="38%" valign="top" style="height:140px;"><div class="card" style="border:1px solid #ddd; border-radius:10px; padding:20px 12px 20px 12px; line-height:14px;">
                         <div style="font-size:18px; font-weight:bold; margin-bottom:6px;">&nbsp;&nbsp;&nbsp;<?php echo !empty($finx->customer_fullname) ? $finx->customer_fullname : '-' ?></div>
-                        <div style="font-size:13px; margin-bottom:10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo !empty($finx->customer_address) ? $finx->customer_address : '-' ?></div>
-                        <div style="font-size:13px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;เลขประจำตัวผู้เสียภาษี / TAX I.D.<?php echo !empty($finx->customer_card_id) ? $finx->customer_card_id : '-' ?></div>
+                        <div style="font-size:13px; margin-bottom:10px;">&nbsp;&nbsp;&nbsp;&nbsp;<?php echo !empty($finx->customer_address) ? $finx->customer_address : '-' ?></div>
+                        <div style="font-size:13px;">&nbsp;&nbsp;&nbsp;&nbsp;เลขประจำตัวผู้เสียภาษี / TAX I.D.<?php echo !empty($finx->customer_card_id) ? $finx->customer_card_id : '-' ?></div>
                     </div>
                 </td>
 
@@ -124,7 +124,7 @@
                 <td width="1%"></td>
 
                 <!-- ตารางขวา -->
-                <td width="64%" valign="top">
+                <td width="60%" valign="top">
                     <table class="grid2" cellpadding="0" cellspacing="0">
                         <tr>
                             <td width="49%" class="cell"><table class="inner" cellpadding="0" cellspacing="0">
@@ -147,7 +147,7 @@
                                         </td>
                                         <td class="value" width="57%" valign="middle" align="right">
                                             <div class="inR">
-                                                <?php echo $finx->loan_code . $finx->inv_date . str_pad($finx->seq, 3, '0', STR_PAD_LEFT); ?>&nbsp;
+                                                <?php echo $finx->loan_code . $finx->inv_date . str_pad($finx->seq, 3, '0', STR_PAD_LEFT); ?>&nbsp;&nbsp;
                                             </div>
                                             <!-- <div class="inR"><php echo $finx->loan_code.$finx->inv_date.$finx->seq ?>&nbsp;&nbsp;</div> -->
                                         </td>
