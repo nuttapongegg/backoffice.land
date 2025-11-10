@@ -136,6 +136,7 @@ class LoanModel
     {
         $sql = "SELECT loan.* , loan_customer.customer_fullname,loan_customer.customer_phone,loan_customer.customer_birthday,loan_customer.customer_card_id,loan_customer.customer_email,loan_customer.customer_gender,loan_customer.customer_address,
             DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') as formatted_date,
+            DATE_FORMAT(loan.loan_date_close, '%Y%m%d') as inv_date,
             DATE_FORMAT(loan.loan_date_promise, '%d/%m/%Y') as formatted_ate_promise,
             (loan.loan_close_payment * 0.03) AS loan_payment_3percent,
             (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period 

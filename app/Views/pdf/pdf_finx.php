@@ -134,7 +134,7 @@
                                     <div class="inL">&nbsp;&nbsp;เลขที่<br><span class="sub">&nbsp;&nbsp;&nbsp;No.</span></div>
                                     </td>
                                     <td class="value" width="57%" valign="middle" align="right">
-                                    <div class="inR">LOA000233&nbsp;&nbsp;&nbsp;</div>
+                                    <div class="inR"><?php echo $finx->loan_code ?>&nbsp;&nbsp;&nbsp;</div>
                                     </td>
                                 </tr>
                                 </table>
@@ -146,7 +146,7 @@
                                             <div class="inL">&nbsp;&nbsp;เลขที่ใบกำกับภาษี<br><span class="sub">&nbsp;&nbsp;&nbsp;Tax Invoice No.</span></div>
                                         </td>
                                         <td class="value" width="57%" valign="middle" align="right">
-                                            <div class="inR">LOA000233202509023001&nbsp;&nbsp;</div>
+                                            <div class="inR"><?php echo $finx->loan_code.$finx->inv_date ?>001&nbsp;&nbsp;</div>
                                         </td>
                                     </tr>
                                 </table>
