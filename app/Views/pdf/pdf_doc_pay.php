@@ -6,13 +6,15 @@
         <tr style="vertical-align:middle;">
             <td width="45%">
                 <br>
-                <span style="font-size:25px; font-weight:bold;">ใบเสร็จจ่ายเงิน / ใบกำกับภาษี</span><br>
-                <span style="font-size:23px; font-weight:bold;">Receipt / Tax Invoice</span>
+                <!-- <span style="font-size:25px; font-weight:bold;">ใบเสร็จจ่ายเงิน / ใบกำกับภาษี</span><br>
+                <span style="font-size:23px; font-weight:bold;">Receipt / Tax Invoice</span> -->
+                <span style="font-size:25px; font-weight:bold;">ใบเสร็จจ่ายเงิน</span><br>
+                <span style="font-size:23px; font-weight:bold;">Receipt</span>
             </td>
             <td width="54%" align="right" style="vertical-align:middle;">
                 <span>ทะเบียนเลขที่ / Registration No. 0345568003383</span><br>
                 <span>เลขประจำตัวผู้เสียภาษี / Tax ID. 0345568003383</span><br>
-                <span>สาขาที่ออกใบกำกับภาษี สาขาสำนักงานใหญ่ / Tax Invoice issued at head office</span><br>
+                <!-- <span>สาขาที่ออกใบกำกับภาษี สาขาสำนักงานใหญ่ / Tax Invoice issued at head office</span><br> -->
                 <span>เลขที่สาขา 00000</span>
             </td>
         </tr>
