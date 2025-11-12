@@ -13,11 +13,11 @@ class pdfDocPay extends TCPDF
         // Logo
         // $image_file = getenv('CDN_IMG').'/uploads/img/' . $data['website']->logo;
         // $image_file = 'https://stock.psnkp.co/assets/img/up2cars_dark.jpg';
-        $image_file = 'https://evxspst.sgp1.cdn.digitaloceanspaces.com/uploads/img/infinityX.png';
+        $image_file = 'https://evxspst.sgp1.cdn.digitaloceanspaces.com/uploads/img/logo_infinitex.jpg';
         /**
          * width : 50
          */
-        $this->Image($image_file, 20, 11, 50);
+        $this->Image($image_file, 8, 11, 45);
         // Set font
         // $this->SetFont('thsarabun', 'B', 11);
         // $this->SetX(70);
