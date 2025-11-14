@@ -413,13 +413,15 @@ class Finx extends BaseController
                         <table class="table border-0 mb-0">
                             <tbody>
                                 <tr>
-                                    <th class="border-top-0 bg-black-03 br-bs-5 br-ts-5 tx-15 wd-15p">เดือน</th>
-                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">เปิดสินเชื่อ</th>
-                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">ยอดรวม</th>
-                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">ชำระดอกเบี้ย</th>
+                                    <th class="border-top-0 bg-black-03 br-bs-5 br-ts-5 tx-15 wd-18p">เดือน</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-12p tx-right">เปิดสินเชื่อ</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-12p tx-right">ยอดรวมสินเชื่อ</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-12p tx-right">ชำระปิดบัญชี</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-12p tx-right">ชำระค่าธรรมเนียม</th>
                                     <th class="border-top-0 bg-black-03 tx-15 wd-5p tx-right"></th>
-                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">ชำระปิดบัญชี</th>
-                                    <th class="border-top-0 bg-black-03 tx-15 wd-15p tx-right">รายจ่าย</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-12p tx-right">รายจ่าย</th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-5p tx-right"></th>
+                                    <th class="border-top-0 bg-black-03 tx-15 wd-12p tx-right">รวมรับ/จ่าย</th>
                                     <th class="border-top-0 bg-black-03 tx-15 wd-5p tx-right"></th>
                                 </tr>';
 
@@ -449,6 +451,10 @@ class Finx extends BaseController
                     </td>
                     <td class="border-top-0" style="text-align: right;">' . number_format($Month_Payment[$m], 2) . '</td>
                     <td class="border-top-0" style="text-align: right;">
+                        <a href="javascript:void(0);" data-id="' . $m . '" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">'
+                    . number_format($Month_Loan_Close_Payment[$m], 2) . '</a>
+                    </td>
+                    <td class="border-top-0" style="text-align: right;">
                         <a href="javascript:void(0);" data-id="' . $m . '" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">'
                     . number_format($Month_Loan_Payment[$m], 2) . '</a>
                     </td>
@@ -461,16 +467,21 @@ class Finx extends BaseController
                         </div>
                     </td>
                     <td class="border-top-0" style="text-align: right;">
-                        <a href="javascript:void(0);" data-id="' . $m . '" id="Month_Loan_Close_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanClosePaymentMonth">'
-                    . number_format($Month_Loan_Close_Payment[$m], 2) . '</a>
-                    </td>
-                    <td class="border-top-0" style="text-align: right;">
                         <a href="javascript:void(0);" data-id="' . $m . '" id="Month_Doc_Pay_Month" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalDocumentsPayMonth">'
                     . number_format($Month_Doc_Pay_Years[$m], 2) . '</a>
                     </td>
                     <td class="border-top-0 p-0">
                         <div class="d-flex justify-content-center align-items-center" style="height:100%;">
                             <button type="button" class="btn btn-primary-light btn-icon pdf_loan_pay"
+                                data-month="' . $m . '" data-year="' . $data . '">
+                                <i class="fe fe-printer"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td class="border-top-0" style="text-align: right;">' . number_format($Month_Loan_Payment[$m] - $Month_Doc_Pay_Years[$m], 2) . '</td>
+                    <td class="border-top-0 p-0">
+                        <div class="d-flex justify-content-center align-items-center" style="height:100%;">
+                            <button type="button" class="btn btn-primary-light btn-icon pdf_monthly_statement"
                                 data-month="' . $m . '" data-year="' . $data . '">
                                 <i class="fe fe-printer"></i>
                             </button>
@@ -492,16 +503,22 @@ class Finx extends BaseController
                                     <p class="mb-0">' . number_format($Month_Payment_Sum, 2) . '</p>
                                 </td>
                                 <td class="border-top-0" style="text-align: right;">
+                                    <p class="mb-0">' . number_format($Month_Loan_Close_Payment_Sum, 2) . '</p>
+                                </td>
+                                <td class="border-top-0" style="text-align: right;">
                                     <p class="mb-0">' . number_format($Month_Loan_Payment_Sum, 2) . '</p>
                                 </td>
                                 <td class="border-top-0">
                                     <p class="mb-0"></p>
                                 </td>
                                 <td class="border-top-0" style="text-align: right;">
-                                    <p class="mb-0">' . number_format($Month_Loan_Close_Payment_Sum, 2) . '</p>
+                                    <p class="mb-0">' . number_format($Month_Doc_Pay_Years_Sum, 2) . '</p>
+                                </td>
+                                <td class="border-top-0">
+                                    <p class="mb-0"></p>
                                 </td>
                                 <td class="border-top-0" style="text-align: right;">
-                                    <p class="mb-0">' . number_format($Month_Doc_Pay_Years_Sum, 2) . '</p>
+                                    <p class="mb-0">' . number_format($Month_Loan_Payment_Sum - $Month_Doc_Pay_Years_Sum, 2) . '</p>
                                 </td>
                                 <td class="border-top-0">
                                     <p class="mb-0"></p>

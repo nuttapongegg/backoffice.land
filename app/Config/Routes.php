@@ -46,6 +46,7 @@ $routes->get('pdf_doc_pay/(:any)', 'PdfController::PDF_Doc_Pay/$1', ['filter' =>
 $routes->get('pdf_loan_pay/(:any)/(:any)', 'PdfController::pdf_Loan_Pay/$1/$2', ['filter' => 'employeeAuth']);
 $routes->get('pdf_finx_receipt/(:any)/(:any)', 'PdfController::pdf_Finx_Receipt/$1/$2', ['filter' => 'employeeAuth']);
 $routes->get('pdf_finx/(:any)', 'PdfController::PDF_Finx/$1', ['filter' => 'employeeAuth']);
+$routes->get('pdf_monthly_statement/(:any)/(:any)', 'PdfController::pdf_MonthlyStatement/$1/$2', ['filter' => 'employeeAuth']);
 
 //สินเชื่อ loan
 $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {

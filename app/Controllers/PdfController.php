@@ -464,4 +464,78 @@ class PdfController extends BaseController
         // This method has several options, check the source code documentation for more information.
         $pdf->Output('PDF_Finx_' . $data['finx']->loan_code . '.pdf', 'I');
     }
+
+    public function pdf_MonthlyStatement($month, $year)
+    {
+        $this->LoanModel     = new \App\Models\LoanModel();
+        $this->DocumentModel = new \App\Models\DocumentModel();
+
+        $param = [
+            'month' => $month,
+            'years' => $year,
+        ];
+
+        // รับ  (เงินจากลูกค้า / ไฟแนนซ์)
+        $recvs = $this->LoanModel->getFinxPaymentSumMonth($param);
+
+        // จ่าย (ใบสำคัญจ่าย / ค่าใช้จ่ายอื่น ๆ)
+        $pays  = $this->DocumentModel->getDocumentsPaySumMonthAll($param);
+
+        // ให้ทั้งสองอันเป็น list แล้ววนหายอดรวมเอง
+        $total_recv = 0;
+        foreach ($recvs as $r) {
+            $total_recv += (float) $r->amount;      // แก้ชื่อฟิลด์ amount ให้ตรงกับ query ของคุณ
+        }
+
+        $total_pay = 0;
+        foreach ($pays as $p) {
+            $total_pay += (float) $p->amount;       // แก้ชื่อฟิลด์ amount ให้ตรงกับ query ของคุณ
+        }
+
+        $net_total = $total_recv - $total_pay;
+
+        $data = [
+            'month'      => $month,
+            'year'       => $year,
+            'recvs'      => $recvs,
+            'pays'       => $pays,
+            'total_recv' => $total_recv,
+            'total_pay'  => $total_pay,
+            'net_total'  => $net_total,
+        ];
+
+        // ---------- สร้าง PDF ----------
+        $pdf = new pdfFinxReceipt(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetTitle('ใบสรุปยอดรับ-จ่ายประจำเดือน');
+
+        $pdf->SetHeaderData(
+            PDF_HEADER_LOGO,
+            PDF_HEADER_LOGO_WIDTH,
+            'รายงานรับ-จ่ายประจำเดือน',
+            'ประจำเดือน ' . sprintf('%02d', $month) . '/' . $year
+        );
+
+        $pdf->setHeaderFont([PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN]);
+        $pdf->setFooterFont([PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA]);
+        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+        $pdf->SetMargins(PDF_MARGIN_LEFT - 11, PDF_MARGIN_TOP + 13, PDF_MARGIN_RIGHT - 10);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+        $pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM - 10);
+
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+        $pdf->setFontSubsetting(true);
+        $pdf->SetFont('thsarabun', '', 12, '', true);
+
+        $pdf->AddPage('P', 'A4');
+
+        $html = view('pdf/monthly_statement.php', $data);
+        $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 0, 0, true, '', true);
+
+        $this->response->setContentType('application/pdf');
+        $pdf->Output('Monthly_Statement_' . $month . '-' . $year . '.pdf', 'I');
+    }
 }

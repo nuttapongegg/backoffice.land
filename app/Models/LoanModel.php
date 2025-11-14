@@ -1769,4 +1769,23 @@ class LoanModel
         $builder = $this->db->query($sql);
         return $builder->getResult();
     }
+
+    public function getFinxPaymentSumMonth($param) {
+        $month = (int)$param['month'];
+        $years = (int)$param['years'];
+
+        $sql = "SELECT 
+                ROW_NUMBER() OVER (ORDER BY loan_date_close ASC, loan_code ASC) AS seq,
+                'pay' AS kind,
+                loan.loan_code AS doc_no,
+                DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') AS doc_date,
+                CONCAT('ค่าธรรมเนียม ', COALESCE(loan.loan_address, '')) AS title,
+                (loan.loan_close_payment * 0.03) AS amount
+                FROM loan
+                WHERE YEAR(loan_date_close) = {$years}
+                AND MONTH(loan_date_close) = {$month}
+                AND loan_type = 'เงินสด'
+                ORDER BY loan_date_close ASC, loan_code ASC";
+        return $this->db->query($sql)->getResult();
+    }
 }

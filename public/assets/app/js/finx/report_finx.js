@@ -366,4 +366,16 @@ $(document).ready(function () {
             "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 "
         );
     });
+
+    $('body').on('click', '.pdf_monthly_statement', function () {
+        var month = $(this).attr('data-month');
+        var year = $(this).attr('data-year');
+        let url = `${serverUrl}/pdf_monthly_statement/` + month +'/'+ year;
+
+        window.open(
+            url,
+            "Doc",
+            "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 "
+        );
+    });
 });

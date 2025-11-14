@@ -828,4 +828,22 @@ class DocumentModel
         $builder = $this->db->query($sql, [$amount, $date, $time]);
         return $builder->getRow();
     }
+
+    public function getDocumentsPaySumMonthAll($param) {
+        $month = (int)$param['month'];
+        $years = (int)$param['years'];
+
+        $sql = "SELECT 
+                ROW_NUMBER() OVER (ORDER BY doc_date ASC, doc_number ASC) AS seq,
+                'recv' AS kind,
+                doc_number AS doc_no,
+                DATE_FORMAT(doc_date, '%d/%m/%Y') AS doc_date,
+                title,
+                price AS amount
+                FROM documents
+                WHERE YEAR(doc_date) = {$years}
+                AND MONTH(doc_date) = {$month}
+                ORDER BY doc_date ASC, doc_number ASC";
+        return $this->db->query($sql)->getResult();
+    }
 }
