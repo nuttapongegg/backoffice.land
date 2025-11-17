@@ -185,56 +185,56 @@
     </div>
 
     <table class="t">
-        <tr>
-            <th class="th thh center mt-5" width="5%">#</th>
-            <th class="th thh center" width="13%">เลขที่<br /><span class="small">Finx No.</span>
-            </th>
-            <th class="th thh center" width="12%">วันที่<br /><span class="small">Date</span>
-            </th>
-            <th class="th thh center" width="55%">รายละเอียด<br /><span class="small">Details</span>
-            </th>
-            <th class="th thh right" width="15%">จำนวนเงิน (บาท)<br /><span class="small">Amount (THB)</span>
-            </th>
-        </tr>
+        <thead>
+            <tr>
+                <th class="th thh center mt-5" width="5%">#</th>
+                <th class="th thh center" width="13%">เลขที่<br /><span class="small">Finx No.</span></th>
+                <th class="th thh center" width="12%">วันที่<br /><span class="small">Date</span></th>
+                <th class="th thh center" width="55%">รายละเอียด<br /><span class="small">Details</span></th>
+                <th class="th thh right" width="15%">จำนวนเงิน (บาท)<br /><span class="small">Amount (THB)</span></th>
+            </tr>
+        </thead>
 
-        <?php if (empty($recvs)): ?>
-            <tr>
-                <td class="td center" colspan="5">- ไม่มีรายการรับในเดือนนี้ -</td>
-            </tr>
-        <?php else: ?>
-            <?php $i = 1;
-            foreach ($recvs as $r): ?>
+        <tbody>
+            <?php if (empty($recvs)): ?>
                 <tr>
-                    <td class="td center"><?= $i++ ?></td>
-                    <td class="td center">
-                        <?= isset($r->doc_no) ? $r->doc_no : (isset($r->loan_code) ? $r->loan_code : '-') ?>
-                    </td>
-                    <td class="td center">
-                        <?= isset($r->doc_date) ? $r->doc_date : (isset($r->formatted_date) ? $r->formatted_date : '') ?>
-                    </td>
-                    <td class="td">
-                        <?php
-                        // เลือก title ตามที่มีอยู่จริง
-                        if (isset($r->title) && $r->title !== '') {
-                            echo $r->title;
-                        } elseif (isset($r->loan_address)) {
-                            echo $r->loan_address;
-                        } else {
-                            echo '-';
-                        }
-                        ?>
-                    </td>
-                    <td class="td right">
-                        <?= number_format((float) (isset($r->amount) ? $r->amount : (isset($r->loan_payment_3percent) ? $r->loan_payment_3percent : 0)), 2) ?>
-                    </td>
+                    <td class="td center" colspan="5">- ไม่มีรายการรับในเดือนนี้ -</td>
                 </tr>
-            <?php endforeach; ?>
-            <tr>
-                <td class="td right" colspan="4"><b>รวมรายการรับทั้งหมด / Total Receipts</b></td>
-                <td class="td right"><b><?= number_format($total_recv, 2) ?></b></td>
-            </tr>
-        <?php endif; ?>
+            <?php else: ?>
+                <?php $i = 1;
+                foreach ($recvs as $r): ?>
+                    <tr>
+                        <td class="td center" width="5%"><?= $i++ ?></td>
+                        <td class="td center" width="13%">
+                            <?= isset($r->doc_no) ? $r->doc_no : (isset($r->loan_code) ? $r->loan_code : '-') ?>
+                        </td>
+                        <td class="td center" width="12%">
+                            <?= isset($r->doc_date) ? $r->doc_date : (isset($r->formatted_date) ? $r->formatted_date : '') ?>
+                        </td>
+                        <td class="td" width="55%">
+                            <?php
+                            if (!empty($r->title)) {
+                                echo $r->title;
+                            } elseif (!empty($r->loan_address)) {
+                                echo $r->loan_address;
+                            } else {
+                                echo '-';
+                            }
+                            ?>
+                        </td>
+                        <td class="td right" width="15%">
+                            <?= number_format((float) (!empty($r->amount) ? $r->amount : (!empty($r->loan_payment_3percent) ? $r->loan_payment_3percent : 0)), 2) ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                <tr>
+                    <td class="td right" colspan="4"><b>รวมรายการรับทั้งหมด / Total Receipts</b></td>
+                    <td class="td right"><b><?= number_format($total_recv, 2) ?></b></td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
     </table>
+
 
     <div class="mt8"></div>
 
@@ -244,63 +244,64 @@
     </div>
 
     <table class="t">
-        <tr>
-            <th class="th thh center" width="5%">#</th>
-            <th class="th thh center" width="13%">เลขที่<br /><span class="small">Document No.</span>
-            </th>
-            <th class="th thh center" width="12%">วันที่<br /><span class="small">Date</span>
-            </th>
-            <th class="th thh center" width="55%">รายละเอียด<br /><span class="small">Details</span>
-            </th>
-            <th class="th thh right" width="15%">จำนวนเงิน (บาท)<br /><span class="small">Amount (THB)</span>
-            </th>
-        </tr>
-
-        <?php if (empty($pays)): ?>
+        <thead>
             <tr>
-                <td class="td center" colspan="5">- ไม่มีรายการจ่ายในเดือนนี้ -</td>
+                <th class="th thh center" width="5%">#</th>
+                <th class="th thh center" width="13%">เลขที่<br /><span class="small">Document No.</span></th>
+                <th class="th thh center" width="12%">วันที่<br /><span class="small">Date</span></th>
+                <th class="th thh center" width="55%">รายละเอียด<br /><span class="small">Details</span></th>
+                <th class="th thh right" width="15%">จำนวนเงิน (บาท)<br /><span class="small">Amount (THB)</span></th>
             </tr>
-        <?php else: ?>
-            <?php $j = 1;
-            foreach ($pays as $p): ?>
+        </thead>
+
+        <tbody>
+            <?php if (empty($pays)): ?>
                 <tr>
-                    <td class="td center"><?= $j++ ?></td>
-                    <td class="td">
-                        <?= isset($p->doc_no) ? $p->doc_no : (isset($p->doc_number) ? $p->doc_number : '-') ?>
-                    </td>
-                    <td class="td center">
-                        <?= isset($p->doc_date) ? $p->doc_date : (isset($p->formatted_date_doc) ? $p->formatted_date_doc : '') ?>
-                    </td>
-                    <td class="td">
-                        <?php
-                        if (isset($p->title) && $p->title !== '') {
-                            echo $p->title;
-                        } elseif (isset($p->note) && $p->note !== '') {
-                            echo $p->note;
-                        } else {
-                            echo '-';
-                        }
-                        ?>
-                    </td>
+                    <td class="td center" colspan="5">- ไม่มีรายการจ่ายในเดือนนี้ -</td>
+                </tr>
+            <?php else: ?>
+                <?php $j = 1;
+                foreach ($pays as $p): ?>
+                    <tr>
+                        <td class="td center" width="5%"><?= $j++ ?></td>
+                        <td class="td" width="13%">
+                            <?= isset($p->doc_no) ? $p->doc_no : (isset($p->doc_number) ? $p->doc_number : '-') ?>
+                        </td>
+                        <td class="td center" width="12%">
+                            <?= isset($p->doc_date) ? $p->doc_date : (isset($p->formatted_date_doc) ? $p->formatted_date_doc : '') ?>
+                        </td>
+                        <td class="td" width="55%">
+                            <?php
+                            if (!empty($p->title)) {
+                                echo $p->title;
+                            } elseif (!empty($p->note)) {
+                                echo $p->note;
+                            } else {
+                                echo '-';
+                            }
+                            ?>
+                        </td>
+                        <td class="td right" width="15%">
+                            <?= number_format((float) (!empty($p->amount) ? $p->amount : (!empty($p->price) ? $p->price : 0)), 2) ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                <tr>
+                    <td class="td right" colspan="4"><b>รวมรายการจ่ายทั้งหมด / Total Payments</b></td>
+                    <td class="td right"><b><?= number_format($total_pay, 2) ?></b></td>
+                </tr>
+                <tr>
+                    <td class="td right" colspan="4"><b>ยอดสุทธิ (รับ - จ่าย) / Net</b></td>
                     <td class="td right">
-                        <?= number_format((float) (isset($p->amount) ? $p->amount : (isset($p->price) ? $p->price : 0)), 2) ?>
+                        <b style="color:<?= $net_total >= 0 ? '#2e7d32' : '#c62828' ?>;">
+                            <?= number_format($net_total, 2) ?>
+                        </b>
                     </td>
                 </tr>
-            <?php endforeach; ?>
-            <tr>
-                <td class="td right" colspan="4"><b>รวมรายการจ่ายทั้งหมด / Total Payments</b></td>
-                <td class="td right"><b><?= number_format($total_pay, 2) ?></b></td>
-            </tr>
-            <tr>
-                <td class="td right" colspan="4"><b>ยอดสุทธิ (รับ - จ่าย) / Net</b></td>
-                <td class="td right">
-                    <b style="color:<?= $net_total >= 0 ? '#2e7d32' : '#c62828' ?>;">
-                        <?= number_format($net_total, 2) ?>
-                    </b>
-                </td>
-            </tr>
-        <?php endif; ?>
+            <?php endif; ?>
+        </tbody>
     </table>
+
 
 </body>
 
