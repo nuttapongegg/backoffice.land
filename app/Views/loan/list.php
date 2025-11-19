@@ -56,6 +56,18 @@
                             </div>
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
+                                    <div class="row justify-content-end">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-text">
+                                                        <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="daterange_loan" placeholder="เริ่มหาวันที่ ถึง วันที่ (กรณีว่าง จะดึงข้อมูลทั้งหมด)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive double-scroll">
                                         <table class="table table-bordered text-nowrap border-bottom" id="tableLoanOn">
                                             <thead>
@@ -74,7 +86,7 @@
                                                     <th class="wd-30p text-center">เกินกำหนดชำระ</th>
                                                     <th class="wd-30p text-center">ยอดค้างชำระ</th>
                                                     <th class="wd-30p text-center">ชำระแล้วเป็นเงิน</th>
-                                                    <th class="wd-30p text-center">เงินที่ต้องชำระคงเหลือ</th>
+                                                    <th class="wd-30p text-center">ROI</th>
                                                     <th class="wd-30p text-center">งวดละ</th>
                                                     <th class="wd-20p text-center">เครดิต</th>
                                                     <th class="wd-20p text-center">ประเภทสินเชื่อ</th>
@@ -126,6 +138,18 @@
                             </div>
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
+                                    <div class="row justify-content-end">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-text">
+                                                        <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="daterange_loan_payments" placeholder="เริ่มหาวันที่ ถึง วันที่ (กรณีว่าง จะดึงข้อมูลทั้งหมด)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive double-scroll">
                                         <table class="table table-bordered text-nowrap border-bottom" id="tableLoanPayments">
                                             <thead>
@@ -166,6 +190,18 @@
                             </div>
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
+                                    <div class="row justify-content-end">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-text">
+                                                        <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="daterange_loan_close" placeholder="เริ่มหาวันที่ ถึง วันที่ (กรณีว่าง จะดึงข้อมูลทั้งหมด)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive double-scroll">
                                         <table class="table table-bordered text-nowrap border-bottom" id="tableLoanClose">
                                             <thead>
@@ -189,7 +225,7 @@
                                                     <th class="wd-30p text-center">จำนวนงวด</th>
                                                     <th class="wd-30p text-center">ชำระแล้ว</th>
                                                     <th class="wd-30p text-center">งวดละ</th>
-                                                    <th class="wd-30p text-center">เงินที่ต้องชำระคงเหลือ</th>
+                                                    <th class="wd-30p text-center">ROI</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
                                                 </tr>
                                             </thead>

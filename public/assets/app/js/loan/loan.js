@@ -6,18 +6,48 @@
     disableMobile: true,
   });
 
-  callTableLoan();
-  callTableLoanPayments();
-
+  // callTableLoan();
+  // callTableLoanPayments();
 })(jQuery);
+
+$(document).ready(function () {
+  flatpickr("#daterange_loan", {
+    mode: "range",
+    dateFormat: "Y-m-d",
+    disableMobile: true,
+    onChange: function () {
+      callTableLoan();
+    },
+  });
+
+  callTableLoan();
+});
+
+$(document).ready(function () {
+  flatpickr("#daterange_loan_payments", {
+    mode: "range",
+    dateFormat: "Y-m-d",
+    disableMobile: true,
+    onChange: function () {
+      callTableLoanPayments();
+    },
+  });
+
+  callTableLoanPayments();
+});
+
 var count_loan = 0;
 
 function callTableLoan() {
   $("#tableLoanOn").DataTable().clear().destroy();
+
+  const date = $("#daterange_loan").val() || "";
+
   $.ajax({
     url: serverUrl + "/loan/tableLoan",
     dataType: "json",
     type: "get",
+    data: { date: date },
     success: function (response) {
       var result = JSON.parse(response.message);
       result.forEach(statusLoan);
@@ -285,11 +315,11 @@ function callAutoloenTable(data) {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
-          var summary_all =
-            data["loan_sum_interest"] - data["loan_payment_sum_installment"];
+          var roi =
+             ((data["loan_payment_sum_installment"] / data["loan_summary_no_vat"]) * 100);
           return (
             "<font>" +
-            new Intl.NumberFormat().format(Number(summary_all).toFixed(2)) +
+            new Intl.NumberFormat().format(Number(roi)) +'%'+
             "</font>"
           );
         },
@@ -445,16 +475,16 @@ function callAutoloenTable(data) {
           return intVal(a) + intVal(b.loan_payment_month); // Handle formatted numbers
         }, 0);
 
-      Total_sum_remaining_payment = api
-        .column(14, { page: "current" })
-        .data()
-        .reduce(function (a, b) {
-          return (
-            intVal(a) +
-            (intVal(b.loan_sum_interest) -
-              intVal(b.loan_payment_sum_installment))
-          );
-        }, 0);
+      // Total_sum_remaining_payment = api
+      //   .column(14, { page: "current" })
+      //   .data()
+      //   .reduce(function (a, b) {
+      //     return (
+      //       intVal(a) +
+      //       (intVal(b.loan_sum_interest) -
+      //         intVal(b.loan_payment_sum_installment))
+      //     );
+      //   }, 0);
 
       Total_summary_no_vat = api
         .column(8, { page: "current" })
@@ -504,12 +534,12 @@ function callAutoloenTable(data) {
         Number(number_payment_month).toLocaleString()
       );
 
-      number_sum_remaining_payment = parseFloat(
-        Total_sum_remaining_payment
-      ).toFixed(2);
-      $(api.column(14).footer()).html(
-        Number(number_sum_remaining_payment).toLocaleString()
-      );
+      // number_sum_remaining_payment = parseFloat(
+      //   Total_sum_remaining_payment
+      // ).toFixed(2);
+      // $(api.column(14).footer()).html(
+      //   Number(number_sum_remaining_payment).toLocaleString()
+      // );
 
       number_payment_sum_installment = parseFloat(
         Total_payment_sum_installment
@@ -527,7 +557,6 @@ function callAutoloenTable(data) {
       $(api.column(8).footer()).html(
         Number(number_summary_no_vat).toLocaleString()
       );
-
     },
     bFilter: true,
   });
@@ -766,10 +795,14 @@ $(".tabPaymentType").on("click", function () {
 
 function callTableLoanPayments() {
   $("#tableLoanPayments").DataTable().clear().destroy();
+
+  const date = $("#daterange_loan_payments").val() || "";
+
   $.ajax({
     url: serverUrl + "/loan/tableLoanPayments",
     dataType: "json",
     type: "get",
+    data: { date: date },
     success: function (response) {
       var result = JSON.parse(response.message);
       callAutoloenTablePayments(result);

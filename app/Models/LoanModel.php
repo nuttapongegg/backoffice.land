@@ -102,8 +102,24 @@ class LoanModel
         $this->order_finx = array('loan.loan_code' => 'DESC');
     }
 
-    public function getAllDataLoanOn()
+    public function getAllDataLoanOn($date)
     {
+        if ($date) {
+            $dateExplode = explode(" to ", $date);
+            if (array_key_exists(1, $dateExplode)) {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[1];
+            } else {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[0];
+            }
+        }
+        $whereDate = '';
+
+        if (!empty($date)) {
+            $whereDate = "AND loan.loan_date_promise >= '$dateStart' AND loan.loan_date_promise <= '$dateEnd'";
+        }
+
         $sql = "SELECT * ,
         (SELECT COUNT(loan_payment_type) FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code) AS loan_payment_type,
         (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date,
@@ -111,7 +127,8 @@ class LoanModel
         (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period,
         TIMESTAMPDIFF(MONTH,(SELECT DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_period - 1) MONTH)  FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code),CURDATE()) AS loan_overdue
         FROM loan
-        WHERE loan.loan_status = 'ON_STATE' ORDER BY loan.id DESC
+        WHERE loan.loan_status = 'ON_STATE' {$whereDate}
+        ORDER BY loan.id DESC
         ";
 
         $builder = $this->db->query($sql);
@@ -306,6 +323,18 @@ class LoanModel
 
     private function DataLoanHistoryQuery($post_data)
     {
+        $date = $post_data['date'] ?? '';
+
+        if ($date) {
+            $dateExplode = explode(" to ", $date);
+            if (array_key_exists(1, $dateExplode)) {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[1];
+            } else {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[0];
+            }
+        }
 
         // Builder นี้ดัดแปลงจากคิวรี่ข้างบน
         $builder = $this->db->table('loan');
@@ -337,6 +366,11 @@ class LoanModel
          (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date
         ");
         $builder->where("loan_status = 'CLOSE_STATE'");
+
+        if (!empty($date)) {
+            $builder->where("loan.loan_date_close >=", $dateStart);
+            $builder->where("loan.loan_date_close <=", $dateEnd);
+        }
 
         $i = 0;
         // loop searchable columns
@@ -382,29 +416,84 @@ class LoanModel
         return $builder;
     }
 
-    public function getAllDataLoanHistoryFilter()
-    {
+    // public function getAllDataLoanHistoryFilter()
+    // {
 
-        $sql = "
-        SELECT * FROM loan
-        WHERE loan.loan_status = 'CLOSE_STATE' ORDER BY loan.id DESC
-        ";
+    //     $sql = "
+    //     SELECT * FROM loan
+    //     WHERE loan.loan_status = 'CLOSE_STATE' ORDER BY loan.id DESC
+    //     ";
 
-        $builder = $this->db->query($sql);
-        return $builder->getResult();
-    }
+    //     $builder = $this->db->query($sql);
+    //     return $builder->getResult();
+    // }
 
     public function countAllDataLoanHistory()
     {
-
-        $sql = "
-        SELECT count(loan.id) AS count_data FROM loan
-        WHERE loan.loan_status = 'CLOSE_STATE' ORDER BY loan.id DESC
-        ";
-
-        $builder = $this->db->query($sql);
-        return $builder->getResult();
+        return $this->db->table('loan')
+            ->where('loan.loan_status', 'CLOSE_STATE')
+            ->countAllResults();
     }
+
+    // public function countAllDataLoanHistory()
+    // {
+
+    //     $sql = "
+    //     SELECT count(loan.id) AS count_data FROM loan
+    //     WHERE loan.loan_status = 'CLOSE_STATE' ORDER BY loan.id DESC
+    //     ";
+
+    //     $builder = $this->db->query($sql);
+    //     return $builder->getResult();
+    // }
+
+    public function getAllDataLoanHistoryFilter(array $post): int
+    {
+        $date = $post['date'] ?? '';
+
+        if ($date) {
+            $dateExplode = explode(" to ", $date);
+            if (array_key_exists(1, $dateExplode)) {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[1];
+            } else {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[0];
+            }
+        }
+
+        $builder = $this->db->table('loan');
+
+
+        // base where
+        $builder->where('loan.loan_status', 'CLOSE_STATE');
+
+        if (!empty($date)) {
+            $builder->where("loan.loan_date_close >=", $dateStart);
+            $builder->where("loan.loan_date_close <=", $dateEnd);
+        }
+
+        // search เหมือนด้านบน
+        $search = trim($post['search']['value'] ?? '');
+        if ($search !== '') {
+            $kw = $this->db->escapeLikeString($search);
+
+            $builder->groupStart();
+            foreach ($this->column_search as $item) {
+                if (strpos($item, '.') !== false) {
+                    [$tbl, $col] = explode('.', $item, 2);
+                    $raw = "`{$tbl}`.`{$col}` LIKE '%{$kw}%'";
+                } else {
+                    $raw = "`{$item}` LIKE '%{$kw}%'";
+                }
+                $builder->orWhere($raw, null, false);
+            }
+            $builder->groupEnd();
+        }
+
+        return $builder->countAllResults();
+    }
+
 
     public function insertpayment($payment_data)
     {
@@ -850,12 +939,28 @@ class LoanModel
         return $builder->getResult();
     }
 
-    public function getAllDataLoanPayments()
+    public function getAllDataLoanPayments($date)
     {
+        if ($date) {
+            $dateExplode = explode(" to ", $date);
+            if (array_key_exists(1, $dateExplode)) {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[1];
+            } else {
+                $dateStart = $dateExplode[0];
+                $dateEnd = $dateExplode[0];
+            }
+        }
+        $whereDate = '';
+
+        if (!empty($date)) {
+            $whereDate = "AND DATE(setting_land_report.created_at) >= '$dateStart' AND DATE(setting_land_report.created_at) <= '$dateEnd'";
+        }
+        
         $sql = "SELECT setting_land_report.*, setting_land.land_account_name
                 FROM setting_land_report
                 JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
-                WHERE setting_land_report_detail LIKE 'ชำระสินเชื่อ%' OR setting_land_report_detail LIKE 'เปิดสินเชื่อ%' OR setting_land_report_detail LIKE 'ลบสินเชื่อ%'
+                WHERE (setting_land_report_detail LIKE 'ชำระสินเชื่อ%' OR setting_land_report_detail LIKE 'เปิดสินเชื่อ%' OR setting_land_report_detail LIKE 'ลบสินเชื่อ%') {$whereDate}
                 ORDER BY setting_land_report.id DESC;
         ";
 
@@ -1770,7 +1875,8 @@ class LoanModel
         return $builder->getResult();
     }
 
-    public function getFinxPaymentSumMonth($param) {
+    public function getFinxPaymentSumMonth($param)
+    {
         $month = (int)$param['month'];
         $years = (int)$param['years'];
 

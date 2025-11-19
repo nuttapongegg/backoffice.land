@@ -140,6 +140,19 @@ function loadLoan(loanCode) {
       $("#open_loan_payment").val(response.message.loan_summary_no_vat);
 
       payNow = response.message.loan_payment_month;
+
+      let loan_ROI = (( loan_payment_sum_installment / loanAmount) * 100);
+
+      let loan_YTD_Realized = (( loan_payment_sum_installment / loanAmount) * 100);
+
+      let loan_YTD_Planned = (( loan_payment_sum_installment / loanAmount) * 100);
+
+      $("#loan_roi").val(loan_ROI);
+      $("#loan_nim").val(loan_ROI);
+      // $("#loan_ytd_realized").val(loan_YTD_Realized);
+      // $("#loan_ytd_planned").val(loan_YTD_Planned);
+      // $("#loan_ytd_gap").val(loan_ROI);
+      // $("#loan_duration").val(loan_ROI);
     },
   });
 

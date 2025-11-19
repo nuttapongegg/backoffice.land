@@ -28,8 +28,8 @@
                                 <li class="nav-item" id="detail_car_name"><a class="nav-link thumb active" data-bs-toggle="tab" href="#detail_loan"><i class="fe fe-home"></i> รายละเอียดสินเชื่อ</a></li>
                                 <li class="nav-item" id="contract_loan"><a class="nav-link thumb pdf_loan" id='<?php echo $loanData->loan_code; ?>' data-bs-toggle="tab" href="#"><i class="fa fa-clipboard"></i> หนังสือสัญญากู้เงิน</a></li>
                                 <!-- <php if (session()->get('positionID') != 0) { ?> -->
-                                    <li class="nav-item" id="table_loan"><a class="nav-link thumb pdf_installment_schedule" id='<?php echo $loanData->loan_code; ?>' data-bs-toggle="tab" href="#"><i class="far fa-newspaper"></i> ตารางการผ่อนชำระ</a></li>
-                                    <li class="nav-item" id="pay_loan"><a class="nav-link thumb" data-bs-toggle="tab" href="#payment_loan"><i class="fab fa-cc-stripe"></i> ชำระสินเชื่อ</a></li>
+                                <li class="nav-item" id="table_loan"><a class="nav-link thumb pdf_installment_schedule" id='<?php echo $loanData->loan_code; ?>' data-bs-toggle="tab" href="#"><i class="far fa-newspaper"></i> ตารางการผ่อนชำระ</a></li>
+                                <li class="nav-item" id="pay_loan"><a class="nav-link thumb" data-bs-toggle="tab" href="#payment_loan"><i class="fab fa-cc-stripe"></i> ชำระสินเชื่อ</a></li>
                                 <!-- <php } ?> -->
                                 <li class="nav-item car_cancel_btn"><a class="nav-link thumb" id='<?php echo $loanData->loan_code; ?>' href="javascript:cancelLoan(this.id);"><i class="fa fa-trash"></i> ยกเลิกสินเชื่อ</a></li>
                             </ul>
@@ -163,7 +163,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="input-group mb-3">
-                                                        <input aria-describedby="basic-addon2" aria-label="" class="form-control price" placeholder="" value="0" name="loan_without_vat" id="loan_without_vat" pattern="/^-?\d+\.?\d*$/" onkeypress="if(this.value.length==10) return false;" type="number" required readonly>
+                                                        <input aria-describedby="basic-addon2" aria-label="" class="form-control tx-right price" placeholder="" value="0" name="loan_without_vat" id="loan_without_vat" pattern="/^-?\d+\.?\d*$/" onkeypress="if(this.value.length==10) return false;" type="number" required readonly>
                                                         <span class="input-group-text" id="basic-addon2">บาท</span>
                                                     </div>
                                                 </div>
@@ -299,72 +299,266 @@
                                         </div>
                                     </div>
 
+                                    <p class="font-weight-semibold tx-17 pb-2 border-bottom-dashed tx-primary mt-1">Performance</p>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ROI (อัตราผลตอบแทน)</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="loan_roi" id="loan_roi" type="text" readonly>
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">NIM (กำไรดอกเบี้ยสุทธิ)</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="loan_nim" id="loan_nim" type="text" readonly>
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">YTD (Realized)</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="loan_ytd_realized" id="loan_ytd_realized" type="text" readonly>
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">YTD (Planned)</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="loan_ytd_planned" id="loan_ytd_planned" type="text" readonly>
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">YTD (Gap)</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="loan_ytd_gap" id="loan_ytd_gap" type="text" readonly>
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">Duration</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="loan_duration" id="loan_duration" type="text" readonly>
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <?php
                                     $posID = session()->get('positionID');
                                     ?>
                                     <!-- ฟอร์มสำหรับ positionID == 2 -->
                                     <!-- <div class="<= $posID == 0 ? '' : 'd-none' ?>"> -->
-                                        <p class="font-weight-semibold tx-17 pb-2 border-bottom-dashed tx-primary mt-1">ข้อมูลสินเชื่อ</p>
-                                        <div class="row">
-                                            <div class="col-6"></div>
-                                            <div class="col-6">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">ยอดสินเชื่อ</label>
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <div class="input-group mb-3">
-                                                            <input class="form-control price" name="loan_amount" id="loan_amount" type="text" readonly>
-                                                            <span class="input-group-text">บาท</span>
-                                                        </div>
+                                    <p class="font-weight-semibold tx-17 pb-2 border-bottom-dashed tx-primary mt-1">ข้อมูลสินเชื่อ</p>
+                                    <div class="row">
+                                        <div class="col-6"></div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดสินเชื่อ</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="loan_amount" id="loan_amount" type="text" readonly>
+                                                        <span class="input-group-text">บาท</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">ยอดดอกเบี้ย</label>
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <div class="input-group mb-3">
-                                                            <input class="form-control price" name="loan_interest_amount" id="loan_interest_amount" type="text" readonly>
-                                                            <span class="input-group-text">บาท</span>
-                                                        </div>
-                                                    </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดดอกเบี้ย</label>
                                                 </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">ยอดสินเชื่อรวม</label>
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <div class="input-group mb-3">
-                                                            <input class="form-control price" name="total_loan_amount" id="total_loan_amount" type="text" readonly>
-                                                            <span class="input-group-text">บาท</span>
-                                                        </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="loan_interest_amount" id="loan_interest_amount" type="text" readonly>
+                                                        <span class="input-group-text">บาท</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดสินเชื่อรวม</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="total_loan_amount" id="total_loan_amount" type="text" readonly>
+                                                        <span class="input-group-text">บาท</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!-- </div> -->
 
 
                                     <!-- ฟอร์มสำหรับ positionID != 2 -->
                                     <!-- <div class="<= $posID != 0 ? '' : 'd-none' ?>"> -->
-                                        <p class="font-weight-semibold tx-17 pb-2 border-bottom-dashed tx-primary mt-1">ข้อมูลการคำนวนรายการสินเชื่อ</p>
+                                    <p class="font-weight-semibold tx-17 pb-2 border-bottom-dashed tx-primary mt-1">ข้อมูลการคำนวนรายการสินเชื่อ</p>
+                                    <div class="row">
+                                        <div class="col-6" id="car_name"></div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดสินเชื่อ</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="money_loan" id="money_loan" type="text" readonly>
+                                                        <span class="input-group-text">บาท</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- จำนวนปี -->
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">จำนวนปี</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right" name="payment_year_counter" id="payment_year_counter" type="number" value="4" readonly>
+                                                        <span class="input-group-text">ปี</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดดอกเบี้ยรวม</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="total_loan_interest" id="total_loan_interest" type="text" readonly>
+                                                        <span class="input-group-text">บาท</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ดอกเบี้ย -->
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ดอกเบี้ย</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right" name="payment_interest" id="payment_interest" type="number" value="1" readonly>
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดสินเชื่อรวม</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="total_loan" id="total_loan" type="text" readonly>
+                                                        <span class="input-group-text">บาท</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- งวดละ -->
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">งวดละ</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control tx-right price" name="pricePerMonth" id="pricePerMonth" type="text" readonly>
+                                                        <span class="input-group-text">บาท</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ค่าใช้จ่ายอื่น ๆ -->
+                                    <div id="other_cash">
+                                        <p class="font-weight-semibold tx-17 pb-2 border-bottom-dashed tx-primary mt-5">ค่าใช้จ่ายอื่น ๆ</p>
                                         <div class="row">
-                                            <div class="col-6" id="car_name"></div>
                                             <div class="col-6">
                                                 <div class="row align-items-center">
                                                     <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">ยอดสินเชื่อ</label>
+                                                        <label class="form-label mt-0">ค่าดำเนินการ</label>
                                                     </div>
                                                     <div class="col-md-8">
                                                         <div class="input-group mb-3">
-                                                            <input class="form-control price" name="money_loan" id="money_loan" type="text" readonly>
+                                                            <input class="form-control tx-right price" id="charges_process" name="charges_process" type="text" value="0">
+                                                            <span class="input-group-text">บาท</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-4 tx-right">
+                                                        <label class="form-label mt-0">ยอดจ่ายจริง</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <div class="input-group mb-3">
+                                                            <input class="form-control tx-right price" name="really_pay_loan" id="really_pay_loan" type="text" readonly>
                                                             <span class="input-group-text">บาท</span>
                                                         </div>
                                                     </div>
@@ -372,76 +566,16 @@
                                             </div>
                                         </div>
 
-                                        <!-- จำนวนปี -->
+                                        <!-- ค่าโอน -->
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="row align-items-center">
                                                     <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">จำนวนปี</label>
+                                                        <label class="form-label mt-0">ค่าโอน</label>
                                                     </div>
                                                     <div class="col-md-8">
                                                         <div class="input-group mb-3">
-                                                            <input class="form-control" name="payment_year_counter" id="payment_year_counter" type="number" value="4" readonly>
-                                                            <span class="input-group-text">ปี</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">ยอดดอกเบี้ยรวม</label>
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <div class="input-group mb-3">
-                                                            <input class="form-control price" name="total_loan_interest" id="total_loan_interest" type="text" readonly>
-                                                            <span class="input-group-text">บาท</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- ดอกเบี้ย -->
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">ดอกเบี้ย</label>
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <div class="input-group mb-3">
-                                                            <input class="form-control" name="payment_interest" id="payment_interest" type="number" value="1" readonly>
-                                                            <span class="input-group-text">%</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">ยอดสินเชื่อรวม</label>
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <div class="input-group mb-3">
-                                                            <input class="form-control price" name="total_loan" id="total_loan" type="text" readonly>
-                                                            <span class="input-group-text">บาท</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- งวดละ -->
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-4 tx-right">
-                                                        <label class="form-label mt-0">งวดละ</label>
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <div class="input-group mb-3">
-                                                            <input class="form-control price" name="pricePerMonth" id="pricePerMonth" type="text" readonly>
+                                                            <input class="form-control tx-right price" id="charges_transfer" name="charges_transfer" type="text" value="0">
                                                             <span class="input-group-text">บาท</span>
                                                         </div>
                                                     </div>
@@ -450,85 +584,36 @@
                                         </div>
 
                                         <!-- ค่าใช้จ่ายอื่น ๆ -->
-                                        <div id="other_cash">
-                                            <p class="font-weight-semibold tx-17 pb-2 border-bottom-dashed tx-primary mt-5">ค่าใช้จ่ายอื่น ๆ</p>
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-md-4 tx-right">
-                                                            <label class="form-label mt-0">ค่าดำเนินการ</label>
-                                                        </div>
-                                                        <div class="col-md-8">
-                                                            <div class="input-group mb-3">
-                                                                <input class="form-control price" id="charges_process" name="charges_process" type="text" value="0">
-                                                                <span class="input-group-text">บาท</span>
-                                                            </div>
-                                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-4 tx-right">
+                                                        <label class="form-label mt-0">ค่าใช้จ่ายอื่น ๆ</label>
                                                     </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-md-4 tx-right">
-                                                            <label class="form-label mt-0">ยอดจ่ายจริง</label>
-                                                        </div>
-                                                        <div class="col-md-8">
-                                                            <div class="input-group mb-3">
-                                                                <input class="form-control price" name="really_pay_loan" id="really_pay_loan" type="text" readonly>
-                                                                <span class="input-group-text">บาท</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- ค่าโอน -->
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-md-4 tx-right">
-                                                            <label class="form-label mt-0">ค่าโอน</label>
-                                                        </div>
-                                                        <div class="col-md-8">
-                                                            <div class="input-group mb-3">
-                                                                <input class="form-control price" id="charges_transfer" name="charges_transfer" type="text" value="0">
-                                                                <span class="input-group-text">บาท</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- ค่าใช้จ่ายอื่น ๆ -->
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-md-4 tx-right">
-                                                            <label class="form-label mt-0">ค่าใช้จ่ายอื่น ๆ</label>
-                                                        </div>
-                                                        <div class="col-md-8">
-                                                            <div class="input-group mb-3">
-                                                                <input class="form-control price" id="charges_etc" name="charges_etc" type="text" value="0">
-                                                                <span class="input-group-text">บาท</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- หมายเหตุ -->
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-md-2 tx-right">
-                                                            <label class="form-label mt-0" for="remark">หมายเหตุ</label>
-                                                        </div>
-                                                        <div class="col-md-10">
-                                                            <input class="form-control" id="remark" name="remark" placeholder="หมายเหตุ...">
+                                                    <div class="col-md-8">
+                                                        <div class="input-group mb-3">
+                                                            <input class="form-control tx-right price" id="charges_etc" name="charges_etc" type="text" value="0">
+                                                            <span class="input-group-text">บาท</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- หมายเหตุ -->
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-2 tx-right">
+                                                        <label class="form-label mt-0" for="remark">หมายเหตุ</label>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <input class="form-control" id="remark" name="remark" placeholder="หมายเหตุ...">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!-- </div> -->
 
                                     <div align="right">

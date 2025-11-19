@@ -2,6 +2,16 @@
   callTableLoanHistory();
 })(jQuery);
 
+$(document).ready(function () {
+  flatpickr("#daterange_loan_close", {
+    mode: "range",
+    dateFormat: "Y-m-d",
+    onChange: function (selectedDates) {
+      tableStock.ajax.reload();
+    },
+  });
+});
+
 function callTableLoanHistory() {
   $("#tableLoanClose").DataTable().clear().destroy();
   tableStock = $("#tableLoanClose").DataTable({
@@ -31,6 +41,12 @@ function callTableLoanHistory() {
       type: "POST",
       url: serverUrl + "/loan/tableLoanHistory",
       data: function (d) {
+        const $date = $("#daterange_loan_close").val();
+        if ($date !== "") {
+          d.date = $date;
+        } else {
+          d.date = "";
+        }
         return d;
       },
     },
@@ -205,10 +221,12 @@ function callTableLoanHistory() {
         orderable: false,
         className: "text-right",
         render: function (data, type, row, meta) {
-          var summary_all = (data["loan_sum_interest"] - data["loan_payment_sum_installment"])
-          
+          // var summary_all = (data["loan_sum_interest"] - data["loan_payment_sum_installment"])
+          var roi = ((data["loan_payment_sum_installment"] / data["loan_summary_no_vat"]) * 100);
           return (
-            "<font>" + new Intl.NumberFormat().format(Number(summary_all).toFixed(2)) + "</font>"
+            "<font>" +
+            new Intl.NumberFormat().format(Number(roi)) +'%'+
+            "</font>"
           );
         },
       },

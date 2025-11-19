@@ -128,7 +128,9 @@ class Loan extends BaseController
     // Get Data Loan กำลังจ่าย
     public function FetchAllLoanOn()
     {
-        $data_loanOn = $this->LoanModel->getAllDataLoanOn();
+        $date = $this->request->getGet('date') ?? '';
+
+        $data_loanOn = $this->LoanModel->getAllDataLoanOn($date);
 
         return $this->response->setJSON([
             'status' => 200,
@@ -1218,16 +1220,18 @@ class Loan extends BaseController
 
     public function loanHistory()
     {
-        $datas_loan = $this->LoanModel->_getAllDataLoanHistory($_POST);
+        $post = $this->request->getPost();
 
-        $datas_count = $this->LoanModel->countAllDataLoanHistory();
+        $datas_loan = $this->LoanModel->_getAllDataLoanHistory($post);
 
-        $filter = $this->LoanModel->getAllDataLoanHistoryFilter();
+        $recordsTotal = $this->LoanModel->countAllDataLoanHistory();
+
+        $recordsFiltered = $this->LoanModel->getAllDataLoanHistoryFilter($post);
 
         return $this->response->setJSON([
             'draw' => $_POST['draw'],
-            'recordsTotal' => $datas_count,
-            'recordsFiltered' => count($filter),
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
             "data" => $datas_loan,
         ]);
     }
@@ -4111,8 +4115,9 @@ class Loan extends BaseController
     // Get Data Loan ยอดชำระต่อเดือน
     public function FetchAllLoanPayments()
     {
-        $data_loan_payments = $this->LoanModel->getAllDataLoanPayments();
+        $date = $this->request->getGet('date') ?? '';
 
+        $data_loan_payments = $this->LoanModel->getAllDataLoanPayments($date);
         return $this->response->setJSON([
             'status' => 200,
             'error' => false,
