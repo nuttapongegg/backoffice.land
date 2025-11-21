@@ -141,18 +141,57 @@ function loadLoan(loanCode) {
 
       payNow = response.message.loan_payment_month;
 
-      let loan_ROI = (( loan_payment_sum_installment / loanAmount) * 100);
+      loan_payment_month_counter = response.message.loan_payment_year_counter * 12;
 
-      let loan_YTD_Realized = (( loan_payment_sum_installment / loanAmount) * 100);
+      loan_total_profit = response.message.loan_payment_month * loan_payment_month_counter;
 
-      let loan_YTD_Planned = (( loan_payment_sum_installment / loanAmount) * 100);
+      function getPlannedInstallments(loan_installment_date, total_installments = null) {
+        const start = new Date(loan_installment_date); // วันเริ่มงวดแรก
+        const now = new Date(); // วันนี้
+
+        // ถ้ายังไม่ถึงงวดแรก
+        if (now < start) return 0;
+
+        // ส่วนต่างเป็นจำนวนเดือนแบบปฏิทิน
+        let monthsDiff =
+          (now.getFullYear() - start.getFullYear()) * 12 +
+          (now.getMonth() - start.getMonth());
+
+        // ถ้าวันนี้เลย/เท่ากับ "วันครบกำหนด" ของเดือนนี้ ให้รวมงวดเดือนนี้ด้วย
+        let planned = monthsDiff + (now.getDate() >= start.getDate() ? 1 : 0);
+
+        // กันพลาด (ต้องไม่ต่ำกว่า 0)
+        if (planned < 0) planned = 0;
+
+        // ถ้าระบุจำนวนงวดทั้งหมด ก็ cap ไม่ให้เกิน
+        if (total_installments !== null) {
+          planned = Math.min(planned, total_installments);
+        }
+
+        return planned;
+      }
+
+      let loan_planned =  getPlannedInstallments(loan_installment_date, loan_payment_month_counter);
+
+      loan_planned_payment = response.message.loan_payment_month * loan_planned;
+
+      let loan_ROI = (( loan_payment_sum_installment / loanAmount) * 100).toFixed(2);
+
+      let loan_YTD_Realized = (( loan_payment_sum_installment / loan_total_profit) * 100).toFixed(2);
+
+      let loan_YTD_Planned = (( loan_planned_payment / loan_total_profit) * 100).toFixed(2);
+
+      let loan_duration = 0;
+      if(response.message.loan_status !== "CLOSE_STATE"){
+        loan_duration = ((loan_payment_month_counter - (loan_period - 1)) / loan_payment_month_counter) * 100;
+      }
 
       $("#loan_roi").val(loan_ROI);
       $("#loan_nim").val(loan_ROI);
-      // $("#loan_ytd_realized").val(loan_YTD_Realized);
-      // $("#loan_ytd_planned").val(loan_YTD_Planned);
-      // $("#loan_ytd_gap").val(loan_ROI);
-      // $("#loan_duration").val(loan_ROI);
+      $("#loan_ytd_realized").val(loan_YTD_Realized);
+      $("#loan_ytd_planned").val(loan_YTD_Planned);
+      $("#loan_ytd_gap").val((loan_YTD_Planned - loan_YTD_Realized).toFixed(2));
+      $("#loan_duration").val(loan_duration.toFixed(2));
     },
   });
 
