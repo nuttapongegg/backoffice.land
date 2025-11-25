@@ -6,9 +6,9 @@
         <tr style="vertical-align:middle;">
             <td width="45%">
                 <br>
-                <!-- <span style="font-size:25px; font-weight:bold;">ใบเสร็จจ่ายเงิน / ใบกำกับภาษี</span><br>
+                <!-- <span style="font-size:25px; font-weight:bold;">ใบเสร็จรับเงิน / ใบกำกับภาษี</span><br>
                 <span style="font-size:23px; font-weight:bold;">Receipt / Tax Invoice</span> -->
-                <span style="font-size:25px; font-weight:bold;">ใบเสร็จจ่ายเงิน</span><br>
+                <span style="font-size:25px; font-weight:bold;">ใบเสร็จรับเงิน</span><br>
                 <span style="font-size:23px; font-weight:bold;">Receipt</span>
             </td>
             <td width="54%" align="right" style="vertical-align:middle;">
@@ -139,7 +139,7 @@
                             <td width="49%" class="cell"><table class="inner" cellpadding="0" cellspacing="0">
                                     <tr valign="middle" style="height:36px;">
                                         <td class="label" width="43%" bgcolor="#eeeeee" valign="middle" style="border-left: none;">
-                                            <div class="inL">&nbsp;&nbsp;เลขที่ใบกำกับภาษี<br><span class="sub">&nbsp;&nbsp;&nbsp;Tax Invoice No.</span></div>
+                                            <div class="inL">&nbsp;&nbsp;เลขที่ใบเสร็จ<br><span class="sub">&nbsp;&nbsp;&nbsp;Receipt No.</span></div>
                                         </td>
                                         <td class="value" width="57%" valign="middle" align="right">
                                             <div class="inR">INV-<?php echo $docid->doc_number?>&nbsp;&nbsp;</div>
@@ -158,10 +158,10 @@
                             <td width="49%" class="cell"><table class="inner" cellpadding="0" cellspacing="0">
                                     <tr valign="middle" style="height:36px;">
                                         <td class="label" width="43%" bgcolor="#eeeeee" valign="middle">
-                                            <div class="inL">&nbsp;&nbsp;วันที่ทำรายการ<br><span class="sub">&nbsp;&nbsp;&nbsp;Effective Date</span></div>
+                                            <div class="inL">&nbsp;&nbsp;เลขที่ทำรายการ<br><span class="sub">&nbsp;&nbsp;&nbsp;Transaction No.</span></div>
                                         </td>
                                         <td class="value" width="57%" valign="middle" align="right">
-                                            <div class="inR"><?php echo $docid->formatted_date_doc ?>&nbsp;&nbsp;&nbsp;</div>
+                                            <div class="inR"><?php echo $docid->formatted_doc_no ?>&nbsp;&nbsp;&nbsp;</div>
                                         </td>
                                     </tr>
                                 </table>
@@ -173,7 +173,7 @@
                             <td width="49%" class="cell"><table class="inner" cellpadding="0" cellspacing="0">
                                     <tr valign="middle" style="height:36px;">
                                         <td class="label" width="43%" bgcolor="#eeeeee" valign="middle">
-                                            <div class="inL">&nbsp;&nbsp;วันออกใบกำกับภาษี<br><span class="sub">&nbsp;&nbsp;&nbsp;Issue Date</span></div>
+                                            <div class="inL">&nbsp;&nbsp;วันออกใบเสร็จ<br><span class="sub">&nbsp;&nbsp;&nbsp;Receipt Date</span></div>
                                         </td>
                                         <td class="value" width="57%" valign="middle" align="right">
                                             <div class="inR"><?php echo $docid->formatted_date_doc ?>&nbsp;&nbsp;&nbsp;&nbsp;</div>

@@ -155,7 +155,7 @@ class LoanModel
             ROW_NUMBER() OVER (ORDER BY loan.loan_date_close ASC) AS seq,
             DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') as formatted_date,
             DATE_FORMAT(loan.loan_date_close, '%Y%m%d') as inv_date,
-            DATE_FORMAT(loan.loan_date_promise, '%d/%m/%Y') as formatted_ate_promise,
+            DATE_FORMAT(loan.loan_date_promise, '%d%m%Y') as formatted_ate_promise,
             (loan.loan_close_payment * 0.03) AS loan_payment_3percent,
             (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period 
             FROM loan
@@ -1862,7 +1862,7 @@ class LoanModel
                 ROW_NUMBER() OVER (ORDER BY loan.loan_date_close ASC) AS seq,
                 DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') as formatted_date,
                 DATE_FORMAT(loan.loan_date_close, '%Y%m%d') as inv_date,
-                DATE_FORMAT(loan.loan_date_promise, '%d/%m/%Y') as formatted_ate_promise,
+                DATE_FORMAT(loan.loan_date_promise, '%d%m%Y') as formatted_ate_promise,
                 (loan.loan_close_payment * 0.03) AS loan_payment_3percent
             FROM loan
             LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code

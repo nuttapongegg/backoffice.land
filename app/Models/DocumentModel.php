@@ -617,7 +617,7 @@ class DocumentModel
         $years = $param['years'];
 
         $sql = "
-        SELECT DATE_FORMAT(documents.doc_date, '%d-%m-%Y') as formatted_date_doc ,documents.doc_type , documents.price , documents.title, documents.note, documents.doc_number
+        SELECT DATE_FORMAT(documents.doc_date, '%d-%m-%Y') as formatted_date_doc ,DATE_FORMAT(documents.doc_date, '%d%m%Y') as formatted_doc_no ,documents.doc_type , documents.price , documents.title, documents.note, documents.doc_number
         FROM documents
         WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
         ";
@@ -705,7 +705,7 @@ class DocumentModel
 
     public function getDocumentID($id)
     {
-        $sql = "SELECT *,DATE_FORMAT(documents.doc_date, '%d/%m/%Y') as formatted_date_doc
+        $sql = "SELECT *,DATE_FORMAT(documents.doc_date, '%d/%m/%Y') as formatted_date_doc ,DATE_FORMAT(documents.doc_date, '%d%m%Y') as formatted_doc_no
         FROM documents
         WHERE documents.id = $id
         ";
