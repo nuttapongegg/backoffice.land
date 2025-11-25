@@ -315,13 +315,21 @@ function callAutoloenTable(data) {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
-          var roi =
-             ((data["loan_payment_sum_installment"] / data["loan_summary_no_vat"]) * 100);
-          return (
-            "<font>" +
-            new Intl.NumberFormat().format(Number(roi)) +'%'+
-            "</font>"
-          );
+          var roi = (data["loan_payment_sum_installment"] / data["loan_summary_no_vat"]) * 100;
+          var roiFormatted = new Intl.NumberFormat().format(Number(roi.toFixed(2)));
+
+          // กำหนดสีตามเงื่อนไข
+          let color = "";
+
+          if (roi > 100) {
+            color = "tx-info";
+          } else if (roi >= 50) {
+            color = "tx-success";
+          } else {
+            color = "tx-secondary";
+          }
+
+          return `<font class='${color}'>${roiFormatted}%</font>`;
         },
       },
       {

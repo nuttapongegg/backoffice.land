@@ -1391,49 +1391,50 @@ class Loan extends BaseController
 
             $html_summarizeLoan =
                 '<div class="row">
-                <div class="col-xl-12">
-                    <div class="card">
-                        <div class="card-body mt-2 mb-3">
-                            <div class="row">
-                                <div class="col" style="flex-grow: 1;">
-                                    <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
-                                        <p class="mb-0 font-weight-semibold tx-18">เงินลงทุนจริง</p>
-                                        <div class="mt-2">
-                                            <span class="mb-0 font-weight-semibold tx-15">' . number_format($real_investment->investment, 2) . '</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col" style="flex-grow: 1;">
-                                    <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
-                                        <p class="mb-0 font-weight-semibold tx-18">ยอดวงเงินกู้รวม</p>
-                                        <div class="mt-2">
-                                            <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_no_vat_ON_STATE, 2) . '</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col" style="flex-grow: 1;">
-                                    <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
-                                        <a href="' . base_url('/setting_land/land') . '">
-                                            <p class="mb-0 font-weight-semibold tx-18">เงินสดบัญชี</p>
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-body mt-2 mb-3">
+                                <div class="row">
+                                    <div class="col" style="flex-grow: 1;">
+                                        <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
+                                            <p class="mb-0 font-weight-semibold tx-18">เงินลงทุนจริง</p>
                                             <div class="mt-2">
-                                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($sum_land_account, 2) . '</span>
+                                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($real_investment->investment, 2) . '</span>
                                             </div>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col" style="flex-grow: 1;">
-                                    <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
-                                        <p class="mb-0 font-weight-semibold tx-18">วงเงินที่ปิดบัญชีแล้ว</p>
-                                        <div class="mt-2">
-                                            <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_no_vat_CLOSE_STATE, 2) . '</span>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col" style="flex-grow: 1;">
-                                    <div class="tx-center pd-y-7 pd-sm-y-0-f">
-                                        <p class="mb-0 font-weight-semibold tx-18">ทรัพย์สินสุทธิ</p>
-                                        <div class="mt-2">
-                                            <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_net_assets, 2) . '</span>
+                                    <div class="col" style="flex-grow: 1;">
+                                        <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
+                                            <p class="mb-0 font-weight-semibold tx-18">ยอดวงเงินกู้รวม</p>
+                                            <div class="mt-2">
+                                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_no_vat_ON_STATE, 2) . '</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col" style="flex-grow: 1;">
+                                        <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
+                                            <a href="' . base_url('/setting_land/land') . '">
+                                                <p class="mb-0 font-weight-semibold tx-18">เงินสดบัญชี</p>
+                                                <div class="mt-2">
+                                                    <span class="mb-0 font-weight-semibold tx-15">' . number_format($sum_land_account, 2) . '</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col" style="flex-grow: 1;">
+                                        <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
+                                            <p class="mb-0 font-weight-semibold tx-18">วงเงินที่ปิดบัญชีแล้ว</p>
+                                            <div class="mt-2">
+                                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_no_vat_CLOSE_STATE, 2) . '</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col" style="flex-grow: 1;">
+                                        <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
+                                            <p class="mb-0 font-weight-semibold tx-18">ทรัพย์สินสุทธิ</p>
+                                            <div class="mt-2">
+                                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_net_assets, 2) . '</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1441,9 +1442,51 @@ class Loan extends BaseController
                         </div>
                     </div>
                 </div>
-            </div>
                 ';
-
+                                // <div class="row">
+                                //     <div class="col" style="flex-grow: 1;">
+                                //         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
+                                //             <p class="mb-0 font-weight-semibold tx-18">เงินลงทุนจริง</p>
+                                //             <div class="mt-2 mb-2">
+                                //                 <span class="mb-0 font-weight-semibold tx-15">' . number_format($real_investment->investment, 2) . '</span>
+                                //             </div>
+                                //         </div>
+                                //     </div>
+                                //     <div class="col" style="flex-grow: 1;">
+                                //         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
+                                //             <p class="mb-0 font-weight-semibold tx-18">ยอดวงเงินกู้รวม</p>
+                                //             <div class="mt-2 mb-2">
+                                //                 <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_no_vat_ON_STATE, 2) . '</span>
+                                //             </div>
+                                //         </div>
+                                //     </div>
+                                //     <div class="col" style="flex-grow: 1;">
+                                //         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
+                                //             <a href="' . base_url('/setting_land/land') . '">
+                                //                 <p class="mb-0 font-weight-semibold tx-18">เงินสดบัญชี</p>
+                                //                 <div class="mt-2 mb-2">
+                                //                     <span class="mb-0 font-weight-semibold tx-15">' . number_format($sum_land_account, 2) . '</span>
+                                //                 </div>
+                                //             </a>
+                                //         </div>
+                                //     </div>
+                                //     <div class="col" style="flex-grow: 1;">
+                                //         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
+                                //             <p class="mb-0 font-weight-semibold tx-18">วงเงินที่ปิดบัญชีแล้ว</p>
+                                //             <div class="mt-2 mb-2">
+                                //                 <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_no_vat_CLOSE_STATE, 2) . '</span>
+                                //             </div>
+                                //         </div>
+                                //     </div>
+                                //     <div class="col" style="flex-grow: 1;">
+                                //         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
+                                //             <p class="mb-0 font-weight-semibold tx-18">ทรัพย์สินสุทธิ</p>
+                                //             <div class="mt-2 mb-2">
+                                //                 <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_net_assets, 2) . '</span>
+                                //             </div>
+                                //         </div>
+                                //     </div>
+                                // </div>
             $response['data_summarizeLoan'] = $html_summarizeLoan;
 
             $response['data_SummarizeLoan'] = $html_SummarizeLoan;
