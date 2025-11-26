@@ -88,9 +88,8 @@
 </div>
 <!-- จบ ตารางยอดรายรับ(ค่าดำเนินการ) -->
 
-
 <!-- ตารางยอดรายรับ(ใบสำคัญรับ) -->
-<div class="modal fade" id="modalReceiptMonth" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+<!-- <div class="modal fade" id="modalReceiptMonth" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -125,8 +124,47 @@
             </form>
         </div>
     </div>
-</div>
+</div> -->
 <!-- จบ ตารางยอดรายรับ(ใบสำคัญรับ) -->
+
+<!-- ยอดชำระค่างวดจริง -->
+<div class="modal fade" id="modalLoanPaymentMonth" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="card-title">ยอดชำระค่างวดจริง (เดือน)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModalLoanPaymentMonth"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="#">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-nowrap border-bottom" id="DataTable_LoanPayment">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20px;">#</th>
+                                    <th style="width: 100px;">รายการ</th>
+                                    <th style="width: 30px;">จำนวนเงิน</th>
+                                    <th style="width: 100px;">รายละเอียด</th>
+                                    <th style="width: 30px;">ผู้ทำรายการ</th>
+                                    <th style="width: 30px;">ชื่อบัญชีรับชำระ</th>
+                                    <th style="width: 30px;">จำนวนเงินในบัญชี</th>
+                                    <th style="width: 50px;">วันที่ชำระ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                        <div style="display: flex; justify-content: center;">
+                            <button type="button" class="btn btn-primary " data-bs-dismiss="modal" aria-label="Close">ปิด</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- จบ ยอดชำระค่างวดจริง -->
 
  <!-- ตารางยอดรายจ่าย -->
 <div class="modal fade" id="modalExpensesMonth" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
