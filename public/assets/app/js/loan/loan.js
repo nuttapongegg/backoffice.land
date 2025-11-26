@@ -38,6 +38,35 @@ $(document).ready(function () {
 
 var count_loan = 0;
 
+function getPlannedInstallments(
+  loan_installment_date,
+  total_installments = null
+) {
+  const start = new Date(loan_installment_date); // วันเริ่มงวดแรก
+  const now = new Date(); // วันนี้
+
+  // ถ้ายังไม่ถึงงวดแรก
+  if (now < start) return 0;
+
+  // ส่วนต่างเป็นจำนวนเดือนแบบปฏิทิน
+  let monthsDiff =
+    (now.getFullYear() - start.getFullYear()) * 12 +
+    (now.getMonth() - start.getMonth());
+
+  // ถ้าวันนี้เลย/เท่ากับ "วันครบกำหนด" ของเดือนนี้ ให้รวมงวดเดือนนี้ด้วย
+  let planned = monthsDiff + (now.getDate() >= start.getDate() ? 1 : 0);
+
+  // กันพลาด (ต้องไม่ต่ำกว่า 0)
+  if (planned < 0) planned = 0;
+
+  // ถ้าระบุจำนวนงวดทั้งหมด ก็ cap ไม่ให้เกิน
+  if (total_installments !== null) {
+    planned = Math.min(planned, total_installments);
+  }
+
+  return planned;
+}
+
 function callTableLoan() {
   $("#tableLoanOn").DataTable().clear().destroy();
 
@@ -302,6 +331,44 @@ function callAutoloenTable(data) {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
+          const loan_payment_month_counter =
+            data["loan_payment_year_counter"] * 12;
+          const totalProfit =
+            data["loan_payment_month"] * loan_payment_month_counter;
+
+          if (!totalProfit || totalProfit === 0) {
+            return `<font class='tx-secondary'>-</font>`;
+          }
+          const ctdRealized =
+            (data["loan_payment_sum_installment"] / totalProfit) * 100;
+          const plannedInstallments = getPlannedInstallments(
+            data["loan_installment_date"],
+            loan_payment_month_counter
+          );
+          const plannedAmount =
+            plannedInstallments * data["loan_payment_month"];
+          const ctdPlanned = (plannedAmount / totalProfit) * 100;
+          const gap = ctdPlanned - ctdRealized;
+          const gapFormatted = new Intl.NumberFormat().format(gap.toFixed(2));
+
+          let color = "";
+
+          if (gap < 0) {
+            color = "tx-info"; // จ่ายไว
+          } else if (gap === 0) {
+            color = "tx-success"; // ตรงแผน
+          } else if (gap > 0 && gap <= 10) {
+            color = "tx-secondary"; // ช้านิดหน่อย
+          } else {
+            color = "tx-danger"; // ช้าหนัก
+          }
+          return `<font class='${color}'>${gapFormatted}%</font>`;
+        },
+      },
+      {
+        data: null,
+        className: "text-right",
+        render: function (data, type, row, meta) {
           return (
             "<font class='tx-success'>" +
             new Intl.NumberFormat().format(
@@ -477,7 +544,7 @@ function callAutoloenTable(data) {
 
       // Total over this page
       var Total_payment_month = api
-        .column(15, { page: "current" })
+        .column(16, { page: "current" })
         .data()
         .reduce(function (a, b) {
           return intVal(a) + intVal(b.loan_payment_month); // Handle formatted numbers
@@ -530,7 +597,7 @@ function callAutoloenTable(data) {
         }, 0);
 
       Total_payment_sum_installment = api
-        .column(13, { page: "current" })
+        .column(14, { page: "current" })
         .data()
         .reduce(function (a, b) {
           return intVal(a) + intVal(b.loan_payment_sum_installment);
@@ -538,7 +605,7 @@ function callAutoloenTable(data) {
 
       // Update footer
       number_payment_month = parseFloat(Total_payment_month).toFixed(2);
-      $(api.column(15).footer()).html(
+      $(api.column(16).footer()).html(
         Number(number_payment_month).toLocaleString()
       );
 
@@ -552,7 +619,7 @@ function callAutoloenTable(data) {
       number_payment_sum_installment = parseFloat(
         Total_payment_sum_installment
       ).toFixed(2);
-      $(api.column(13).footer()).html(
+      $(api.column(14).footer()).html(
         Number(number_payment_sum_installment).toLocaleString()
       );
 

@@ -85,6 +85,7 @@
                                                     <th class="wd-30p text-center">สถานะ</th>
                                                     <th class="wd-30p text-center">เกินกำหนดชำระ</th>
                                                     <th class="wd-30p text-center">ยอดค้างชำระ</th>
+                                                    <th class="wd-30p text-center">GAP</th>
                                                     <th class="wd-30p text-center">ชำระแล้วเป็นเงิน</th>
                                                     <th class="wd-30p text-center">ROI</th>
                                                     <th class="wd-30p text-center">งวดละ</th>

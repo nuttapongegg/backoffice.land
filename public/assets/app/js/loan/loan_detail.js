@@ -177,9 +177,9 @@ function loadLoan(loanCode) {
 
       let loan_ROI = (( loan_payment_sum_installment / loanAmount) * 100).toFixed(2);
 
-      let loan_YTD_Realized = (( loan_payment_sum_installment / loan_total_profit) * 100).toFixed(2);
+      let loan_CTD_Realized = (( loan_payment_sum_installment / loan_total_profit) * 100).toFixed(2);
 
-      let loan_YTD_Planned = (( loan_planned_payment / loan_total_profit) * 100).toFixed(2);
+      let loan_CTD_Planned = (( loan_planned_payment / loan_total_profit) * 100).toFixed(2);
 
       let loan_duration = 0;
       if(response.message.loan_status !== "CLOSE_STATE"){
@@ -188,9 +188,9 @@ function loadLoan(loanCode) {
 
       $("#loan_roi").val(loan_ROI);
       $("#loan_nim").val(loan_ROI);
-      $("#loan_ytd_realized").val(loan_YTD_Realized);
-      $("#loan_ytd_planned").val(loan_YTD_Planned);
-      $("#loan_ytd_gap").val((loan_YTD_Planned - loan_YTD_Realized).toFixed(2));
+      $("#loan_ctd_realized").val(loan_CTD_Realized);
+      $("#loan_ctd_planned").val(loan_CTD_Planned);
+      $("#loan_ctd_gap").val((loan_CTD_Planned - loan_CTD_Realized).toFixed(2));
       $("#loan_duration").val(loan_duration.toFixed(2));
     },
   });

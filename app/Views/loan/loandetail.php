@@ -332,11 +332,11 @@
                                         <div class="col-6">
                                             <div class="row align-items-center">
                                                 <div class="col-md-4 tx-right">
-                                                    <label class="form-label mt-0">YTD (Realized)</label>
+                                                    <label class="form-label mt-0">CTD (Realized)</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="input-group mb-3">
-                                                        <input class="form-control tx-right price" name="loan_ytd_realized" id="loan_ytd_realized" type="text" readonly>
+                                                        <input class="form-control tx-right price" name="loan_ctd_realized" id="loan_ctd_realized" type="text" readonly>
                                                         <span class="input-group-text">%</span>
                                                     </div>
                                                 </div>
@@ -345,11 +345,11 @@
                                         <div class="col-6">
                                             <div class="row align-items-center">
                                                 <div class="col-md-4 tx-right">
-                                                    <label class="form-label mt-0">YTD (Planned)</label>
+                                                    <label class="form-label mt-0">CTD (Planned)</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="input-group mb-3">
-                                                        <input class="form-control tx-right price" name="loan_ytd_planned" id="loan_ytd_planned" type="text" readonly>
+                                                        <input class="form-control tx-right price" name="loan_ctd_planned" id="loan_ctd_planned" type="text" readonly>
                                                         <span class="input-group-text">%</span>
                                                     </div>
                                                 </div>
@@ -360,11 +360,11 @@
                                         <div class="col-6">
                                             <div class="row align-items-center">
                                                 <div class="col-md-4 tx-right">
-                                                    <label class="form-label mt-0">YTD (Gap)</label>
+                                                    <label class="form-label mt-0">CTD (Gap)</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="input-group mb-3">
-                                                        <input class="form-control tx-right price" name="loan_ytd_gap" id="loan_ytd_gap" type="text" readonly>
+                                                        <input class="form-control tx-right price" name="loan_ctd_gap" id="loan_ctd_gap" type="text" readonly>
                                                         <span class="input-group-text">%</span>
                                                     </div>
                                                 </div>
