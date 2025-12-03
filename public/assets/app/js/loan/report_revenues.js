@@ -13,7 +13,7 @@ $(document).ready(function () {
   var lastValue = null;
   $("#datepicker").on("change", function (e) {
     if (lastValue !== e.target.value) {
-      console.log(e.target.value);
+      // console.log(e.target.value);
       slowtable(e.target.value);
       lastValue = e.target.value;
     }

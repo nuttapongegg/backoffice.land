@@ -1270,6 +1270,9 @@ class Loan extends BaseController
             $response['success'] = 0;
             $response['message'] = '';
 
+            $DocumentModel = new \App\Models\DocumentModel();
+            $document = $DocumentModel->getDocSumAll();
+
             $RealInvestmentModel = new \App\Models\RealInvestmentModel();
             $real_investment = $RealInvestmentModel->getRealInvestmentAll();
 
@@ -1278,14 +1281,33 @@ class Loan extends BaseController
 
             $datas = $this->LoanModel->getAllDataLoan();
 
+            $end   = new \DateTime('first day of this month');   // ต้นเดือนปัจจุบัน
+            $start = (clone $end)->modify('-12 months');         // ย้อนกลับไป 12 เดือน
+
+            $startDate = $start->format('Y-m-d'); // เช่น 2024-12-01
+            $endDate   = $end->format('Y-m-d');   // เช่น 2025-12-01
+
+            $rolling12m = $this->LoanModel->getRolling12mSummary($startDate, $endDate);
+
+            $fee_income_12m      = (float)($rolling12m->fee_income_12m      ?? 0); // ค่าดำเนินการ 12 เดือน
+            $interest_income_12m = (float)($rolling12m->interest_income_12m ?? 0); // ดอกเบี้ยรับ 12 เดือน
+            $expense_12m         = (float)($rolling12m->expense_12m         ?? 0); // ใบสำคัญจ่าย 12 เดือน
+
+            // กำไรสุทธิจากพอร์ตสินเชื่อ 12 เดือน (ดอกเบี้ย + ค่าดำเนินการ - ค่าใช้จ่าย)
+            $interest_net_12m = $fee_income_12m + $interest_income_12m - $expense_12m;
+
             $loan_summary_no_vat = 0;
             $loan_payment_sum_installment = 0;
             $loan_summary_all = 0;
-            $summary_all = 0;
+            // $summary_all = 0;
             $loan_payment_month = 0;
-            $principle = 0;
-            $investment = 0;
-            $return_funds = 0;
+            // $principle = 0;
+            // $investment = 0;
+            // $return_funds = 0;
+            $loan_summary_process = 0;
+
+            // $receipt  = $document->receipt;   // ยอดใบสำคัญรับทั้งหมด
+            $expenses = $document->expenses;  // ยอดใบสำคัญจ่ายทั้งหมด
 
             $sum_installment = 0;
             $summary_no_vat_ON_STATE = 0;
@@ -1301,9 +1323,7 @@ class Loan extends BaseController
                     $loan_summary_no_vat = $loan_summary_no_vat + $data->loan_summary_no_vat;
                 }
 
-                if ($data->loan_payment_sum_installment != '') {
-                    $loan_payment_sum_installment = $loan_payment_sum_installment + $data->loan_payment_sum_installment;
-                }
+                $loan_payment_sum_installment = $loan_payment_sum_installment + $data->loan_payment_sum_installment;
 
                 if ($data->loan_summary_all != '') {
                     $loan_summary_all = $loan_summary_all + $data->loan_summary_all;
@@ -1318,12 +1338,14 @@ class Loan extends BaseController
                 if ($data->loan_status == 'CLOSE_STATE') {
                     $summary_no_vat_CLOSE_STATE = $summary_no_vat_CLOSE_STATE + $data->loan_summary_no_vat;
                 }
+
+                $loan_summary_process = $loan_summary_process + $data->loan_payment_process + $data->loan_tranfer + $data->loan_payment_other;
             }
 
-            $summary_all = $loan_summary_all - $loan_payment_sum_installment;
-            if ($summary_all != 0) {
-                $return_funds = ($loan_payment_month / $summary_all) * 100;
-            }
+            // $summary_all = $loan_summary_all - $loan_payment_sum_installment;
+            // if ($summary_all != 0) {
+            //     $return_funds = ($loan_payment_month / $summary_all) * 100;
+            // }
 
             $summary_net_assets = $summary_no_vat_ON_STATE + $sum_land_account;
 
@@ -1342,6 +1364,14 @@ class Loan extends BaseController
                             <div class="card-body">
                                 <div>ชำระแล้ว</div>
                                 <div class="font-weight-semibold mb-1 tx-secondary">' . number_format($loan_payment_sum_installment, 2) . '</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="flex-grow: 1;">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <div>วงเงินที่ปิดบัญชีแล้ว</div>
+                                <div class="font-weight-semibold mb-1 tx-secondary">' . number_format($summary_no_vat_CLOSE_STATE, 2) . '</div>
                             </div>
                         </div>
                     </div>
@@ -1389,51 +1419,262 @@ class Loan extends BaseController
             //     </div>
             // </div>
 
-            $html_summarizeLoan =
-                '<div class="row">
+            // ตัวเลขหลัก
+            $paid_up_capital      = $real_investment->investment;   // ทุนตั้งต้น
+            $retained_earnings    = ($loan_summary_process + $loan_payment_sum_installment) - $expenses;    // กำไรสะสม
+            $equity_real          = $paid_up_capital + $retained_earnings;   // ทรัพย์สินสุทธิ (Equity จริง)
+
+            // KPI %
+            $true_leverage        = ($summary_no_vat_ON_STATE / $equity_real);   // x
+            $leverage_vs_capital  = ($summary_no_vat_ON_STATE / $paid_up_capital);   // x
+            $turnover_times       = ($loan_summary_no_vat / $summary_no_vat_ON_STATE);   // x
+            $roi_total            = ($retained_earnings / $paid_up_capital) * 100;   // %
+            $portfolio_yield      = ($interest_net_12m / $summary_no_vat_ON_STATE) * 100;   // %
+            $cash_buffer_percent  = ($sum_land_account / $summary_no_vat_ON_STATE) * 100;    // %
+            $cash_equity_percent  = ($sum_land_account / $equity_real) * 100;    // %
+            $equity_gain_percent  = (($equity_real - $paid_up_capital) / $paid_up_capital) * 100;   // %
+
+            $roi = $roi_total; // เช่น 57.9
+
+            // ROI
+            if ($roi >= 40) {
+                $roi_text = 'ดีมาก';
+                $roi_class = 'tx-info';
+            } elseif ($roi >= 20) {
+                $roi_text = 'ดี';
+                $roi_class = 'tx-success';
+            } elseif ($roi >= 0) {
+                $roi_text = 'ปานกลาง';
+                $roi_class = 'tx-secondary';
+            } else {
+                $roi_text = 'เสี่ยง';
+                $roi_class = 'tx-danger';
+            }
+
+            // True Leverage
+            if ($true_leverage < 1.0) {
+                $tl_text = "ดีมาก";
+                $tl_class = "tx-info";
+            } elseif ($true_leverage < 2.0) {
+                $tl_text = "ดี";
+                $tl_class = "tx-success";
+            } elseif ($true_leverage < 3.0) {
+                $tl_text = "ปานกลาง";
+                $tl_class = "tx-secondary";
+            } else {
+                $tl_text = "เสี่ยง";
+                $tl_class = "tx-danger";
+            }
+
+            if ($leverage_vs_capital < 1.0) {
+                $lvc_text  = "ดีมาก";
+                $lvc_class = "tx-info";       // ฟ้า
+            } elseif ($leverage_vs_capital < 2.0) {
+                $lvc_text  = "ดี";
+                $lvc_class = "tx-success";    // เขียว
+            } elseif ($leverage_vs_capital < 3.0) {
+                $lvc_text  = "พอเหมาะ";
+                $lvc_class = "tx-warning";    // เหลือง
+            } else {
+                $lvc_text  = "ขยายตัวสูง";
+                $lvc_class = "tx-danger";     // แดง แต่ดูไม่รุนแรงเกินไป
+            }
+
+            // Turnover Times
+            if ($turnover_times < 1.0) {
+                $to_text  = "ช้า";
+                $to_class = "tx-danger";     // แดง (แสดงว่าหมุนช้า)
+            } elseif ($turnover_times < 2.0) {
+                $to_text  = "พอเหมาะ";
+                $to_class = "tx-warning";    // เหลือง
+            } elseif ($turnover_times < 3.0) {
+                $to_text  = "ดี";
+                $to_class = "tx-success";    // เขียว
+            } else {
+                $to_text  = "ดีมาก";
+                $to_class = "tx-info";       // ฟ้า = ดีสุด
+            }
+
+            // Cash Buffer %
+            if ($cash_buffer_percent >= 15) {
+                $cb_text  = "ดีมาก";
+                $cb_class = "tx-info";       // ฟ้า (ดีที่สุด)
+            } elseif ($cash_buffer_percent >= 10) {
+                $cb_text  = "ดี";
+                $cb_class = "tx-success";    // เขียว
+            } elseif ($cash_buffer_percent >= 5) {
+                $cb_text  = "พอใช้";
+                $cb_class = "tx-warning";    // เหลือง
+            } else {
+                $cb_text  = "ต่ำ";
+                $cb_class = "tx-danger";     // แดง
+            }
+
+            if ($cash_equity_percent >= 15) {
+                $ce_text  = "ดีมาก";
+                $ce_class = "tx-info";       // ฟ้า
+            } elseif ($cash_equity_percent >= 8) {
+                $ce_text  = "ดี";
+                $ce_class = "tx-success";    // เขียว
+            } elseif ($cash_equity_percent >= 5) {
+                $ce_text  = "พอใช้";
+                $ce_class = "tx-warning";    // เหลือง
+            } else {
+                $ce_text  = "ต่ำ";
+                $ce_class = "tx-danger";     // แดง
+            }
+
+            // Equity Gain vs Paid-Up Capital
+            if ($equity_gain_percent >= 50) {
+                $eg_text  = "ดีมาก";
+                $eg_class = "tx-info";        // ฟ้า
+            } elseif ($equity_gain_percent >= 20) {
+                $eg_text  = "ดี";
+                $eg_class = "tx-success";     // เขียว
+            } elseif ($equity_gain_percent >= 0) {
+                $eg_text  = "ปานกลาง";
+                $eg_class = "tx-secondary";   // เทา
+            } else {
+                $eg_text  = "ต่ำ";
+                $eg_class = "tx-danger";      // แดง
+            }
+
+            if ($portfolio_yield < 10) {
+                $py_text  = "ต่ำ";
+                $py_class = "tx-danger";     // แดง
+            } elseif ($portfolio_yield < 20) {
+                $py_text  = "พอใช้";
+                $py_class = "tx-warning";    // เหลือง
+            } elseif ($portfolio_yield < 30) {
+                $py_text  = "ดี";
+                $py_class = "tx-success";    // เขียว
+            } else {
+                $py_text  = "ดีมาก";
+                $py_class = "tx-info";       // ฟ้า
+            }
+
+            // format ตัวเลขไว้ก่อน
+            $fmt_paid_up_capital   = number_format($paid_up_capital, 2);
+            $fmt_retained_earnings = number_format($retained_earnings, 2);
+            $fmt_equity_real       = number_format($equity_real, 2);
+            $fmt_loan_book         = number_format($summary_no_vat_ON_STATE, 2);
+            $fmt_cash_account      = number_format($sum_land_account, 2);
+            $fmt_total_assets      = number_format($summary_net_assets, 2);
+
+            $fmt_roi_total         = number_format($roi_total, 1) . '%';
+            $fmt_true_leverage     = number_format($true_leverage, 2) . 'x';
+            $fmt_lev_vs_capital    = number_format($leverage_vs_capital, 2) . 'x';
+            $fmt_turnover          = number_format($turnover_times, 2) . 'x';
+            $fmt_port_yield        = number_format($portfolio_yield, 1) . '%';
+            $fmt_cash_buffer       = number_format($cash_buffer_percent, 1) . '%';
+            $fmt_cash_equity       = number_format($cash_equity_percent, 1) . '%';
+            $fmt_equity_gain       = number_format($equity_gain_percent, 1) . '%';
+
+            $roi_display             = $fmt_roi_total       . '<span class="badge ' . $roi_class . '">(' . $roi_text . ')</span>';
+            $true_leverage_display   = $fmt_true_leverage   . '<span class="badge ' . $tl_class  . '">(' . $tl_text  . ')</span>';
+            $lev_vs_capital_display  = $fmt_lev_vs_capital  . '<span class="badge ' . $lvc_class . '">(' . $lvc_text . ')</span>';
+            $turnover_display        = $fmt_turnover        . '<span class="badge ' . $to_class  . '">(' . $to_text  . ')</span>';
+            $cash_buffer_display     = $fmt_cash_buffer     . '<span class="badge ' . $cb_class  . '">(' . $cb_text  . ')</span>';
+            $cash_equity_display     = $fmt_cash_equity     . '<span class="badge ' . $ce_class  . '">(' . $ce_text  . ')</span>';
+            $equity_gain_display     = $fmt_equity_gain     . '<span class="badge ' . $eg_class  . '">(' . $eg_text  . ')</span>';
+            $portfolio_yield_display = $fmt_port_yield      . '<span class="badge ' . $py_class  . '">(' . $py_text  . ')</span>';
+
+
+            $html_summarizeLoan = '
+                <div class="row">
                     <div class="col-xl-12">
                         <div class="card">
-                            <div class="card-body mt-2 mb-3">
-                                <div class="row">
-                                    <div class="col" style="flex-grow: 1;">
-                                        <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
-                                            <p class="mb-0 font-weight-semibold tx-18">เงินลงทุนจริง</p>
-                                            <div class="mt-2">
-                                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($real_investment->investment, 2) . '</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col" style="flex-grow: 1;">
-                                        <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
-                                            <p class="mb-0 font-weight-semibold tx-18">ยอดวงเงินกู้รวม</p>
-                                            <div class="mt-2">
-                                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_no_vat_ON_STATE, 2) . '</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col" style="flex-grow: 1;">
-                                        <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
-                                            <a href="' . base_url('/setting_land/land') . '">
-                                                <p class="mb-0 font-weight-semibold tx-18">เงินสดบัญชี</p>
-                                                <div class="mt-2">
-                                                    <span class="mb-0 font-weight-semibold tx-15">' . number_format($sum_land_account, 2) . '</span>
+                            <div class="card-body mt-2 mb-2">
+                                <div class="loan-rows">
+                                    <div class="loan-row">
+                                        <div class="loan-row-left">
+                                            <div class="loan-row-left-grid">
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">ทุนตั้งต้น</div>
+                                                    <div class="loan-metric-value">' . $fmt_paid_up_capital . '</div>
+                                                    <div class="loan-metric-sub">เงินลงทุนตั้งต้นของ InfiniteX</div>
                                                 </div>
-                                            </a>
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">กำไรสะสม</div>
+                                                    <div class="loan-metric-value">' . $fmt_retained_earnings . '</div>
+                                                    <div class="loan-metric-sub">กำไรที่ได้รับจริง – ค่าใช้จ่าย</div>
+                                                </div>
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">ทรัพย์สินสุทธิ</div>
+                                                    <div class="loan-metric-value">' . $fmt_equity_real . '</div>
+                                                    <div class="loan-metric-sub">ทุนตั้งต้น + กำไรสะสมทั้งหมด</div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col" style="flex-grow: 1;">
-                                        <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
-                                            <p class="mb-0 font-weight-semibold tx-18">วงเงินที่ปิดบัญชีแล้ว</p>
-                                            <div class="mt-2">
-                                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_no_vat_CLOSE_STATE, 2) . '</span>
+                                        <div class="loan-row-right">
+                                            <div class="loan-row-right-grid">
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">ROI</div>
+                                                    <div class="loan-metric-value">' . $roi_display . '</div>
+                                                    <div class="loan-metric-sub">ผลตอบแทนรวมเทียบกับทุน</div>
+                                                </div>
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">True Leverage</div>
+                                                    <div class="loan-metric-value">' . $true_leverage_display . '</div>
+                                                    <div class="loan-metric-sub">สัดส่วนเงินปล่อยกู้ต่อทุน</div>
+                                                </div>
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">ปล่อยกู้ต่อทุน</div>
+                                                    <div class="loan-metric-value">' . $lev_vs_capital_display . '</div>
+                                                    <div class="loan-metric-sub">ปล่อยกู้ได้กี่เท่าของทุนตั้งต้น</div>
+                                                </div>
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">Turnover</div>
+                                                    <div class="loan-metric-value">' . $turnover_display . '</div>
+                                                    <div class="loan-metric-sub">อัตราการหมุนพอร์ต</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col" style="flex-grow: 1;">
-                                        <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
-                                            <p class="mb-0 font-weight-semibold tx-18">ทรัพย์สินสุทธิ</p>
-                                            <div class="mt-2">
-                                                <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_net_assets, 2) . '</span>
+                                    <div class="loan-row">
+                                        <div class="loan-row-left">
+                                            <div class="loan-row-left-grid">
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">พอร์ตสินเชื่อปัจจุบัน</div>
+                                                    <div class="loan-metric-value">' . $fmt_loan_book . '</div>
+                                                    <div class="loan-metric-sub">ยอดปล่อยกู้ที่กำลังหมุนอยู่</div>
+                                                </div>
+                                                <div class="loan-metric-card">
+                                                    <a href="' . base_url('/setting_land/land') . '" style="color:inherit;text-decoration:none;">
+                                                        <div class="loan-metric-label">เงินสดบัญชี</div>
+                                                        <div class="loan-metric-value">' . $fmt_cash_account . '</div>
+                                                        <div class="loan-metric-sub">ยอดเงินสดที่พร้อมใช้</div>
+                                                    </a>
+                                                </div>
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">สินทรัพย์รวม</div>
+                                                    <div class="loan-metric-value">' . $fmt_total_assets . '</div>
+                                                    <div class="loan-metric-sub">เงินปล่อยกู้ + เงินสดในระบบ</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="loan-row-right">
+                                            <div class="loan-row-right-grid">
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">Portfolio Yield</div>
+                                                    <div class="loan-metric-value">' . $portfolio_yield_display . '</div>
+                                                    <div class="loan-metric-sub">ผลตอบแทนต่อพอร์ต (12m)</div>
+                                                </div>
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">เงินสดต่อพอร์ต</div>
+                                                    <div class="loan-metric-value">' . $cash_buffer_display . '</div>
+                                                    <div class="loan-metric-sub">ระดับกันชนสภาพคล่อง</div>
+                                                </div>
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">เงินสด / Equity</div>
+                                                    <div class="loan-metric-value">' . $cash_equity_display . '</div>
+                                                    <div class="loan-metric-sub">สัดส่วนเงินสดเทียบ Equity</div>
+                                                </div>
+                                                <div class="loan-metric-card">
+                                                    <div class="loan-metric-label">การเติบโตรวม</div>
+                                                    <div class="loan-metric-value">' . $equity_gain_display . '</div>
+                                                    <div class="loan-metric-sub">โตขึ้นจากทุนเริ่มต้น</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1441,52 +1682,8 @@ class Loan extends BaseController
                             </div>
                         </div>
                     </div>
-                </div>
-                ';
-            // <div class="row">
-            //     <div class="col" style="flex-grow: 1;">
-            //         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
-            //             <p class="mb-0 font-weight-semibold tx-18">เงินลงทุนจริง</p>
-            //             <div class="mt-2 mb-2">
-            //                 <span class="mb-0 font-weight-semibold tx-15">' . number_format($real_investment->investment, 2) . '</span>
-            //             </div>
-            //         </div>
-            //     </div>
-            //     <div class="col" style="flex-grow: 1;">
-            //         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
-            //             <p class="mb-0 font-weight-semibold tx-18">ยอดวงเงินกู้รวม</p>
-            //             <div class="mt-2 mb-2">
-            //                 <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_no_vat_ON_STATE, 2) . '</span>
-            //             </div>
-            //         </div>
-            //     </div>
-            //     <div class="col" style="flex-grow: 1;">
-            //         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
-            //             <a href="' . base_url('/setting_land/land') . '">
-            //                 <p class="mb-0 font-weight-semibold tx-18">เงินสดบัญชี</p>
-            //                 <div class="mt-2 mb-2">
-            //                     <span class="mb-0 font-weight-semibold tx-15">' . number_format($sum_land_account, 2) . '</span>
-            //                 </div>
-            //             </a>
-            //         </div>
-            //     </div>
-            //     <div class="col" style="flex-grow: 1;">
-            //         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
-            //             <p class="mb-0 font-weight-semibold tx-18">วงเงินที่ปิดบัญชีแล้ว</p>
-            //             <div class="mt-2 mb-2">
-            //                 <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_no_vat_CLOSE_STATE, 2) . '</span>
-            //             </div>
-            //         </div>
-            //     </div>
-            //     <div class="col" style="flex-grow: 1;">
-            //         <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed" style="border-bottom:1px dashed hsl(0deg 0% 0% / 5%) !important;">
-            //             <p class="mb-0 font-weight-semibold tx-18">ทรัพย์สินสุทธิ</p>
-            //             <div class="mt-2 mb-2">
-            //                 <span class="mb-0 font-weight-semibold tx-15">' . number_format($summary_net_assets, 2) . '</span>
-            //             </div>
-            //         </div>
-            //     </div>
-            // </div>
+                </div>';
+
             $response['data_summarizeLoan'] = $html_summarizeLoan;
 
             $response['data_SummarizeLoan'] = $html_SummarizeLoan;
@@ -4666,7 +4863,7 @@ class Loan extends BaseController
 
             $documentmonth      = $DocumentModel->getrevenue($data);
             $loanprocessmonths  = $this->LoanModel->getLoanProcessMonths($data);
-            
+
             $LoanPaymentMonths  = $this->LoanModel->getListLoanPaymentMonths($data);
 
             // เตรียม array เดือน 1-12
@@ -4831,29 +5028,29 @@ class Loan extends BaseController
                             </thead>
                             <tbody>';
 
-                    foreach ($months as $m) {
-                        $monthName = $monthNames[$m];
-                        $monthId   = str_pad($m, 2, '0', STR_PAD_LEFT);
-                        $idNoPad   = (string) $m;
+            foreach ($months as $m) {
+                $monthName = $monthNames[$m];
+                $monthId   = str_pad($m, 2, '0', STR_PAD_LEFT);
+                $idNoPad   = (string) $m;
 
-                        $html .= '
+                $html .= '
                                 <tr class="' . $classRow[$m] . '">
                                     <td>' . $monthName . '</td>
                                     <td class="tx-right" style="text-align: right;">
                                         <a href="javascript:void(0);" data-id="' . $monthId . '" id="Month_Process" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalProcessMonth">'
-                            . number_format($process[$m], 2) .
-                            '</a>
+                    . number_format($process[$m], 2) .
+                    '</a>
                                     </td>
                                     <td class="border-top-0" style="text-align: right;">
                                         <a href="javascript:void(0);" data-id="' . $idNoPad . '" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">'
-                            . number_format($loanPayment[$m], 2) .
-                            '</a>
+                    . number_format($loanPayment[$m], 2) .
+                    '</a>
                                     </td>
                                     <td class="tx-right">' . number_format($sumReceiptByMonth[$m], 2) . '</td>
                                     <td class="tx-right" style="text-align: right;">
                                         <a href="javascript:void(0);" data-id="' . $monthId . '" id="Month_Expenses" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalExpensesMonth">'
-                            . number_format($expenses[$m], 2) .
-                            '</a>
+                    . number_format($expenses[$m], 2) .
+                    '</a>
                                     </td>
                                     <td class="tx-right">
                                         <span class="' . $colorProcessDiffByMonth[$m] . '">' . $processDiffByMonth[$m] . '</span>
@@ -4862,40 +5059,40 @@ class Loan extends BaseController
                                         <span class="' . $colorNetByMonth[$m] . '">' . $netByMonth[$m] . '</span>
                                     </td>
                                 </tr>';
-                    }
+            }
 
-                    $html .= '
+            $html .= '
                                 <tr class="bg-primary">
                                     <td colspan="1"></td>
                                     <td class="tx-right" colspan="1">
                                         <h6 class="tx-uppercase mb-0"><b>รายรับ(ค่าดำเนินการ)&nbsp;&nbsp;'
-                        . number_format($sumProcess, 2) .
-                        '</b></h6>
+                . number_format($sumProcess, 2) .
+                '</b></h6>
                                     </td>
                                     <td class="tx-right" colspan="1">
                                         <h6 class="tx-uppercase mb-0"><b>รายรับ(ค่างวด)&nbsp;&nbsp;'
-                        . number_format($sumLoanPayment, 2) .
-                        '</b></h6>
+                . number_format($sumLoanPayment, 2) .
+                '</b></h6>
                                     </td>
                                     <td class="tx-right" colspan="1">
                                         <h6 class="tx-uppercase mb-0"><b>รายรับรวม&nbsp;&nbsp;'
-                        . number_format($sumReceipt, 2) .
-                        '</b></h6>
+                . number_format($sumReceipt, 2) .
+                '</b></h6>
                                     </td>
                                     <td class="tx-right" colspan="1">
                                         <h6 class="tx-uppercase mb-0"><b>รายจ่ายรวม&nbsp;&nbsp;'
-                        . number_format($sumExpenses, 2) .
-                        '</b></h6>
+                . number_format($sumExpenses, 2) .
+                '</b></h6>
                                     </td>
                                     <td class="tx-right" colspan="1">
                                         <h6 class="tx-uppercase mb-0"><b>ดุลดำเนินการรวม&nbsp;&nbsp;'
-                        . $sumProcessDiff .
-                        '</b></h6>
+                . $sumProcessDiff .
+                '</b></h6>
                                     </td>
                                     <td class="tx-right" colspan="1">
                                         <h6 class="tx-uppercase mb-0"><b>กำไรรวมสุทธิ&nbsp;&nbsp;'
-                        . $sumNet .
-                        '</b></h6>
+                . $sumNet .
+                '</b></h6>
                                     </td>
                                 </tr>
                             </tbody>

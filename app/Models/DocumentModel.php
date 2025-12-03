@@ -611,6 +611,19 @@ class DocumentModel
         return $builder->getResult();
     }
 
+    public function getDocSumAll()
+    {
+        $sql = "
+            SELECT 
+                SUM(CASE WHEN doc_type = 'ใบสำคัญรับ'  THEN price ELSE 0 END) AS receipt,
+                SUM(CASE WHEN doc_type = 'ใบสำคัญจ่าย' THEN price ELSE 0 END) AS expenses
+            FROM documents
+            WHERE doc_type IN ('ใบสำคัญรับ', 'ใบสำคัญจ่าย')
+        ";
+
+        return $this->db->query($sql)->getRow();
+    }
+
     public function getDocumentsPayMonthAll($param)
     {
         $month = $param['month'];

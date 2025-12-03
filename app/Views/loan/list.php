@@ -27,6 +27,288 @@
             max-width: 180px;
             /* กำหนดความกว้างของคอลัมน์แรก */
         }
+
+        /* container หลักของ summary */
+        .loan-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* แต่ละแถวใหญ่ (ซ้าย + ขวา) */
+        .loan-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* ด้านซ้าย/ขวา แต่ละแถว */
+        .loan-row-left,
+        .loan-row-right {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        @media (min-width: 1200px) {
+            .loan-row-left {
+                flex: 0 0 calc(55% - 6px);
+                /* 6px = ครึ่งของ gap 12px */
+                max-width: calc(55% - 6px);
+            }
+
+            .loan-row-right {
+                flex: 0 0 calc(45% - 6px);
+                max-width: calc(45% - 6px);
+            }
+        }
+
+        /* กริดด้านซ้าย: 3 กล่องต่อแถว (6 กล่อง = 2 แถว) */
+        .loan-row-left-grid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        @media (min-width: 768px) {
+            .loan-row-left-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        /* กริดด้านขวา: 4 กล่องต่อแถว (8 กล่อง = 2 แถว) */
+        .loan-row-right-grid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        @media (min-width: 768px) {
+            .loan-row-right-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .loan-row-right-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                /* [%1][%2][%3][%4] */
+            }
+        }
+
+        /* การ์ดแต่ละ metric – โทนเรียบแบบที่ใช้อยู่ */
+        /* DEFAULT (พื้นฐาน = DARK MODE เดิม) */
+        .loan-metric-card {
+            background: linear-gradient(145deg, #1e232d, #10131b);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 12px;
+            text-align: center;
+            min-height: 85px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+        }
+
+        .loan-metric-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        .loan-metric-value {
+            margin-top: 4px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .loan-metric-sub {
+            margin-top: 2px;
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+
+        /* VERSION มือถือ: กริด 2 คอลัมน์, การ์ดเตี้ย, ไม่เอา sub text */
+        @media (max-width: 575.98px) {
+
+            /* ซ้าย/ขวา ใช้เต็มกว้างทีละ block */
+            .loan-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .loan-row-left,
+            .loan-row-right {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            /* ให้ทั้งฝั่งซ้ายและขวาเป็นกริด 2 คอลัมน์ */
+            .loan-row-left-grid,
+            .loan-row-right-grid {
+                display: grid;
+                gap: 8px;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                /* 2 การ์ดต่อแถว */
+            }
+
+            /* การ์ดเตี้ยลง */
+            .loan-metric-card {
+                /* background: linear-gradient(135deg, #f9fafb, #e5e7eb); */
+                border-radius: 12px;
+                border: 1px solid rgba(148, 163, 184, 0.35);
+                /* ทำให้บางลงนิด */
+
+                padding: 6px 10px;
+                /* ↓ ลดระยะห่างบนล่างลง */
+                min-height: 70px;
+                /* ↓ ลดความสูง */
+
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                box-shadow: 0 3px 8px rgba(15, 23, 42, 0.06);
+                /* ↓ เงาเบาขึ้น */
+            }
+
+
+            /* label เล็กลงหน่อย */
+            .loan-metric-label {
+                font-size: 10px;
+                line-height: 1.2;
+            }
+
+            /* ตัวเลขยังเด่น แต่ไม่ใหญ่เกิน */
+            .loan-metric-value {
+                margin-top: 2px;
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            /* มือถือไม่ต้องมี sub text เพื่อให้เตี้ยลง */
+            .loan-metric-sub {
+                display: none;
+            }
+
+            .badge {
+                display: none;
+            }
+
+            /* ถ้ารู้สึกว่าการ์ดชิดขอบเกินไปค่อยลด/เพิ่ม padding ของ card-body ตรงนี้ได้ */
+            .card .card-body {
+                padding: 10px 10px;
+            }
+
+            /* ใช้ flex-center สำหรับกริดที่มีการ์ด 1 ใบ */
+            .loan-row-left-grid:only-child,
+            .loan-row-right-grid:only-child {
+                display: flex !important;
+                justify-content: center;
+            }
+
+            /* และให้การ์ดไม่ยืดเต็มแถว */
+            .loan-row-left-grid:only-child .loan-metric-card,
+            .loan-row-right-grid:only-child .loan-metric-card {
+                width: 85%;
+                /* หรือ 90% แล้วแต่ชอบ */
+                max-width: 280px;
+            }
+        }
+
+        .roi-inline {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            /* ระยะห่างระหว่าง % กับข้อความ */
+        }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* =========================
+        DARK THEME OVERRIDE
+        ========================= */
+
+        /* การ์ดในโหมดมืด */
+        [data-theme-color="dark"] .loan-metric-card {
+            background: linear-gradient(145deg, #1e232d, #10131b);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+            color: #e5e7eb;
+        }
+
+        [data-theme-color="dark"] .loan-metric-label {
+            color: #ffffff;
+        }
+
+        [data-theme-color="dark"] .loan-metric-value {
+            color: #ffffff;
+        }
+
+        [data-theme-color="dark"] .loan-metric-sub {
+            color: #9ca3af;
+        }
+
+        /* badge สีต่าง ๆ ในโหมดมืด (ใช้ class เดิมที่คุณมีอยู่แล้ว) */
+        [data-theme-color="dark"] .badge.tx-info {
+            color: #38bdf8 !important;
+            /* ดีมาก = ฟ้า */
+        }
+
+        [data-theme-color="dark"] .badge.tx-success {
+            color: #4ade80 !important;
+            /* ดี = เขียว */
+        }
+
+        [data-theme-color="dark"] .badge.tx-warning {
+            color: #facc15 !important;
+            /* พอใช้ = เหลือง */
+        }
+
+        [data-theme-color="dark"] .badge.tx-secondary {
+            color: #94a3b8 !important;
+            /* ปานกลาง = เทา */
+        }
+
+        [data-theme-color="dark"] .badge.tx-danger {
+            color: #f87171 !important;
+            /* ต่ำ/เสี่ยง = แดง */
+        }
+
+        /* ถ้าอยากให้มือถือในโหมดมืดก็เป็นกล่องเข้มเหมือนกัน */
+        @media (max-width: 575.98px) {
+            [data-theme-color="dark"] .loan-metric-card {
+                background: linear-gradient(145deg, #1e232d, #10131b);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        [data-theme-color="light"] .loan-metric-card {
+            background: linear-gradient(135deg, #f9fafb, #e5e7eb);
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+            color: #111827;
+        }
+
+        [data-theme-color="light"] .loan-metric-label {
+            color: #111827;
+        }
+
+        [data-theme-color="light"] .loan-metric-value {
+            color: #0f172a;
+        }
+
+        [data-theme-color="light"] .loan-metric-sub {
+            color: #6b7280;
+        }
     </style>
     <!-- container -->
     <div class="main-container container-fluid">

@@ -400,7 +400,6 @@ class Document extends BaseController
                 'doc_file' => $docfile,
                 'filePath' => $file,
                 'note' => $this->request->getVar('note'),
-                'note' => $this->request->getVar('note'),
             ];
 
             switch ($docType) {

@@ -528,8 +528,11 @@ class LoanModel
 
     public function getRevenueListPayments($year)
     {
-        $sql = "SELECT * , MONTH(loan_payment.loan_payment_date) as payment_month FROM loan_payment 
-        WHERE YEAR(loan_payment.loan_payment_date) = $year ORDER BY id DESC
+        $sql = "SELECT * , MONTH(loan_payment.loan_payment_date) as payment_month 
+        FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(loan_payment.loan_payment_date) = $year AND loan.loan_status != 'CANCEL_STATE'
+        ORDER BY loan_payment.id DESC
         ";
 
         $builder = $this->db->query($sql);
@@ -561,8 +564,9 @@ class LoanModel
         $month = $param['month'];
         $years = $param['years'];
 
-        $sql = "SELECT * FROM loan_payment 
-        WHERE YEAR(loan_payment.loan_payment_date) = $years AND MONTH(loan_payment.loan_payment_date) = $month
+        $sql = "SELECT loan_payment.* FROM loan_payment 
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(loan_payment.loan_payment_date) = $years AND MONTH(loan_payment.loan_payment_date) = $month AND loan.loan_status != 'CANCEL_STATE'
         ";
 
         $builder = $this->db->query($sql);
@@ -577,8 +581,10 @@ class LoanModel
         $start = $param['start'];
         $length = $param['length'];
 
-        $sql = "SELECT * , DATE_FORMAT(loan_payment.loan_payment_date , '%Y-%m-%d') as payment_date FROM loan_payment 
-        WHERE YEAR(loan_payment.loan_payment_date) = $years AND MONTH(loan_payment.loan_payment_date) = $month ORDER BY loan_payment.loan_payment_date ASC
+        $sql = "SELECT loan_payment.* , DATE_FORMAT(loan_payment.loan_payment_date , '%Y-%m-%d') as payment_date FROM loan_payment
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(loan_payment.loan_payment_date) = $years AND MONTH(loan_payment.loan_payment_date) = $month AND loan.loan_status != 'CANCEL_STATE'
+        ORDER BY loan_payment.loan_payment_date ASC
         LIMIT $start, $length";
         $builder = $this->db->query($sql);
 
@@ -593,11 +599,12 @@ class LoanModel
         $start = $param['start'];
         $length = $param['length'];
 
-        $sql = "SELECT * , DATE_FORMAT(loan_payment.loan_payment_date , '%Y-%m-%d') as payment_date FROM loan_payment
-        WHERE YEAR(loan_payment.loan_payment_date) = $years AND MONTH(loan_payment.loan_payment_date) = $month
-        and ((loan_code like '%" . $search_value . "%') OR (loan_payment_customer like '%" . $search_value . "%') OR (loan_employee like '%" . $search_value . "%') 
-           OR (loan_payment_installment like '%" . $search_value . "%') OR (land_account_name like '%" . $search_value . "%') OR (loan_payment_pay_type like '%" . $search_value . "%')
-           OR (loan_payment_amount like '%" . $search_value . "%') OR (loan_payment_date like '%" . $search_value . "%')) ORDER BY loan_payment.loan_payment_date ASC
+        $sql = "SELECT loan_payment.* , DATE_FORMAT(loan_payment.loan_payment_date , '%Y-%m-%d') as payment_date FROM loan_payment
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(loan_payment.loan_payment_date) = $years AND MONTH(loan_payment.loan_payment_date) = $month AND loan.loan_status != 'CANCEL_STATE'
+        and ((loan_payment.loan_code like '%" . $search_value . "%') OR (loan_payment.loan_payment_customer like '%" . $search_value . "%') OR (loan_payment.loan_employee like '%" . $search_value . "%') 
+           OR (loan_payment.loan_payment_installment like '%" . $search_value . "%') OR (loan_payment.land_account_name like '%" . $search_value . "%') OR (loan_payment.loan_payment_pay_type like '%" . $search_value . "%')
+           OR (loan_payment.loan_payment_amount like '%" . $search_value . "%') OR (loan_payment.loan_payment_date like '%" . $search_value . "%')) ORDER BY loan_payment.loan_payment_date ASC
         LIMIT $start, $length
             ";
         $builder = $this->db->query($sql);
@@ -611,10 +618,11 @@ class LoanModel
         $years = $param['years'];
         $search_value = $param['search_value'];
         $sql = "SELECT * FROM loan_payment
-        WHERE YEAR(loan_payment.loan_payment_date) = $years AND MONTH(loan_payment.loan_payment_date) = $month
-        and ((loan_code like '%" . $search_value . "%') OR (loan_payment_customer like '%" . $search_value . "%') OR (loan_employee like '%" . $search_value . "%') 
-           OR (loan_payment_installment like '%" . $search_value . "%') OR (land_account_name like '%" . $search_value . "%') OR (loan_payment_pay_type like '%" . $search_value . "%')
-           OR (loan_payment_amount like '%" . $search_value . "%') OR (loan_payment_date like '%" . $search_value . "%'))
+        JOIN loan ON loan_payment.loan_code = loan.loan_code
+        WHERE YEAR(loan_payment.loan_payment_date) = $years AND MONTH(loan_payment.loan_payment_date) = $month AND loan.loan_status != 'CANCEL_STATE'
+        and ((loan_payment.loan_code like '%" . $search_value . "%') OR (loan_payment.loan_payment_customer like '%" . $search_value . "%') OR (loan_payment.loan_employee like '%" . $search_value . "%') 
+           OR (loan_payment.loan_payment_installment like '%" . $search_value . "%') OR (loan_payment.land_account_name like '%" . $search_value . "%') OR (loan_payment.loan_payment_pay_type like '%" . $search_value . "%')
+           OR (loan_payment.loan_payment_amount like '%" . $search_value . "%') OR (loan_payment.loan_payment_date like '%" . $search_value . "%'))
             ";
         $builder = $this->db->query($sql);
 
@@ -956,7 +964,7 @@ class LoanModel
         if (!empty($date)) {
             $whereDate = "AND DATE(setting_land_report.created_at) >= '$dateStart' AND DATE(setting_land_report.created_at) <= '$dateEnd'";
         }
-        
+
         $sql = "SELECT setting_land_report.*, setting_land.land_account_name
                 FROM setting_land_report
                 JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
@@ -983,15 +991,31 @@ class LoanModel
 
     public function getListLoanPaymentMonths($year)
     {
-        $sql = "SELECT * , MONTH(created_at) as loan_created_payment
-        FROM setting_land_report
-        WHERE YEAR(created_at) = $year AND setting_land_report_detail LIKE 'ชำระสินเชื่อ%' AND setting_land_report_detail LIKE '%งวดที่%'
-        ORDER BY id DESC;
+        $sql = "
+            SELECT 
+                setting_land_report.*,
+                MONTH(setting_land_report.created_at) AS loan_created_payment,
+                loan.loan_status
+            FROM setting_land_report
+            JOIN loan 
+                ON loan.loan_code = SUBSTRING(
+                    setting_land_report.setting_land_report_detail,
+                    LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                    9
+                )
+            WHERE 
+                YEAR(setting_land_report.created_at) = $year
+                AND setting_land_report.setting_land_report_detail LIKE 'ชำระสินเชื่อ%'
+                AND setting_land_report.setting_land_report_detail LIKE '%งวดที่%'
+                AND loan.loan_status != 'CANCEL_STATE'
+            ORDER BY 
+                setting_land_report.id DESC
         ";
 
         $builder = $this->db->query($sql);
         return $builder->getResult();
     }
+
 
     public function getLoanProcessMonths($year)
     {
@@ -1011,29 +1035,56 @@ class LoanModel
 
     public function getListLoanClosePaymentMonths($year)
     {
-        $sql = "SELECT * , MONTH(created_at) as loan_created_close_payment
-        FROM setting_land_report
-        WHERE YEAR(created_at) = $year AND setting_land_report_detail LIKE '%ชำระปิดสินเชื่อ%' 
-        ORDER BY id DESC;
+        $sql = "
+            SELECT 
+                setting_land_report.*,
+                MONTH(setting_land_report.created_at) AS loan_created_close_payment,
+                loan.loan_status
+            FROM setting_land_report
+            JOIN loan 
+                ON loan.loan_code = SUBSTRING(
+                    setting_land_report.setting_land_report_detail,
+                    LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                    9
+                )
+            WHERE 
+                YEAR(setting_land_report.created_at) = $year
+                AND setting_land_report.setting_land_report_detail LIKE '%ชำระปิดสินเชื่อ%'
+                AND loan.loan_status != 'CANCEL_STATE'
+            ORDER BY 
+                setting_land_report.id DESC
         ";
 
         $builder = $this->db->query($sql);
         return $builder->getResult();
     }
+
 
     public function getDataTableLoanPaymentMonthCount($param)
     {
         $month = $param['month'];
         $years = $param['years'];
 
-        $sql = "SELECT * FROM setting_land_report 
-        WHERE YEAR(setting_land_report.created_at) = $years AND MONTH(setting_land_report.created_at) = $month AND setting_land_report_detail LIKE 'ชำระสินเชื่อ%' AND setting_land_report_detail LIKE '%งวดที่%'
+        $sql = "
+            SELECT setting_land_report.*, loan.loan_status
+            FROM setting_land_report
+            JOIN loan
+                ON loan.loan_code = SUBSTRING(
+                    setting_land_report.setting_land_report_detail,
+                    LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                    9
+                )
+            WHERE 
+                YEAR(setting_land_report.created_at) = $years
+                AND MONTH(setting_land_report.created_at) = $month
+                AND setting_land_report.setting_land_report_detail LIKE 'ชำระสินเชื่อ%'
+                AND setting_land_report.setting_land_report_detail LIKE '%งวดที่%'
+                AND loan.loan_status != 'CANCEL_STATE'
         ";
 
-        $builder = $this->db->query($sql);
-
-        return $builder->getResult();
+        return $this->db->query($sql)->getResult();
     }
+
 
     public function getDataTableLoanPaymentMonth($param)
     {
@@ -1042,15 +1093,35 @@ class LoanModel
         $start = $param['start'];
         $length = $param['length'];
 
-        $sql = "SELECT setting_land_report.*, setting_land.land_account_name, DATE_FORMAT(setting_land_report.created_at , '%Y-%m-%d') as payment_date FROM setting_land_report 
-        JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
-        WHERE YEAR(setting_land_report.created_at) = $years AND MONTH(setting_land_report.created_at) = $month AND setting_land_report_detail LIKE 'ชำระสินเชื่อ%' AND setting_land_report_detail LIKE '%งวดที่%'
-        ORDER BY setting_land_report.created_at DESC
-        LIMIT $start, $length";
-        $builder = $this->db->query($sql);
+        $sql = "
+            SELECT 
+                setting_land_report.*,
+                setting_land.land_account_name,
+                DATE_FORMAT(setting_land_report.created_at, '%Y-%m-%d') AS payment_date,
+                loan.loan_status
+            FROM setting_land_report
+            JOIN setting_land 
+                ON setting_land.id = setting_land_report.setting_land_id
+            JOIN loan
+                ON loan.loan_code = SUBSTRING(
+                    setting_land_report.setting_land_report_detail,
+                    LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                    9
+                )
+            WHERE 
+                YEAR(setting_land_report.created_at) = $years
+                AND MONTH(setting_land_report.created_at) = $month
+                AND setting_land_report.setting_land_report_detail LIKE 'ชำระสินเชื่อ%'
+                AND setting_land_report.setting_land_report_detail LIKE '%งวดที่%'
+                AND loan.loan_status != 'CANCEL_STATE'
+            ORDER BY 
+                setting_land_report.created_at DESC
+            LIMIT $start, $length
+        ";
 
-        return $builder->getResult();
+        return $this->db->query($sql)->getResult();
     }
+
 
     public function getDataTableLoanPaymentMonthSearch($param)
     {
@@ -1060,34 +1131,84 @@ class LoanModel
         $start = $param['start'];
         $length = $param['length'];
 
-        $sql = "SELECT setting_land_report.*, setting_land.land_account_name, DATE_FORMAT(setting_land_report.created_at , '%Y-%m-%d') as payment_date FROM setting_land_report
-        JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
-        WHERE YEAR(setting_land_report.created_at) = $years AND MONTH(setting_land_report.created_at) = $month AND setting_land_report_detail LIKE 'ชำระสินเชื่อ%' AND setting_land_report_detail LIKE '%งวดที่%'
-        and ((setting_land.land_account_name like '%" . $search_value . "%') OR (setting_land_report_detail like '%" . $search_value . "%') OR (setting_land_report_money like '%" . $search_value . "%') 
-           OR (setting_land_report_note like '%" . $search_value . "%') OR (setting_land_report_account_balance like '%" . $search_value . "%') OR (setting_land_report.employee_name like '%" . $search_value . "%')
-           OR (setting_land_report.created_at like '%" . $search_value . "%')) ORDER BY setting_land_report.created_at DESC
-        LIMIT $start, $length
-            ";
-        $builder = $this->db->query($sql);
+        $sql = "
+            SELECT 
+                setting_land_report.*,
+                setting_land.land_account_name,
+                DATE_FORMAT(setting_land_report.created_at, '%Y-%m-%d') AS payment_date,
+                loan.loan_status
+            FROM setting_land_report
+            JOIN setting_land 
+                ON setting_land.id = setting_land_report.setting_land_id
+            JOIN loan
+                ON loan.loan_code = SUBSTRING(
+                    setting_land_report.setting_land_report_detail,
+                    LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                    9
+                )
+            WHERE 
+                YEAR(setting_land_report.created_at) = $years
+                AND MONTH(setting_land_report.created_at) = $month
+                AND setting_land_report.setting_land_report_detail LIKE 'ชำระสินเชื่อ%'
+                AND setting_land_report.setting_land_report_detail LIKE '%งวดที่%'
+                AND loan.loan_status != 'CANCEL_STATE'
+                AND (
+                    setting_land.land_account_name LIKE '%$search_value%'
+                    OR setting_land_report.setting_land_report_detail LIKE '%$search_value%'
+                    OR setting_land_report.setting_land_report_money LIKE '%$search_value%'
+                    OR setting_land_report.setting_land_report_note LIKE '%$search_value%'
+                    OR setting_land_report.setting_land_report_account_balance LIKE '%$search_value%'
+                    OR setting_land_report.employee_name LIKE '%$search_value%'
+                    OR setting_land_report.created_at LIKE '%$search_value%'
+                )
+            ORDER BY 
+                setting_land_report.created_at DESC
+            LIMIT $start, $length
+        ";
 
-        return $builder->getResult();
+        return $this->db->query($sql)->getResult();
     }
+
 
     public function getDataTableLoanPaymentMonthSearchCount($param)
     {
         $month = $param['month'];
         $years = $param['years'];
         $search_value = $param['search_value'];
-        $sql = "SELECT setting_land_report.*, setting_land.land_account_name, DATE_FORMAT(setting_land_report.created_at , '%Y-%m-%d') as payment_date FROM setting_land_report
-        JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
-        WHERE YEAR(setting_land_report.created_at) = $years AND MONTH(setting_land_report.created_at) = $month AND setting_land_report_detail LIKE 'ชำระสินเชื่อ%' AND setting_land_report_detail LIKE '%งวดที่%'
-        and ((setting_land.land_account_name like '%" . $search_value . "%') OR (setting_land_report_detail like '%" . $search_value . "%') OR (setting_land_report_money like '%" . $search_value . "%') 
-           OR (setting_land_report_note like '%" . $search_value . "%') OR (setting_land_report_account_balance like '%" . $search_value . "%') OR (setting_land_report.employee_name like '%" . $search_value . "%')
-           OR (setting_land_report.created_at like '%" . $search_value . "%'))
-            ";
-        $builder = $this->db->query($sql);
 
-        return $builder->getResult();
+        $sql = "
+            SELECT 
+                setting_land_report.*,
+                setting_land.land_account_name,
+                DATE_FORMAT(setting_land_report.created_at, '%Y-%m-%d') AS payment_date,
+                loan.loan_status
+            FROM setting_land_report
+            JOIN setting_land 
+                ON setting_land.id = setting_land_report.setting_land_id
+            JOIN loan
+                ON loan.loan_code = SUBSTRING(
+                    setting_land_report.setting_land_report_detail,
+                    LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                    9
+                )
+            WHERE 
+                YEAR(setting_land_report.created_at) = $years
+                AND MONTH(setting_land_report.created_at) = $month
+                AND setting_land_report.setting_land_report_detail LIKE 'ชำระสินเชื่อ%'
+                AND setting_land_report.setting_land_report_detail LIKE '%งวดที่%'
+                AND loan.loan_status != 'CANCEL_STATE'
+                AND (
+                    setting_land.land_account_name LIKE '%$search_value%'
+                    OR setting_land_report.setting_land_report_detail LIKE '%$search_value%'
+                    OR setting_land_report.setting_land_report_money LIKE '%$search_value%'
+                    OR setting_land_report.setting_land_report_note LIKE '%$search_value%'
+                    OR setting_land_report.setting_land_report_account_balance LIKE '%$search_value%'
+                    OR setting_land_report.employee_name LIKE '%$search_value%'
+                    OR setting_land_report.created_at LIKE '%$search_value%'
+                )
+        ";
+
+        return $this->db->query($sql)->getResult();
     }
 
     public function getDataTableLoanClosePaymentMonthCount($param)
@@ -1095,12 +1216,25 @@ class LoanModel
         $month = $param['month'];
         $years = $param['years'];
 
-        $sql = "SELECT * FROM setting_land_report 
-        WHERE YEAR(setting_land_report.created_at) = $years AND MONTH(setting_land_report.created_at) = $month AND setting_land_report_detail LIKE '%ชำระปิดสินเชื่อ%'
+        $sql = "
+            SELECT 
+                setting_land_report.*,
+                loan.loan_status
+            FROM setting_land_report
+            JOIN loan 
+                ON loan.loan_code = SUBSTRING(
+                    setting_land_report.setting_land_report_detail,
+                    LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                    9
+                )
+            WHERE 
+                YEAR(setting_land_report.created_at) = $years
+                AND MONTH(setting_land_report.created_at) = $month
+                AND setting_land_report.setting_land_report_detail LIKE '%ชำระปิดสินเชื่อ%'
+                AND loan.loan_status != 'CANCEL_STATE'
         ";
 
         $builder = $this->db->query($sql);
-
         return $builder->getResult();
     }
 
@@ -1111,13 +1245,32 @@ class LoanModel
         $start = $param['start'];
         $length = $param['length'];
 
-        $sql = "SELECT setting_land_report.*, setting_land.land_account_name, DATE_FORMAT(setting_land_report.created_at , '%Y-%m-%d') as payment_date FROM setting_land_report 
-        JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
-        WHERE YEAR(setting_land_report.created_at) = $years AND MONTH(setting_land_report.created_at) = $month AND setting_land_report_detail LIKE '%ชำระปิดสินเชื่อ%'
-        ORDER BY setting_land_report.created_at DESC
-        LIMIT $start, $length";
-        $builder = $this->db->query($sql);
+        $sql = "
+            SELECT 
+                setting_land_report.*,
+                setting_land.land_account_name,
+                DATE_FORMAT(setting_land_report.created_at , '%Y-%m-%d') AS payment_date,
+                loan.loan_status
+            FROM setting_land_report 
+            JOIN setting_land 
+                ON setting_land.id = setting_land_report.setting_land_id
+            JOIN loan 
+                ON loan.loan_code = SUBSTRING(
+                    setting_land_report.setting_land_report_detail,
+                    LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                    9
+                )
+            WHERE 
+                YEAR(setting_land_report.created_at) = $years
+                AND MONTH(setting_land_report.created_at) = $month
+                AND setting_land_report.setting_land_report_detail LIKE '%ชำระปิดสินเชื่อ%'
+                AND loan.loan_status != 'CANCEL_STATE'
+            ORDER BY 
+                setting_land_report.created_at DESC
+            LIMIT $start, $length
+        ";
 
+        $builder = $this->db->query($sql);
         return $builder->getResult();
     }
 
@@ -1129,16 +1282,41 @@ class LoanModel
         $start = $param['start'];
         $length = $param['length'];
 
-        $sql = "SELECT setting_land_report.*, setting_land.land_account_name, DATE_FORMAT(setting_land_report.created_at , '%Y-%m-%d') as payment_date FROM setting_land_report
-        JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
-        WHERE YEAR(setting_land_report.created_at) = $years AND MONTH(setting_land_report.created_at) = $month AND setting_land_report_detail LIKE '%ชำระปิดสินเชื่อ%'
-        and ((setting_land.land_account_name like '%" . $search_value . "%') OR (setting_land_report_detail like '%" . $search_value . "%') OR (setting_land_report_money like '%" . $search_value . "%') 
-           OR (setting_land_report_note like '%" . $search_value . "%') OR (setting_land_report_account_balance like '%" . $search_value . "%') OR (setting_land_report.employee_name like '%" . $search_value . "%')
-           OR (setting_land_report.created_at like '%" . $search_value . "%')) ORDER BY setting_land_report.created_at DESC
-        LIMIT $start, $length
-            ";
-        $builder = $this->db->query($sql);
+        $sql = "
+            SELECT 
+                setting_land_report.*,
+                setting_land.land_account_name,
+                DATE_FORMAT(setting_land_report.created_at , '%Y-%m-%d') AS payment_date,
+                loan.loan_status
+            FROM setting_land_report
+            JOIN setting_land 
+                ON setting_land.id = setting_land_report.setting_land_id
+            JOIN loan 
+                ON loan.loan_code = SUBSTRING(
+                    setting_land_report.setting_land_report_detail,
+                    LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                    9
+                )
+            WHERE 
+                YEAR(setting_land_report.created_at) = $years
+                AND MONTH(setting_land_report.created_at) = $month
+                AND setting_land_report.setting_land_report_detail LIKE '%ชำระปิดสินเชื่อ%'
+                AND loan.loan_status != 'CANCEL_STATE'
+                AND (
+                    setting_land.land_account_name LIKE '%" . $search_value . "%'
+                    OR setting_land_report.setting_land_report_detail LIKE '%" . $search_value . "%'
+                    OR setting_land_report.setting_land_report_money LIKE '%" . $search_value . "%'
+                    OR setting_land_report.setting_land_report_note LIKE '%" . $search_value . "%'
+                    OR setting_land_report.setting_land_report_account_balance LIKE '%" . $search_value . "%'
+                    OR setting_land_report.employee_name LIKE '%" . $search_value . "%'
+                    OR setting_land_report.created_at LIKE '%" . $search_value . "%'
+                )
+            ORDER BY 
+                setting_land_report.created_at DESC
+            LIMIT $start, $length
+        ";
 
+        $builder = $this->db->query($sql);
         return $builder->getResult();
     }
 
@@ -1147,17 +1325,42 @@ class LoanModel
         $month = $param['month'];
         $years = $param['years'];
         $search_value = $param['search_value'];
-        $sql = "SELECT setting_land_report.*, setting_land.land_account_name, DATE_FORMAT(setting_land_report.created_at , '%Y-%m-%d') as payment_date FROM setting_land_report
-        JOIN setting_land ON setting_land.id = setting_land_report.setting_land_id
-        WHERE YEAR(setting_land_report.created_at) = $years AND MONTH(setting_land_report.created_at) = $month AND setting_land_report_detail LIKE '%ชำระปิดสินเชื่อ%'
-        and ((setting_land.land_account_name like '%" . $search_value . "%') OR (setting_land_report_detail like '%" . $search_value . "%') OR (setting_land_report_money like '%" . $search_value . "%') 
-           OR (setting_land_report_note like '%" . $search_value . "%') OR (setting_land_report_account_balance like '%" . $search_value . "%') OR (setting_land_report.employee_name like '%" . $search_value . "%')
-           OR (setting_land_report.created_at like '%" . $search_value . "%'))
-            ";
-        $builder = $this->db->query($sql);
 
+        $sql = "
+            SELECT 
+                setting_land_report.*,
+                setting_land.land_account_name,
+                DATE_FORMAT(setting_land_report.created_at , '%Y-%m-%d') AS payment_date,
+                loan.loan_status
+            FROM setting_land_report
+            JOIN setting_land 
+                ON setting_land.id = setting_land_report.setting_land_id
+            JOIN loan 
+                ON loan.loan_code = SUBSTRING(
+                    setting_land_report.setting_land_report_detail,
+                    LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                    9
+                )
+            WHERE 
+                YEAR(setting_land_report.created_at) = $years
+                AND MONTH(setting_land_report.created_at) = $month
+                AND setting_land_report.setting_land_report_detail LIKE '%ชำระปิดสินเชื่อ%'
+                AND loan.loan_status != 'CANCEL_STATE'
+                AND (
+                    setting_land.land_account_name LIKE '%" . $search_value . "%'
+                    OR setting_land_report.setting_land_report_detail LIKE '%" . $search_value . "%'
+                    OR setting_land_report.setting_land_report_money LIKE '%" . $search_value . "%'
+                    OR setting_land_report.setting_land_report_note LIKE '%" . $search_value . "%'
+                    OR setting_land_report.setting_land_report_account_balance LIKE '%" . $search_value . "%'
+                    OR setting_land_report.employee_name LIKE '%" . $search_value . "%'
+                    OR setting_land_report.created_at LIKE '%" . $search_value . "%'
+                )
+        ";
+
+        $builder = $this->db->query($sql);
         return $builder->getResult();
     }
+
 
     public function getAllLoan()
     {
@@ -1893,5 +2096,64 @@ class LoanModel
                 AND loan_type = 'เงินสด'
                 ORDER BY loan_date_close ASC, loan_code ASC";
         return $this->db->query($sql)->getResult();
+    }
+
+    public function getRolling12mSummary($startDate, $endDate)
+    {
+        $sql = "
+        SELECT
+            COALESCE((
+                SELECT 
+                    SUM(
+                        IFNULL(loan.loan_payment_process, 0)
+                      + IFNULL(loan.loan_tranfer, 0)
+                      + IFNULL(loan.loan_payment_other, 0)
+                    )
+                FROM loan
+                WHERE 
+                    loan.loan_date_promise >= ?
+                    AND loan.loan_date_promise < ?
+                    AND loan.loan_status != 'CANCEL_STATE'
+            ), 0) AS fee_income_12m,
+
+            COALESCE((
+                SELECT 
+                    SUM(IFNULL(setting_land_report.setting_land_report_money, 0))
+                FROM setting_land_report
+                JOIN loan 
+                    ON loan.loan_code = SUBSTRING(
+                        setting_land_report.setting_land_report_detail,
+                        LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                        9
+                    )
+                WHERE 
+                    setting_land_report.created_at >= ?
+                    AND setting_land_report.created_at < ?
+                    AND setting_land_report.setting_land_report_detail LIKE 'ชำระสินเชื่อ%'
+                    AND setting_land_report.setting_land_report_detail LIKE '%งวดที่%'
+                    AND loan.loan_status != 'CANCEL_STATE'
+            ), 0) AS interest_income_12m,
+
+            COALESCE((
+                SELECT 
+                    SUM(IFNULL(documents.price, 0))
+                FROM documents
+                WHERE 
+                    documents.doc_date >= ?
+                    AND documents.doc_date < ?
+                    AND documents.doc_type = 'ใบสำคัญจ่าย'
+            ), 0) AS expense_12m
+    ";
+
+        $params = [
+            $startDate,
+            $endDate,   // ค่าดำเนินการ
+            $startDate,
+            $endDate,   // ดอกเบี้ย
+            $startDate,
+            $endDate    // ค่าใช้จ่าย
+        ];
+
+        return $this->db->query($sql, $params)->getRow();
     }
 }
