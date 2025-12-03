@@ -257,30 +257,25 @@
         }
 
         /* badge สีต่าง ๆ ในโหมดมืด (ใช้ class เดิมที่คุณมีอยู่แล้ว) */
-        [data-theme-color="dark"] .badge.tx-info {
+        /* [data-theme-color="dark"] .badge.tx-info {
             color: #38bdf8 !important;
-            /* ดีมาก = ฟ้า */
         }
 
         [data-theme-color="dark"] .badge.tx-success {
             color: #4ade80 !important;
-            /* ดี = เขียว */
         }
 
         [data-theme-color="dark"] .badge.tx-warning {
             color: #facc15 !important;
-            /* พอใช้ = เหลือง */
         }
 
         [data-theme-color="dark"] .badge.tx-secondary {
             color: #94a3b8 !important;
-            /* ปานกลาง = เทา */
         }
 
         [data-theme-color="dark"] .badge.tx-danger {
             color: #f87171 !important;
-            /* ต่ำ/เสี่ยง = แดง */
-        }
+        } */
 
         /* ถ้าอยากให้มือถือในโหมดมืดก็เป็นกล่องเข้มเหมือนกัน */
         @media (max-width: 575.98px) {
