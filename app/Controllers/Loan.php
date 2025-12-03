@@ -1379,7 +1379,7 @@ class Loan extends BaseController
                         <div class="card text-center">
                             <div class="card-body">
                                 <div>ค่างวดต่อเดือน</div>
-                                <div class="font-weight-semibold mb-1 tx-warning">' . number_format($loan_payment_month, 2) . '</div>
+                                <div class="font-weight-semibold mb-1 tx-secondary">' . number_format($loan_payment_month, 2) . '</div>
                             </div>
                         </div>
                     </div>
@@ -1474,7 +1474,7 @@ class Loan extends BaseController
                 $lvc_class = "tx-success";    // เขียว
             } elseif ($leverage_vs_capital < 3.0) {
                 $lvc_text  = "พอเหมาะ";
-                $lvc_class = "tx-warning";    // เหลือง
+                $lvc_class = "tx-secondary";    // เหลือง
             } else {
                 $lvc_text  = "ขยายตัวสูง";
                 $lvc_class = "tx-danger";     // แดง แต่ดูไม่รุนแรงเกินไป
@@ -1486,7 +1486,7 @@ class Loan extends BaseController
                 $to_class = "tx-danger";     // แดง (แสดงว่าหมุนช้า)
             } elseif ($turnover_times < 2.0) {
                 $to_text  = "พอเหมาะ";
-                $to_class = "tx-warning";    // เหลือง
+                $to_class = "tx-secondary";    // เหลือง
             } elseif ($turnover_times < 3.0) {
                 $to_text  = "ดี";
                 $to_class = "tx-success";    // เขียว
@@ -1504,7 +1504,7 @@ class Loan extends BaseController
                 $cb_class = "tx-success";    // เขียว
             } elseif ($cash_buffer_percent >= 5) {
                 $cb_text  = "พอใช้";
-                $cb_class = "tx-warning";    // เหลือง
+                $cb_class = "tx-secondary";    // เหลือง
             } else {
                 $cb_text  = "ต่ำ";
                 $cb_class = "tx-danger";     // แดง
@@ -1518,7 +1518,7 @@ class Loan extends BaseController
                 $ce_class = "tx-success";    // เขียว
             } elseif ($cash_equity_percent >= 5) {
                 $ce_text  = "พอใช้";
-                $ce_class = "tx-warning";    // เหลือง
+                $ce_class = "tx-secondary";    // เหลือง
             } else {
                 $ce_text  = "ต่ำ";
                 $ce_class = "tx-danger";     // แดง
@@ -1544,7 +1544,7 @@ class Loan extends BaseController
                 $py_class = "tx-danger";     // แดง
             } elseif ($portfolio_yield < 20) {
                 $py_text  = "พอใช้";
-                $py_class = "tx-warning";    // เหลือง
+                $py_class = "tx-secondary";    // เหลือง
             } elseif ($portfolio_yield < 30) {
                 $py_text  = "ดี";
                 $py_class = "tx-success";    // เขียว
