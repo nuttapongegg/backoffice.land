@@ -4342,6 +4342,20 @@ class Loan extends BaseController
             $Loan_Staus = 'งวดที่ ' . $installment_count;
         } elseif (($payment_type == 'CloseLoan')) {
 
+            $inv_number = null;
+
+            if ($data && $data->loan_type === 'เงินสด') {
+
+                $today = date('Y-m-d');
+                $year  = (int)date('Y', strtotime($today));
+                $month = (int)date('m', strtotime($today));
+
+                $nextRunning = $this->LoanModel->getNextInvRunningNumber($year, $month);
+                $runningStr  = str_pad($nextRunning, 3, '0', STR_PAD_LEFT); // 1 -> 001
+
+                $inv_number = $codeloan_hidden . date('Ymd', strtotime($today)) . $runningStr;
+            }
+
             $loan_payment = [
                 // 'loan_code' => $codeloan_hidden,
                 'loan_payment_amount'  => $payment_now,
@@ -4369,6 +4383,10 @@ class Loan extends BaseController
                 'loan_date_close' => date("Y-m-d"),
                 'updated_at' => $buffer_datetime
             ];
+
+            if ($inv_number !== null) {
+                $data_loan['inv_number'] = $inv_number;
+            }
 
             $data_close_payment = [
                 'loan_payment_amount'  => 0,
