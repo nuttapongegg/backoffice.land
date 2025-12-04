@@ -2062,7 +2062,6 @@ class LoanModel
         $years        = $param['years'];
 
         $sql = "SELECT loan.*, loan_customer.customer_fullname,loan_customer.customer_phone,loan_customer.customer_birthday,loan_customer.customer_card_id,loan_customer.customer_email,loan_customer.customer_gender,loan_customer.customer_address,
-                ROW_NUMBER() OVER (ORDER BY loan.loan_date_close ASC) AS seq,
                 DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') as formatted_date,
                 DATE_FORMAT(loan.loan_date_close, '%Y%m%d') as inv_date,
                 DATE_FORMAT(loan.loan_date_promise, '%d%m%Y') as formatted_ate_promise,
@@ -2083,8 +2082,7 @@ class LoanModel
         $month = (int)$param['month'];
         $years = (int)$param['years'];
 
-        $sql = "SELECT 
-                ROW_NUMBER() OVER (ORDER BY loan_date_close ASC, loan_code ASC) AS seq,
+        $sql = "SELECT
                 'pay' AS kind,
                 loan.loan_code AS doc_no,
                 DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') AS doc_date,

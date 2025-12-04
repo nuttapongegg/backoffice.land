@@ -148,7 +148,7 @@
                                         </td>
                                         <td class="value" width="57%" valign="middle" align="right">
                                             <div class="inR">
-                                                <?php echo $finx->loan_code . $finx->inv_date . str_pad($finx->seq, 3, '0', STR_PAD_LEFT); ?>&nbsp;&nbsp;
+                                                <?php echo !empty($finx->inv_number) ? $finx->inv_number : '-' ?>&nbsp;&nbsp;
                                             </div>
                                             <!-- <div class="inR"><php echo $finx->loan_code.$finx->inv_date.$finx->seq ?>&nbsp;&nbsp;</div> -->
                                         </td>
