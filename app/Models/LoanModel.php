@@ -2156,4 +2156,26 @@ class LoanModel
 
         return $this->db->query($sql, $params)->getRow();
     }
+
+    public function getNextInvRunningNumber(int $year, int $month): int
+    {
+        // หาวันแรกกับวันสุดท้ายของเดือน
+        $startOfMonth = sprintf('%04d-%02d-01', $year, $month);
+        $endOfMonth   = date('Y-m-t', strtotime($startOfMonth));
+
+        $sql = "
+        SELECT 
+            COUNT(*) AS total_rows
+        FROM loan
+        WHERE loan_type = 'เงินสด'
+          AND loan_date_close BETWEEN ? AND ?
+        ";
+
+        $row = $this->db->query($sql, [$startOfMonth, $endOfMonth])->getRow();
+
+        $count = ($row && $row->total_rows !== null) ? (int)$row->total_rows : 0;
+
+        // เลขถัดไป เช่น มี 0 รายการ -> 1, มี 3 รายการ -> 4
+        return $count + 1;
+    }
 }
