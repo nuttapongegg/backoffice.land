@@ -19,7 +19,8 @@
         "laminas/laminas-escaper": "^2.9",
         "psr/log": "^1.1",
         "pusher/pusher-php-server": "^6.1",
-        "tecnickcom/tcpdf": "^6.6"
+        "tecnickcom/tcpdf": "^6.6",
+        "smalot/pdfparser": "2.7.0"
     },
     "require-dev": {
         "codeigniter/coding-standard": "^1.1",
