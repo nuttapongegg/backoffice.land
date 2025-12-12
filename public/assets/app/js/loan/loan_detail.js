@@ -10,7 +10,7 @@ var loan_installment_date = 0;
 
 (function ($) {
   let searchParams = window.location.pathname;
-  var searchParams_ = searchParams.split("/loan/detail/");
+  var searchParams_ = searchParams.split("/detail/");
 
   flatpickr("#date_to_loan", {
     disableMobile: true,

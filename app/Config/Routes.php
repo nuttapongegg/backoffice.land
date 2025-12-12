@@ -101,6 +101,8 @@ $routes->group('finx', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->post('tableFinxHistory', 'Finx::finxHistory');
     $routes->post('ajax-summarizeFinx', 'Finx::ajaxSummarizeFinx');
 
+    $routes->get('detail/(:any)', 'Loan::detail/$1');
+
     $routes->get('report_finx', 'Finx::report_finx');
     $routes->get('ajax-tablesreportfinx/(:any)', 'Finx::ajaxTablesReportFinx/$1');
     $routes->get('ajaxdatatableopenloanfinx/(:any)', 'Finx::ajaxDataTableOpenLoanFinx/$1');

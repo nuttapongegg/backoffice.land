@@ -74,7 +74,11 @@ class Authentication extends BaseController
                             $response['success'] = 1;
                             $response['message'] = 'เข้าสู่ระบบสำเร็จ';
 
-                            $response['redirect_to'] = base_url('/loan/list');
+                            if ($employee->position_id == 0) {
+                                $response['redirect_to'] = base_url('/finx/list');
+                            } else {
+                                $response['redirect_to'] = base_url('/loan/list');
+                            }
                         } else {
                             $missedTotal = $employee->login_fail + 1;
                             $EmployeeModel->updateEmployeeByID($employee->id, ['login_fail' => $missedTotal]);

@@ -297,8 +297,12 @@
             <div class="main-header side-header sticky nav nav-item">
                 <div class=" main-container container-fluid">
                     <div class="main-header-left">
+                        <?php
+                        $positionID = session()->get('positionID');
+                        $link = ($positionID != 0) ? base_url() : base_url('/finx/list');
+                        ?>
                         <div class="responsive-logo">
-                            <a href="<?php echo base_url(); ?>" class="header-logo">
+                            <a href="<?php echo $link; ?>" class="header-logo">
                                 <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo dark-logo-1" alt="logo">
                             </a>
                         </div>
@@ -308,7 +312,7 @@
                             <a class="close-toggle" href="javascript:void(0)"><i class="header-icon fe fe-x"></i></a>
                         </div>
                         <div class="logo-horizontal">
-                            <a href="<?php echo base_url(); ?>" class="header-logo">
+                            <a href="<?php echo $link; ?>" class="header-logo">
                                 <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo dark-logo-1" alt="logo">
                                 <img src="<?php echo base_url('/assets/img/logo.png'); ?>" class="mobile-logo-1 dark-logo-1" alt="logo">
                             </a>
@@ -628,73 +632,73 @@
                             </svg>
                         </div>
                         <ul class="side-menu">
-                            <li class="side-item side-item-category">บริหาร</li>
-                            <li class="slide">
-                                <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'loan') {
-                                                                        echo 'active';
-                                                                    } ?>" data-bs-toggle="slide" href="javascript:void(0)" id="other_menu">
-                                    <i class="ionicon side-menu__icon fas fa-hand-holding-usd"></i>
-                                    <span class="side-menu__label">สินเชื่อ</span><i class="angle fe fe-chevron-right"></i>
-                                </a>
-                                <ul class="slide-menu">
-                                    <li class="side-menu__label1"><a href="<?php echo base_url('/loan/list'); ?>">สินเชื่อ</a></li>
-                                    <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'list') {
-                                                                    echo 'active';
-                                                                } ?>" href="<?php echo base_url('/loan/list'); ?>">รายการสินเชื่อ/เปิดสินเชื่อ</a></li>
-                                    <!-- <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'list_history') {
-                                                                        echo 'active';
-                                                                    } ?>" href="<?php echo base_url('/loan/list_history'); ?>">ประวัติสินเชื่อ</a></li> -->
-                                    <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'report_loan') {
-                                                                    echo 'active';
-                                                                } ?>" href="<?php echo base_url('/loan/report_loan'); ?>">รายงานสินเชื่อ</a></li>
-                                    <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'report_revenues') {
-                                                                    echo 'active';
-                                                                } ?>" href="<?php echo base_url('/loan/report_revenues'); ?>">รายงานรายรับ/รายจ่าย</a></li>
-                                    <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'Maps') {
-                                                                    echo 'active';
-                                                                } ?>" href="<?php echo base_url('/Maps'); ?>">Maps</a></li>
-                                </ul>
-                            </li>
-                            <li class="side-item side-item-category">จัดการ</li>
-                            <li class="slide">
-                                <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
-                                    <i class="ionicon side-menu__icon icon ion-ios-calculator"></i>
-                                    <span class="side-menu__label">บัญชี</span><i class="angle fe fe-chevron-right"></i>
-                                </a>
-                                <ul class="slide-menu">
-                                    <li class="side-menu__label1"><a href="#">บัญชี</a></li>
-                                    <li><a class="slide-item selectDoc" href="#" data-bs-toggle="modal" data-bs-target="#docModal" data-doc-type="ใบสำคัญรับ">ใบสำคัญรับ</a></li>
-                                    <li><a class="slide-item selectDoc" href="#" data-bs-toggle="modal" data-bs-target="#docModal" data-doc-type="ใบสำคัญจ่าย">ใบสำคัญจ่าย</a></li>
-                                    <!-- class="disabled" -->
-                                </ul>
-                            </li>
-                            <li class="slide">
-                                <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'setting_land' && service('uri')->getSegment(2) == 'index') {
-                                                                        echo 'active';
-                                                                    } ?>" data-bs-toggle="slide" href="<?php echo base_url('/setting_land/index'); ?>">
-                                    <i class="ionicon side-menu__icon icon ion-ios-construct"></i>
-                                    <span class="side-menu__label">ตั้งค่า</span>
-                                </a>
-                            </li>
-                            <!-- <php if (session()->get('positionID') == 0) { ?> -->
+                            <?php if (session()->get('positionID') != 0) { ?>
+                                <li class="side-item side-item-category">บริหาร</li>
                                 <li class="slide">
-                                    <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'finx') {
+                                    <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'loan') {
                                                                             echo 'active';
                                                                         } ?>" data-bs-toggle="slide" href="javascript:void(0)" id="other_menu">
                                         <i class="ionicon side-menu__icon fas fa-hand-holding-usd"></i>
-                                        <span class="side-menu__label">Finx</span><i class="angle fe fe-chevron-right"></i>
+                                        <span class="side-menu__label">สินเชื่อ</span><i class="angle fe fe-chevron-right"></i>
                                     </a>
                                     <ul class="slide-menu">
-                                        <li class="side-menu__label1"><a href="<?php echo base_url('/finx/list'); ?>">Finx</a></li>
-                                        <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'finx' && service('uri')->getSegment(2) == 'list') {
+                                        <li class="side-menu__label1"><a href="<?php echo base_url('/loan/list'); ?>">สินเชื่อ</a></li>
+                                        <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'list') {
                                                                         echo 'active';
-                                                                    } ?>" href="<?php echo base_url('/finx/list'); ?>">รายการสินเชื่อ</a></li>
-                                        <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'finx' && service('uri')->getSegment(2) == 'report_finx') {
+                                                                    } ?>" href="<?php echo base_url('/loan/list'); ?>">รายการสินเชื่อ/เปิดสินเชื่อ</a></li>
+                                        <!-- <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'list_history') {
+                                                                            echo 'active';
+                                                                        } ?>" href="<?php echo base_url('/loan/list_history'); ?>">ประวัติสินเชื่อ</a></li> -->
+                                        <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'report_loan') {
                                                                         echo 'active';
-                                                                    } ?>" href="<?php echo base_url('/finx/report_finx'); ?>">รายงานสินเชื่อ</a></li>
+                                                                    } ?>" href="<?php echo base_url('/loan/report_loan'); ?>">รายงานสินเชื่อ</a></li>
+                                        <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'loan' && service('uri')->getSegment(2) == 'report_revenues') {
+                                                                        echo 'active';
+                                                                    } ?>" href="<?php echo base_url('/loan/report_revenues'); ?>">รายงานรายรับ/รายจ่าย</a></li>
+                                        <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'Maps') {
+                                                                        echo 'active';
+                                                                    } ?>" href="<?php echo base_url('/Maps'); ?>">Maps</a></li>
                                     </ul>
                                 </li>
-                            <!-- <php } ?> -->
+                                <li class="side-item side-item-category">จัดการ</li>
+                                <li class="slide">
+                                    <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
+                                        <i class="ionicon side-menu__icon icon ion-ios-calculator"></i>
+                                        <span class="side-menu__label">บัญชี</span><i class="angle fe fe-chevron-right"></i>
+                                    </a>
+                                    <ul class="slide-menu">
+                                        <li class="side-menu__label1"><a href="#">บัญชี</a></li>
+                                        <li><a class="slide-item selectDoc" href="#" data-bs-toggle="modal" data-bs-target="#docModal" data-doc-type="ใบสำคัญรับ">ใบสำคัญรับ</a></li>
+                                        <li><a class="slide-item selectDoc" href="#" data-bs-toggle="modal" data-bs-target="#docModal" data-doc-type="ใบสำคัญจ่าย">ใบสำคัญจ่าย</a></li>
+                                        <!-- class="disabled" -->
+                                    </ul>
+                                </li>
+                                <li class="slide">
+                                    <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'setting_land' && service('uri')->getSegment(2) == 'index') {
+                                                                            echo 'active';
+                                                                        } ?>" data-bs-toggle="slide" href="<?php echo base_url('/setting_land/index'); ?>">
+                                        <i class="ionicon side-menu__icon icon ion-ios-construct"></i>
+                                        <span class="side-menu__label">ตั้งค่า</span>
+                                    </a>
+                                </li>
+                            <?php } ?>
+                            <li class="slide">
+                                <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'finx') {
+                                                                        echo 'active';
+                                                                    } ?>" data-bs-toggle="slide" href="javascript:void(0)" id="other_menu">
+                                    <i class="ionicon side-menu__icon fas fa-hand-holding-usd"></i>
+                                    <span class="side-menu__label">Finx</span><i class="angle fe fe-chevron-right"></i>
+                                </a>
+                                <ul class="slide-menu">
+                                    <li class="side-menu__label1"><a href="<?php echo base_url('/finx/list'); ?>">Finx</a></li>
+                                    <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'finx' && service('uri')->getSegment(2) == 'list') {
+                                                                    echo 'active';
+                                                                } ?>" href="<?php echo base_url('/finx/list'); ?>">รายการสินเชื่อ</a></li>
+                                    <li><a class="slide-item <?php if (service('uri')->getSegment(1) == 'finx' && service('uri')->getSegment(2) == 'report_finx') {
+                                                                    echo 'active';
+                                                                } ?>" href="<?php echo base_url('/finx/report_finx'); ?>">รายงานสินเชื่อ</a></li>
+                                </ul>
+                            </li>
                         </ul>
                         <div class="slide-right" id="slide-right">
                             <svg fill="#7b8191" width="24" height="24" viewBox="0 0 24 24">

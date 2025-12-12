@@ -114,7 +114,7 @@ function callTableFinxHistory() {
           return (
             '<a href="' +
             serverUrl +
-            "/loan/detail/" +
+            "/finx/detail/" +
             data["loan_code"] +
             '" target="_blank"><font>' +
             data["loan_code"] +
