@@ -15,11 +15,16 @@ $(document).ready(function () {
     mode: "range",
     dateFormat: "Y-m-d",
     disableMobile: true,
-    onChange: function () {
+    onChange: function (selectedDates, dateStr, instance) {
+      // ถ้า user เลือกวันที่เอง (ไม่ใช่มาจากปุ่มลัด)
+      if (instance.isOpen) {
+        resetQuickRangeButtons();
+      }
+
       callTableLoan();
     },
   });
-
+  slowSummarizeLoan();
   callTableLoan();
 });
 
@@ -34,6 +39,59 @@ $(document).ready(function () {
   });
 
   callTableLoanPayments();
+});
+
+function resetQuickRangeButtons() {
+  $(".js-range").removeClass("btn-primary").addClass("btn-outline-primary");
+}
+
+function getRangeByKey(key) {
+  const now = new Date();
+  let start = null,
+    end = null;
+
+  if (key === "this_month") {
+    start = new Date(now.getFullYear(), now.getMonth(), 1);
+    end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  }
+
+  if (key === "last_month") {
+    const d = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    start = new Date(d.getFullYear(), d.getMonth(), 1);
+    end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+  }
+
+  if (key === "this_year") {
+    start = new Date(now.getFullYear(), 0, 1);
+    end = new Date(now.getFullYear(), 11, 31);
+  }
+
+  if (key === "last_year") {
+    start = new Date(now.getFullYear() - 1, 0, 1);
+    end = new Date(now.getFullYear() - 1, 11, 31);
+  }
+
+  return { start, end };
+}
+
+$(document).on("click", ".js-range", function () {
+  const key = $(this).data("range");
+
+  // ปุ่ม active
+  $(".js-range").removeClass("btn-primary").addClass("btn-outline-primary");
+  $(this).removeClass("btn-outline-primary").addClass("btn-primary ");
+
+  const fp = document.querySelector("#daterange_loan")._flatpickr;
+
+  if (key === "all") {
+    fp.clear(); // clear = onChange → callTableLoan()
+    return;
+  }
+
+  const range = getRangeByKey(key);
+  if (range.start && range.end) {
+    fp.setDate([range.start, range.end], true); // true = trigger onChange
+  }
 });
 
 var count_loan = 0;
@@ -89,7 +147,6 @@ function callTableLoan() {
       count_loan = 0;
 
       callAutoloenTable(result);
-      slowSummarizeLoan();
     },
   });
 }
@@ -382,8 +439,13 @@ function callAutoloenTable(data) {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
-          var roi = (data["loan_payment_sum_installment"] / data["loan_summary_no_vat"]) * 100;
-          var roiFormatted = new Intl.NumberFormat().format(Number(roi.toFixed(2)));
+          var roi =
+            (data["loan_payment_sum_installment"] /
+              data["loan_summary_no_vat"]) *
+            100;
+          var roiFormatted = new Intl.NumberFormat().format(
+            Number(roi.toFixed(2))
+          );
 
           // กำหนดสีตามเงื่อนไข
           let color = "";

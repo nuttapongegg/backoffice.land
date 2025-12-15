@@ -6,10 +6,67 @@ $(document).ready(function () {
   flatpickr("#daterange_loan_close", {
     mode: "range",
     dateFormat: "Y-m-d",
-    onChange: function (selectedDates) {
-      tableStock.ajax.reload();
+    disableMobile: true,
+    onChange: function (selectedDates, dateStr, instance) {
+      // user เลือกวันเอง (calendar เปิดอยู่) -> ยกเลิกปุ่มลัด
+      if (instance && instance.isOpen) {
+        resetQuickRangeButtonsClose();
+      }
+      if (window.tableStock) {
+        tableStock.ajax.reload();
+      }
     },
   });
+});
+
+function getRangeByKey(key) {
+  const now = new Date();
+  let start = null,
+    end = null;
+
+  if (key === "this_month") {
+    start = new Date(now.getFullYear(), now.getMonth(), 1);
+    end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  } else if (key === "last_month") {
+    const d = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    start = new Date(d.getFullYear(), d.getMonth(), 1);
+    end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+  } else if (key === "this_year") {
+    start = new Date(now.getFullYear(), 0, 1);
+    end = new Date(now.getFullYear(), 11, 31);
+  } else if (key === "last_year") {
+    start = new Date(now.getFullYear() - 1, 0, 1);
+    end = new Date(now.getFullYear() - 1, 11, 31);
+  }
+
+  return { start, end };
+}
+
+function resetQuickRangeButtonsClose() {
+  $(".js-range-close")
+    .removeClass("btn-primary")
+    .addClass("btn-outline-primary");
+}
+
+$(document).on("click", ".js-range-close", function () {
+  resetQuickRangeButtonsClose();
+
+  // active ปุ่มที่กด
+  $(this).removeClass("btn-outline-primary").addClass("btn-primary");
+
+  const key = $(this).data("range");
+  const fp = document.querySelector("#daterange_loan_close")?._flatpickr;
+  if (!fp) return;
+
+  if (key === "all") {
+    fp.clear(); // onChange -> reload
+    return;
+  }
+
+  const r = getRangeByKey(key);
+  if (r.start && r.end) {
+    fp.setDate([r.start, r.end], true); // true = trigger onChange
+  }
 });
 
 function callTableLoanHistory() {
@@ -167,7 +224,11 @@ function callTableLoanHistory() {
         className: "text-right",
         render: function (data, type, row, meta) {
           return (
-            "<font>" + new Intl.NumberFormat().format(Number(data["loan_payment_sum_installment"]).toFixed(2)) + "</font>"
+            "<font>" +
+            new Intl.NumberFormat().format(
+              Number(data["loan_payment_sum_installment"]).toFixed(2)
+            ) +
+            "</font>"
           );
         },
       },
@@ -176,7 +237,11 @@ function callTableLoanHistory() {
         className: "text-right",
         render: function (data, type, row, meta) {
           return (
-            "<font>" + new Intl.NumberFormat().format(Number(data["loan_close_payment"]).toFixed(2)) + "</font>"
+            "<font>" +
+            new Intl.NumberFormat().format(
+              Number(data["loan_close_payment"]).toFixed(2)
+            ) +
+            "</font>"
           );
         },
       },
@@ -187,19 +252,15 @@ function callTableLoanHistory() {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
-          return (
-            "<font>" + data["loan_payment_interest"] + " %" + "</font>"
-          );
+          return "<font>" + data["loan_payment_interest"] + " %" + "</font>";
         },
       },
       {
         data: null,
         className: "text-center",
         render: function (data, type, row, meta) {
-          var installment = (data["loan_payment_year_counter"] * 12)
-          return (
-            "<font>" + installment + "</font>"
-          );
+          var installment = data["loan_payment_year_counter"] * 12;
+          return "<font>" + installment + "</font>";
         },
       },
       {
@@ -212,7 +273,11 @@ function callTableLoanHistory() {
         className: "text-right",
         render: function (data, type, row, meta) {
           return (
-            "<font>" + new Intl.NumberFormat().format(Number(data["loan_payment_month"]).toFixed(2)) + "</font>"
+            "<font>" +
+            new Intl.NumberFormat().format(
+              Number(data["loan_payment_month"]).toFixed(2)
+            ) +
+            "</font>"
           );
         },
       },
@@ -222,10 +287,14 @@ function callTableLoanHistory() {
         className: "text-right",
         render: function (data, type, row, meta) {
           // var summary_all = (data["loan_sum_interest"] - data["loan_payment_sum_installment"])
-          var roi = ((data["loan_payment_sum_installment"] / data["loan_summary_no_vat"]) * 100);
+          var roi =
+            (data["loan_payment_sum_installment"] /
+              data["loan_summary_no_vat"]) *
+            100;
           return (
             "<font>" +
-            new Intl.NumberFormat().format(Number(roi)) +'%'+
+            new Intl.NumberFormat().format(Number(roi)) +
+            "%" +
             "</font>"
           );
         },
@@ -262,7 +331,7 @@ function callTableLoanHistory() {
         .column(17, { page: "current" })
         .data()
         .reduce(function (a, b) {
-          return intVal(a) + intVal(b.loan_payment_month) // Handle formatted numbers
+          return intVal(a) + intVal(b.loan_payment_month); // Handle formatted numbers
         }, 0);
 
       Total_close_payment = api
@@ -297,16 +366,17 @@ function callTableLoanHistory() {
         Number(number_close_payment).toLocaleString()
       );
 
-      number_payment_sum_installment = parseFloat(Total_payment_sum_installment).toFixed(2);
+      number_payment_sum_installment = parseFloat(
+        Total_payment_sum_installment
+      ).toFixed(2);
       $(api.column(11).footer()).html(
         Number(number_payment_sum_installment).toLocaleString()
       );
 
       number_summary_no_vat = parseFloat(Total_summary_no_vat).toFixed(2);
       $(api.column(8).footer()).html(
-       Number(number_summary_no_vat).toLocaleString()
+        Number(number_summary_no_vat).toLocaleString()
       );
-
     },
     bFilter: true,
   });

@@ -333,6 +333,13 @@
                             </div>
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
+                                    <div class="d-flex flex-wrap gap-2 mb-3 justify-content-end">
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="this_month">เดือนนี้</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="last_month">เดือนที่แล้ว</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="this_year">ปีนี้</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="last_year">ปีที่แล้ว</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="all">ทั้งหมด</button>
+                                    </div>
                                     <div class="row justify-content-end">
                                         <div class="col-12">
                                             <div class="form-group">
@@ -380,16 +387,17 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr class="tx-black bg-primary">
-                                                    <th colspan="8" style="padding: 12px;">
+                                                    <th colspan="8" style="padding:12px;">
                                                         <h6 class="tx-left mt-2"><b>รวม</b></h6>
                                                     </th>
-                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th colspan="3" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th colspan="7" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th class="text-right" style="padding:12px;font-size:15px;font-weight:normal;"></th>
+                                                    <th colspan="3" style="padding:12px;font-size:15px;font-weight:normal;"></th>
+                                                    <th class="text-right" style="padding:12px;font-size:15px;font-weight:normal;"></th>
+                                                    <th style="padding:12px;font-size:15px;font-weight:normal;"></th>
+                                                    <th class="text-right" style="padding:12px;font-size:15px;font-weight:normal;"></th>
+                                                    <th style="padding:12px;font-size:15px;font-weight:normal;"></th>
+                                                    <th class="text-right" style="padding:12px;font-size:15px;font-weight:normal;"></th>
+                                                    <th colspan="7" style="padding:12px;font-size:15px;font-weight:normal;"></th>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -468,6 +476,13 @@
                             </div>
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
+                                    <div class="d-flex flex-wrap gap-2 mb-3 justify-content-end">
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range-close" data-range="this_month">เดือนนี้</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range-close" data-range="last_month">เดือนที่แล้ว</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range-close" data-range="this_year">ปีนี้</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range-close" data-range="last_year">ปีที่แล้ว</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range-close" data-range="all">ทั้งหมด</button>
+                                    </div>
                                     <div class="row justify-content-end">
                                         <div class="col-12">
                                             <div class="form-group">
