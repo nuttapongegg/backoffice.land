@@ -27,6 +27,7 @@ class Landlogs extends BaseController
 
             $loan_payment_sum_installment = 0;
             $summary_no_vat_ON_STATE = 0;
+            $loan_summary_process = 0;
             foreach ($loans as $loan) {
 
                 $loan_payment_sum_installment = $loan_payment_sum_installment + $loan->loan_payment_sum_installment;
@@ -51,7 +52,7 @@ class Landlogs extends BaseController
             $paid_up_capital      = $real_investment->investment;   // ทุนตั้งต้น
             $retained_earnings    = ($loan_summary_process + $loan_payment_sum_installment) - $expenses;    // กำไรสะสม
             $equity_real          = $paid_up_capital + $retained_earnings;   // ทรัพย์สินสุทธิ (Equity จริง)
-            
+
             // บันทึกข้อมูลลง DB insertLandlogs
             $LandlogsModel->insertLandlogs([
                 'land_logs_loan_amount' => $summary_no_vat_ON_STATE,

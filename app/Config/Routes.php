@@ -176,6 +176,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\api'], function ($routes)
 // $routes->group('cronjob', ['namespace' => 'App\Controllers\cronjob'], function ($routes) {
 //     $routes->get('loanstatus', 'LoanStatus::run');
 //     $routes->get('loansenddailysummary', 'LoanSendDailySummary::run');
+//     $routes->get('land_logs', 'Landlogs::land_logs');
 // });
 
 /*
