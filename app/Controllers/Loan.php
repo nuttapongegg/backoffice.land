@@ -5077,7 +5077,7 @@ class Loan extends BaseController
                     . number_format($process[$m], 2) .
                     '</a>
                                     </td>
-                                    <td class="border-top-0" style="text-align: right;">
+                                    <td class="tx-right" style="text-align: right;">
                                         <a href="javascript:void(0);" data-id="' . $idNoPad . '" id="Month_Loan_Payment" name="' . $data . '" data-bs-toggle="modal" data-bs-target="#modalLoanPaymentMonth">'
                     . number_format($loanPayment[$m], 2) .
                     '</a>

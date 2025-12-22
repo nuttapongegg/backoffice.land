@@ -261,23 +261,36 @@ class Loan extends BaseController
         try {
             // โหลดโมเดล
             $LoanModel = new \App\Models\LoanModel();
-            $LoanRevenues = $LoanModel->getLoanRevenuesDay();
-            $LoanExpenses = $LoanModel->getLoanExpensesDay();
+            // $LoanRevenues = $LoanModel->getLoanRevenuesDay();
+            $LoanProcess = $LoanModel->getSumLoanIncomeToday();
+            $LoannPayment = $LoanModel->getSumLoanPaymentToday();
+            // $LoanExpenses = $LoanModel->getLoanExpensesDay();
+            $DocumentModel = new \App\Models\DocumentModel();
+            $Docs = $DocumentModel->getDocToDay();
 
-            $Revenue = 0;
-            $Expense = 0;
+            $LoanProcesstToday =
+                ($LoanProcess->total_payment_process ?? 0)
+                + ($LoanProcess->total_tranfer ?? 0)
+                + ($LoanProcess->total_payment_other ?? 0);
+
+            $loanPaymentToday = $LoannPayment->total_loan_payment_today ?? 0;
+
+            $Revenue = $LoanProcesstToday + $loanPaymentToday;
+
+
+            $Expense = $Docs->total_expense ?? 0;
 
             $sum = 0;
 
             // รวมค่าของ setting_land_report_money จาก LoanRevenues
-            foreach ($LoanRevenues as $LoanRevenue) {
-                $Revenue += $LoanRevenue->setting_land_report_money;
-            }
+            // foreach ($LoanRevenues as $LoanRevenue) {
+            //     $Revenue += $LoanRevenue->setting_land_report_money;
+            // }
 
             // รวมค่าของ setting_land_report_money จาก LoanExpenses
-            foreach ($LoanExpenses as $LoanExpense) {
-                $Expense += $LoanExpense->setting_land_report_money;
-            }
+            // foreach ($LoanExpenses as $LoanExpense) {
+            //     $Expense += $LoanExpense->setting_land_report_money;
+            // }
 
             $sum = $Revenue - $Expense;
 

@@ -25,8 +25,8 @@ class DocumentModel
         // Set default order
         $this->order = array('created_at' => 'DESC');
 
-        $this->column_order_account = array(null, 'doc_type', 'doc_number','doc_date', 'title', 'note', 'land_account_name', 'price', 'doc_file', 'username');
-        $this->column_search_account = array('doc_type', 'doc_number','doc_date', 'title', 'note', 'land_account_name', 'price', 'doc_file', 'username');
+        $this->column_order_account = array(null, 'doc_type', 'doc_number', 'doc_date', 'title', 'note', 'land_account_name', 'price', 'doc_file', 'username');
+        $this->column_search_account = array('doc_type', 'doc_number', 'doc_date', 'title', 'note', 'land_account_name', 'price', 'doc_file', 'username');
     }
 
     public function getDocumentAll()
@@ -759,6 +759,19 @@ class DocumentModel
         $builder = $this->db->query($sql);
 
         return $builder->getResult();
+    }
+
+    public function getDocToDay()
+    {
+        $sql = "
+        SELECT 
+            SUM(CASE WHEN doc_type = 'ใบสำคัญรับ'  THEN price ELSE 0 END) AS total_income,
+            SUM(CASE WHEN doc_type = 'ใบสำคัญจ่าย' THEN price ELSE 0 END) AS total_expense
+        FROM documents
+        WHERE DATE(created_at) = CURDATE()
+    ";
+
+        return $this->db->query($sql)->getRow();
     }
 
     public function getDataTableDocumentsReceiptMonthCount($param)
