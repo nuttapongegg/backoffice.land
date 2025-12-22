@@ -306,6 +306,10 @@ $(document).ready(function () {
           className: "text-center",
           targets: [7],
         },
+        {
+          className: "text-center",
+          targets: [8],
+        },
       ],
       destroy: true,
       // searching: false,

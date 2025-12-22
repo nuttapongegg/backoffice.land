@@ -691,7 +691,7 @@ class DocumentModel
         $sql = "SELECT *
         FROM documents
         WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
-        and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%')
+        and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%') OR (documents.created_at like '%" . $search_value . "%')
            OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%')) 
            ORDER BY documents.doc_date ASC LIMIT $start, $length
             ";
@@ -708,7 +708,7 @@ class DocumentModel
         $sql = "SELECT *
         FROM documents
         WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
-        and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%')
+        and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%') OR (documents.created_at like '%" . $search_value . "%')
            OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%'))
             ";
         $builder = $this->db->query($sql);

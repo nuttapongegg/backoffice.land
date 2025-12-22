@@ -2257,6 +2257,7 @@ class Loan extends BaseController
                 $datas->cash_flow_name,
                 number_format($datas->price, 2),
                 $datas->username,
+                $datas->created_at,
             );
         }
 

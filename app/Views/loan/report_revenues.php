@@ -64,13 +64,13 @@
                             <thead>
                                 <tr>
                                     <th style="width: 5px;">#</th>
-                                    <th style="width: 15px;">เลขที่สินเชื่อ</th>
-                                    <th style="width: 10px;">ผู้ทำรายการ</th>
-                                    <th style="width: 40px;">ค่าดำเนินการ</th>
-                                    <th style="width: 20px;">ค่าโอน</th>
-                                    <th style="width: 20px;">ค่าใช้จ่ายอื่น ๆ</th>
-                                    <th style="width: 20px;">จำนวนเงิน(รวม)</th>
-                                    <th style="width: 15px;">วันที่ขอสินเชื่อ</th>
+                                    <th style="width: 10px;">เลขที่สินเชื่อ</th>
+                                    <th style="width: 15px;">ผู้ทำรายการ</th>
+                                    <th style="width: 15px;">ค่าดำเนินการ</th>
+                                    <th style="width: 15px;">ค่าโอน</th>
+                                    <th style="width: 15px;">ค่าใช้จ่ายอื่น ๆ</th>
+                                    <th style="width: 15px;">จำนวนเงิน(รวม)</th>
+                                    <th style="width: 10px;">วันที่ขอสินเชื่อ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -188,6 +188,7 @@
                                     <th style="width: 20px;">ชื่อบัญชี</th>
                                     <th style="width: 20px;">จำนวนเงิน</th>
                                     <th style="width: 10px;">ผู้ทำรายการ</th>
+                                    <th style="width: 50px;">วันที่ทำรายการ</th>
                                 </tr>
                             </thead>
                             <tbody>

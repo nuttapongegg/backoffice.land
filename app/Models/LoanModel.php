@@ -1041,13 +1041,13 @@ class LoanModel
 
     public function getLoanProcessMonths($year)
     {
-        $sql = "SELECT MONTH(loan_date_promise) as loan_created_payment ,
+        $sql = "SELECT MONTH(created_at) as loan_created_payment ,
         SUM(loan_payment_process) AS total_payment_process,
         SUM(loan_tranfer) AS total_tranfer,
         SUM(loan_payment_other) AS total_payment_other
         FROM loan
-        WHERE YEAR(loan_date_promise) = $year AND loan.loan_status != 'CANCEL_STATE'
-        GROUP BY MONTH(loan_date_promise)
+        WHERE YEAR(created_at) = $year AND loan.loan_status != 'CANCEL_STATE'
+        GROUP BY MONTH(created_at)
         ";
 
         $builder = $this->db->query($sql);
