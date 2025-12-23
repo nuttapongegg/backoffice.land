@@ -226,18 +226,23 @@ class DocumentModel
 
         if ($date) {
             $dateExplode = explode(" to ", $date);
-            if (array_key_exists(1, $dateExplode)) {
+
+            if (isset($dateExplode[1])) {
                 $dateStart = $dateExplode[0];
-                $dateEnd = $dateExplode[1];
-                $dateEnd = date('Y-m-d', strtotime($dateEnd . " +1 day"));
+                $dateEnd   = date('Y-m-d', strtotime($dateExplode[1] . ' +1 day'));
+
                 $builder->where('documents.doc_date >=', $dateStart);
-                $builder->where('documents.doc_date <=', $dateEnd);
+                $builder->where('documents.doc_date <',  $dateEnd);
             } else {
-                $date = $dateExplode[0];
-                $builder->where('DATE(documents.doc_date) =', $date);
+                $dateStart = $dateExplode[0];
+                $dateEnd   = date('Y-m-d', strtotime($dateStart . ' +1 day'));
+
+                $builder->where('documents.doc_date >=', $dateStart);
+                $builder->where('documents.doc_date <',  $dateEnd);
             }
         } else {
-            $builder->where('DATE(documents.doc_date) = CURDATE()');
+            $builder->where('documents.doc_date >=', date('Y-m-d'));
+            $builder->where('documents.doc_date <',  date('Y-m-d', strtotime('+1 day')));
         }
 
         $i = 0;
@@ -310,18 +315,23 @@ class DocumentModel
 
         if ($date) {
             $dateExplode = explode(" to ", $date);
-            if (array_key_exists(1, $dateExplode)) {
+
+            if (isset($dateExplode[1])) {
                 $dateStart = $dateExplode[0];
-                $dateEnd = $dateExplode[1];
-                $dateEnd = date('Y-m-d', strtotime($dateEnd . " +1 day"));
+                $dateEnd   = date('Y-m-d', strtotime($dateExplode[1] . ' +1 day'));
+
                 $builder->where('documents.doc_date >=', $dateStart);
-                $builder->where('documents.doc_date <=', $dateEnd);
+                $builder->where('documents.doc_date <',  $dateEnd);
             } else {
-                $date = $dateExplode[0];
-                $builder->where('DATE(documents.doc_date) =', $date);
+                $dateStart = $dateExplode[0];
+                $dateEnd   = date('Y-m-d', strtotime($dateStart . ' +1 day'));
+
+                $builder->where('documents.doc_date >=', $dateStart);
+                $builder->where('documents.doc_date <',  $dateEnd);
             }
         } else {
-            $builder->where('DATE(documents.doc_date) = CURDATE()');
+            $builder->where('documents.doc_date >=', date('Y-m-d'));
+            $builder->where('documents.doc_date <',  date('Y-m-d', strtotime('+1 day')));
         }
 
         // // อันนีเแก้วันที่ 31/12/2024 แก้วันที่จากวันที่สร้างรายการเป็นวันที่เลือก
@@ -476,13 +486,12 @@ class DocumentModel
         $date = $param['data'];
         if ($date) {
             $dateExplode = explode(" to ", $date);
-            if (array_key_exists(1, $dateExplode)) {
-                $dateStart = $dateExplode[0];
-                $dateEnd = $dateExplode[1];
-            } else {
-                $dateStart = $dateExplode[0];
-                $dateEnd = $dateExplode[0];
-            }
+
+            $dateStart = trim($dateExplode[0]);
+            $dateEnd   = isset($dateExplode[1]) ? trim($dateExplode[1]) : $dateStart;
+
+            // ทำ end เป็นวันถัดไป
+            $dateEnd = date('Y-m-d', strtotime($dateEnd . ' +1 day'));
         }
 
         $sql = "SELECT 
@@ -497,7 +506,7 @@ class DocumentModel
         JOIN car_stock_detail_buy on car_stock.car_stock_code = car_stock_detail_buy.car_stock_detail_buy_code
         WHERE (SELECT SUM(documents.price) FROM documents WHERE documents.doc_type = 'ใบสำคัญจ่าย' AND documents.car_stock_id = car_stock.id) != 'NULL' 
         AND car_stock_detail_buy.car_stock_detail_buy_car_build_status != 'ตัดปล่อยรถ' AND car_stock_detail_buy.car_stock_detail_buy_car_build_status != 'ยกเลิก'
-        AND car_stock_created_at >= '$dateStart' AND car_stock_created_at <= '$dateEnd' AND 
+        AND car_stock_created_at >= '$dateStart' AND car_stock_created_at < '$dateEnd' AND 
         ((car_stock_owner_car_name like '%" . $search_value . "%') OR (car_stock_owner_car_vin like '%" . $search_value . "%') OR (car_stock_owner_car_brand like '%" . $search_value . "%') OR (car_stock_owner_car_model like '%" . $search_value . "%') OR (car_stock_car_year like '%" . $search_value . "%') OR (car_stock_created_at like '%" . $search_value . "%'))
         limit $start, $length
         ";
@@ -514,13 +523,12 @@ class DocumentModel
         $date = $param['data'];
         if ($date) {
             $dateExplode = explode(" to ", $date);
-            if (array_key_exists(1, $dateExplode)) {
-                $dateStart = $dateExplode[0];
-                $dateEnd = $dateExplode[1];
-            } else {
-                $dateStart = $dateExplode[0];
-                $dateEnd = $dateExplode[0];
-            }
+
+            $dateStart = trim($dateExplode[0]);
+            $dateEnd   = isset($dateExplode[1]) ? trim($dateExplode[1]) : $dateStart;
+
+            // ทำ end เป็นวันถัดไป
+            $dateEnd = date('Y-m-d', strtotime($dateEnd . ' +1 day'));
         }
 
         $sql = "SELECT 
@@ -535,7 +543,7 @@ class DocumentModel
         JOIN car_stock_detail_buy on car_stock.car_stock_code = car_stock_detail_buy.car_stock_detail_buy_code
         WHERE (SELECT SUM(documents.price) FROM documents WHERE documents.doc_type = 'ใบสำคัญจ่าย' AND documents.car_stock_id = car_stock.id) != 'NULL' 
         AND car_stock_detail_buy.car_stock_detail_buy_car_build_status != 'ตัดปล่อยรถ' AND car_stock_detail_buy.car_stock_detail_buy_car_build_status != 'ยกเลิก'
-        AND car_stock_created_at >= '$dateStart' AND car_stock_created_at <= '$dateEnd' AND 
+        AND car_stock_created_at >= '$dateStart' AND car_stock_created_at < '$dateEnd' AND 
         ((car_stock_owner_car_name like '%" . $search_value . "%') OR (car_stock_owner_car_vin like '%" . $search_value . "%') OR (car_stock_owner_car_brand like '%" . $search_value . "%') OR (car_stock_owner_car_model like '%" . $search_value . "%') OR (car_stock_car_year like '%" . $search_value . "%') OR (car_stock_created_at like '%" . $search_value . "%'))
         ";
         $builder = $this->db->query($sql);

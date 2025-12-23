@@ -951,18 +951,17 @@ class LoanModel
     {
         if ($date) {
             $dateExplode = explode(" to ", $date);
-            if (array_key_exists(1, $dateExplode)) {
-                $dateStart = $dateExplode[0];
-                $dateEnd = $dateExplode[1];
-            } else {
-                $dateStart = $dateExplode[0];
-                $dateEnd = $dateExplode[0];
-            }
+
+            $dateStart = trim($dateExplode[0]);
+            $dateEnd   = isset($dateExplode[1]) ? trim($dateExplode[1]) : $dateStart;
+
+            // ทำ end เป็นวันถัดไป
+            $dateEnd = date('Y-m-d', strtotime($dateEnd . ' +1 day'));
         }
         $whereDate = '';
 
         if (!empty($date)) {
-            $whereDate = "AND DATE(setting_land_report.created_at) >= '$dateStart' AND DATE(setting_land_report.created_at) <= '$dateEnd'";
+            $whereDate = "AND DATE(setting_land_report.created_at) >= '$dateStart' AND DATE(setting_land_report.created_at) < '$dateEnd'";
         }
 
         $sql = "SELECT setting_land_report.*, setting_land.land_account_name
