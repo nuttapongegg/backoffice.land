@@ -101,6 +101,7 @@ class Document extends BaseController
                 $document->note,
                 $price,
                 $document->username,
+                $document->created_at,
                 $button
             );
         }

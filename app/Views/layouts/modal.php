@@ -206,6 +206,7 @@
                                                     <th class="text-center">รายละเอียด</th>
                                                     <th>จำนวน</th>
                                                     <th>ผู้ทำรายการ</th>
+                                                    <th>วันที่ดำเนินการ</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>

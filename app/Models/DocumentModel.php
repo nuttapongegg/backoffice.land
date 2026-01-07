@@ -608,11 +608,11 @@ class DocumentModel
 
     public function getrevenue($year)
     {
-        $sql = "SELECT MONTH(doc_date) as doc_month , doc_type , SUM(price) as doc_sum_price
+        $sql = "SELECT MONTH(created_at) as doc_month , doc_type , SUM(price) as doc_sum_price
         FROM `documents`
-        WHERE YEAR(documents.doc_date) = $year AND (doc_type = 'ใบสำคัญรับ' OR doc_type = 'ใบสำคัญจ่าย')
-        GROUP BY MONTH(doc_date), doc_type
-        ORDER BY MONTH(doc_date)";
+        WHERE YEAR(documents.created_at) = $year AND (doc_type = 'ใบสำคัญรับ' OR doc_type = 'ใบสำคัญจ่าย')
+        GROUP BY MONTH(created_at), doc_type
+        ORDER BY MONTH(created_at)";
 
         $builder = $this->db->query($sql);
 
@@ -665,7 +665,7 @@ class DocumentModel
 
         $sql = "SELECT *
         FROM documents
-        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+        WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
         ";
         $builder = $this->db->query($sql);
 
@@ -681,8 +681,8 @@ class DocumentModel
 
         $sql = "SELECT *
         FROM documents
-        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
-        ORDER BY documents.doc_date ASC LIMIT $start, $length";
+        WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+        ORDER BY documents.created_at ASC LIMIT $start, $length";
         $builder = $this->db->query($sql);
 
         return $builder->getResult();
@@ -698,10 +698,10 @@ class DocumentModel
 
         $sql = "SELECT *
         FROM documents
-        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+        WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
         and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%') OR (documents.created_at like '%" . $search_value . "%')
            OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%')) 
-           ORDER BY documents.doc_date ASC LIMIT $start, $length
+           ORDER BY documents.created_at ASC LIMIT $start, $length
             ";
         $builder = $this->db->query($sql);
 
@@ -715,7 +715,7 @@ class DocumentModel
         $search_value = $param['search_value'];
         $sql = "SELECT *
         FROM documents
-        WHERE YEAR(documents.doc_date) = $years AND MONTH(documents.doc_date) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+        WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
         and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%') OR (documents.created_at like '%" . $search_value . "%')
            OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%'))
             ";

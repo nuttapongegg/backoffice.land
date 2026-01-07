@@ -103,13 +103,18 @@ $(document).ready(function () {
           {
             className: "text-center",
             targets: [5],
-            width: "15%",
+            width: "10%",
+          },
+          {
+            className: "text-center",
+            targets: [5],
+            width: "10%",
           },
           {
             className: "text-center",
             targets: [6],
             orderable: false,
-            width: "10%",
+            width: "5%",
           },
         ],
       });
