@@ -19,9 +19,9 @@ class DocumentModel
         $this->db = &$db;
 
         // Set orderable column fields
-        $this->column_order = array('doc_number', 'doc_date',  'title', 'note', 'price', 'username', null);
+        $this->column_order = array('doc_number', 'doc_date',  'title', 'note', 'price', 'username', 'created_at', null);
         // Set searchable column fields
-        $this->column_search = array('doc_number', 'doc_date', 'title', 'note', 'price', 'username');
+        $this->column_search = array('doc_number', 'doc_date', 'title', 'note', 'price', 'username', 'created_at');
         // Set default order
         $this->order = array('created_at' => 'DESC');
 
@@ -658,71 +658,148 @@ class DocumentModel
         return $builder->getResult();
     }
 
-    public function getDataTableDocumentsPayMonthCount($param)
+    // public function getDataTableDocumentsPayMonthCount($param)
+    // {
+    //     $month = $param['month'];
+    //     $years = $param['years'];
+
+    //     $sql = "SELECT *
+    //     FROM documents
+    //     WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+    //     ";
+    //     $builder = $this->db->query($sql);
+
+    //     return $builder->getResult();
+    // }
+
+    // public function getDataTableDocumentsPayMonth($param)
+    // {
+    //     $month = $param['month'];
+    //     $years = $param['years'];
+    //     $start = $param['start'];
+    //     $length = $param['length'];
+
+    //     $sql = "SELECT *
+    //     FROM documents
+    //     WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+    //     ORDER BY documents.created_at ASC LIMIT $start, $length";
+    //     $builder = $this->db->query($sql);
+
+    //     return $builder->getResult();
+    // }
+
+    // public function getDataTableDocumentsPayMonthSearch($param)
+    // {
+    //     $month = $param['month'];
+    //     $years = $param['years'];
+    //     $search_value = $param['search_value'];
+    //     $start = $param['start'];
+    //     $length = $param['length'];
+
+    //     $sql = "SELECT *
+    //     FROM documents
+    //     WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+    //     and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%') OR (documents.created_at like '%" . $search_value . "%')
+    //        OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%')) 
+    //        ORDER BY documents.created_at ASC LIMIT $start, $length
+    //         ";
+    //     $builder = $this->db->query($sql);
+
+    //     return $builder->getResult();
+    // }
+
+    // public function getDataTableDocumentsPayMonthSearchCount($param)
+    // {
+    //     $month = $param['month'];
+    //     $years = $param['years'];
+    //     $search_value = $param['search_value'];
+    //     $sql = "SELECT *
+    //     FROM documents
+    //     WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
+    //     and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%') OR (documents.created_at like '%" . $search_value . "%')
+    //        OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%'))
+    //         ";
+    //     $builder = $this->db->query($sql);
+
+    //     return $builder->getResult();
+    // }
+
+    public function getDataTableDocumentsPayMonth($param, $isCount = false)
     {
-        $month = $param['month'];
-        $years = $param['years'];
+        $month  = (int) ($param['month'] ?? 0);
+        $years  = (int) ($param['years'] ?? 0);
+        $start  = (int) ($param['start'] ?? 0);
+        $length = (int) ($param['length'] ?? 10);
+        $search = trim($param['search_value'] ?? '');
 
-        $sql = "SELECT *
-        FROM documents
-        WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
-        ";
-        $builder = $this->db->query($sql);
+        // mapping index ของคอลัมน์ใน DataTable -> ชื่อ column ใน DB
+        // (ตามลำดับ data[] ที่คุณส่งกลับ)
+        $columns = [
+            0 => null,                    // ลำดับ (ไม่เรียง)
+            1 => 'documents.doc_number',
+            2 => 'documents.doc_date',
+            3 => 'documents.title',
+            4 => 'documents.note',
+            5 => 'documents.cash_flow_name',
+            6 => 'documents.price',
+            7 => 'documents.username',
+            8 => 'documents.created_at',
+        ];
 
-        return $builder->getResult();
+        $builder = $this->db->table('documents');
+
+        if ($isCount) {
+            $builder->select('COUNT(*) AS cnt');
+        } else {
+            $builder->select('documents.*');
+        }
+
+        $builder->where('YEAR(documents.created_at)', $years);
+        $builder->where('MONTH(documents.created_at)', $month);
+        $builder->where('documents.doc_type', 'ใบสำคัญจ่าย');
+
+        // search
+        if ($search !== '') {
+            $builder->groupStart()
+                ->like('documents.doc_number', $search)
+                ->orLike('documents.doc_date', $search)
+                ->orLike('documents.username', $search)
+                ->orLike('documents.created_at', $search)
+                ->orLike('documents.title', $search)
+                ->orLike('documents.price', $search)
+                ->orLike('documents.cash_flow_name', $search)
+                ->orLike('documents.note', $search)
+                ->groupEnd();
+        }
+
+        // order
+        if (!$isCount && !empty($param['order'][0]['column'])) {
+            $colIndex = (int) $param['order'][0]['column'];
+            $dir = strtolower($param['order'][0]['dir'] ?? 'asc');
+            $dir = ($dir === 'desc') ? 'DESC' : 'ASC';
+
+            $orderCol = $columns[$colIndex] ?? null;
+            if ($orderCol) {
+                $builder->orderBy($orderCol, $dir);
+            } else {
+                $builder->orderBy('documents.created_at', 'ASC');
+            }
+        } else if (!$isCount) {
+            $builder->orderBy('documents.created_at', 'ASC');
+        }
+
+        // paging
+        if (!$isCount && $length != -1) { // -1 = ทั้งหมด
+            $builder->limit($length, $start);
+        }
+
+        if ($isCount) {
+            return (int) $builder->get()->getRow()->cnt;
+        }
+
+        return $builder->get()->getResult();
     }
 
-    public function getDataTableDocumentsPayMonth($param)
-    {
-        $month = $param['month'];
-        $years = $param['years'];
-        $start = $param['start'];
-        $length = $param['length'];
-
-        $sql = "SELECT *
-        FROM documents
-        WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
-        ORDER BY documents.created_at ASC LIMIT $start, $length";
-        $builder = $this->db->query($sql);
-
-        return $builder->getResult();
-    }
-
-    public function getDataTableDocumentsPayMonthSearch($param)
-    {
-        $month = $param['month'];
-        $years = $param['years'];
-        $search_value = $param['search_value'];
-        $start = $param['start'];
-        $length = $param['length'];
-
-        $sql = "SELECT *
-        FROM documents
-        WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
-        and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%') OR (documents.created_at like '%" . $search_value . "%')
-           OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%')) 
-           ORDER BY documents.created_at ASC LIMIT $start, $length
-            ";
-        $builder = $this->db->query($sql);
-
-        return $builder->getResult();
-    }
-
-    public function getDataTableDocumentsPayMonthSearchCount($param)
-    {
-        $month = $param['month'];
-        $years = $param['years'];
-        $search_value = $param['search_value'];
-        $sql = "SELECT *
-        FROM documents
-        WHERE YEAR(documents.created_at) = $years AND MONTH(documents.created_at) = $month AND documents.doc_type = 'ใบสำคัญจ่าย'
-        and ((documents.doc_number like '%" . $search_value . "%') OR (documents.doc_date like '%" . $search_value . "%') OR (documents.username like '%" . $search_value . "%') OR (documents.created_at like '%" . $search_value . "%')
-           OR (documents.title like '%" . $search_value . "%') OR (documents.price like '%" . $search_value . "%') OR (documents.cash_flow_name like '%" . $search_value . "%') OR (documents.note like '%" . $search_value . "%'))
-            ";
-        $builder = $this->db->query($sql);
-
-        return $builder->getResult();
-    }
 
     public function getDocumentID($id)
     {
@@ -863,7 +940,8 @@ class DocumentModel
         return $builder->getRow();
     }
 
-    public function getDocumentsPaySumMonthAll($param) {
+    public function getDocumentsPaySumMonthAll($param)
+    {
         $month = (int)$param['month'];
         $years = (int)$param['years'];
 

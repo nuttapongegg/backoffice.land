@@ -2224,52 +2224,102 @@ class Loan extends BaseController
     public function ajaxDataTableExpenses($id)
     {
         $DocumentModel = new \App\Models\DocumentModel();
-        $param['search_value'] = $_REQUEST['search']['value'];
-        $param['draw'] = $_REQUEST['draw'];
-        $param['start'] = $_REQUEST['start'];
-        $param['length'] = $_REQUEST['length'];
-        $param['month'] = $id;
-        $param['years'] = $_REQUEST['years'];
 
-        if (!empty($param['search_value'])) {
-            // count all data
-            $total_count = $DocumentModel->getDataTableDocumentsPayMonthSearchCount($param);
+        $param = [
+            'draw'         => (int)($_REQUEST['draw'] ?? 0),
+            'start'        => (int)($_REQUEST['start'] ?? 0),
+            'length'       => (int)($_REQUEST['length'] ?? 10),
+            'search_value' => $_REQUEST['search']['value'] ?? '',
+            'order'        => $_REQUEST['order'] ?? [],
+            'month'        => (int)$id,
+            'years'        => (int)($_REQUEST['years'] ?? 0),
+        ];
 
-            $data_month = $DocumentModel->getDataTableDocumentsPayMonthSearch($param);
-        } else {
-            // count all data
-            $total_count = $DocumentModel->getDataTableDocumentsPayMonthCount($param);
+        // ✅ total ทั้งหมด (ไม่สน search)
+        $paramTotal = $param;
+        $paramTotal['search_value'] = '';
+        $recordsTotal = $DocumentModel->getDataTableDocumentsPayMonth($paramTotal, true);
 
-            // get per page data
-            $data_month = $DocumentModel->getDataTableDocumentsPayMonth($param);
-        }
+        // ✅ filtered (สน search)
+        $recordsFiltered = $DocumentModel->getDataTableDocumentsPayMonth($param, true);
 
-        $i = 0;
+        // ✅ data ตามหน้า + order + search
+        $rows = $DocumentModel->getDataTableDocumentsPayMonth($param, false);
+
         $data = [];
-        foreach ($data_month as $datas) {
-            $i++;
-            $data[] = array(
-                $i,
-                $datas->doc_number,
-                $datas->doc_date,
-                $datas->title,
-                $datas->note,
-                $datas->cash_flow_name,
-                number_format($datas->price, 2),
-                $datas->username,
-                $datas->created_at,
-            );
+        $no = $param['start']; // ให้เลขรันตามหน้า
+        foreach ($rows as $r) {
+            $no++;
+            $data[] = [
+                $no,
+                $r->doc_number,
+                $r->doc_date,
+                $r->title,
+                $r->note,
+                $r->cash_flow_name,
+                number_format((float)$r->price, 2),
+                $r->username,
+                $r->created_at,
+            ];
         }
 
-        $json_data = array(
-            "draw" => intval($param['draw']),
-            "recordsTotal" => count($total_count),
-            "recordsFiltered" => count($total_count),
-            "data" => $data   // total data array
-        );
-
-        echo json_encode($json_data);
+        return $this->response->setJSON([
+            "draw" => $param['draw'],
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $data
+        ]);
     }
+
+    // public function ajaxDataTableExpenses($id)
+    // {
+    //     $DocumentModel = new \App\Models\DocumentModel();
+    //     $param['search_value'] = $_REQUEST['search']['value'];
+    //     $param['draw'] = $_REQUEST['draw'];
+    //     $param['start'] = $_REQUEST['start'];
+    //     $param['length'] = $_REQUEST['length'];
+    //     $param['month'] = $id;
+    //     $param['years'] = $_REQUEST['years'];
+
+    //     if (!empty($param['search_value'])) {
+    //         // count all data
+    //         $total_count = $DocumentModel->getDataTableDocumentsPayMonthSearchCount($param);
+
+    //         $data_month = $DocumentModel->getDataTableDocumentsPayMonthSearch($param);
+    //     } else {
+    //         // count all data
+    //         $total_count = $DocumentModel->getDataTableDocumentsPayMonthCount($param);
+
+    //         // get per page data
+    //         $data_month = $DocumentModel->getDataTableDocumentsPayMonth($param);
+    //     }
+
+    //     $i = 0;
+    //     $data = [];
+    //     foreach ($data_month as $datas) {
+    //         $i++;
+    //         $data[] = array(
+    //             $i,
+    //             $datas->doc_number,
+    //             $datas->doc_date,
+    //             $datas->title,
+    //             $datas->note,
+    //             $datas->cash_flow_name,
+    //             number_format($datas->price, 2),
+    //             $datas->username,
+    //             $datas->created_at,
+    //         );
+    //     }
+
+    //     $json_data = array(
+    //         "draw" => intval($param['draw']),
+    //         "recordsTotal" => count($total_count),
+    //         "recordsFiltered" => count($total_count),
+    //         "data" => $data   // total data array
+    //     );
+
+    //     echo json_encode($json_data);
+    // }
 
 
     public function ajaxDataTableDiffPayment($id)
