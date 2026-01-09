@@ -324,4 +324,108 @@ class Loan extends BaseController
                 ->setJSON($response);
         }
     }
+
+    public function ajaxNetProfitMonthlyByYear($year)
+    {
+        $allowed_origins = [
+            'http://localhost:8080',
+            'https://ceo.evxspst.com'
+        ];
+
+        if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+            header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+            header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+            header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        } else {
+            header('Access-Control-Allow-Origin: null');
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            exit;
+        }
+
+        try {
+            $year = (int)$year;
+            if ($year < 2000 || $year > 2100) {
+                return $this->response
+                    ->setStatusCode(400)
+                    ->setContentType('application/json')
+                    ->setJSON(['success' => 0, 'message' => 'invalid year']);
+            }
+
+            $DocumentModel = new \App\Models\DocumentModel();
+            $LoanModel = new \App\Models\LoanModel();
+
+            // ✅ ใช้ source เดิมที่คุณเคยคำนวณใน ajaxTablesReportRevenues()
+            $documentmonth     = $DocumentModel->getrevenue($year);
+            $loanprocessmonths = $LoanModel->getLoanProcessMonths($year);
+            $LoanPaymentMonths = $LoanModel->getListLoanPaymentMonths($year);
+
+            $months = range(1, 12);
+
+            // ค่าเริ่มต้นทุกเดือน = 0
+            $expenses    = array_fill(1, 12, 0.0); // รายจ่าย (ใบสำคัญจ่าย)
+            $process     = array_fill(1, 12, 0.0); // รายรับ(ค่าดำเนินการ)
+            $loanPayment = array_fill(1, 12, 0.0); // ชำระค่างวดจริง
+
+            // ----- รายจ่ายรายเดือนจากใบสำคัญ -----
+            foreach ($documentmonth as $doc) {
+                $m = (int)$doc->doc_month;
+                if ($m < 1 || $m > 12) continue;
+
+                if ($doc->doc_type === 'ใบสำคัญจ่าย') {
+                    $expenses[$m] = (float)$doc->doc_sum_price;
+                }
+            }
+
+            // ----- รายรับ(ค่าดำเนินการ) รายเดือน -----
+            foreach ($loanprocessmonths as $loan) {
+                $m = (int)$loan->loan_created_payment;
+                if ($m < 1 || $m > 12) continue;
+
+                $process[$m] = (float)$loan->total_payment_process
+                    + (float)$loan->total_tranfer
+                    + (float)$loan->total_payment_other;
+            }
+
+            // ----- รายรับ(ค่างวดจริง) รายเดือน -----
+            foreach ($LoanPaymentMonths as $row) {
+                $m = (int)$row->loan_created_payment;
+                if ($m < 1 || $m > 12) continue;
+
+                $loanPayment[$m] += (float)$row->setting_land_report_money;
+            }
+
+            // ----- คำนวณกำไรสุทธิรายเดือน (เลขจริง) -----
+            $netByMonth = [];
+            $sumNet = 0.0;
+
+            foreach ($months as $m) {
+                $sumReceipt = $process[$m] + $loanPayment[$m];
+                $net = $sumReceipt - $expenses[$m]; // ✅ กำไรสุทธิรายเดือน
+
+                $netByMonth[$m] = $net;
+                $sumNet += $net;
+            }
+
+            // ✅ ส่ง JSON แบบเอาไปใช้เติมคอลัมน์ได้ทันที
+            return $this->response
+                ->setStatusCode(200)
+                ->setContentType('application/json')
+                ->setJSON([
+                    'success' => 1,
+                    'year'    => $year,
+                    'months'  => $netByMonth, // 1..12 (ตัวเลขจริง)
+                    'total'   => $sumNet      // รวมทั้งปี (ตัวเลขจริง)
+                ]);
+        } catch (\Exception $e) {
+            return $this->response
+                ->setStatusCode(500)
+                ->setContentType('application/json')
+                ->setJSON([
+                    'success' => 0,
+                    'message' => $e->getMessage()
+                ]);
+        }
+    }
 }
