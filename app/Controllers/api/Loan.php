@@ -325,7 +325,7 @@ class Loan extends BaseController
         }
     }
 
-    public function ajaxNetProfitMonthlyByYear($year)
+    public function ajaxLandNetProfitMonthlyByYear($year)
     {
         $allowed_origins = [
             'http://localhost:8080',
