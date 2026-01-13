@@ -172,6 +172,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\api'], function ($routes)
 
     $routes->get('landdatadocday', 'Loan::LandDataDocDay');
     $routes->get('ajaxlandnetprofitbyyear/(:any)', 'Loan::ajaxLandNetProfitMonthlyByYear/$1');
+    $routes->get('ajaxlandmonthsummarybyyear/(:num)', 'Loan::ajaxLandMonthlySummaryByYear/$1');
 });
 
 // $routes->group('cronjob', ['namespace' => 'App\Controllers\cronjob'], function ($routes) {
