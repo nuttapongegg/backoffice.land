@@ -259,54 +259,44 @@ class Loan extends BaseController
         ];
 
         try {
-            // โหลดโมเดล
-            $LoanModel = new \App\Models\LoanModel();
-            // $LoanRevenues = $LoanModel->getLoanRevenuesDay();
-            $LoanProcess = $LoanModel->getSumLoanIncomeToday();
-            $LoannPayment = $LoanModel->getSumLoanPaymentToday();
-            // $LoanExpenses = $LoanModel->getLoanExpensesDay();
-            $DocumentModel = new \App\Models\DocumentModel();
-            $Docs = $DocumentModel->getDocToDay();
+            $date = $this->request->getGet('date') ?: date('Y-m-d');
 
-            $LoanProcesstToday =
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+                throw new \Exception("Invalid date format. Use YYYY-MM-DD");
+            }
+
+            $LoanModel = new \App\Models\LoanModel();
+            $DocumentModel = new \App\Models\DocumentModel();
+
+            // ✅ ใช้ ByDate
+            $LoanProcess   = $LoanModel->getSumLoanIncomeByDate($date);
+            $LoannPayment  = $LoanModel->getSumLoanPaymentByDate($date);
+            $Docs          = $DocumentModel->getDocByDate($date);
+
+            $LoanProcesstDay =
                 ($LoanProcess->total_payment_process ?? 0)
                 + ($LoanProcess->total_tranfer ?? 0)
                 + ($LoanProcess->total_payment_other ?? 0);
 
-            $loanPaymentToday = $LoannPayment->total_loan_payment_today ?? 0;
+            $loanPaymentDay = $LoannPayment->total_loan_payment_today ?? 0;
 
-            $Revenue = $LoanProcesstToday + $loanPaymentToday;
-
-
+            $Revenue = $LoanProcesstDay + $loanPaymentDay;
             $Expense = $Docs->total_expense ?? 0;
-
-            $sum = 0;
-
-            // รวมค่าของ setting_land_report_money จาก LoanRevenues
-            // foreach ($LoanRevenues as $LoanRevenue) {
-            //     $Revenue += $LoanRevenue->setting_land_report_money;
-            // }
-
-            // รวมค่าของ setting_land_report_money จาก LoanExpenses
-            // foreach ($LoanExpenses as $LoanExpense) {
-            //     $Expense += $LoanExpense->setting_land_report_money;
-            // }
-
             $sum = $Revenue - $Expense;
 
             $SettingLandModel = new \App\Models\SettingLandModel();
             $land_accounts = $SettingLandModel->getSettingLandAll();
             $sum_land_account = 0;
+
             foreach ($land_accounts as $land_account) {
-                $sum_land_account = $sum_land_account + $land_account->land_account_cash;
+                $sum_land_account += (float)$land_account->land_account_cash;
             }
 
-            // JSON Response
             $response['data'] = [
-                'date' => date('Y-m-d'),
-                'income' => $Revenue,     // รายรับ
-                'expense' => $Expense,   // รายจ่าย
-                'profit' => $sum,   // กำไร
+                'date' => $date,              // ✅ วันตามที่ส่งมา
+                'income' => $Revenue,
+                'expense' => $Expense,
+                'profit' => $sum,
                 'cash_flow' => $sum_land_account
             ];
 

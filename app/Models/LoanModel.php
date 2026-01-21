@@ -1068,6 +1068,45 @@ class LoanModel
         return $this->db->query($sql)->getRow();
     }
 
+    public function getSumLoanPaymentByDate($date)
+    {
+        $sql = "
+        SELECT 
+            SUM(setting_land_report.setting_land_report_money) AS total_loan_payment_today
+        FROM setting_land_report
+        JOIN loan 
+            ON loan.loan_code = SUBSTRING(
+                setting_land_report.setting_land_report_detail,
+                LOCATE('LOA', setting_land_report.setting_land_report_detail),
+                9
+            )
+        WHERE setting_land_report.created_at >= ?
+          AND setting_land_report.created_at <  DATE_ADD(?, INTERVAL 1 DAY)
+          AND setting_land_report.setting_land_report_detail LIKE 'ชำระสินเชื่อ%'
+          AND setting_land_report.setting_land_report_detail LIKE '%งวดที่%'
+          AND loan.loan_status != 'CANCEL_STATE'
+    ";
+
+        return $this->db->query($sql, [$date, $date])->getRow();
+    }
+
+    public function getSumLoanIncomeByDate($date)
+    {
+        $sql = "
+        SELECT
+            SUM(loan_payment_process) AS total_payment_process,
+            SUM(loan_tranfer)         AS total_tranfer,
+            SUM(loan_payment_other)   AS total_payment_other
+        FROM loan
+        WHERE created_at >= ?
+          AND created_at <  DATE_ADD(?, INTERVAL 1 DAY)
+          AND loan_status != 'CANCEL_STATE'
+    ";
+
+        return $this->db->query($sql, [$date, $date])->getRow();
+    }
+
+
     public function getListLoanClosePaymentMonths($year)
     {
         $sql = "

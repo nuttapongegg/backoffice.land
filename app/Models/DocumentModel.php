@@ -859,6 +859,21 @@ class DocumentModel
         return $this->db->query($sql)->getRow();
     }
 
+    public function getDocByDate($date)
+    {
+        $sql = "
+        SELECT 
+            SUM(CASE WHEN doc_type = 'ใบสำคัญรับ'  THEN price ELSE 0 END) AS total_income,
+            SUM(CASE WHEN doc_type = 'ใบสำคัญจ่าย' THEN price ELSE 0 END) AS total_expense
+        FROM documents
+        WHERE created_at >= ?
+          AND created_at <  DATE_ADD(?, INTERVAL 1 DAY)
+    ";
+
+        return $this->db->query($sql, [$date, $date])->getRow();
+    }
+
+
     public function getDataTableDocumentsReceiptMonthCount($param)
     {
         $month = $param['month'];
