@@ -304,6 +304,13 @@
         [data-theme-color="light"] .loan-metric-sub {
             color: #6b7280;
         }
+
+        .filter-divider {
+            width: 1px;
+            height: 22px;
+            background: var(--primary-bg-color);
+            margin: 0 6px;
+        }
     </style>
     <!-- container -->
     <div class="main-container container-fluid">
@@ -333,13 +340,27 @@
                             </div>
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
-                                    <div class="d-flex flex-wrap gap-2 mb-3 justify-content-end">
+                                    <div class="d-flex flex-wrap gap-2 mb-3 justify-content-end align-items-center">
+
+                                        <!-- ช่วงเวลา -->
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="this_month">เดือนนี้</button>
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="last_month">เดือนที่แล้ว</button>
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="this_year">ปีนี้</button>
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="last_year">ปีที่แล้ว</button>
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="all">ทั้งหมด</button>
+
+                                        <!-- คั่นแบบเบา ๆ -->
+                                        <span class="filter-divider"></span>
+
+                                        <!-- ประเภทสินเชื่อ -->
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-loan-type" data-type="เงินสด">
+                                            เงินสด
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-loan-type" data-type="เช่าซื้อ">
+                                            เช่าซื้อ
+                                        </button>
                                     </div>
+
                                     <div class="row justify-content-end">
                                         <div class="col-12">
                                             <div class="form-group">
@@ -476,12 +497,18 @@
                             </div>
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
-                                    <div class="d-flex flex-wrap gap-2 mb-3 justify-content-end">
+                                    <div class="d-flex flex-wrap gap-2 mb-3 justify-content-end align-items-center">
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range-close" data-range="this_month">เดือนนี้</button>
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range-close" data-range="last_month">เดือนที่แล้ว</button>
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range-close" data-range="this_year">ปีนี้</button>
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range-close" data-range="last_year">ปีที่แล้ว</button>
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range-close" data-range="all">ทั้งหมด</button>
+
+                                        <span class="filter-divider"></span>
+
+                                        <!-- ไม่เลือก = ทั้งหมด -->
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-loan-type-close" data-type="เงินสด">เงินสด</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-loan-type-close" data-type="เช่าซื้อ">เช่าซื้อ</button>
                                     </div>
                                     <div class="row justify-content-end">
                                         <div class="col-12">

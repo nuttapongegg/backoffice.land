@@ -41,6 +41,21 @@ $(document).ready(function () {
   callTableLoanPayments();
 });
 
+$(document).on("click", ".js-loan-type", function () {
+  $(this).toggleClass("active");
+  callTableLoan();
+});
+
+function getLoanTypesSelected() {
+  const types = $(".js-loan-type.active")
+    .map(function () {
+      return $(this).data("type");
+    })
+    .get();
+
+  return types; // [] = all
+}
+
 function resetQuickRangeButtons() {
   $(".js-range").removeClass("btn-primary").addClass("btn-outline-primary");
 }
@@ -98,7 +113,7 @@ var count_loan = 0;
 
 function getPlannedInstallments(
   loan_installment_date,
-  total_installments = null
+  total_installments = null,
 ) {
   const start = new Date(loan_installment_date); // วันเริ่มงวดแรก
   const now = new Date(); // วันนี้
@@ -129,12 +144,16 @@ function callTableLoan() {
   $("#tableLoanOn").DataTable().clear().destroy();
 
   const date = $("#daterange_loan").val() || "";
+  const loan_types = getLoanTypesSelected();
 
   $.ajax({
     url: serverUrl + "/loan/tableLoan",
     dataType: "json",
-    type: "get",
-    data: { date: date },
+    type: "POST",
+    data: {
+      date: date,
+      loan_types: loan_types,
+    },
     success: function (response) {
       var result = JSON.parse(response.message);
       result.forEach(statusLoan);
@@ -142,7 +161,7 @@ function callTableLoan() {
       $("#count_car").html(
         '<div class="tx-primary tx-18" id="count_car">รายการสินเชื่อที่ยังไม่ปิด (' +
           count_loan +
-          " ราย)</div>"
+          " ราย)</div>",
       );
       count_loan = 0;
 
@@ -202,7 +221,7 @@ function callAutoloenTable(data) {
           return (
             '<span class="tx-success">' +
             new Intl.NumberFormat().format(
-              Number(data["loan_summary_no_vat"]).toFixed(2)
+              Number(data["loan_summary_no_vat"]).toFixed(2),
             ) +
             "</span>"
           );
@@ -302,11 +321,11 @@ function callAutoloenTable(data) {
           if (data["loan_status"] == "ON_STATE") {
             const date = new Date(data["loan_payment_date_fix"]);
             const newDate = new Date(
-              date.setMonth(date.getMonth() + (data["loan_period"] - 1))
+              date.setMonth(date.getMonth() + (data["loan_period"] - 1)),
             );
 
             const daysPassed = Math.floor(
-              (Date.now() - newDate) / (1000 * 60 * 60 * 24)
+              (Date.now() - newDate) / (1000 * 60 * 60 * 24),
             );
             if (daysPassed > 0) {
               return "<font class='tx-secondary'>รอการจ่าย/เลยกำหนด</font>";
@@ -326,11 +345,11 @@ function callAutoloenTable(data) {
           if (data["loan_status"] == "ON_STATE") {
             const date = new Date(data["loan_payment_date_fix"]);
             const newDate = new Date(
-              date.setMonth(date.getMonth() + (data["loan_period"] - 1))
+              date.setMonth(date.getMonth() + (data["loan_period"] - 1)),
             );
 
             const daysPassed = Math.floor(
-              (Date.now() - newDate) / (1000 * 60 * 60 * 24)
+              (Date.now() - newDate) / (1000 * 60 * 60 * 24),
             );
 
             if (daysPassed > 0) {
@@ -350,11 +369,11 @@ function callAutoloenTable(data) {
           if (data["loan_status"] == "ON_STATE") {
             const date = new Date(data["loan_payment_date_fix"]);
             const newDate = new Date(
-              date.setMonth(date.getMonth() + (data["loan_period"] - 1))
+              date.setMonth(date.getMonth() + (data["loan_period"] - 1)),
             );
 
             const daysPassed = Math.floor(
-              (Date.now() - newDate) / (1000 * 60 * 60 * 24)
+              (Date.now() - newDate) / (1000 * 60 * 60 * 24),
             );
             var installment = data["loan_payment_year_counter"] * 12;
             const remaining_installments =
@@ -365,7 +384,7 @@ function callAutoloenTable(data) {
                 Number(data["loan_overdue"].replace(/[^0-9.-]+/g, "")) + 1;
               const overdue_months = Math.min(
                 loan_overdue,
-                remaining_installments
+                remaining_installments,
               );
               const loan_overdue_sum =
                 overdue_months * data["loan_payment_month"];
@@ -374,7 +393,7 @@ function callAutoloenTable(data) {
               return (
                 "<font class='tx-danger'>" +
                 new Intl.NumberFormat().format(
-                  Number(loan_overdue_sum).toFixed(2)
+                  Number(loan_overdue_sum).toFixed(2),
                 ) +
                 "</font>"
               );
@@ -400,7 +419,7 @@ function callAutoloenTable(data) {
             (data["loan_payment_sum_installment"] / totalProfit) * 100;
           const plannedInstallments = getPlannedInstallments(
             data["loan_installment_date"],
-            loan_payment_month_counter
+            loan_payment_month_counter,
           );
           const plannedAmount =
             plannedInstallments * data["loan_payment_month"];
@@ -429,7 +448,7 @@ function callAutoloenTable(data) {
           return (
             "<font class='tx-success'>" +
             new Intl.NumberFormat().format(
-              Number(data["loan_payment_sum_installment"]).toFixed(2)
+              Number(data["loan_payment_sum_installment"]).toFixed(2),
             ) +
             "</font>"
           );
@@ -444,7 +463,7 @@ function callAutoloenTable(data) {
               data["loan_summary_no_vat"]) *
             100;
           var roiFormatted = new Intl.NumberFormat().format(
-            Number(roi.toFixed(2))
+            Number(roi.toFixed(2)),
           );
 
           // กำหนดสีตามเงื่อนไข
@@ -468,7 +487,7 @@ function callAutoloenTable(data) {
           return (
             "<font>" +
             new Intl.NumberFormat().format(
-              Number(data["loan_payment_month"]).toFixed(2)
+              Number(data["loan_payment_month"]).toFixed(2),
             ) +
             "</font>"
           );
@@ -481,11 +500,11 @@ function callAutoloenTable(data) {
           if (data["loan_status"] == "ON_STATE") {
             const date = new Date(data["loan_payment_date_fix"]);
             const newDate = new Date(
-              date.setMonth(date.getMonth() + (data["loan_period"] - 1))
+              date.setMonth(date.getMonth() + (data["loan_period"] - 1)),
             );
 
             const daysPassed = Math.floor(
-              (Date.now() - newDate) / (1000 * 60 * 60 * 24)
+              (Date.now() - newDate) / (1000 * 60 * 60 * 24),
             );
             var installment = data["loan_payment_year_counter"] * 12;
             const remaining_installments =
@@ -495,7 +514,7 @@ function callAutoloenTable(data) {
               Number(data["loan_overdue"].replace(/[^0-9.-]+/g, "")) + 1;
             const overdue_months = Math.min(
               loan_overdue,
-              remaining_installments
+              remaining_installments,
             );
             const loan_overdue_sum =
               overdue_months * data["loan_payment_month"];
@@ -600,8 +619,8 @@ function callAutoloenTable(data) {
         return typeof i === "string"
           ? i.replace(/[\$,]/g, "") * 1
           : typeof i === "number"
-          ? i
-          : 0;
+            ? i
+            : 0;
       };
 
       // Total over this page
@@ -636,11 +655,11 @@ function callAutoloenTable(data) {
         .reduce(function (a, b) {
           const date = new Date(b.loan_payment_date_fix);
           const newDate = new Date(
-            date.setMonth(date.getMonth() + (b.loan_period - 1))
+            date.setMonth(date.getMonth() + (b.loan_period - 1)),
           );
 
           const daysPassed = Math.floor(
-            (Date.now() - newDate) / (1000 * 60 * 60 * 24)
+            (Date.now() - newDate) / (1000 * 60 * 60 * 24),
           );
 
           if (daysPassed > 0) {
@@ -668,7 +687,7 @@ function callAutoloenTable(data) {
       // Update footer
       number_payment_month = parseFloat(Total_payment_month).toFixed(2);
       $(api.column(16).footer()).html(
-        Number(number_payment_month).toLocaleString()
+        Number(number_payment_month).toLocaleString(),
       );
 
       // number_sum_remaining_payment = parseFloat(
@@ -679,20 +698,20 @@ function callAutoloenTable(data) {
       // );
 
       number_payment_sum_installment = parseFloat(
-        Total_payment_sum_installment
+        Total_payment_sum_installment,
       ).toFixed(2);
       $(api.column(14).footer()).html(
-        Number(number_payment_sum_installment).toLocaleString()
+        Number(number_payment_sum_installment).toLocaleString(),
       );
 
       number_loanOverdueSum = parseFloat(Total_loanOverdueSum).toFixed(2);
       $(api.column(12).footer()).html(
-        Number(number_loanOverdueSum).toLocaleString()
+        Number(number_loanOverdueSum).toLocaleString(),
       );
 
       number_summary_no_vat = parseFloat(Total_summary_no_vat).toFixed(2);
       $(api.column(8).footer()).html(
-        Number(number_summary_no_vat).toLocaleString()
+        Number(number_summary_no_vat).toLocaleString(),
       );
     },
     bFilter: true,
@@ -772,7 +791,7 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
                 loan_without_vat: response.loan_without_vat,
               }),
               mode: "no-cors", // ใช้โหมด no-cors
-            }
+            },
           )
             .then((response) => {
               // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
@@ -983,7 +1002,7 @@ function callAutoloenTablePayments(data) {
           return (
             "<font>" +
             new Intl.NumberFormat().format(
-              Number(data["setting_land_report_money"]).toFixed(2)
+              Number(data["setting_land_report_money"]).toFixed(2),
             ) +
             "</font>"
           );
@@ -1007,7 +1026,7 @@ function callAutoloenTablePayments(data) {
           return (
             "<font>" +
             new Intl.NumberFormat().format(
-              Number(data["setting_land_report_account_balance"]).toFixed(2)
+              Number(data["setting_land_report_account_balance"]).toFixed(2),
             ) +
             "</font>"
           );
@@ -1170,7 +1189,7 @@ $(document).ready(function () {
 
           if (bundleData.prename) {
             bundleData.gender = ["น.ส.", "นางสาว", "นาง", "เด็กหญิง"].includes(
-              bundleData.prename
+              bundleData.prename,
             )
               ? "หญิง"
               : "ชาย";
@@ -1183,7 +1202,7 @@ $(document).ready(function () {
               .val(
                 `${bundleData.firstname || ""} ${
                   bundleData.lastname || ""
-                }`.trim()
+                }`.trim(),
               )
               .removeClass("is-invalid")
               .addClass("is-valid");

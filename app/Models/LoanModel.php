@@ -102,8 +102,24 @@ class LoanModel
         $this->order_finx = array('loan.loan_code' => 'DESC');
     }
 
-    public function getAllDataLoanOn($date)
+    public function getAllDataLoanOn($date, $loan_types)
     {
+        if (empty($loan_types)) {
+            $loan_types = [];
+        } elseif (!is_array($loan_types)) {
+            $loan_types = [$loan_types];
+        }
+
+        $params = [];
+
+        // loan_type filter
+        $whereType = '';
+        if (!empty($loan_types)) {
+            $placeholders = implode(',', array_fill(0, count($loan_types), '?'));
+            $whereType = " AND loan.loan_type IN ($placeholders) ";
+            foreach ($loan_types as $t) $params[] = $t;
+        }
+
         if ($date) {
             $dateExplode = explode(" to ", $date);
             if (array_key_exists(1, $dateExplode)) {
@@ -127,11 +143,12 @@ class LoanModel
         (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period,
         TIMESTAMPDIFF(MONTH,(SELECT DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_period - 1) MONTH)  FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code),CURDATE()) AS loan_overdue
         FROM loan
-        WHERE loan.loan_status = 'ON_STATE' {$whereDate}
+        WHERE loan.loan_status = 'ON_STATE' {$whereDate}{$whereType}
         ORDER BY loan.id DESC
         ";
 
-        $builder = $this->db->query($sql);
+        $builder = $this->db->query($sql, $params);
+
         return $builder->getResult();
     }
 
@@ -323,6 +340,7 @@ class LoanModel
 
     private function DataLoanHistoryQuery($post_data)
     {
+
         $date = $post_data['date'] ?? '';
 
         if ($date) {
@@ -370,6 +388,14 @@ class LoanModel
         if (!empty($date)) {
             $builder->where("loan.loan_date_close >=", $dateStart);
             $builder->where("loan.loan_date_close <=", $dateEnd);
+        }
+
+        $loanTypes = $post_data['loan_types'] ?? [];
+        if (!empty($loanTypes) && !is_array($loanTypes)) {
+            $loanTypes = [$loanTypes];
+        }
+        if (!empty($loanTypes)) {
+            $builder->whereIn('loan.loan_type', $loanTypes);
         }
 
         $i = 0;
@@ -464,13 +490,21 @@ class LoanModel
 
         $builder = $this->db->table('loan');
 
-
         // base where
         $builder->where('loan.loan_status', 'CLOSE_STATE');
 
         if (!empty($date)) {
             $builder->where("loan.loan_date_close >=", $dateStart);
             $builder->where("loan.loan_date_close <=", $dateEnd);
+        }
+
+        // ✅ เพิ่มตรงนี้
+        $loanTypes = $post['loan_types'] ?? [];
+        if (!empty($loanTypes) && !is_array($loanTypes)) {
+            $loanTypes = [$loanTypes];
+        }
+        if (!empty($loanTypes)) {
+            $builder->whereIn('loan.loan_type', $loanTypes);
         }
 
         // search เหมือนด้านบน
@@ -493,7 +527,6 @@ class LoanModel
 
         return $builder->countAllResults();
     }
-
 
     public function insertpayment($payment_data)
     {

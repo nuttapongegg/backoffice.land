@@ -128,9 +128,10 @@ class Loan extends BaseController
     // Get Data Loan กำลังจ่าย
     public function FetchAllLoanOn()
     {
-        $date = $this->request->getGet('date') ?? '';
+        $date = $this->request->getPost('date');
+        $loan_types = $this->request->getPost('loan_types'); // <-- array แน่นอน
 
-        $data_loanOn = $this->LoanModel->getAllDataLoanOn($date);
+        $data_loanOn = $this->LoanModel->getAllDataLoanOn($date, $loan_types);
 
         return $this->response->setJSON([
             'status' => 200,
@@ -1239,6 +1240,10 @@ class Loan extends BaseController
     public function loanHistory()
     {
         $post = $this->request->getPost();
+
+        $loanTypes = $this->request->getPost('loan_types');
+        if (!empty($loanTypes) && !is_array($loanTypes)) $loanTypes = [$loanTypes];
+        $post['loan_types'] = $loanTypes ?: [];
 
         $datas_loan = $this->LoanModel->_getAllDataLoanHistory($post);
 
@@ -4168,8 +4173,10 @@ class Loan extends BaseController
 
     public function list_ai()
     {
+        $date = $this->request->getPost('date');
+        $loan_types = $this->request->getPost('loan_types'); // <-- array แน่นอน
 
-        $message_back = $this->LoanModel->getAllDataLoanOn();
+        $message_back = $this->LoanModel->getAllDataLoanOn($date, $loan_types);
         $loan_close = $this->LoanModel->DataLoanHistoryQueryAI();
         $real_investment = $this->realInvestmentModel->getRealInvestmentAll();
         $land_accounts = $this->SettingLandModel->getSettingLandAll();

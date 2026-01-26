@@ -51,7 +51,7 @@ $routes->get('pdf_monthly_statement/(:any)/(:any)', 'PdfController::pdf_MonthlyS
 //สินเชื่อ loan
 $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->get('list', 'Loan::list');
-    $routes->get('tableLoan', 'Loan::FetchAllLoanOn');
+    $routes->post('tableLoan', 'Loan::FetchAllLoanOn');
     $routes->get('get_emp', 'Loan::GetEmp');
     $routes->post('addLoan', 'Loan::insertDataLoan');
     $routes->post('addPayment', 'Loan::insertDataLoanPayment');

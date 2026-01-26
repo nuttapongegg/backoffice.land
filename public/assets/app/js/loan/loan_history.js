@@ -69,6 +69,23 @@ $(document).on("click", ".js-range-close", function () {
   }
 });
 
+function getLoanTypesSelectedClose() {
+  return $(".js-loan-type-close.active")
+    .map(function () {
+      return $(this).data("type");
+    })
+    .get(); // [] = all
+}
+
+$(document).on("click", ".js-loan-type-close", function () {
+  $(this).toggleClass("active"); // ให้ UI เป็นเหมือน filter
+
+  // reload ตารางปิดแล้ว
+  if (window.tableStock) {
+    tableStock.ajax.reload();
+  }
+});
+
 function callTableLoanHistory() {
   $("#tableLoanClose").DataTable().clear().destroy();
   tableStock = $("#tableLoanClose").DataTable({
@@ -98,6 +115,8 @@ function callTableLoanHistory() {
       type: "POST",
       url: serverUrl + "/loan/tableLoanHistory",
       data: function (d) {
+        const loan_types = getLoanTypesSelectedClose();
+        d.loan_types = loan_types;
         const $date = $("#daterange_loan_close").val();
         if ($date !== "") {
           d.date = $date;
@@ -116,7 +135,7 @@ function callTableLoanHistory() {
           return (
             '<span class="tx-success">' +
             new Intl.NumberFormat().format(
-              Number(data["loan_summary_no_vat"]).toFixed(2)
+              Number(data["loan_summary_no_vat"]).toFixed(2),
             ) +
             "</span>"
           );
@@ -226,7 +245,7 @@ function callTableLoanHistory() {
           return (
             "<font>" +
             new Intl.NumberFormat().format(
-              Number(data["loan_payment_sum_installment"]).toFixed(2)
+              Number(data["loan_payment_sum_installment"]).toFixed(2),
             ) +
             "</font>"
           );
@@ -239,7 +258,7 @@ function callTableLoanHistory() {
           return (
             "<font>" +
             new Intl.NumberFormat().format(
-              Number(data["loan_close_payment"]).toFixed(2)
+              Number(data["loan_close_payment"]).toFixed(2),
             ) +
             "</font>"
           );
@@ -275,7 +294,7 @@ function callTableLoanHistory() {
           return (
             "<font>" +
             new Intl.NumberFormat().format(
-              Number(data["loan_payment_month"]).toFixed(2)
+              Number(data["loan_payment_month"]).toFixed(2),
             ) +
             "</font>"
           );
@@ -310,7 +329,7 @@ function callTableLoanHistory() {
       $("#count_car_history").html(
         '<div class="tx-primary tx-18" id="count_car_history">รายการสินเชื่อที่ปิดแล้ว (' +
           num_rows +
-          " ราย)</div>"
+          " ราย)</div>",
       );
     },
     createdRow: function (tr, tdsContent) {},
@@ -322,8 +341,8 @@ function callTableLoanHistory() {
         return typeof i === "string"
           ? i.replace(/[\$,]/g, "") * 1
           : typeof i === "number"
-          ? i
-          : 0;
+            ? i
+            : 0;
       };
 
       // Total over this page
@@ -358,24 +377,24 @@ function callTableLoanHistory() {
       // Update footer
       number_payment_month = parseFloat(Total_payment_month).toFixed(2);
       $(api.column(17).footer()).html(
-        Number(number_payment_month).toLocaleString()
+        Number(number_payment_month).toLocaleString(),
       );
 
       number_close_payment = parseFloat(Total_close_payment).toFixed(2);
       $(api.column(12).footer()).html(
-        Number(number_close_payment).toLocaleString()
+        Number(number_close_payment).toLocaleString(),
       );
 
       number_payment_sum_installment = parseFloat(
-        Total_payment_sum_installment
+        Total_payment_sum_installment,
       ).toFixed(2);
       $(api.column(11).footer()).html(
-        Number(number_payment_sum_installment).toLocaleString()
+        Number(number_payment_sum_installment).toLocaleString(),
       );
 
       number_summary_no_vat = parseFloat(Total_summary_no_vat).toFixed(2);
       $(api.column(8).footer()).html(
-        Number(number_summary_no_vat).toLocaleString()
+        Number(number_summary_no_vat).toLocaleString(),
       );
     },
     bFilter: true,
