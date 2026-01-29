@@ -5,6 +5,7 @@ namespace App\Controllers\cronjob;
 use App\Controllers\BaseController;
 use App\Models\LoanModel;
 use App\Models\OverdueStatusModel;
+use App\Models\OwnerLoanModel;
 use CURLFile;
 use Error;
 
@@ -28,6 +29,9 @@ class LoanSendDailySummary extends BaseController
         $OpenLoans = $LoanModel->getOpenLoanMonthlySummary();
         $TargetedModel = new \App\Models\TargetedModel();
         $targeteds = $TargetedModel->getTargetedAll();
+
+        $OwnerLoanModel = new OwnerLoanModel();
+        $totalPrincipalOutstanding = $OwnerLoanModel->getTotalPrincipalOutstandingOpenLoan();
 
         try {
 
@@ -86,6 +90,7 @@ class LoanSendDailySummary extends BaseController
                             $messagePayload = $this->createDailySummaryMessage(
                                 $messageGroup,
                                 $cashBalance,
+                                $totalPrincipalOutstanding,
                                 $loanOpen,
                                 true,
                                 [
@@ -96,7 +101,7 @@ class LoanSendDailySummary extends BaseController
                                 ]
                             );
                         } else {
-                            $messagePayload = $this->createDailySummaryMessage($messageGroup, $cashBalance, $loanOpen, false);
+                            $messagePayload = $this->createDailySummaryMessage($messageGroup, $cashBalance, $totalPrincipalOutstanding, $loanOpen, false);
                         }
 
                         // $messagePayload = $this->createDailySummaryMessage($messageGroup);  // สร้าง Flex Message
@@ -131,7 +136,7 @@ class LoanSendDailySummary extends BaseController
         }
     }
 
-    private function createDailySummaryMessage($summaryItems, $cashBalance, $loanOpen, $isLastGroup = false, $summary = [])
+    private function createDailySummaryMessage($summaryItems, $cashBalance, $totalPrincipalOutstanding, $loanOpen, $isLastGroup = false, $summary = [])
     {
         $contents = [];
 
@@ -263,6 +268,7 @@ class LoanSendDailySummary extends BaseController
                     $this->buildInfoRow("📥 เงินเข้า", number_format($summary['totalAmountIn'] ?? 0, 2) . " บาท", "#2E7D32", true),
                     $this->buildInfoRow("📤 เงินออก", number_format($summary['totalAmountOut'] ?? 0, 2) . " บาท", "#C62828", true),
                     $this->buildInfoRow("💼 เงินสดคงเหลือ", number_format($cashBalance, 2) . " บาท", "#EF6C00", true),
+                    $this->buildInfoRow("💳 เงินต้นคงค้าง", number_format($totalPrincipalOutstanding, 2) . " บาท", "#C62828", true),
                     $this->buildInfoRow("💳 ยอดเปิดสินเชื่อ", number_format($loanOpen, 2) . " บาท", "#1565C0", true),
 
                     [
@@ -276,7 +282,7 @@ class LoanSendDailySummary extends BaseController
                                 "contents" => [
                                     [
                                         "type" => "text",
-                                        "text" => "เป้าหมาย ".number_format($goal, 2)." บาท",
+                                        "text" => "เป้าหมาย " . number_format($goal, 2) . " บาท",
                                         "size" => "xs",
                                         "color" => "#999999",
                                         "flex" => 6,

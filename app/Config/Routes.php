@@ -94,6 +94,23 @@ $routes->group('loan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->post('ocrCustomer', 'Loan::ocrCustomer');
 });
 
+$routes->group('ownerloan', ['filter' => 'employeeAuth'], function ($routes) {
+    $routes->get('list', 'OwnerLoan::list');
+    $routes->get('tableOwnerLoanOn', 'OwnerLoan::fetchAllOwnerLoanOn');
+    $routes->post('addOwnerLoan', 'OwnerLoan::insertOwnerLoan');
+    $routes->post('tableOwnerLoanHistory', 'OwnerLoan::tableOwnerLoanHistory');
+    $routes->post('ajax-summarizeOwnerLoan', 'OwnerLoan::ajaxSummarizeOwnerLoan');
+    $routes->get('detail/(:any)', 'OwnerLoan::detail/$1');
+
+    // ✅ เพิ่ม
+    $routes->get('ajax-payments/(:any)', 'OwnerLoan::ajaxPayments/$1');   // โหลดตารางจ่าย
+    $routes->post('pay', 'OwnerLoan::pay');                               // บันทึกจ่าย
+    $routes->post('cancel-payment', 'OwnerLoan::cancelPayment');          // ยกเลิกรายการจ่าย (ถ้าต้องการ)
+    $routes->post('cancel-ownerloan', 'OwnerLoan::cancelOwnerLoan');      // ยกเลิกรายการยืม (คุณมีอยู่แล้วก็ได้)
+    $routes->get('ajax-calc-payoff-today/(:any)', 'OwnerLoan::ajaxCalcPayoffToday/$1');
+    $routes->get('ajax-land-accounts', 'OwnerLoan::ajaxLandAccounts');
+});
+
 //สินเชื่อ Finx
 $routes->group('finx', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->get('list', 'Finx::list');

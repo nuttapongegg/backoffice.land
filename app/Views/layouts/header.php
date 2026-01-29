@@ -674,6 +674,14 @@
                                     </ul>
                                 </li>
                                 <li class="slide">
+                                    <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'ownerloan' && service('uri')->getSegment(2) == 'list') {
+                                                                            echo 'active';
+                                                                        } ?>" data-bs-toggle="slide" href="<?php echo base_url('/ownerloan/list'); ?>">
+                                        <i class="ionicon side-menu__icon fe fe-dollar-sign"></i>
+                                        <span class="side-menu__label">Owner Loan</span>
+                                    </a>
+                                </li>
+                                <li class="slide">
                                     <a class="side-menu__item has-link <?php if (service('uri')->getSegment(1) == 'setting_land' && service('uri')->getSegment(2) == 'index') {
                                                                             echo 'active';
                                                                         } ?>" data-bs-toggle="slide" href="<?php echo base_url('/setting_land/index'); ?>">
