@@ -268,7 +268,11 @@ class LoanSendDailySummary extends BaseController
                     $this->buildInfoRow("📥 เงินเข้า", number_format($summary['totalAmountIn'] ?? 0, 2) . " บาท", "#2E7D32", true),
                     $this->buildInfoRow("📤 เงินออก", number_format($summary['totalAmountOut'] ?? 0, 2) . " บาท", "#C62828", true),
                     $this->buildInfoRow("💼 เงินสดคงเหลือ", number_format($cashBalance, 2) . " บาท", "#EF6C00", true),
-                    $this->buildInfoRow("💳 เงินต้นคงค้าง", number_format($totalPrincipalOutstanding, 2) . " บาท", "#C62828", true),
+                    (
+                        ($totalPrincipalOutstanding > 0)
+                        ? $this->buildInfoRow("💳 ค้างยืมทั้งหมด", number_format($totalPrincipalOutstanding, 2) . " บาท", "#C62828", true)
+                        : null
+                    ),
                     $this->buildInfoRow("💳 ยอดเปิดสินเชื่อ", number_format($loanOpen, 2) . " บาท", "#1565C0", true),
 
                     [

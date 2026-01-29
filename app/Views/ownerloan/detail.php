@@ -143,7 +143,7 @@
 
                                     <?php $isClosed = in_array($ownerLoanData->status, ['CLOSED', 'PAID', 'CANCELLED', 'CANCEL']); ?>
 
-                                    <button class="btn btn-primary btn-sm"
+                                    <button class="btn btn-outline-primary"
                                         type="button"
                                         id="btnOpenPayModal"
                                         <?= $isClosed ? 'disabled' : '' ?>>
@@ -188,74 +188,73 @@
 
         </div>
     </div>
+</div>
 
-    <!-- Modal ชำระ -->
-    <div class="modal fade" id="modalPayInstallment" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+<!-- Modal ชำระ -->
+<div class="modal fade" id="modalPayInstallment" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
 
-                <div class="modal-header">
-                    <h5 class="modal-title">เพิ่มการชำระ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+            <div class="modal-header">
+                <h5 class="modal-title">เพิ่มการชำระ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-                <div class="modal-body">
-                    <input type="hidden" id="pay_owner_loan_id" value="<?= (int)$ownerLoanData->id ?>">
+            <div class="modal-body">
+                <input type="hidden" id="pay_owner_loan_id" value="<?= (int)$ownerLoanData->id ?>">
 
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <label class="form-label">วันที่ชำระ</label>
-                            <div class="input-group">
-                                <div class="input-group-text">
-                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-                                </div>
-                                <input type="text"
-                                    class="form-control"
-                                    id="pay_paid_date"
-                                    value="<?= date('Y-m-d') ?>"
-                                    readonly>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label class="form-label">วันที่ชำระ</label>
+                        <div class="input-group">
+                            <div class="input-group-text">
+                                <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">ยอดชำระ</label>
-                            <input type="text" class="form-control text-end price_pay_amount" id="pay_amount" placeholder="0.00">
-                            <div class="text-muted small mt-1">คงเหลือ: <b id="modalRemain">0.00</b></div>
-                        </div>
-                    </div>
-
-                    <!-- ✅ เพิ่มบัญชีโอนออก -->
-                    <div class="row mb-2">
-                        <div class="col-md-12">
-                            <div class="mb-2">
-                                <label class="form-label">โอนออกจากบัญชีไหน</label>
-                                <select class="form-control custom-select" id="pay_land_account_id" style="font-size: 13px;">
-                                    <option value="">-- กำลังโหลดบัญชี --</option>
-                                </select>
-                            </div>
+                            <input type="text"
+                                class="form-control"
+                                id="pay_paid_date"
+                                value="<?= date('Y-m-d') ?>"
+                                readonly>
                         </div>
                     </div>
-
-                    <div class="mb-2">
-                        <label class="form-label">หมายเหตุ</label>
-                        <input type="text" class="form-control" id="pay_note" placeholder="หมายเหตุ...">
+                    <div class="col-md-6">
+                        <label class="form-label">ยอดชำระ</label>
+                        <input type="text" class="form-control text-end price_pay_amount" id="pay_amount" placeholder="0.00">
+                        <div class="text-muted small mt-1">คงเหลือ: <b id="modalRemain">0.00</b></div>
                     </div>
-
-                    <div class="mb-2">
-                        <label class="form-label">แนบหลักฐาน (ถ้ามี)</label>
-                        <input type="file" class="form-control" id="pay_file" accept="image/*,application/pdf">
-                    </div>
-
-                    <div id="pay_file_preview" class="mt-2"></div>
                 </div>
 
-                <div class="modal-footer">
-                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">ปิด</button>
-                    <button class="btn btn-primary" type="button" id="btnSubmitPay">บันทึกการชำระ</button>
+                <!-- ✅ เพิ่มบัญชีโอนออก -->
+                <div class="row mb-2">
+                    <div class="col-md-12">
+                        <div class="mb-2">
+                            <label class="form-label">โอนออกจากบัญชีไหน</label>
+                            <select class="form-control custom-select" id="pay_land_account_id" style="font-size: 13px;">
+                                <option value="">-- กำลังโหลดบัญชี --</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
+                <div class="mb-2">
+                    <label class="form-label">หมายเหตุ</label>
+                    <input type="text" class="form-control" id="pay_note" placeholder="หมายเหตุ...">
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">แนบหลักฐาน (ถ้ามี)</label>
+                    <input type="file" class="form-control" id="pay_file" accept="image/*,application/pdf">
+                </div>
+
+                <div id="pay_file_preview" class="mt-2"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">ปิด</button>
+                <button class="btn btn-outline-primary" type="button" id="btnSubmitPay">บันทึกการชำระ</button>
             </div>
         </div>
     </div>
-    <script>
-        window.CDN_IMG = "<?= rtrim(getenv('CDN_IMG'), '/') ?>";
-    </script>
+</div>
+<script>
+    window.CDN_IMG = "<?= rtrim(getenv('CDN_IMG'), '/') ?>";
+</script>
