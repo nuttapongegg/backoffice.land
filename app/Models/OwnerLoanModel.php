@@ -421,12 +421,9 @@ class OwnerLoanModel
 
         GROUP BY owner_loan.id
         ORDER BY owner_loan.id DESC
-    ";
-
+        ";
         return $this->db->query($sql, $params)->getResult();
     }
-
-
 
     public function getAllDataOwnerLoan()
     {
@@ -530,7 +527,6 @@ class OwnerLoanModel
     ", [$ownerLoanId])->getRow();
     }
 
-
     public function getPaymentSummary($owner_loan_id)
     {
         $sql = "
@@ -633,7 +629,7 @@ class OwnerLoanModel
         WHERE owner_loan_id = ?
           AND status = 'ACTIVE'
           AND deleted_at IS NULL
-    ", [$ownerLoanId])->getRow();
+        ", [$ownerLoanId])->getRow();
 
         return (float)($row->s ?? 0);
     }
@@ -646,7 +642,7 @@ class OwnerLoanModel
         WHERE owner_loan_id = ?
           AND status = 'ACTIVE'
           AND deleted_at IS NULL
-    ", [$ownerLoanId])->getRow();
+        ", [$ownerLoanId])->getRow();
 
         $d = $row->d ?? null;
         return $d ?: null;
@@ -662,7 +658,7 @@ class OwnerLoanModel
           AND deleted_at IS NULL
         ORDER BY pay_date DESC, id DESC
         LIMIT 1
-    ", [$ownerLoanId])->getRow();
+        ", [$ownerLoanId])->getRow();
 
         return (int)($row->id ?? 0);
     }
@@ -674,7 +670,7 @@ class OwnerLoanModel
         FROM owner_loan_payment
         WHERE owner_loan_id = ?
           AND status = 'ACTIVE'
-    ", [$ownerLoanId])->getRow();
+        ", [$ownerLoanId])->getRow();
 
         return (int)($row->c ?? 0);
     }
@@ -769,7 +765,7 @@ class OwnerLoanModel
         ),0)) AS outstanding,
 
         DATEDIFF(CURDATE(), owner_loan.owner_loan_date) AS days_from_loan
-    ");
+        ");
 
         $builder->join('owner_loan_payment', 'owner_loan_payment.owner_loan_id = owner_loan.id', 'left');
         $builder->join('setting_land', 'setting_land.id = owner_loan.land_account_id', 'left');
@@ -931,7 +927,7 @@ class OwnerLoanModel
               AND owner_loan.status <> 'CANCEL'
               {$whereDate}
         ) p ON 1=1
-    ";
+        ";
 
         return $this->db->query($sql, $params)->getRow();
     }
@@ -950,9 +946,16 @@ class OwnerLoanModel
             AND owner_loan_payment.deleted_at IS NULL
         WHERE owner_loan.status = 'OPEN'
           AND owner_loan.deleted_at IS NULL
-    ";
+        ";
 
         $row = $this->db->query($sql)->getRow();
         return (float)($row->total_principal_outstanding ?? 0);
+    }
+
+    public function updateOwnerLoanByID($id, $data)
+    {
+        $builder = $this->db->table('owner_loan');
+
+        return $builder->where('id', $id)->update($data);
     }
 }

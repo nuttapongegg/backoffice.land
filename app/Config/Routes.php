@@ -101,10 +101,14 @@ $routes->group('ownerloan', ['filter' => 'employeeAuth'], function ($routes) {
     $routes->post('tableOwnerLoanHistory', 'OwnerLoan::tableOwnerLoanHistory');
     $routes->post('ajax-summarizeOwnerLoan', 'OwnerLoan::ajaxSummarizeOwnerLoan');
     $routes->get('detail/(:any)', 'OwnerLoan::detail/$1');
+    $routes->post('update-owner-loan-interest', 'OwnerLoan::updateOwnerLoanInterest');
+
+    $routes->get('edit-interest-rate', 'OwnerLoan::editInterestRate');
+    $routes->post('update-interest-rate', 'OwnerLoan::updateInterestRate');
 
     // ✅ เพิ่ม
     $routes->get('ajax-payments/(:any)', 'OwnerLoan::ajaxPayments/$1');   // โหลดตารางจ่าย
-    $routes->post('pay', 'OwnerLoan::pay');                               // บันทึกจ่าย
+    $routes->post('ajax-payoff-today', 'OwnerLoan::ajaxPayoffToday');                               // บันทึกจ่าย
     $routes->post('cancel-payment', 'OwnerLoan::cancelPayment');          // ยกเลิกรายการจ่าย (ถ้าต้องการ)
     $routes->post('cancel-ownerloan', 'OwnerLoan::cancelOwnerLoan');      // ยกเลิกรายการยืม (คุณมีอยู่แล้วก็ได้)
     $routes->get('ajax-calc-payoff-today/(:any)', 'OwnerLoan::ajaxCalcPayoffToday/$1');

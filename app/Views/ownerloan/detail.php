@@ -49,18 +49,20 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="tx-primary mb-0">ข้อมูลการยืม</h5>
-
-                                <!-- STATUS BADGE -->
-                                <span id="loanStatusBadge"
-                                    class="badge px-3 py-2
-                                    <?= $ownerLoanData->status === 'OPEN' ? 'bg-success'
-                                        : (in_array($ownerLoanData->status, ['CANCELLED', 'CANCEL']) ? 'bg-danger' : 'bg-secondary') ?>">
-                                    <?= esc($ownerLoanData->status) ?>
-                                </span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <!-- ⭐ Interest Rate -->
+                                    <span class="badge bg-primary modal_Edit_Owner_Interest px-3 py-2"  data-id="<?= $ownerLoanData->id ?>" data-rate="<?= $ownerLoanData->interest_rate ?? $owner_setting->default_interest_rate ?>" style="cursor:pointer;">
+                                        <?= number_format($ownerLoanData->interest_rate ?? $owner_setting->default_interest_rate, 2) ?>% ต่อปี
+                                    </span>
+                                    <!-- STATUS -->
+                                    <span id="loanStatusBadge"
+                                        class="badge px-3 py-2
+                                        <?= $ownerLoanData->status === 'OPEN' ? 'bg-success'
+                                            : (in_array($ownerLoanData->status, ['CANCELLED', 'CANCEL']) ? 'bg-danger' : 'bg-secondary') ?>">
+                                        <?= esc($ownerLoanData->status) ?>
+                                    </span>
+                                </div>
                             </div>
-
-
-
                             <div class="row mb-2">
                                 <div class="col-md-6">
                                     <label>เลขที่รายการ</label>
@@ -251,6 +253,46 @@
             <div class="modal-footer">
                 <button class="btn btn-outline-secondary" data-bs-dismiss="modal">ปิด</button>
                 <button class="btn btn-outline-primary" type="button" id="btnSubmitPay">บันทึกการชำระ</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal modal_Edit_Owner_Interest -->
+<div class="modal fade" id="modal_Edit_Owner_Interest" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">ตั้งค่าอัตราดอกเบี้ย</h6>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="card-body">
+                <form method="post" id="form_Edit_Loan_Interest" name="form_Edit_Loan_Interest" action="#">
+                    <input type="hidden" name="owner_loan_id" id="owner_loan_id" />
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <label for="loan_interest_rate" class="form-label">
+                                ตั้งค่าอัตราดอกเบี้ย (% ต่อปี)
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                <input type="number"
+                                    class="form-control text-end"
+                                    id="loan_interest_rate"
+                                    name="loan_interest_rate"
+                                    step="0.01"
+                                    min="0"
+                                    placeholder="0.00">
+                                <span class="input-group-text">% ต่อปี</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr>
+                    <div style="display:flex; justify-content:center;">
+                        <button class="btn btn-primary btn-block btnSaveLoanInterest" type="button">บันทึก</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

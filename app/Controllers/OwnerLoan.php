@@ -13,6 +13,7 @@ use App\Models\EmployeeModel;
 use App\Models\EmployeeLogModel;
 use App\Models\OwnerLoanModel;
 use App\Models\SettingLandModel;
+use App\Models\OwnerSettingModel;
 
 use Smalot\PdfParser\Parser;
 
@@ -22,6 +23,7 @@ class OwnerLoan extends BaseController
     private EmployeeLogModel $EmployeeLogModel;
     private OwnerLoanModel $OwnerLoanModel;
     private SettingLandModel $SettingLandModel;
+    private OwnerSettingModel $OwnerSettingModel;
     private $http;
 
     private string $s3_bucket;
@@ -50,6 +52,7 @@ class OwnerLoan extends BaseController
         $this->EmployeeLogModel = new EmployeeLogModel();
         $this->OwnerLoanModel = new OwnerLoanModel();
         $this->SettingLandModel = new SettingLandModel();
+        $this->OwnerSettingModel = new OwnerSettingModel();
         $this->http = new Client();
 
         // Environment Variables
@@ -386,6 +389,7 @@ class OwnerLoan extends BaseController
     public function detail($ownerCode = null)
     {
         $data['employee_logs'] = $this->EmployeeLogModel->getEmployeeLogToday();
+        $data['owner_setting'] = $this->OwnerSettingModel->getOwnerSettingAll();
 
         $data['content'] = 'ownerloan/detail';
         $data['title'] = 'รายละเอียดรายการยืม';
@@ -476,7 +480,7 @@ class OwnerLoan extends BaseController
         ]);
     }
 
-    public function pay()
+    public function ajaxPayoffToday()
     {
         try {
             $owner_loan_id   = (int)$this->request->getPost('owner_loan_id');
@@ -508,6 +512,8 @@ class OwnerLoan extends BaseController
                 return $this->response->setJSON(['ok' => false, 'message' => 'รายการนี้ถูกปิด/ยกเลิกแล้ว']);
             }
 
+            $owner_setting = $this->OwnerSettingModel->getOwnerSettingAll();
+
             // 2) last active payment
             $last = $this->OwnerLoanModel->getLastPaymentActive($owner_loan_id);
 
@@ -528,7 +534,8 @@ class OwnerLoan extends BaseController
             if ($days < 0) $days = 0;
 
             // 4) interest due
-            $ratePerYear = 0.25;
+            $ratePercent = $loan->interest_rate ?? $owner_setting->default_interest_rate; // ดอกเบี้ยต่อปี
+            $ratePerYear = $ratePercent / 100;
             $interestDue = round($principalStart * $ratePerYear * $days / 365, 2);
 
             // ✅ ยอดปิดวันนี้
@@ -581,6 +588,7 @@ class OwnerLoan extends BaseController
                 'pay_date'          => $pay_date,
                 'pay_amount'        => $pay_amount_apply,
                 'interest_amount'   => $interestAmount,
+                'interest_rate_used' => $ratePercent,
                 'principal_amount'  => $principalAmount,
                 'principal_balance' => $principalBalance,
                 'days_diff'         => $days,
@@ -780,6 +788,7 @@ class OwnerLoan extends BaseController
     public function ajaxCalcPayoffToday($owner_code)
     {
         $loan = $this->OwnerLoanModel->getAllDataOwnerLoanByCode($owner_code);
+        $owner_setting = $this->OwnerSettingModel->getOwnerSettingAll();
         if (!$loan) return $this->response->setJSON(['ok' => false, 'message' => 'ไม่พบรายการยืม']);
 
         $pay_date = date('Y-m-d'); // บังคับเป็นวันนี้
@@ -813,7 +822,9 @@ class OwnerLoan extends BaseController
         $days = (int)$d1->diff($d2)->format('%r%a');
         if ($days < 0) $days = 0;
 
-        $ratePerYear = 0.25; // 25%/ปี
+        $ratePercent = $loan->interest_rate ?? $owner_setting->default_interest_rate; // ดอกเบี้ยต่อปี
+        $ratePerYear = $ratePercent / 100;
+
         $interest = round($principalRemain * $ratePerYear * $days / 365, 2);
         $totalDue = round($principalRemain + $interest, 2);
 
@@ -837,5 +848,124 @@ class OwnerLoan extends BaseController
             'ok' => true,
             'rows' => $accounts,
         ]);
+    }
+
+    // show Modal editInterestRate
+    public function editInterestRate()
+    {
+        $OwnerSettingModel = new OwnerSettingModel();
+
+        if ($OwnerSettingModel->getOwnerSettingAll()) {
+            echo json_encode(array("status" => true, 'data' => $OwnerSettingModel->getOwnerSettingAll()));
+        } else {
+            echo json_encode(array("status" => false));
+        }
+    }
+
+    //updateInterestRate
+    public function updateInterestRate()
+    {
+        $OwnerSettingModel = new \App\Models\OwnerSettingModel();
+
+        try {
+            // SET CONFIG
+            $status = 500;
+            $response['success'] = 0;
+            $response['message'] = '';
+            $id = $this->request->getVar('OwnerSettingId');
+            $interest_Rate = floatval(str_replace(',', '', $this->request->getVar('interest_Rate')));
+
+            // HANDLE REQUEST
+            $update = $OwnerSettingModel->updateOwnerSettingByID($id, [
+                'default_interest_rate' => $interest_Rate,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($update) {
+
+                // pusherEdit
+                $pusher = getPusher();
+                $pusher->trigger('color_Status', 'event', [
+                    'img' => '/uploads/img/' . session()->get('thumbnail') != '' ? session()->get('thumbnail') : 'nullthumbnail.png',
+                    'event' => 'status_Yellow',
+                    'title' => session()->get('username') . " : " . 'ทำการแก้ไขอัตราดอกเบี้ย'
+                ]);
+
+                logger_store([
+                    'employee_id' => session()->get('employeeID'),
+                    'username' => session()->get('username'),
+                    'event' => 'อัพเดท',
+                    'detail' => '[อัพเดท] อัตราดอกเบี้ย',
+                    'ip' => $this->request->getIPAddress()
+                ]);
+                $status = 200;
+                $response['success'] = 1;
+                $response['message'] = 'แก้ไข อัตราดอกเบี้ย สำเร็จ';
+            } else {
+                $status = 200;
+                $response['success'] = 0;
+                $response['message'] = 'แก้ไข อัตราดอกเบี้ย ไม่สำเร็จ';
+            }
+
+            return $this->response
+                ->setStatusCode($status)
+                ->setContentType('application/json')
+                ->setJSON($response);
+        } catch (\Exception $e) {
+            echo $e->getMessage() . ' ' . $e->getLine();
+        }
+    }
+
+    //updateOwnerLoanInterest
+    public function updateOwnerLoanInterest()
+    {
+        $OwnerLoanModel = new \App\Models\OwnerLoanModel();
+        try {
+            // SET CONFIG
+            $status = 500;
+            $response['success'] = 0;
+            $response['message'] = '';
+            $id = $this->request->getVar('owner_loan_id');
+            $interest_rate = floatval(str_replace(',', '', $this->request->getVar('loan_interest_rate')));
+
+            // HANDLE REQUEST
+            $update = $OwnerLoanModel->updateOwnerLoanByID($id, [
+                'interest_rate' => $interest_rate,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($update) {
+
+                // pusherEdit
+                $pusher = getPusher();
+                $pusher->trigger('color_Status', 'event', [
+                    'img' => '/uploads/img/' . session()->get('thumbnail') != '' ? session()->get('thumbnail') : 'nullthumbnail.png',
+                    'event' => 'status_Yellow',
+                    'title' => session()->get('username') . " : " . 'ทำการแก้ไขอัตราดอกเบี้ย'
+                ]);
+
+                logger_store([
+                    'employee_id' => session()->get('employeeID'),
+                    'username' => session()->get('username'),
+                    'event' => 'อัพเดท',
+                    'detail' => '[อัพเดท] อัตราดอกเบี้ย',
+                    'ip' => $this->request->getIPAddress()
+                ]);
+                $status = 200;
+                $response['success'] = 1;
+                $response['message'] = 'แก้ไข อัตราดอกเบี้ย สำเร็จ';
+            } else {
+                $status = 200;
+                $response['success'] = 0;
+                $response['message'] = 'แก้ไข อัตราดอกเบี้ย ไม่สำเร็จ';
+            }
+
+            return $this->response
+                ->setStatusCode($status)
+                ->setContentType('application/json')
+                ->setJSON($response);
+        } catch (\Exception $e) {
+            echo $e->getMessage() . ' ' . $e->getLine();
+        }
     }
 }

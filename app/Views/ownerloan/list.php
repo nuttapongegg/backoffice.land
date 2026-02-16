@@ -45,7 +45,8 @@
                                 <div id="count_owner_loan"></div>
                             </div>
                             <div>
-                                <a href="javascript:void(0);" class="btn btn-outline-primary owner_Loan_open text-center" data-bs-toggle="modal" data-bs-target="#modalAddOwnerLoan"><i class="fa-solid fa-plus text-center"></i>&nbsp;&nbsp;เพิ่มเงินยืมจากเจ้าของ</a>
+                                <a href="javascript:void(0);" class="btn btn-outline-primary owner_Loan_open text-center me-2" data-bs-toggle="modal" data-bs-target="#modalAddOwnerLoan"><i class="fa-solid fa-plus text-center"></i>&nbsp;&nbsp;เพิ่มเงินยืมจากเจ้าของ</a>
+                                <a href="javascript:void(0);" class="btn btn-outline-primary modal_Interest_Rate text-center">ตั้งค่าดอกเบี้ย</a>
                             </div>
                         </div>
                     </div>
@@ -222,7 +223,7 @@
 
                     <div class="modal-header">
                         <h5 class="modal-title">เพิ่มเงินยืมจากเจ้าของ</h5>
-                        <button type="button" class="btn-close modalAddOwnerLoanClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close modalAddOwnerLoanClose" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
 
                     <div class="modal-body">
@@ -318,13 +319,52 @@
                             <div style="display:flex; justify-content:center;">
                                 <button class="btn btn-primary btn-block btn-add-owner-loan" type="button">บันทึก</button>
                             </div>
-
                         </form>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
     <!-- main-content closed -->
+</div>
+
+<!-- modal modal_Interest_Rate -->
+<div class="modal fade" id="modal_Interest_Rate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">ตั้งค่าอัตราดอกเบี้ย</h6>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="card-body">
+                <form method="post" id="form_Setting_Interest_Rate" name="form_Setting_Interest_Rate" action="#">
+                    <input type="hidden" name="OwnerSettingId" id="OwnerSettingId"/>
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <label for="interest_Rate" class="form-label">
+                                ตั้งค่าอัตราดอกเบี้ย (% ต่อปี)
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                <input type="number"
+                                    class="form-control text-end"
+                                    id="interest_Rate"
+                                    name="interest_Rate"
+                                    step="0.01"
+                                    min="0"
+                                    placeholder="0.00">
+                                <span class="input-group-text">% ต่อปี</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr>
+                    <div style="display:flex; justify-content:center;">
+                        <button class="btn btn-primary btn-block btnEditSettingInterestRate" type="button">บันทึก</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

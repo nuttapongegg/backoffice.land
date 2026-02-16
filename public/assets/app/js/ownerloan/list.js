@@ -441,7 +441,7 @@ $(document).delegate(".btn-add-owner-loan", "click", function (e) {
         if (typeof callTableOwnerLoan === "function") {
           callTableOwnerLoan();
         }
-          slowSummarizeOwnerLoan();
+        slowSummarizeOwnerLoan();
       },
       error: function (xhr) {
         console.error("STATUS:", xhr.status);
@@ -485,3 +485,109 @@ function slowSummarizeOwnerLoan() {
     },
   });
 }
+
+$(document).ready(function () {
+  //When click edit modal_Interest_Rate
+  $("body").on("click", ".modal_Interest_Rate", function () {
+    $.ajax({
+      url: "/ownerloan/edit-interest-rate",
+      type: "GET",
+      dataType: "json",
+      success: function (res) {
+        // let $data = res.data
+        $("#modal_Interest_Rate").modal("show");
+        $("#form_Setting_Interest_Rate #OwnerSettingId").val(
+          res.data.id,
+        );
+        $("#form_Setting_Interest_Rate #interest_Rate").val(
+          res.data.default_interest_rate,
+        );
+      },
+      error: function (data) {
+        $("#modal_Interest_Rate").modal("show");
+      },
+    });
+  });
+
+  //modalEditTargeted
+  let $modalInterestRate = $("#modal_Interest_Rate");
+  let $formEditlInterestRate = $modalInterestRate.find("form");
+
+  $formEditlInterestRate
+    // บันทึกข้อมูล
+    .on("click", ".btnEditSettingInterestRate", function (e) {
+      e.preventDefault();
+
+      let $me = $(this);
+
+      $me.attr("disabled", true);
+
+      let formData = new FormData($formEditlInterestRate[0]);
+
+      formData.append(
+        "content",
+        $formEditlInterestRate.find(".ql-editor").html(),
+      );
+
+      $.ajax({
+        type: "POST",
+        url: "/ownerloan/update-interest-rate",
+        data: formData,
+        processData: false,
+        contentType: false,
+      })
+        .done(function (res) {
+          if (res.success == 1) {
+            Swal.fire({
+              text: "แก้ไข อัตราดอกเบี้ย สำเร็จ",
+              icon: "success",
+              buttonsStyling: false,
+              confirmButtonText: "ตกลง",
+              customClass: {
+                confirmButton: "btn btn-primary",
+              },
+            }).then(function (result) {
+              $modalInterestRate.modal("hide");
+              $me.attr("disabled", false);
+            });
+          }
+
+          // กรณี: Server มีการตอบกลับ แต่ไม่สำเร็จ
+          else {
+            // Show error message.
+            Swal.fire({
+              text: res.message,
+              icon: "error",
+              buttonsStyling: false,
+              confirmButtonText: "ตกลง",
+              customClass: {
+                confirmButton: "btn btn-primary",
+              },
+            }).then(function (result) {
+              if (result.isConfirmed) {
+                // LANDING_PROMOTION.reloadPage()
+              }
+            });
+
+            $me.attr("disabled", false);
+          }
+        })
+        .fail(function (context) {
+          let messages =
+            context.responseJSON?.messages ||
+            "ไม่สามารถบันทึกได้ กรุณาลองใหม่อีกครั้ง หรือติดต่อผู้ให้บริการ";
+          // Show error message.
+          Swal.fire({
+            text: messages,
+            icon: "error",
+            buttonsStyling: false,
+            confirmButtonText: "ตกลง",
+            customClass: {
+              confirmButton: "btn btn-primary",
+            },
+          });
+
+          $me.attr("disabled", false);
+        });
+    });
+});

@@ -381,7 +381,7 @@
     $btn.prop("disabled", true).addClass("disabled");
 
     $.ajax({
-      url: `${serverUrl}/ownerloan/pay`,
+      url: `${serverUrl}/ownerloan/ajax-payoff-today`,
       type: "POST",
       data: fd,
       processData: false,
@@ -603,3 +603,40 @@
     // reloadLandAccounts();
   });
 })();
+
+let currentLoanId = null;
+
+$("body").on("click", ".modal_Edit_Owner_Interest", function () {
+  let id = $(this).data("id");
+  let rate = $(this).attr("data-rate");
+
+  currentLoanId = id;
+
+  $("#owner_loan_id").val(id);
+  $("#loan_interest_rate").val(rate);
+
+  $("#modal_Edit_Owner_Interest").modal("show");
+});
+
+$(".btnSaveLoanInterest").on("click", function () {
+  let rate = $("#loan_interest_rate").val();
+
+  $.ajax({
+    url: "/ownerloan/update-owner-loan-interest",
+    type: "POST",
+    data: {
+      owner_loan_id: currentLoanId,
+      loan_interest_rate: rate,
+    },
+  }).done(function (res) {
+    if (res.success) {
+      let $badge = $(
+        ".modal_Edit_Owner_Interest[data-id='" + currentLoanId + "']",
+      );
+
+      $badge.text(rate + "% ต่อปี").attr("data-rate", rate);
+
+      $("#modal_Edit_Owner_Interest").modal("hide");
+    }
+  });
+});
