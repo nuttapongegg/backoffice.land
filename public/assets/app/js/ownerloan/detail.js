@@ -297,6 +297,9 @@
             actionHtml = `<button class="btn btn-sm btn-outline-secondary" disabled>-</button>`;
           }
 
+          const dailyInterest =
+            r.days_diff > 0 ? money(r.interest_amount / r.days_diff) : "0.00";
+
           html += `
           <tr>
             <td class="text-center">${idx + 1}</td>
@@ -305,7 +308,10 @@
               <div>${money(r.pay_amount)}</div>
               <div class="small text-muted">ต้น ${money(r.principal_amount)} | ดอก ${money(r.interest_amount)}</div>
             </td>
-            <td>${r.note || "-"}</td>
+            <td class="text-center">${r.days_diff}</td>
+            <td class="text-center">${r.interest_rate_used}%</td>
+            <td class="text-end">${dailyInterest}</td>
+            <td class="text-center">${r.note || "-"}</td>
             <td class="text-center">${r.username || "-"}</td>
             <td class="text-center">${proofLink(r.owner_loan_pay_file)}</td>
                 <td class="text-center">${badge(r.status)}</td>

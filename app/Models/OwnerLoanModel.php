@@ -313,7 +313,30 @@ class OwnerLoanModel
                 )
             ) AS days_since_last_pay,
 
-            -- ดอกถึงวันนี้ (25%/ปี)
+            -- ดอกกี่เปอร์เซ็น
+            COALESCE(owner_loan.interest_rate, owner_setting.default_interest_rate) AS interest_rate_used,
+
+            -- ดอกวันละเท่าไหร่
+            ROUND(
+                COALESCE(
+                    (
+                        SELECT owner_loan_payment.principal_balance
+                        FROM owner_loan_payment
+                        WHERE owner_loan_payment.owner_loan_id = owner_loan.id
+                        AND owner_loan_payment.status = 'ACTIVE'
+                        AND owner_loan_payment.deleted_at IS NULL
+                        ORDER BY owner_loan_payment.pay_date DESC,
+                                owner_loan_payment.id DESC
+                        LIMIT 1
+                    ),
+                    owner_loan.amount
+                )
+                *
+                (COALESCE(owner_loan.interest_rate, owner_setting.default_interest_rate) / 100)
+                / 365
+            , 2) AS interest_per_day,
+
+            -- ดอกถึงวันนี้
             ROUND(
                 COALESCE(
                     (
@@ -327,7 +350,7 @@ class OwnerLoanModel
                         LIMIT 1
                     ),
                     owner_loan.amount
-                ) * 0.25 *
+                ) * (COALESCE(owner_loan.interest_rate, owner_setting.default_interest_rate) / 100) *
                 DATEDIFF(
                     CURDATE(),
                     COALESCE(
@@ -375,7 +398,7 @@ class OwnerLoanModel
                             LIMIT 1
                         ),
                         owner_loan.amount
-                    ) * 0.25 *
+                    ) * (COALESCE(owner_loan.interest_rate, owner_setting.default_interest_rate) / 100) *
                     DATEDIFF(
                         CURDATE(),
                         COALESCE(
@@ -414,7 +437,7 @@ class OwnerLoanModel
             ON owner_loan_payment.owner_loan_id = owner_loan.id
         LEFT JOIN setting_land
             ON setting_land.id = owner_loan.land_account_id
-
+        LEFT JOIN owner_setting ON owner_setting.id = 1
         WHERE owner_loan.deleted_at IS NULL
           AND owner_loan.status = 'OPEN'
           {$whereDate}
@@ -467,7 +490,7 @@ class OwnerLoanModel
         $sql = "SELECT owner_loan.*,
             setting_land.land_account_name
             FROM owner_loan
-        LEFT JOIN setting_land 
+            LEFT JOIN setting_land 
             ON setting_land.id = owner_loan.land_account_id
             WHERE owner_loan.owner_code = '$owner_code' ORDER BY owner_loan.id DESC
         ";
@@ -497,6 +520,9 @@ class OwnerLoanModel
             id,
             pay_date,
             pay_amount,
+            pay_amount,
+            interest_rate_used,
+            days_diff,
             interest_amount,
             principal_amount,
             principal_balance,

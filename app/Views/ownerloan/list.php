@@ -83,6 +83,11 @@
 
                                                     <th class="wd-10p text-center">คงเหลือต้น</th>
                                                     <th class="wd-10p text-center">ดอกถึงวันนี้</th>
+
+                                                    <th class="wd-10p text-center">% ดอก</th>
+                                                    <th class="wd-10p text-center">วัน</th>
+                                                    <th class="wd-10p text-center">ดอก/วัน</th>
+
                                                     <th class="wd-10p text-center">ยอดปิดวันนี้</th>
 
                                                     <th class="wd-10p text-center">วันยืมมาแล้ว</th>
@@ -111,8 +116,13 @@
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
 
-                                                    <!-- outstanding / interest_due_today / total_due_today -->
+                                                    <!-- outstanding / interest_due_today -->
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+
+                                                    <th colspan="2" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    
+                                                    <!--interest_per_day / total_due_today -->
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
 
@@ -338,7 +348,7 @@
             </div>
             <div class="card-body">
                 <form method="post" id="form_Setting_Interest_Rate" name="form_Setting_Interest_Rate" action="#">
-                    <input type="hidden" name="OwnerSettingId" id="OwnerSettingId"/>
+                    <input type="hidden" name="OwnerSettingId" id="OwnerSettingId" />
                     <div class="row align-items-center">
                         <div class="col-md-7">
                             <label for="interest_Rate" class="form-label">

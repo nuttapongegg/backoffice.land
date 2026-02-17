@@ -304,6 +304,31 @@ function callOwnerLoanTable(data) {
           }),
       },
 
+      // interest_rate_used
+      {
+        data: "interest_rate_used",
+        className: "text-center",
+        render: (v) => (v ? Number(v).toFixed(2) + "%" : "-"),
+      },
+
+      // days_since_last_pay
+      {
+        data: "days_since_last_pay",
+        className: "text-center",
+        render: (v) => (v != null ? v : "-"),
+      },
+
+      // interest_per_day
+      {
+        data: "interest_per_day",
+        className: "text-right",
+        render: (v) =>
+          Number(v || 0).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }),
+      },
+
       // total_due_today
       {
         data: "total_due_today",
@@ -366,7 +391,8 @@ function callOwnerLoanTable(data) {
       $(api.column(6).footer()).html(fmt(sumCol(6)));
       $(api.column(7).footer()).html(fmt(sumCol(7)));
       $(api.column(8).footer()).html(fmt(sumCol(8)));
-      $(api.column(9).footer()).html(fmt(sumCol(9)));
+      $(api.column(11).footer()).html(fmt(sumCol(11)));
+      $(api.column(12).footer()).html(fmt(sumCol(12)));
     },
 
     bFilter: true,
@@ -496,9 +522,7 @@ $(document).ready(function () {
       success: function (res) {
         // let $data = res.data
         $("#modal_Interest_Rate").modal("show");
-        $("#form_Setting_Interest_Rate #OwnerSettingId").val(
-          res.data.id,
-        );
+        $("#form_Setting_Interest_Rate #OwnerSettingId").val(res.data.id);
         $("#form_Setting_Interest_Rate #interest_Rate").val(
           res.data.default_interest_rate,
         );

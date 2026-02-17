@@ -51,7 +51,7 @@
                                 <h5 class="tx-primary mb-0">ข้อมูลการยืม</h5>
                                 <div class="d-flex align-items-center gap-2">
                                     <!-- ⭐ Interest Rate -->
-                                    <span class="badge bg-primary modal_Edit_Owner_Interest px-3 py-2"  data-id="<?= $ownerLoanData->id ?>" data-rate="<?= $ownerLoanData->interest_rate ?? $owner_setting->default_interest_rate ?>" style="cursor:pointer;">
+                                    <span class="badge bg-primary modal_Edit_Owner_Interest px-3 py-2" data-id="<?= $ownerLoanData->id ?>" data-rate="<?= $ownerLoanData->interest_rate ?? $owner_setting->default_interest_rate ?>" style="cursor:pointer;">
                                         <?= number_format($ownerLoanData->interest_rate ?? $owner_setting->default_interest_rate, 2) ?>% ต่อปี
                                     </span>
                                     <!-- STATUS -->
@@ -167,6 +167,9 @@
                                             <th style="width:60px;">#</th>
                                             <th>วันที่ชำระ</th>
                                             <th>ยอดชำระ</th>
+                                            <th>จำนวนวัน</th>
+                                            <th>อัตราดอกเบี้ย</th>
+                                            <th>ดอก/วัน</th>
                                             <th>หมายเหตุ</th>
                                             <th>ผู้รับชำระ</th>
                                             <th>หลักฐาน</th>
