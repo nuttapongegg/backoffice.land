@@ -69,14 +69,14 @@
             $sumpay = 0;
             foreach ($finxpayments as $finxpayment) {
                 $i++;
-                $sumpay = $sumpay + $finxpayment->loan_payment_3percent; ?>
+                $sumpay = $sumpay + $finxpayment->loan_payment_1_25percent; ?>
                 <tr>
                     <th width="4%" style="text-align:center;"><?php echo $i ?></th>
                     <th width="10%" style="text-align:center;"><?php echo $finxpayment->loan_code ?></th>
                     <th width="13%" style="text-align:center;"><?php echo $finxpayment->formatted_date ?></th>
                     <th width="20%" style="text-align:center;"><?php echo !empty($datas->customer_fullname) ? $datas->customer_fullname : '-' ?></th>
                     <th width="37%"><?php echo $finxpayment->loan_address ?></th>
-                    <th width="15%" style="text-align:right;"><?php echo number_format($finxpayment->loan_payment_3percent, 2) ?></th>
+                    <th width="15%" style="text-align:right;"><?php echo number_format($finxpayment->loan_payment_1_25percent, 2) ?></th>
                 </tr>
             <?php } ?>
         </table>

@@ -248,8 +248,8 @@ function callAutoloenTable(data) {
         data: null,
         className: "text-right",
         render: function (data, type, row, meta) {
-          // คำนวณ 3% ของ loan_summary_no_vat
-          let value = (Number(data["loan_summary_no_vat"]) * 0.03).toFixed(2);
+          // คำนวณ 1.25% ของ loan_summary_no_vat
+          let value = (Number(data["loan_summary_no_vat"]) * 0.0125).toFixed(2);
 
           // แสดงผลแบบมี comma
           return "<font>" + new Intl.NumberFormat().format(value) + "</font>";
@@ -362,7 +362,7 @@ function callAutoloenTable(data) {
         .column(12, { page: "current" })
         .data()
         .reduce(function (a, b) {
-          return intVal(a) + Number(b.loan_summary_no_vat) * 0.03; // Handle formatted numbers
+          return intVal(a) + Number(b.loan_summary_no_vat) * 0.0125; // Handle formatted numbers
         }, 0);
 
       Total_summary_no_vat = api

@@ -173,7 +173,7 @@ class LoanModel
             DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') as formatted_date,
             DATE_FORMAT(loan.loan_date_close, '%Y%m%d') as inv_date,
             DATE_FORMAT(loan.loan_date_promise, '%d%m%Y') as formatted_ate_promise,
-            (loan.loan_close_payment * 0.03) AS loan_payment_3percent,
+            (loan.loan_close_payment * 0.0125) AS loan_payment_1_25percent,
             (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period 
             FROM loan
             left join loan_customer on  loan.loan_code = loan_customer.loan_code
@@ -1702,7 +1702,7 @@ class LoanModel
          loan.loan_status,
          loan.loan_remnark,
          loan.loan_close_payment,
-        (loan.loan_summary_no_vat * 0.03) AS installment_3pct,
+        (loan.loan_summary_no_vat * 0.0125) AS installment_3pct,
          (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
          (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date
         ");
@@ -1734,8 +1734,8 @@ class LoanModel
 
                 // สร้างเงื่อนไขดิบ (raw) ต่อกรณีปกติ vs คอลัมน์คำนวณ
                 if ($item === 'installment_3pct') {
-                    // คอลัมน์คำนวณ 3%: ใช้ CAST(...) LIKE '%$kw%'
-                    $raw = "CAST(loan.loan_summary_no_vat * 0.03 AS CHAR) LIKE '%{$kw}%'";
+                    // คอลัมน์คำนวณ 1.25%: ใช้ CAST(...) LIKE '%$kw%'
+                    $raw = "CAST(loan.loan_summary_no_vat * 0.0125 AS CHAR) LIKE '%{$kw}%'";
                 } else {
                     // ฟิลด์ปกติ: ครอบด้วย backtick ให้เรียบร้อย
                     // หมายเหตุ: $item ของคุณมีทั้ง 'loan.loan_code' และ alias ('loan_customer') ได้
@@ -1764,8 +1764,8 @@ class LoanModel
             $col    = $this->column_order_finx[$colIdx] ?? null;
 
             if ($col === 'installment_3pct') {
-                // sort ด้วยสูตร 3% โดยไม่ escape
-                $builder->orderBy("(loan.loan_summary_no_vat * 0.03)", $dir, false);
+                // sort ด้วยสูตร 1.25% โดยไม่ escape
+                $builder->orderBy("(loan.loan_summary_no_vat * 0.0125)", $dir, false);
             } elseif (!empty($col)) {
                 $builder->orderBy($col, $dir);
             }
@@ -1826,7 +1826,7 @@ class LoanModel
             $builder->groupStart();
             foreach ($this->column_search_finx as $item) {
                 if ($item === 'installment_3pct') {
-                    $builder->orWhere("CAST(loan.loan_summary_no_vat * 0.03 AS CHAR) LIKE '%{$kw}%'", null, false);
+                    $builder->orWhere("CAST(loan.loan_summary_no_vat * 0.0125 AS CHAR) LIKE '%{$kw}%'", null, false);
                 } else {
                     if (strpos($item, '.') !== false) {
                         [$tbl, $col] = explode('.', $item, 2);
@@ -1999,7 +1999,7 @@ class LoanModel
         $order_dir    = $param['order_dir'] ?? 'DESC';
 
         $sql = "SELECT loan.*, loan_customer.customer_fullname, 
-                   (loan.loan_close_payment * 0.03) AS loan_payment_3percent
+                   (loan.loan_close_payment * 0.0125) AS loan_payment_1_25percent
             FROM loan
             LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
             WHERE YEAR(loan.loan_date_close) = $years 
@@ -2023,7 +2023,7 @@ class LoanModel
         $order_dir    = $param['order_dir'] ?? 'DESC';
 
         $sql = "SELECT loan.*, loan_customer.customer_fullname, 
-                   (loan.loan_close_payment * 0.03) AS loan_payment_3percent
+                   (loan.loan_close_payment * 0.0125) AS loan_payment_1_25percent
             FROM loan
             LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
             WHERE YEAR(loan.loan_date_close) = $years 
@@ -2033,7 +2033,7 @@ class LoanModel
                 loan.loan_code LIKE '%$search_value%' 
                 OR loan_customer.customer_fullname LIKE '%$search_value%' 
                 OR loan.loan_employee LIKE '%$search_value%' 
-                OR (loan.loan_close_payment * 0.03) LIKE '%$search_value%'
+                OR (loan.loan_close_payment * 0.0125) LIKE '%$search_value%'
                 OR loan.loan_date_close LIKE '%$search_value%'
               )
             ORDER BY $order_column $order_dir
@@ -2059,7 +2059,7 @@ class LoanModel
                 loan.loan_code LIKE '%$search_value%' 
                 OR loan_customer.customer_fullname LIKE '%$search_value%' 
                 OR loan.loan_employee LIKE '%$search_value%' 
-                OR (loan.loan_close_payment * 0.03) LIKE '%$search_value%'
+                OR (loan.loan_close_payment * 0.0125) LIKE '%$search_value%'
                 OR loan.loan_date_close LIKE '%$search_value%'
               )";
 
@@ -2172,7 +2172,7 @@ class LoanModel
                 DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') as formatted_date,
                 DATE_FORMAT(loan.loan_date_close, '%Y%m%d') as inv_date,
                 DATE_FORMAT(loan.loan_date_promise, '%d%m%Y') as formatted_ate_promise,
-                (loan.loan_close_payment * 0.03) AS loan_payment_3percent
+                (loan.loan_close_payment * 0.0125) AS loan_payment_1_25percent
             FROM loan
             LEFT JOIN loan_customer ON loan.loan_code = loan_customer.loan_code
             WHERE YEAR(loan.loan_date_close) = $years 
@@ -2194,7 +2194,7 @@ class LoanModel
                 loan.loan_code AS doc_no,
                 DATE_FORMAT(loan.loan_date_close, '%d/%m/%Y') AS doc_date,
                 CONCAT('ค่าธรรมเนียม ', COALESCE(loan.loan_address, '')) AS title,
-                (loan.loan_close_payment * 0.03) AS amount
+                (loan.loan_close_payment * 0.0125) AS amount
                 FROM loan
                 WHERE YEAR(loan_date_close) = {$years}
                 AND MONTH(loan_date_close) = {$month}

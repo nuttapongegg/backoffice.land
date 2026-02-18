@@ -223,7 +223,7 @@
                             ?>
                         </td>
                         <td class="td right" width="15%">
-                            <?= number_format((float) (!empty($r->amount) ? $r->amount : (!empty($r->loan_payment_3percent) ? $r->loan_payment_3percent : 0)), 2) ?>
+                            <?= number_format((float) (!empty($r->amount) ? $r->amount : (!empty($r->loan_payment_1_25percent) ? $r->loan_payment_1_25percent : 0)), 2) ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

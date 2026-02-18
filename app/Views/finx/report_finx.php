@@ -168,10 +168,10 @@
                             // เตรียม array 12 เดือน ค่าเริ่มต้น = 0
                             $MonthProfit = array_fill(1, 12, 0);
 
-                            // รวมกำไร 3% ของแต่ละเดือน
+                            // รวมกำไร 1.25% ของแต่ละเดือน
                             foreach ($LoanClosePaymentMonths as $LoanClosePaymentMonth) {
                                 $month = (int)$LoanClosePaymentMonth->loan_date_close_month;
-                                $profit = $LoanClosePaymentMonth->loan_summary_no_vat * 0.03; // 3% ของยอด
+                                $profit = $LoanClosePaymentMonth->loan_summary_no_vat * 0.0125; // 1.25% ของยอด
                                 $MonthProfit[$month] += $profit;
                             }
 

@@ -172,7 +172,7 @@
                                                     <th colspan="1" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                     <th class="text-right" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
-                                                    <th colspan="2" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
+                                                    <th colspan="3" style="padding: 12px;font-size: 15px;font-weight: normal;"></th>
                                                 </tr>
                                             </tfoot>
                                         </table>

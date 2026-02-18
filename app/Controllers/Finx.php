@@ -210,9 +210,9 @@ class Finx extends BaseController
                 }
             }
 
-            $loan_payment_month = $summary_no_vat_ON_STATE * 0.03;
+            $loan_payment_month = $summary_no_vat_ON_STATE * 0.0125;
 
-            $installment_3pct = $loan_summary_no_vat * 0.03;
+            $installment_3pct = $loan_summary_no_vat * 0.0125;
 
             $summary_net_assets = $summary_no_vat_ON_STATE + $sum_land_account;
 
@@ -245,20 +245,21 @@ class Finx extends BaseController
                 </div>
             ';
 
+            // <div class="col" style="flex-grow: 1;">
+            //     <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
+            //         <p class="mb-0 font-weight-semibold tx-18">เงินลงทุนจริง</p>
+            //         <div class="mt-2">
+            //             <span class="mb-0 font-weight-semibold tx-15">' . number_format($real_investment->investment, 2) . '</span>
+            //         </div>
+            //     </div>
+            // </div>
+
             $html_summarizeFinx =
                 '<div class="row">
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-body mt-2 mb-3">
                             <div class="row">
-                                <div class="col" style="flex-grow: 1;">
-                                    <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
-                                        <p class="mb-0 font-weight-semibold tx-18">เงินลงทุนจริง</p>
-                                        <div class="mt-2">
-                                            <span class="mb-0 font-weight-semibold tx-15">' . number_format($real_investment->investment, 2) . '</span>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="col" style="flex-grow: 1;">
                                     <div class="tx-center pd-y-7 pd-sm-y-0-f bd-sm-e bd-e-0 bd-b bd-sm-b-0 bd-b-dashed bd-e-dashed">
                                         <p class="mb-0 font-weight-semibold tx-18">ยอดวงเงินกู้รวม</p>
@@ -360,7 +361,7 @@ class Finx extends BaseController
 
             // สร้าง array เก็บค่าเริ่มต้น 0 ทุกเดือน
             $Month_Loan_Close_Payment = array_fill(1, 12, 0);
-            $Month_Loan_Payment       = array_fill(1, 12, 0); // 3%
+            $Month_Loan_Payment       = array_fill(1, 12, 0); // 1.25%
             $Month_Payment            = array_fill(1, 12, 0); // รวม
 
             // รวมยอดปิดสินเชื่อตามเดือน
@@ -372,10 +373,10 @@ class Finx extends BaseController
                 }
             }
 
-            // คำนวณ 3% และรวมยอด
+            // คำนวณ 1.25% และรวมยอด
             foreach ($Month_Loan_Close_Payment as $m => $amount) {
                 if ($amount > 0) {
-                    $Month_Loan_Payment[$m] = $amount * 0.03; // 3%
+                    $Month_Loan_Payment[$m] = $amount * 0.0125; // 1.25%
                     $Month_Payment[$m]      = $amount + $Month_Loan_Payment[$m]; // รวม
                 }
             }
@@ -625,13 +626,13 @@ class Finx extends BaseController
         $param['years']        = $_REQUEST['years'] ?? date('Y');
 
         // ✅ mapping คอลัมน์จริงกับ index ของ DataTables
-        // โครงตาราง: [0]=ลำดับ, [1]=loan_code, [2]=customer_fullname, [3]=loan_employee, [4]=loan_payment_3percent, [5]=loan_date_close
+        // โครงตาราง: [0]=ลำดับ, [1]=loan_code, [2]=customer_fullname, [3]=loan_employee, [4]=loan_payment_1_25percent, [5]=loan_date_close
         $columns = [
             0 => null, // ลำดับ (ไม่ต้อง sort)
             1 => 'loan.loan_code',
             2 => 'loan_customer.customer_fullname',
             3 => 'loan.loan_employee',
-            4 => 'loan_payment_3percent',   // alias จาก SQL
+            4 => 'loan_payment_1_25percent',   // alias จาก SQL
             5 => 'loan.loan_date_close'
         ];
 
@@ -668,7 +669,7 @@ class Finx extends BaseController
                 $datas->loan_code,
                 !empty($datas->customer_fullname) ? $datas->customer_fullname : '-',
                 $datas->loan_employee,
-                number_format(!empty($datas->loan_payment_3percent) ? $datas->loan_payment_3percent : 0, 2),
+                number_format(!empty($datas->loan_payment_1_25percent) ? $datas->loan_payment_1_25percent : 0, 2),
                 dateThaiDM($datas->loan_date_close),
             ];
         }

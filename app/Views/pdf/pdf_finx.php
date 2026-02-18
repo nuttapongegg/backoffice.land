@@ -227,7 +227,7 @@
                 - ค่าธรรมเนียมบริการ<br>
                 - ค่าดำเนินการ โอน-ไถ่ถอน
             </th>
-            <th width="19%" style="text-align:right;"><?php echo number_format($finx->loan_payment_3percent, 2) ?></th>
+            <th width="19%" style="text-align:right;"><?php echo number_format($finx->loan_payment_1_25percent, 2) ?></th>
         </tr>
         <tr>
             <th width="99%" style="font-size: 2px;border-bottom-style: solid;"></th>
@@ -236,9 +236,9 @@
             <th style="font-size: 10px;"></th>
         </tr>
         <tr>
-            <th width="60%">(<?php echo numToThaiBath(number_format($finx->loan_payment_3percent, 2)); ?>)</th>
+            <th width="60%">(<?php echo numToThaiBath(number_format($finx->loan_payment_1_25percent, 2)); ?>)</th>
             <th width="20%" style="text-align:right;"><B style="color: #3F51B5;">ค่าธรรมเนียมรวมทั้งสิ้น</B></th>
-            <th width="19%" class="mt-5" style="text-align:right;"><?php echo number_format($finx->loan_payment_3percent, 2) ?> บาท</th>
+            <th width="19%" class="mt-5" style="text-align:right;"><?php echo number_format($finx->loan_payment_1_25percent, 2) ?> บาท</th>
         </tr>
         <tr>
             <th style="font-size: 9px;"></th>
