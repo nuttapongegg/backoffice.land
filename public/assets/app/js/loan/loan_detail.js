@@ -78,7 +78,7 @@ function loadLoan(loanCode) {
       $(".cardIDMask").mask("9-9999-99999-99-9");
       $("#customer_email").val(response.message.customer_email);
       $("#birthday").val(
-        moment(response.message.customer_birthday).format("DD/MM/YYYY")
+        moment(response.message.customer_birthday).format("DD/MM/YYYY"),
       );
       $(".dateMask").mask("99/99/9999");
       $("#gender").val(response.message.customer_gender);
@@ -89,7 +89,7 @@ function loadLoan(loanCode) {
       $("#loan_without_vat").val(response.message.loan_summary_no_vat);
       $("#money_loan").val(response.message.loan_summary_no_vat);
       $("#payment_year_counter").val(
-        response.message.loan_payment_year_counter
+        response.message.loan_payment_year_counter,
       );
       $("#pricePerMonth").val(response.message.loan_payment_month);
       $("#total_loan").val(response.message.loan_summary_all);
@@ -116,7 +116,7 @@ function loadLoan(loanCode) {
 
       calInstallment(
         response.message.loan_payment_month,
-        response.message.loan_payment_year_counter * 12
+        response.message.loan_payment_year_counter * 12,
       );
 
       loan_period = response.message.loan_period;
@@ -134,18 +134,23 @@ function loadLoan(loanCode) {
       $("#total_loan_payment").val(response.message.loan_sum_interest);
 
       $("#pay_sum").val(
-        Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, ""))
+        Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, "")),
       );
 
       $("#open_loan_payment").val(response.message.loan_summary_no_vat);
 
       payNow = response.message.loan_payment_month;
 
-      loan_payment_month_counter = response.message.loan_payment_year_counter * 12;
+      loan_payment_month_counter =
+        response.message.loan_payment_year_counter * 12;
 
-      loan_total_profit = response.message.loan_payment_month * loan_payment_month_counter;
+      loan_total_profit =
+        response.message.loan_payment_month * loan_payment_month_counter;
 
-      function getPlannedInstallments(loan_installment_date, total_installments = null) {
+      function getPlannedInstallments(
+        loan_installment_date,
+        total_installments = null,
+      ) {
         const start = new Date(loan_installment_date); // วันเริ่มงวดแรก
         const now = new Date(); // วันนี้
 
@@ -171,19 +176,34 @@ function loadLoan(loanCode) {
         return planned;
       }
 
-      let loan_planned =  getPlannedInstallments(loan_installment_date, loan_payment_month_counter);
+      let loan_planned = getPlannedInstallments(
+        loan_installment_date,
+        loan_payment_month_counter,
+      );
 
       loan_planned_payment = response.message.loan_payment_month * loan_planned;
 
-      let loan_ROI = (( loan_payment_sum_installment / loanAmount) * 100).toFixed(2);
+      let loan_ROI = (
+        (loan_payment_sum_installment / loanAmount) *
+        100
+      ).toFixed(2);
 
-      let loan_CTD_Realized = (( loan_payment_sum_installment / loan_total_profit) * 100).toFixed(2);
+      let loan_CTD_Realized = (
+        (loan_payment_sum_installment / loan_total_profit) *
+        100
+      ).toFixed(2);
 
-      let loan_CTD_Planned = (( loan_planned_payment / loan_total_profit) * 100).toFixed(2);
+      let loan_CTD_Planned = (
+        (loan_planned_payment / loan_total_profit) *
+        100
+      ).toFixed(2);
 
       let loan_duration = 0;
-      if(response.message.loan_status !== "CLOSE_STATE"){
-        loan_duration = ((loan_payment_month_counter - (loan_period - 1)) / loan_payment_month_counter) * 100;
+      if (response.message.loan_status !== "CLOSE_STATE") {
+        loan_duration =
+          ((loan_payment_month_counter - (loan_period - 1)) /
+            loan_payment_month_counter) *
+          100;
       }
 
       $("#loan_roi").val(loan_ROI);
@@ -200,7 +220,7 @@ function loadLoan(loanCode) {
     method: "get",
     success: function (response) {
       let installMentCount = parseInt(
-        response.message.loan_payment_installment
+        response.message.loan_payment_installment,
       );
       $("#installment_count").val(installMentCount);
       $("#payment_id").val(response.message.id);
@@ -211,8 +231,8 @@ function loadLoan(loanCode) {
 $("#loan_without_vat").keyup(function () {
   $("#money_loan").val(
     new Intl.NumberFormat().format(
-      Number($("#loan_without_vat").val()).toFixed(2)
-    )
+      Number($("#loan_without_vat").val()).toFixed(2),
+    ),
   );
 });
 
@@ -304,7 +324,7 @@ function cancelLoan() {
                   action: "delete",
                 }),
                 mode: "no-cors", // ใช้โหมด no-cors
-              }
+              },
             )
               .then((response) => {
                 // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
@@ -345,7 +365,7 @@ function loadPicture() {
         $(".brick").find($(".brick").find(".js-img-viewer-other")),
         {
           resizeStyle: "fit",
-        }
+        },
       );
     },
   });
@@ -626,7 +646,7 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
   const newDate = new Date(date.setMonth(date.getMonth() + (loan_period - 1)));
 
   const overdue_days = Math.floor(
-    (Date.now() - newDate) / (1000 * 60 * 60 * 24)
+    (Date.now() - newDate) / (1000 * 60 * 60 * 24),
   );
 
   let overdueColor;
@@ -735,7 +755,7 @@ function proceedLoanPayment(formData, form) {
                 action: "delete",
               }),
               mode: "no-cors", // ใช้โหมด no-cors
-            }
+            },
           )
             .then((response) => {
               // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
@@ -846,7 +866,7 @@ function dataTablePaymentDetail() {
       for (let i = 0; i < result.length; i++) {
         if (result[i].loan_payment_type == "Close") {
           $("#btn_seting").html(
-            "<div id='btn_seting' class='d-flex justify-content-end'></div>"
+            "<div id='btn_seting' class='d-flex justify-content-end'></div>",
           );
           break;
         }
@@ -854,7 +874,7 @@ function dataTablePaymentDetail() {
         if (result[0].loan_payment_date_fix != null) {
           if (i == 0) {
             result[0].loan_payment_date_fix = new Date(
-              result[0].loan_payment_date_fix
+              result[0].loan_payment_date_fix,
             );
             newDate = new Date(result[0].loan_payment_date_fix);
           } else if (i > 0) {
@@ -895,7 +915,7 @@ function tableCall(data) {
           return (
             '<span class="tx-success">' +
             new Intl.NumberFormat().format(
-              Number(data["loan_payment_amount"]).toFixed(2)
+              Number(data["loan_payment_amount"]).toFixed(2),
             ) +
             "</span>"
           );
@@ -909,7 +929,7 @@ function tableCall(data) {
           return (
             '<span class="tx-success">' +
             new Intl.NumberFormat().format(
-              Number(data["loan_balance"]).toFixed(2)
+              Number(data["loan_balance"]).toFixed(2),
             ) +
             "</span>"
           );
@@ -1003,6 +1023,67 @@ function tableCall(data) {
       {
         data: null,
       },
+{
+  data: null,
+  className: "text-center",
+  render: function (data, type, row, meta) {
+
+    const table = $("#tablePayment").DataTable();
+    const rows = table.rows().data().toArray();
+
+    const normalize = (d) => {
+      const date = new Date(d);
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    };
+
+    const paidDate = data["loan_payment_date"];
+    const dueDate = data["loan_payment_date_fix"];
+
+    if (!paidDate || !dueDate) return "0 วัน";
+
+    const paid = normalize(paidDate);
+    const due = normalize(dueDate);
+
+    // ✅ ถ้าจ่ายก่อนกำหนด = 0 วัน ทันที
+    if (paid < due) {
+      return "<span class='tx-success'>0 วัน</span>";
+    }
+
+    // 🔥 หา earliest overdue due ที่อยู่ในวันจ่ายเดียวกัน
+    let earliestDue = null;
+
+    rows.forEach(r => {
+
+      if (r["loan_payment_date"] === paidDate) {
+
+        const rDue = normalize(r["loan_payment_date_fix"]);
+
+        // เอาเฉพาะงวดที่เลยกำหนดแล้ว
+        if (rDue <= paid) {
+          if (!earliestDue || rDue < earliestDue) {
+            earliestDue = rDue;
+          }
+        }
+      }
+
+    });
+
+    if (!earliestDue) {
+      return "<span class='tx-success'>0 วัน</span>";
+    }
+
+    const diffDays = Math.floor(
+      (paid - earliestDue) / (1000 * 60 * 60 * 24)
+    );
+
+    if (diffDays <= 0) {
+      return "<span class='tx-success'>0 วัน</span>";
+    }
+
+    return "<span style='color:#ffc107'>" + diffDays + " วัน</span>";
+  }
+},
+
       {
         data: null,
         render: function (data, type, row, meta) {
@@ -1077,6 +1158,7 @@ function tableCall(data) {
     ],
   });
 }
+
 $("body").on("click", ".pdf_loan", function () {
   var id = $(this).attr("id");
 
@@ -1085,7 +1167,7 @@ $("body").on("click", ".pdf_loan", function () {
   window.open(
     url,
     "Doc",
-    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 "
+    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 ",
   );
 });
 
@@ -1097,7 +1179,7 @@ $("body").on("click", ".pdf_installment_schedule", function () {
   window.open(
     url,
     "Doc",
-    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 "
+    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 ",
   );
 });
 
@@ -1109,7 +1191,7 @@ $("body").on("click", ".pdf_loan_receipt", function () {
   window.open(
     url,
     "Doc",
-    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 "
+    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 ",
   );
 });
 
@@ -1261,7 +1343,7 @@ $("body").on("click", "#btn_edit_link_map", function () {
                 longitude: parsedCoords.longitude, // ค่าใหม่ของ longitude
               }),
               mode: "no-cors", // ใช้โหมด no-cors
-            }
+            },
           )
             .then((response) => {
               // ไม่สามารถเข้าถึงเนื้อหาของคำตอบได้ในโหมดนี้
@@ -1422,7 +1504,7 @@ $(document).ready(function () {
 
           if (bundleData.prename) {
             bundleData.gender = ["น.ส.", "นางสาว", "นาง", "เด็กหญิง"].includes(
-              bundleData.prename
+              bundleData.prename,
             )
               ? "หญิง"
               : "ชาย";
@@ -1432,7 +1514,9 @@ $(document).ready(function () {
           if (bundleData.firstname || bundleData.lastname) {
             let $inputName = $form.find("input[name=fullname]");
             $inputName
-              .val(`${bundleData.firstname || ""} ${bundleData.lastname || ""}`.trim())
+              .val(
+                `${bundleData.firstname || ""} ${bundleData.lastname || ""}`.trim(),
+              )
               .removeClass("is-invalid")
               .addClass("is-valid");
           }
@@ -1461,7 +1545,10 @@ $(document).ready(function () {
 
           if (bundleData.gender) {
             let $inputGender = $form.find("select[name=gender]");
-            $inputGender.val(bundleData.gender).removeClass("is-invalid").addClass("is-valid");
+            $inputGender
+              .val(bundleData.gender)
+              .removeClass("is-invalid")
+              .addClass("is-valid");
           }
 
           if (bundleData.address) {

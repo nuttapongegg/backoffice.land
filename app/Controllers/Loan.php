@@ -130,8 +130,9 @@ class Loan extends BaseController
     {
         $date = $this->request->getPost('date');
         $loan_types = $this->request->getPost('loan_types'); // <-- array แน่นอน
+        $range_type = $this->request->getPost('range_type');
 
-        $data_loanOn = $this->LoanModel->getAllDataLoanOn($date, $loan_types);
+        $data_loanOn = $this->LoanModel->getAllDataLoanOn($date, $loan_types, $range_type);
 
         return $this->response->setJSON([
             'status' => 200,

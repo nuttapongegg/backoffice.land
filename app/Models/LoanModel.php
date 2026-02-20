@@ -102,7 +102,7 @@ class LoanModel
         $this->order_finx = array('loan.loan_code' => 'DESC');
     }
 
-    public function getAllDataLoanOn($date, $loan_types)
+    public function getAllDataLoanOn($date, $loan_types, $range_type = null)
     {
         if (empty($loan_types)) {
             $loan_types = [];
@@ -120,20 +120,54 @@ class LoanModel
             foreach ($loan_types as $t) $params[] = $t;
         }
 
-        if ($date) {
+        $whereDate = '';
+        $whereInstallment = '';
+
+        if (in_array($range_type, ['today', 'tomorrow', 'today_tomorrow'])) {
+
+            // ⭐ today = offset 0
+            // ⭐ tomorrow = offset 1
+            // ⭐ today_tomorrow = OR ทั้งสอง
+
+            if ($range_type === 'today') {
+
+                $whereInstallment = "
+            AND loan.loan_installment_date IS NOT NULL
+            AND DAY(loan.loan_installment_date) = DAY(CURDATE())
+        ";
+            } elseif ($range_type === 'tomorrow') {
+
+                $whereInstallment = "
+            AND loan.loan_installment_date IS NOT NULL
+            AND DAY(loan.loan_installment_date) = DAY(DATE_ADD(CURDATE(), INTERVAL 1 DAY))
+        ";
+            } elseif ($range_type === 'today_tomorrow') {
+
+                $whereInstallment = "
+            AND loan.loan_installment_date IS NOT NULL
+            AND (
+                DAY(loan.loan_installment_date) = DAY(CURDATE())
+                OR
+                DAY(loan.loan_installment_date) = DAY(DATE_ADD(CURDATE(), INTERVAL 1 DAY))
+            )
+        ";
+            }
+        } else if (!empty($date)) {
+
             $dateExplode = explode(" to ", $date);
-            if (array_key_exists(1, $dateExplode)) {
+
+            if (isset($dateExplode[1])) {
                 $dateStart = $dateExplode[0];
-                $dateEnd = $dateExplode[1];
+                $dateEnd   = $dateExplode[1];
             } else {
                 $dateStart = $dateExplode[0];
-                $dateEnd = $dateExplode[0];
+                $dateEnd   = $dateExplode[0];
             }
-        }
-        $whereDate = '';
 
-        if (!empty($date)) {
-            $whereDate = "AND loan.loan_date_promise >= '$dateStart' AND loan.loan_date_promise <= '$dateEnd'";
+            $whereDate = "
+        AND loan.loan_date_promise >= '{$dateStart}'
+        AND loan.loan_date_promise <= '{$dateEnd}'
+        ";
         }
 
         $sql = "SELECT * ,
@@ -143,7 +177,7 @@ class LoanModel
         (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period,
         TIMESTAMPDIFF(MONTH,(SELECT DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_period - 1) MONTH)  FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code),CURDATE()) AS loan_overdue
         FROM loan
-        WHERE loan.loan_status = 'ON_STATE' {$whereDate}{$whereType}
+        WHERE loan.loan_status = 'ON_STATE' {$whereDate}{$whereType}{$whereInstallment}
         ORDER BY loan.id DESC
         ";
 

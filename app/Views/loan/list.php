@@ -341,7 +341,11 @@
                             <div class="panel tabs-style1">
                                 <div class="panel-body">
                                     <div class="d-flex flex-wrap gap-2 mb-3 justify-content-end align-items-center">
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="today">วันนี้</button>
 
+                                        <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="tomorrow">พรุ่งนี้</button>
+                                        <!-- คั่นแบบเบา ๆ -->
+                                        <span class="filter-divider"></span>
                                         <!-- ช่วงเวลา -->
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="this_month">เดือนนี้</button>
                                         <button type="button" class="btn btn-sm btn-outline-primary js-range" data-range="last_month">เดือนที่แล้ว</button>
@@ -395,8 +399,8 @@
                                                     <th class="wd-30p text-center">ROI</th>
                                                     <th class="wd-30p text-center">งวดละ</th>
                                                     <th class="wd-20p text-center">เครดิต</th>
-                                                    <th class="wd-20p text-center">ประเภทสินเชื่อ</th>
-                                                    <th class="wd-30p text-center">ระยะเวลาการผ่อน</th>
+                                                    <th class="wd-20p text-center">ประเภท</th>
+                                                    <th class="wd-30p text-center">เวลา</th>
                                                     <th class="wd-30p text-center">ชำระแล้ว</th>
                                                     <th class="wd-30p text-center">จำนวนงวด</th>
                                                     <th class="wd-30p text-center">ดอกเบี้ย</th>
@@ -533,9 +537,9 @@
                                                     <th class="wd-20p text-center">เนื้อที่</th>
                                                     <th class="wd-20p text-center">เลขที่ดิน</th>
                                                     <th class="wd-20p text-center">วันที่ปิดสินเชื่อ</th>
-                                                    <th class="wd-20p text-center">ประเภทสินเชื่อ</th>
+                                                    <th class="wd-20p text-center">ประเภท</th>
                                                     <th class="wd-40p text-center">วงเงิน</th>
-                                                    <th class="wd-30p text-center">ระยะเวลาการผ่อน</th>
+                                                    <th class="wd-30p text-center">เวลา</th>
                                                     <th class="wd-30p text-center">สถานะ</th>
                                                     <th class="wd-30p text-center">ชำระแล้วเป็นเงิน</th>
                                                     <th class="wd-30p text-center">ยอดชำระปิดสินเชื่อ</th>

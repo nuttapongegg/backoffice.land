@@ -9,7 +9,7 @@
   // callTableLoan();
   // callTableLoanPayments();
 })(jQuery);
-
+let currentRangeType = null;
 $(document).ready(function () {
   flatpickr("#daterange_loan", {
     mode: "range",
@@ -60,8 +60,9 @@ function resetQuickRangeButtons() {
   $(".js-range").removeClass("btn-primary").addClass("btn-outline-primary");
 }
 
-function getRangeByKey(key) {
+function getRangeByKeyLoanOn(key) {
   const now = new Date();
+
   let start = null,
     end = null;
 
@@ -86,26 +87,109 @@ function getRangeByKey(key) {
     end = new Date(now.getFullYear() - 1, 11, 31);
   }
 
+  if (key === "today") {
+    start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+
+  if (key === "tomorrow") {
+    const t = new Date();
+    t.setDate(t.getDate() + 1);
+
+    start = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+    end = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  }
+
   return { start, end };
 }
 
 $(document).on("click", ".js-range", function () {
   const key = $(this).data("range");
-
-  // ปุ่ม active
-  $(".js-range").removeClass("btn-primary").addClass("btn-outline-primary");
-  $(this).removeClass("btn-outline-primary").addClass("btn-primary ");
+  const isDayBtn = key === "today" || key === "tomorrow";
 
   const fp = document.querySelector("#daterange_loan")._flatpickr;
+  const now = new Date();
+  if (isDayBtn) {
+    // ล้างปุ่มเดือน/ปี
+    $(".js-range")
+      .not('[data-range="today"],[data-range="tomorrow"]')
+      .removeClass("btn-primary")
+      .addClass("btn-outline-primary");
 
-  if (key === "all") {
-    fp.clear(); // clear = onChange → callTableLoan()
-    return;
+    // toggle ปุ่มที่กด
+    $(this).toggleClass("btn-primary btn-outline-primary");
+  } else {
+    // ล้าง today/tomorrow
+    $('.js-range[data-range="today"], .js-range[data-range="tomorrow"]')
+      .removeClass("btn-primary")
+      .addClass("btn-outline-primary");
+
+    // active ปุ่มเดียว
+    $(".js-range")
+      .not(this)
+      .removeClass("btn-primary")
+      .addClass("btn-outline-primary");
+
+    $(this).removeClass("btn-outline-primary").addClass("btn-primary");
+  }
+  const todayActive = $('.js-range[data-range="today"]').hasClass(
+    "btn-primary",
+  );
+  const tomorrowActive = $('.js-range[data-range="tomorrow"]').hasClass(
+    "btn-primary",
+  );
+
+  let start = null;
+  let end = null;
+
+  if (todayActive && tomorrowActive) {
+    currentRangeType = "today_tomorrow";
+
+    const tomorrow = new Date();
+    tomorrow.setDate(now.getDate() + 1);
+
+    start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    end = new Date(
+      tomorrow.getFullYear(),
+      tomorrow.getMonth(),
+      tomorrow.getDate(),
+    );
   }
 
-  const range = getRangeByKey(key);
-  if (range.start && range.end) {
-    fp.setDate([range.start, range.end], true); // true = trigger onChange
+  else if (todayActive) {
+    currentRangeType = "today";
+
+    start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    end = start;
+  }
+
+  else if (tomorrowActive) {
+    currentRangeType = "tomorrow";
+
+    const t = new Date();
+    t.setDate(t.getDate() + 1);
+
+    start = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+    end = start;
+  }
+
+  else {
+    currentRangeType = key;
+
+    if (key === "all") {
+      fp.clear();
+      callTableLoan();
+      return;
+    }
+
+    const range = getRangeByKeyLoanOn(key);
+
+    start = range.start;
+    end = range.end;
+  }
+
+  if (start && end) {
+    fp.setDate([start, end], true);
   }
 });
 
@@ -153,6 +237,7 @@ function callTableLoan() {
     data: {
       date: date,
       loan_types: loan_types,
+      range_type: currentRangeType,
     },
     success: function (response) {
       var result = JSON.parse(response.message);

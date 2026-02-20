@@ -709,6 +709,7 @@
                                                         <th class="wd-5p text-center">วันออกสินเชื่อ</th>
                                                         <th class="wd-5p text-center">กำหนดชำระ</th>
                                                         <th class="wd-5p text-center">วันที่ชำระจริง</th>
+                                                        <th class="wd-5p text-center">ค้างชำระ (วัน)</th>
                                                         <th class="wd-5p text-center">สถานะ</th>
                                                         <th class="wd-5p text-center"></th>
                                                     </tr>
