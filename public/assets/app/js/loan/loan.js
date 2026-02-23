@@ -154,16 +154,12 @@ $(document).on("click", ".js-range", function () {
       tomorrow.getMonth(),
       tomorrow.getDate(),
     );
-  }
-
-  else if (todayActive) {
+  } else if (todayActive) {
     currentRangeType = "today";
 
     start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     end = start;
-  }
-
-  else if (tomorrowActive) {
+  } else if (tomorrowActive) {
     currentRangeType = "tomorrow";
 
     const t = new Date();
@@ -171,9 +167,7 @@ $(document).on("click", ".js-range", function () {
 
     start = new Date(t.getFullYear(), t.getMonth(), t.getDate());
     end = start;
-  }
-
-  else {
+  } else {
     currentRangeType = key;
 
     if (key === "all") {
@@ -490,7 +484,7 @@ function callAutoloenTable(data) {
       },
       {
         data: null,
-        className: "text-right",
+        className: "text-center",
         render: function (data, type, row, meta) {
           const loan_payment_month_counter =
             data["loan_payment_year_counter"] * 12;
@@ -540,8 +534,28 @@ function callAutoloenTable(data) {
         },
       },
       {
+        data: "Late",
+        className: "text-center",
+        render: function (data) {
+          let late = Math.max(0, Math.floor(Number(data) || 0));
+          let color = "";
+
+          if (late === 0) {
+            color = "tx-success"; // เขียว = ปกติ
+          } else if (late <= 30) {
+            color = "tx-secondary"; // เหลือง = เริ่มเสี่ยง
+          } else if (late <= 90) {
+            color = "tx-orange"; // ส้ม = เสี่ยง
+          } else {
+            color = "tx-danger"; // แดง = อันตราย
+          }
+
+          return `<span class="${color}">${late} วัน</span>`;
+        },
+      },
+      {
         data: null,
-        className: "text-right",
+        className: "text-center",
         render: function (data, type, row, meta) {
           var roi =
             (data["loan_payment_sum_installment"] /
@@ -710,7 +724,7 @@ function callAutoloenTable(data) {
 
       // Total over this page
       var Total_payment_month = api
-        .column(16, { page: "current" })
+        .column(17, { page: "current" })
         .data()
         .reduce(function (a, b) {
           return intVal(a) + intVal(b.loan_payment_month); // Handle formatted numbers
@@ -771,7 +785,7 @@ function callAutoloenTable(data) {
 
       // Update footer
       number_payment_month = parseFloat(Total_payment_month).toFixed(2);
-      $(api.column(16).footer()).html(
+      $(api.column(17).footer()).html(
         Number(number_payment_month).toLocaleString(),
       );
 

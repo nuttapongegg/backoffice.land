@@ -1023,67 +1023,68 @@ function tableCall(data) {
       {
         data: null,
       },
-{
-  data: null,
-  className: "text-center",
-  render: function (data, type, row, meta) {
+      {
+        data: null,
+        className: "text-center",
+        render: function (data, type, row, meta) {
 
-    const table = $("#tablePayment").DataTable();
-    const rows = table.rows().data().toArray();
+          const table = $("#tablePayment").DataTable();
+          const rows = table.rows().data().toArray();
 
-    const normalize = (d) => {
-      const date = new Date(d);
-      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    };
+          const normalize = (d) => {
+            const date = new Date(d);
+            return new Date(date.getFullYear(),date.getMonth(), date.getDate(),
+            );
+          };
 
-    const paidDate = data["loan_payment_date"];
-    const dueDate = data["loan_payment_date_fix"];
+          const paidDate = data["loan_payment_date"];
+          const dueDate = data["loan_payment_date_fix"];
 
-    if (!paidDate || !dueDate) return "0 วัน";
+          if (!dueDate) return "0 วัน";
 
-    const paid = normalize(paidDate);
-    const due = normalize(dueDate);
+          const today = normalize(new Date());
+          const due = normalize(dueDate);
 
-    // ✅ ถ้าจ่ายก่อนกำหนด = 0 วัน ทันที
-    if (paid < due) {
-      return "<span class='tx-success'>0 วัน</span>";
-    }
+          if (!paidDate) {
+            // ยังไม่ถึงกำหนด
+            if (today <= due) {
+              return "-";
+            }
+            const diffDays = Math.floor((today - due) / (1000 * 60 * 60 * 24));
 
-    // 🔥 หา earliest overdue due ที่อยู่ในวันจ่ายเดียวกัน
-    let earliestDue = null;
-
-    rows.forEach(r => {
-
-      if (r["loan_payment_date"] === paidDate) {
-
-        const rDue = normalize(r["loan_payment_date_fix"]);
-
-        // เอาเฉพาะงวดที่เลยกำหนดแล้ว
-        if (rDue <= paid) {
-          if (!earliestDue || rDue < earliestDue) {
-            earliestDue = rDue;
+            return "<span style='color:#ffc107'>" + diffDays + " วัน</span>";
           }
-        }
-      }
+          const paid = normalize(paidDate);
+          // จ่ายก่อนกำหนด
+          if (paid < due) {
+            return "<span class='tx-success'>0 วัน</span>";
+          }
 
-    });
+          let earliestDue = null;
 
-    if (!earliestDue) {
-      return "<span class='tx-success'>0 วัน</span>";
-    }
+          rows.forEach((r) => {
+            if (r["loan_payment_date"] === paidDate) {
+              const rDue = normalize(r["loan_payment_date_fix"]);
 
-    const diffDays = Math.floor(
-      (paid - earliestDue) / (1000 * 60 * 60 * 24)
-    );
-
-    if (diffDays <= 0) {
-      return "<span class='tx-success'>0 วัน</span>";
-    }
-
-    return "<span style='color:#ffc107'>" + diffDays + " วัน</span>";
-  }
-},
-
+              if (rDue <= paid) {
+                if (!earliestDue || rDue < earliestDue) {
+                  earliestDue = rDue;
+                }
+              }
+            }
+          });
+          if (!earliestDue) {
+            return "-";
+          }
+          const diffDays = Math.floor(
+            (paid - earliestDue) / (1000 * 60 * 60 * 24),
+          );
+          if (diffDays <= 0) {
+            return "<span class='tx-success'>0 วัน</span>";
+          }
+          return "<span style='color:#ffc107'>" + diffDays + " วัน</span>";
+        },
+      },
       {
         data: null,
         render: function (data, type, row, meta) {

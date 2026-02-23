@@ -392,11 +392,12 @@
                                                     <th class="wd-40p text-center">วงเงิน</th>
                                                     <th class="wd-20p text-center">ชำระทุกวันที</th>
                                                     <th class="wd-30p text-center">สถานะ</th>
-                                                    <th class="wd-30p text-center">เกินกำหนดชำระ</th>
-                                                    <th class="wd-30p text-center">ยอดค้างชำระ</th>
+                                                    <th class="wd-30p text-center">เกินกำหนด</th>
+                                                    <th class="wd-30p text-center">ยอดค้าง</th>
                                                     <th class="wd-30p text-center">GAP</th>
-                                                    <th class="wd-30p text-center">ชำระแล้วเป็นเงิน</th>
-                                                    <th class="wd-30p text-center">ROI</th>
+                                                    <th class="wd-30p text-center">ชำระแล้ว</th>
+                                                    <th class="wd-10p text-center">Late</th>
+                                                    <th class="wd-10p text-center">ROI</th>
                                                     <th class="wd-30p text-center">งวดละ</th>
                                                     <th class="wd-20p text-center">เครดิต</th>
                                                     <th class="wd-20p text-center">ประเภท</th>
@@ -405,7 +406,6 @@
                                                     <th class="wd-30p text-center">จำนวนงวด</th>
                                                     <th class="wd-30p text-center">ดอกเบี้ย</th>
                                                     <th class="wd-30p text-center">รายละเอียด</th>
-
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -420,7 +420,7 @@
                                                     <th class="text-right" style="padding:12px;font-size:15px;font-weight:normal;"></th>
                                                     <th style="padding:12px;font-size:15px;font-weight:normal;"></th>
                                                     <th class="text-right" style="padding:12px;font-size:15px;font-weight:normal;"></th>
-                                                    <th style="padding:12px;font-size:15px;font-weight:normal;"></th>
+                                                    <th colspan="2" style="padding:12px;font-size:15px;font-weight:normal;"></th>
                                                     <th class="text-right" style="padding:12px;font-size:15px;font-weight:normal;"></th>
                                                     <th colspan="7" style="padding:12px;font-size:15px;font-weight:normal;"></th>
                                                 </tr>

@@ -141,6 +141,28 @@ class Loan extends BaseController
         ]);
     }
 
+    // public function FetchAllLoanOn()
+    // {
+    //     $post = $this->request->getPost();
+
+    //     $loanTypes = $post['loan_types'] ?? [];
+    //     if (!empty($loanTypes) && !is_array($loanTypes)) {
+    //         $loanTypes = [$loanTypes];
+    //     }
+    //     $post['loan_types'] = $loanTypes;
+
+    //     $data = $this->LoanModel->_getAllDataLoanOn($post);
+    //     $recordsTotal = $this->LoanModel->countAllDataLoanOn();
+    //     $recordsFiltered = $this->LoanModel->countAllDataLoanOnFilter($post);
+
+    //     return $this->response->setJSON([
+    //         "draw" => $post['draw'],
+    //         "recordsTotal" => $recordsTotal,
+    //         "recordsFiltered" => $recordsFiltered,
+    //         "data" => $data
+    //     ]);
+    // }
+
     // Get Data Loan ทั้งหมด
     public function FetchAllLoan() {}
 

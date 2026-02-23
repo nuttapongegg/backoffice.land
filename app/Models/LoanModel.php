@@ -11,6 +11,9 @@ class LoanModel
     protected $column_search;
     protected $order;
 
+    // protected $column_order_on;
+    // protected $column_search_on;
+
     protected $column_order_finx;
     protected $column_search_finx;
     protected $order_finx;
@@ -66,6 +69,62 @@ class LoanModel
         // Set default order
         $this->order = array('loan.loan_code' => 'DESC');
 
+        // $this->column_order_on = [
+
+        //     'loan.loan_code', // 0  #
+        //     'loan.loan_code', // 1  เลขที่สินเชื่อ
+        //     'loan.loan_customer', // 2  ชื่อลูกค้า
+        //     'loan.loan_address', // 3  ชื่อสถานที่
+        //     'loan.loan_area', // 4  เนื้อที่
+        //     'loan.loan_number', // 5  เลขที่ดิน
+        //     'loan.land_deed_status', // 6  โฉนด (checkbox)
+        //     'loan.loan_date_promise', // 7  วันที่ขอสินเชื่อ
+        //     'loan.loan_summary_no_vat', // 8  วงเงิน
+        //     'loan.loan_installment_date', // 9  ชำระทุกวันที่
+        //     null, // 10 สถานะ (render คำนวณ)
+        //     'Late', // 11 เกินกำหนด
+        //     null, // 12 ยอดค้าง (คำนวณ)
+        //     null, // 13 GAP (คำนวณ)
+        //     'loan.loan_payment_sum_installment', // 14 ชำระแล้ว
+        //     'Late', // 15 Late
+        //     null, // 16 ROI (คำนวณ)
+        //     'loan.loan_payment_month', // 17 งวดละ
+        //     null, // 18 เครดิต (ถ้ามี field นี้ใน DB)
+        //     'loan.loan_type', // 19 ประเภท
+        //     'loan.loan_payment_year_counter', // 20 เวลา
+        //     'loan.loan_payment_sum_installment', // 21 ชำระแล้ว (ซ้ำ)
+        //     'loan_payment_type', // 22 จำนวนงวด (alias จาก subquery)
+        //     'loan.loan_payment_interest', // 23 ดอกเบี้ย
+        //     'loan.loan_remnark' // 24 รายละเอียด
+
+        // ];
+
+        // $this->column_search_on = [
+
+        //     // ===== main loan info =====
+        //     'loan.loan_code',
+        //     'loan.loan_customer',
+        //     'loan.loan_address',
+        //     'loan.loan_area',
+        //     'loan.loan_number',
+
+        //     // ===== financial =====
+        //     'loan.loan_summary_no_vat',
+        //     'loan.loan_payment_month',
+        //     'loan.loan_payment_interest',
+
+        //     // ===== type / status =====
+        //     'loan.loan_type',
+        //     'loan.loan_status',
+
+        //     // ===== date =====
+        //     'loan.loan_date_promise',
+        //     'loan.loan_installment_date',
+
+        //     // ===== extra =====
+        //     'loan.loan_remnark'
+
+        // ];
         // ให้ index ตรงกับ DataTables columns เดิมของคุณ
         $this->column_order_finx = [
             null,
@@ -171,12 +230,81 @@ class LoanModel
         }
 
         $sql = "SELECT * ,
+        IFNULL(late_table.Late,0) AS Late,
         (SELECT COUNT(loan_payment_type) FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code) AS loan_payment_type,
         (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date,
         (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
         (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period,
         TIMESTAMPDIFF(MONTH,(SELECT DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_period - 1) MONTH)  FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code),CURDATE()) AS loan_overdue
         FROM loan
+        LEFT JOIN (
+            SELECT 
+                lp.loan_code,
+                ROUND(
+                    SUM(
+                        CASE
+                            -- ✅ จ่ายก่อนกำหนด
+                            WHEN lp.loan_payment_date IS NOT NULL
+                            AND DATE_ADD(
+                                lp.loan_payment_date_fix,
+                                INTERVAL (lp.loan_payment_installment - 1) MONTH
+                            ) > lp.loan_payment_date
+                            THEN 0
+                            -- ✅ จ่ายแล้ว (สูตรเดิม EXACT)
+                            WHEN lp.loan_payment_date IS NOT NULL
+                            THEN GREATEST(
+                                DATEDIFF(
+                                    lp.loan_payment_date,
+                                    batch.min_due_date
+                                ),
+                                0
+                            )
+                            -- ✅ ยังไม่จ่ายแต่ถึงกำหนด
+                            WHEN CURDATE() >= DATE_ADD(
+                                lp.loan_payment_date_fix,
+                                INTERVAL (lp.loan_payment_installment - 1) MONTH
+                            )
+                            THEN DATEDIFF(
+                                CURDATE(),
+                                DATE_ADD(
+                                    lp.loan_payment_date_fix,
+                                    INTERVAL (lp.loan_payment_installment - 1) MONTH
+                                )
+                            )
+                            ELSE NULL
+                        END
+                    )
+                    /
+                    NULLIF(
+                        COUNT(
+                            CASE
+                                WHEN DATE_ADD(
+                                    lp.loan_payment_date_fix,
+                                    INTERVAL (lp.loan_payment_installment - 1) MONTH
+                                ) <= CURDATE()
+                                THEN 1
+                            END
+                        ),0
+                    )
+                ,2) AS Late
+            FROM loan_payment lp
+            LEFT JOIN (
+                SELECT 
+                    loan_code,
+                    loan_payment_date,
+                    MIN(
+                        DATE_ADD(
+                            loan_payment_date_fix,
+                            INTERVAL (loan_payment_installment - 1) MONTH
+                        )
+                    ) AS min_due_date
+                FROM loan_payment
+                GROUP BY loan_code, loan_payment_date
+            ) AS batch
+            ON batch.loan_code = lp.loan_code
+            AND batch.loan_payment_date = lp.loan_payment_date
+            GROUP BY lp.loan_code
+        ) AS late_table ON late_table.loan_code = loan.loan_code
         WHERE loan.loan_status = 'ON_STATE' {$whereDate}{$whereType}{$whereInstallment}
         ORDER BY loan.id DESC
         ";
@@ -185,6 +313,171 @@ class LoanModel
 
         return $builder->getResult();
     }
+
+    // public function _getAllDataLoanOn($post)
+    // {
+    //     $builder = $this->DataLoanOnQuery($post);
+
+    //     if ($post['length'] != -1) {
+    //         $builder->limit($post['length'], $post['start']);
+    //     }
+
+    //     return $builder->get()->getResult();
+    // }
+
+    // public function countAllDataLoanOn()
+    // {
+    //     return $this->db->table('loan')
+    //         ->where('loan_status', 'ON_STATE')
+    //         ->countAllResults();
+    // }
+
+    // public function countAllDataLoanOnFilter($post)
+    // {
+    //     $builder = $this->DataLoanOnQuery($post);
+    //     return $builder->countAllResults(false);
+    // }
+
+    // private function DataLoanOnQuery($post)
+    // {
+    //     $builder = $this->db->table('loan');
+
+    //     $builder->select("
+    //     loan.*,
+    //     (
+    //         SELECT ROUND(
+    //             SUM(
+    //                 CASE
+
+    //                     -- ✅ จ่ายก่อนกำหนด = 0
+    //                     WHEN loan_payment.loan_payment_date IS NOT NULL
+    //                     AND DATE_ADD(
+    //                             loan_payment.loan_payment_date_fix,
+    //                             INTERVAL (loan_payment.loan_payment_installment - 1) MONTH
+    //                         ) > loan_payment.loan_payment_date
+    //                     THEN 0
+
+    //                     -- ✅ จ่ายแล้ว
+    //                     WHEN loan_payment.loan_payment_date IS NOT NULL
+    //                     THEN GREATEST(
+    //                             DATEDIFF(
+    //                                 loan_payment.loan_payment_date,
+    //                                 (
+    //                                     SELECT MIN(
+    //                                         DATE_ADD(
+    //                                             loan_payment2.loan_payment_date_fix,
+    //                                             INTERVAL (loan_payment2.loan_payment_installment - 1) MONTH
+    //                                         )
+    //                                     )
+    //                                     FROM loan_payment AS loan_payment2
+    //                                     WHERE loan_payment2.loan_code = loan.loan_code
+    //                                     AND loan_payment2.loan_payment_date = loan_payment.loan_payment_date
+    //                                     AND DATE_ADD(
+    //                                             loan_payment2.loan_payment_date_fix,
+    //                                             INTERVAL (loan_payment2.loan_payment_installment - 1) MONTH
+    //                                         ) <= loan_payment.loan_payment_date
+    //                                 )
+    //                             ),
+    //                             0
+    //                         )
+
+    //                     -- ✅ ยังไม่จ่ายแต่ถึงกำหนด
+    //                     WHEN CURDATE() >= DATE_ADD(
+    //                             loan_payment.loan_payment_date_fix,
+    //                             INTERVAL (loan_payment.loan_payment_installment - 1) MONTH
+    //                         )
+    //                     THEN DATEDIFF(
+    //                             CURDATE(),
+    //                             DATE_ADD(
+    //                                 loan_payment.loan_payment_date_fix,
+    //                                 INTERVAL (loan_payment.loan_payment_installment - 1) MONTH
+    //                             )
+    //                         )
+
+    //                     ELSE NULL
+
+    //                 END
+    //             )
+    //             /
+    //             COUNT(
+    //                 CASE
+    //                     WHEN DATE_ADD(
+    //                             loan_payment.loan_payment_date_fix,
+    //                             INTERVAL (loan_payment.loan_payment_installment - 1) MONTH
+    //                         ) <= CURDATE()
+    //                     THEN 1
+    //                 END
+    //             )
+    //         ,2)
+
+    //         FROM loan_payment
+
+    //         WHERE loan_payment.loan_code = loan.loan_code
+    //     ) AS Late,
+    //     (SELECT COUNT(loan_payment_type) FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code) AS loan_payment_type,
+    //     (SELECT loan_payment.loan_payment_date FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date,
+    //     (SELECT loan_payment.loan_payment_date_fix FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code) AS loan_payment_date_fix,
+    //     (SELECT loan_payment.loan_payment_installment FROM loan_payment WHERE loan_payment.loan_code = loan.loan_code AND loan_payment.loan_payment_type IS NULL LIMIT 1) AS loan_period,
+    //     TIMESTAMPDIFF(MONTH,(SELECT DATE_ADD(loan_payment.loan_payment_date_fix, INTERVAL (loan_period - 1) MONTH)  FROM loan_payment WHERE loan_payment_installment = 1 AND loan_payment.loan_code = loan.loan_code),CURDATE()) AS loan_overdue
+    //     ");
+
+    //     $builder->where("loan.loan_status", "ON_STATE");
+
+    //     // =====================
+    //     // filter date
+    //     // =====================
+    //     $date = $post['date'] ?? '';
+    //     if (!empty($date)) {
+
+    //         $dateExplode = explode(" to ", $date);
+
+    //         if (isset($dateExplode[1])) {
+    //             $dateStart = $dateExplode[0];
+    //             $dateEnd   = $dateExplode[1];
+    //         } else {
+    //             $dateStart = $dateExplode[0];
+    //             $dateEnd   = $dateExplode[0];
+    //         }
+
+    //         $builder->where("loan.loan_date_promise >=", $dateStart);
+    //         $builder->where("loan.loan_date_promise <=", $dateEnd);
+    //     }
+
+    //     // =====================
+    //     // filter loan type
+    //     // =====================
+    //     $loanTypes = $post['loan_types'] ?? [];
+    //     if (!empty($loanTypes)) {
+    //         $builder->whereIn("loan.loan_type", $loanTypes);
+    //     }
+
+    //     // =====================
+    //     // search
+    //     // =====================
+    //     $search = $post['search']['value'] ?? '';
+    //     if ($search != '') {
+
+    //         $builder->groupStart();
+    //         foreach ($this->column_search_on as $item) {
+    //             $builder->orLike($item, $search);
+    //         }
+    //         $builder->groupEnd();
+    //     }
+
+    //     // =====================
+    //     // order
+    //     // =====================
+    //     if (isset($post['order'])) {
+    //         $builder->orderBy(
+    //             $this->column_order_on[$post['order'][0]['column']],
+    //             $post['order'][0]['dir']
+    //         );
+    //     } else {
+    //         $builder->orderBy('loan.id', 'DESC');
+    //     }
+
+    //     return $builder;
+    // }
 
     public function getAllDataLoanMessageAPI()
     {
