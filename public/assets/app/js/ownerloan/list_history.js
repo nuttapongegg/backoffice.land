@@ -170,7 +170,18 @@ function callTableOwnerLoanHistory() {
 
       { data: "land_account_name", className: "text-center" },
       { data: "username", className: "text-center" },
-      { data: "note" },
+      {
+        data: "note",
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-180" title="' +
+            (data ?? "") +
+            '">' +
+            (data ?? "") +
+            "</div>"
+          );
+        },
+      },
     ],
 
     drawCallback: function (settings, data, start, end, max, total, pre) {

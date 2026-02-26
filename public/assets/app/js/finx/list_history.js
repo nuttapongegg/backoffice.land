@@ -59,7 +59,7 @@ function callTableFinxHistory() {
           return (
             '<span class="tx-success">' +
             new Intl.NumberFormat().format(
-              Number(data["loan_summary_no_vat"]).toFixed(2)
+              Number(data["loan_summary_no_vat"]).toFixed(2),
             ) +
             "</span>"
           );
@@ -127,12 +127,30 @@ function callTableFinxHistory() {
       },
       {
         data: "loan_address",
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-180" title="' +
+            (data ?? "") +
+            '">' +
+            (data ?? "") +
+            "</div>"
+          );
+        },
       },
       {
         data: "loan_area",
       },
       {
         data: "loan_number",
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-100" title="' +
+            (data ?? "") +
+            '">' +
+            (data ?? "") +
+            "</div>"
+          );
+        },
       },
       {
         data: null,
@@ -161,7 +179,7 @@ function callTableFinxHistory() {
           return (
             "<font>" +
             new Intl.NumberFormat().format(
-              Number(data["installment_3pct"]).toFixed(2)
+              Number(data["installment_3pct"]).toFixed(2),
             ) +
             "</font>"
           );
@@ -174,7 +192,7 @@ function callTableFinxHistory() {
           return (
             "<font>" +
             new Intl.NumberFormat().format(
-              Number(data["loan_close_payment"]).toFixed(2)
+              Number(data["loan_close_payment"]).toFixed(2),
             ) +
             "</font>"
           );
@@ -185,6 +203,15 @@ function callTableFinxHistory() {
       },
       {
         data: "loan_remnark",
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-180" title="' +
+            (data ?? "") +
+            '">' +
+            (data ?? "") +
+            "</div>"
+          );
+        },
       },
       {
         orderable: false,
@@ -211,7 +238,7 @@ function callTableFinxHistory() {
       $("#count_car_history").html(
         '<div class="tx-primary tx-18" id="count_car_history">รายการสินเชื่อที่ปิดแล้ว (' +
           num_rows +
-          " ราย)</div>"
+          " ราย)</div>",
       );
     },
     createdRow: function (tr, tdsContent) {},
@@ -223,8 +250,8 @@ function callTableFinxHistory() {
         return typeof i === "string"
           ? i.replace(/[\$,]/g, "") * 1
           : typeof i === "number"
-          ? i
-          : 0;
+            ? i
+            : 0;
       };
 
       // Total over this page
@@ -252,17 +279,17 @@ function callTableFinxHistory() {
       // Update footer
       number_close_payment = parseFloat(Total_close_payment).toFixed(2);
       $(api.column(11).footer()).html(
-        Number(number_close_payment).toLocaleString()
+        Number(number_close_payment).toLocaleString(),
       );
 
       number_installment_3pct = parseFloat(Total_installment_3pct).toFixed(2);
       $(api.column(10).footer()).html(
-        Number(number_installment_3pct).toLocaleString()
+        Number(number_installment_3pct).toLocaleString(),
       );
 
       number_summary_no_vat = parseFloat(Total_summary_no_vat).toFixed(2);
       $(api.column(8).footer()).html(
-        Number(number_summary_no_vat).toLocaleString()
+        Number(number_summary_no_vat).toLocaleString(),
       );
     },
     bFilter: true,
@@ -275,6 +302,6 @@ function reportFinxPrint(id) {
   window.open(
     url,
     "Doc",
-    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=1024,height=900,top=10,left=500"
+    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=1024,height=900,top=10,left=500",
   );
 }

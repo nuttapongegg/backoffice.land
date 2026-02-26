@@ -360,7 +360,18 @@ function callOwnerLoanTable(data) {
       { data: "land_account_name", className: "text-center" },
       { data: "username", className: "text-center" },
       // { data: "status", className: "text-center" },
-      { data: "note" },
+      {
+        data: "note",
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-180" title="' +
+            (data ?? "") +
+            '">' +
+            (data ?? "") +
+            "</div>"
+          );
+        },
+      },
     ],
 
     footerCallback: function (row, data, start, end, display) {

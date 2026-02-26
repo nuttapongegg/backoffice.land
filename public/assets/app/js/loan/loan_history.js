@@ -202,12 +202,30 @@ function callTableLoanHistory() {
       },
       {
         data: "loan_address",
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-180" title="' +
+            (data ?? "") +
+            '">' +
+            (data ?? "") +
+            "</div>"
+          );
+        },
       },
       {
         data: "loan_area",
       },
       {
         data: "loan_number",
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-100" title="' +
+            (data ?? "") +
+            '">' +
+            (data ?? "") +
+            "</div>"
+          );
+        },
       },
       {
         data: null,
@@ -320,6 +338,15 @@ function callTableLoanHistory() {
       },
       {
         data: "loan_remnark",
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-180" title="' +
+            (data ?? "") +
+            '">' +
+            (data ?? "") +
+            "</div>"
+          );
+        },
       },
     ],
     drawCallback: function (settings, data, start, end, max, total, pre) {

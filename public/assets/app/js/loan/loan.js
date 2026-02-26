@@ -701,6 +701,15 @@ function callAutoloenTable(data) {
       },
       {
         data: "loan_remnark",
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-180" title="' +
+            (data ?? "") +
+            '">' +
+            (data ?? "") +
+            "</div>"
+          );
+        },
       },
     ],
     createdRow: function (row, data, dataIndex) {
@@ -1107,8 +1116,17 @@ function callAutoloenTablePayments(data) {
           );
         },
       },
-      {
+            {
         data: "setting_land_report_note",
+        render: function (data, type, row) {
+          return (
+            '<div class="text-ellipsis wd-180" title="' +
+            (data ?? "") +
+            '">' +
+            (data ?? "") +
+            "</div>"
+          );
+        },
       },
       {
         className: "text-center",
