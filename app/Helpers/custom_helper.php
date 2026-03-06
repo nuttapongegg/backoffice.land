@@ -503,8 +503,18 @@ function notify($token,$data)
 
 function send_line_message($token, $message)
 {
+    $groupId = getenv('LINE_GROUP_ID');
+
+    if (empty($groupId)) {
+        log_message('error', 'LINE_GROUP_ID not found in .env');
+        return [
+            'status' => 500,
+            'response' => 'LINE_GROUP_ID not set'
+        ];
+    }
+
     $data = [
-        'to' => 'C42b75bab9b01cb8e0a78d76002f81fe0', // ใส่ ID ของผู้ใช้หรือกลุ่ม
+        'to' => $groupId, // ใส่ ID ของผู้ใช้หรือกลุ่ม
         'messages' => [
             [
                 'type' => 'flex', // ส่งข้อความเป็น Flex message
@@ -513,7 +523,7 @@ function send_line_message($token, $message)
             ]
         ]
     ];
-// px($data);
+    // px($data);
     $headers = [
         'Content-Type: application/json',
         'Authorization: Bearer ' . $token
