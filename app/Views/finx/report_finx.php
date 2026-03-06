@@ -143,7 +143,11 @@
                                                 </div>
                                                 <h4 class="tx-18 font-weight-semibold my-1">ยอดเปิดสินเชื่อ <?php echo number_format($total_open_loan_month, 2) ?></h4>
                                                 <h4 class="tx-18 font-weight-semibold my-1">(ยอดเปิดสินเชื่อเดือนปัจจุบัน)</h4>
-                                                <?php $Sum_Open_Loan_percent = $total_open_loan_month * 100 / $targeteds->open_loan_target; ?>
+                                                <?php
+                                                $Sum_Open_Loan_percent = ($targeteds->open_loan_target > 0)
+                                                    ? ($total_open_loan_month * 100) / $targeteds->open_loan_target
+                                                    : 0;
+                                                ?>
                                                 <?php if ($Sum_Open_Loan_percent < 0) {
                                                     $open_Loan_Color = "bg-danger-transparent tx-danger";
                                                     $open_Loan_profit = number_format($Sum_Open_Loan_percent, 2) . '%';
@@ -200,7 +204,9 @@
                                                 </h4>
                                                 <h4 class="tx-18 font-weight-semibold my-1">(กำไรเดือนปัจจุบัน)</h4>
                                                 <?php
-                                                $Sum_profit_month = $total_month * 100 / $targeteds->desired_goals_month;
+                                                $Sum_profit_month = ($targeteds->desired_goals_month > 0)
+                                                    ? ($total_month * 100) / $targeteds->desired_goals_month
+                                                    : 0;
                                                 if ($Sum_profit_month < 0) {
                                                     $profit_Color = "bg-danger-transparent tx-danger";
                                                     $Sum_profit = number_format($Sum_profit_month, 2) . '%';
@@ -245,7 +251,9 @@
                                                 </h4>
                                                 <h4 class="tx-18 font-weight-semibold my-1">(กำไรปีปัจจุบัน)</h4>
                                                 <?php
-                                                $Sum_price_percent = $Month_Diff_Payment_Sum * 100 / $targeteds->desired_goal;
+                                                $Sum_price_percent = ($targeteds->desired_goal > 0)
+                                                    ? ($Month_Diff_Payment_Sum * 100) / $targeteds->desired_goal
+                                                    : 0;
                                                 if ($Sum_price_percent < 0) {
                                                     $profit_Color_year = "bg-danger-transparent tx-danger";
                                                     $Sum_profit_year = number_format($Sum_price_percent, 2) . '%';

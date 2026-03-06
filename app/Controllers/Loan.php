@@ -1471,14 +1471,37 @@ class Loan extends BaseController
             $equity_real          = $paid_up_capital + $retained_earnings;   // ทรัพย์สินสุทธิ (Equity จริง)
 
             // KPI %
-            $true_leverage        = ($summary_no_vat_ON_STATE / $equity_real);   // x
-            $leverage_vs_capital  = ($summary_no_vat_ON_STATE / $paid_up_capital);   // x
-            $turnover_times       = ($loan_summary_no_vat / $summary_no_vat_ON_STATE);   // x
-            $roi_total            = ($retained_earnings / $paid_up_capital) * 100;   // %
-            $portfolio_yield      = ($interest_net_12m / $summary_no_vat_ON_STATE) * 100;   // %
-            $cash_buffer_percent  = ($sum_land_account / $summary_no_vat_ON_STATE) * 100;    // %
-            $cash_equity_percent  = ($sum_land_account / $equity_real) * 100;    // %
-            $equity_gain_percent  = (($equity_real - $paid_up_capital) / $paid_up_capital) * 100;   // %
+            $true_leverage = ($equity_real > 0)
+                ? ($summary_no_vat_ON_STATE / $equity_real)
+                : 0;
+
+            $leverage_vs_capital = ($paid_up_capital > 0)
+                ? ($summary_no_vat_ON_STATE / $paid_up_capital)
+                : 0;
+
+            $turnover_times = ($summary_no_vat_ON_STATE > 0)
+                ? ($loan_summary_no_vat / $summary_no_vat_ON_STATE)
+                : 0;
+
+            $roi_total = ($paid_up_capital > 0)
+                ? ($retained_earnings / $paid_up_capital) * 100
+                : 0;
+
+            $portfolio_yield = ($summary_no_vat_ON_STATE > 0)
+                ? ($interest_net_12m / $summary_no_vat_ON_STATE) * 100
+                : 0;
+
+            $cash_buffer_percent = ($summary_no_vat_ON_STATE > 0)
+                ? ($sum_land_account / $summary_no_vat_ON_STATE) * 100
+                : 0;
+
+            $cash_equity_percent = ($equity_real > 0)
+                ? ($sum_land_account / $equity_real) * 100
+                : 0;
+
+            $equity_gain_percent = ($paid_up_capital > 0)
+                ? (($equity_real - $paid_up_capital) / $paid_up_capital) * 100
+                : 0;
 
             $roi = $roi_total; // เช่น 57.9
 
@@ -3299,7 +3322,9 @@ class Loan extends BaseController
                 }
             }
             $percent_profit = 0;
-            $percent_profit = $AVERAGE / $loan_summary_no_vat * 100;
+            $percent_profit = ($loan_summary_no_vat > 0)
+                ? ($AVERAGE / $loan_summary_no_vat) * 100
+                : 0;
 
             if ($percent_profit < 0) {
                 $percent_Color = "tx-danger";
@@ -3628,18 +3653,18 @@ class Loan extends BaseController
         $Sum_price =  $Month_Jan_Diff_Payment_Month + $Month_Feb_Diff_Payment_Month + $Month_Mar_Diff_Payment_Month + $Month_Apr_Diff_Payment_Month + $Month_May_Diff_Payment_Month +
             $Month_Jun_Diff_Payment_Month + $Month_Jul_Diff_Payment_Month + $Month_Aug_Diff_Payment_Month + $Month_Sep_Diff_Payment_Month + $Month_Oct_Diff_Payment_Month + $Month_Nov_Diff_Payment_Month + $Month_Dec_Diff_Payment_Month;
 
-        $Month_Revenue_Jan = ($Month_Jan_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_Feb = ($Month_Feb_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_Mar = ($Month_Mar_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_Apr = ($Month_Apr_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_May = ($Month_May_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_Jun = ($Month_Jun_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_Jul = ($Month_Jul_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_Aug = ($Month_Aug_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_Sep = ($Month_Sep_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_Oct = ($Month_Oct_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_Nov = ($Month_Nov_Diff_Payment_Month / $Sum_price) * 100;
-        $Month_Revenue_Dec = ($Month_Dec_Diff_Payment_Month / $Sum_price) * 100;
+        $Month_Revenue_Jan = ($Sum_price > 0) ? ($Month_Jan_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_Feb = ($Sum_price > 0) ? ($Month_Feb_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_Mar = ($Sum_price > 0) ? ($Month_Mar_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_Apr = ($Sum_price > 0) ? ($Month_Apr_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_May = ($Sum_price > 0) ? ($Month_May_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_Jun = ($Sum_price > 0) ? ($Month_Jun_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_Jul = ($Sum_price > 0) ? ($Month_Jul_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_Aug = ($Sum_price > 0) ? ($Month_Aug_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_Sep = ($Sum_price > 0) ? ($Month_Sep_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_Oct = ($Sum_price > 0) ? ($Month_Oct_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_Nov = ($Sum_price > 0) ? ($Month_Nov_Diff_Payment_Month / $Sum_price) * 100 : 0;
+        $Month_Revenue_Dec = ($Sum_price > 0) ? ($Month_Dec_Diff_Payment_Month / $Sum_price) * 100 : 0;
         // $Month_Revenue = [
         //     10,0,0,0,0,90,0,0,0,0,0,0
         // ];
