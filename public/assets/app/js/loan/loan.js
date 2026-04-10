@@ -851,6 +851,22 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
     formData.append("imageFile", imageFile);
   }
 
+  let loanWithoutVat = parseFloat(form.find('input[name=loan_without_vat]').val()) || 0;
+
+  if (loanWithoutVat <= 0) {
+    Swal.fire({
+      text: "ยอดสินเชื่อต้องมากกว่า 0",
+      icon: "error",
+      buttonsStyling: false,
+      confirmButtonText: "ตกลง",
+      customClass: {
+        confirmButton: "btn btn-primary"
+      }
+    });
+
+    return false;
+  }
+  
   var loan_list = form.parsley();
   if (loan_list.isValid()) {
     $(".btn-add-loan").text("กำลังบันทึก...").prop("disabled", true); // 🔒 Disable ปุ่ม
