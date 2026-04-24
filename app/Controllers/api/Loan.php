@@ -2,7 +2,7 @@
 
 namespace App\Controllers\api;
 
-date_default_timezone_set('Asia/Jakarta');
+date_default_timezone_set('Asia/Bangkok');
 
 use App\Controllers\BaseController;
 

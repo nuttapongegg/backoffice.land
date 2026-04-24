@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-date_default_timezone_set('Asia/Jakarta');
+date_default_timezone_set('Asia/Bangkok');
 
 use App\Controllers\BaseController;
 use App\Models\RebuildModel;
@@ -14,6 +14,7 @@ use App\Models\EmployeeLogModel;
 use App\Models\OwnerLoanModel;
 use App\Models\SettingLandModel;
 use App\Models\OwnerSettingModel;
+use App\Models\OwnerLoanLedgerModel;
 
 use Smalot\PdfParser\Parser;
 
@@ -24,6 +25,7 @@ class OwnerLoan extends BaseController
     private OwnerLoanModel $OwnerLoanModel;
     private SettingLandModel $SettingLandModel;
     private OwnerSettingModel $OwnerSettingModel;
+    private OwnerLoanLedgerModel $OwnerLoanLedgerModel;
     private $http;
 
     private string $s3_bucket;
@@ -53,6 +55,7 @@ class OwnerLoan extends BaseController
         $this->OwnerLoanModel = new OwnerLoanModel();
         $this->SettingLandModel = new SettingLandModel();
         $this->OwnerSettingModel = new OwnerSettingModel();
+        $this->OwnerLoanLedgerModel = new OwnerLoanLedgerModel();
         $this->http = new Client();
 
         // Environment Variables
@@ -109,7 +112,7 @@ class OwnerLoan extends BaseController
     {
         $date = $this->request->getGet('date') ?? '';
 
-        $data = $this->OwnerLoanModel->getAllDataOwnerLoanOn($date);
+        $data = $this->OwnerLoanModel->getAllOwnerLoanWithLog($date);
 
         return $this->response->setJSON([
             'status' => 200,
@@ -292,6 +295,7 @@ class OwnerLoan extends BaseController
             ];
 
             $res = $this->OwnerLoanModel->createOwnerLoan($ownerLoanData);
+
             $owner_loan_id = (int) ($res['id'] ?? 0);
             $owner_code    = (string) ($res['owner_code'] ?? '');
 
@@ -302,6 +306,14 @@ class OwnerLoan extends BaseController
                     'message' => 'เพิ่มรายการไม่สำเร็จ (createOwnerLoan)'
                 ]);
             }
+
+            $this->OwnerLoanLedgerModel->insert([
+                'owner_loan_id' => $owner_loan_id,
+                'log_date'      => $owner_loan_date,
+                'type'          => 'INIT',
+                'amount'        => $amount,
+                'note'          => 'create loan',
+            ]);
 
             // ----------------------------
             // 2) เงินเข้า "บัญชี"
@@ -483,6 +495,7 @@ class OwnerLoan extends BaseController
     public function ajaxPayoffToday()
     {
         try {
+
             $owner_loan_id   = (int)$this->request->getPost('owner_loan_id');
             $pay_date        = trim((string)$this->request->getPost('pay_date'));
             $pay_amount_raw  = (string)$this->request->getPost('pay_amount');
@@ -503,60 +516,82 @@ class OwnerLoan extends BaseController
                 $pay_date = date('Y-m-d');
             }
 
-            // 1) loan
+            // -------------------------
+            // 1. loan
+            // -------------------------
             $loan = $this->OwnerLoanModel->getOwnerLoanById($owner_loan_id);
             if (!$loan) return $this->response->setJSON(['ok' => false, 'message' => 'ไม่พบรายการยืม']);
 
-            $loanStatus = strtoupper((string)($loan->status ?? 'OPEN'));
-            if (in_array($loanStatus, ['CANCEL', 'CANCELLED', 'CLOSED', 'PAID'], true)) {
-                return $this->response->setJSON(['ok' => false, 'message' => 'รายการนี้ถูกปิด/ยกเลิกแล้ว']);
+            if (in_array(strtoupper($loan->status), ['CANCEL', 'CLOSED', 'PAID'])) {
+                return $this->response->setJSON(['ok' => false, 'message' => 'รายการนี้ปิดแล้ว']);
             }
 
+            // -------------------------
+            // 2. log ล่าสุด (ตัวจริง)
+            // -------------------------
+            $balanceNow = $this->OwnerLoanLedgerModel->getBalance($owner_loan_id);
+
+            if ($balanceNow <= 0) {
+                return $this->response->setJSON([
+                    'ok' => false,
+                    'message' => 'ไม่พบยอดเงินกู้'
+                ]);
+            }
+
+            // -------------------------
+            // 3. เงินต้นคงเหลือจริง
+            // -------------------------
+            $paidPrincipal = (float)$this->OwnerLoanModel->getPaidPrincipalTotalActive($owner_loan_id);
+            $principalRemain = max(0, (float)$loan->amount - $paidPrincipal);
+
+            // -------------------------
+            // 🔥 หา rate (% ดอก)
+            // -------------------------
             $owner_setting = $this->OwnerSettingModel->getOwnerSettingAll();
+            $ratePercent = $loan->interest_rate ?? $owner_setting->default_interest_rate;
 
-            // 2) last active payment
-            $last = $this->OwnerLoanModel->getLastPaymentActive($owner_loan_id);
+            // -------------------------
+            // 🔥 หา days (จำนวนวัน)
+            // -------------------------
+            $lastPayDate = $this->OwnerLoanModel->getLastActivePayDate($owner_loan_id);
 
-            $startDate = $last->pay_date ?? $loan->owner_loan_date;
-            $principalStart = isset($last->principal_balance) ? (float)$last->principal_balance : (float)$loan->amount;
-            if ($principalStart < 0) $principalStart = 0;
-
-            if ($principalStart <= 0) {
-                // ปิดสถานะให้ตรง
-                $this->OwnerLoanModel->closeOwnerLoanById($owner_loan_id, $employee_id, 'Auto close: principal already 0');
-                return $this->response->setJSON(['ok' => false, 'message' => 'รายการนี้ปิดยอดเงินต้นแล้ว']);
+            if (!$lastPayDate) {
+                $lastPayDate = $loan->owner_loan_date;
             }
 
-            // 3) days diff
-            $d1 = new \DateTime($startDate);
+            $d1 = new \DateTime($lastPayDate);
             $d2 = new \DateTime($pay_date);
-            $days = (int)$d1->diff($d2)->format('%r%a');
+
+            $days = (int)$d1->diff($d2)->format('%a');
             if ($days < 0) $days = 0;
+            // -------------------------
+            // 4. ดอกสะสม (จาก log)
+            // -------------------------
+            $interestDue = round(max(0, $balanceNow - $principalRemain), 2);
 
-            // 4) interest due
-            $ratePercent = $loan->interest_rate ?? $owner_setting->default_interest_rate; // ดอกเบี้ยต่อปี
-            $ratePerYear = $ratePercent / 100;
-            $interestDue = round($principalStart * $ratePerYear * $days / 365, 2);
+            $totalDueToday = $balanceNow;
 
-            // ✅ ยอดปิดวันนี้
-            $totalDueToday = round($principalStart + $interestDue, 2);
-
-            // ✅ กันจ่ายเกิน: รับจริงไม่เกินยอดปิด (ยอดเกินเอาไปแจ้ง user)
-            // ✅ กันจ่ายเกิน: ยอดที่นำไปตัดหนี้จริง (ไม่เกินยอดปิดวันนี้)
+            // -------------------------
+            // 5. กันจ่ายเกิน
+            // -------------------------
             $pay_amount_apply = min($pay_amount_input, $totalDueToday);
             $overpay_amount   = round(max(0, $pay_amount_input - $pay_amount_apply), 2);
 
-            // ... allocate โดยใช้ $pay_amount_apply
+            // -------------------------
+            // 6. แยก ดอก / ต้น
+            // -------------------------
             $interestAmount  = round(min($pay_amount_apply, $interestDue), 2);
             $principalAmount = round(max(0, $pay_amount_apply - $interestAmount), 2);
 
-
-            if ($principalAmount > $principalStart) $principalAmount = $principalStart;
-
-            $principalBalance = round($principalStart - $principalAmount, 2);
+            // -------------------------
+            // 7. เงินต้นคงเหลือใหม่
+            // -------------------------
+            $principalBalance = round($principalRemain - $principalAmount, 2);
             if ($principalBalance < 0) $principalBalance = 0;
 
-            // 6) upload file
+            // -------------------------
+            // 8. upload file
+            // -------------------------
             $file_name = null;
             $upload = $this->request->getFile('pay_file');
             if ($upload && $upload->isValid() && !$upload->hasMoved()) {
@@ -565,25 +600,24 @@ class OwnerLoan extends BaseController
 
             $now = date('Y-m-d H:i:s');
 
-            // ----------------------------
-            // 6.5) เช็คเงินบัญชีโอนออกก่อน (สำคัญมาก)
-            // ----------------------------
+            // -------------------------
+            // 9. เช็คเงินบัญชี
+            // -------------------------
             $land_account = $this->SettingLandModel->getSettingLandByID($land_account_id);
             if (!$land_account) {
-                return $this->response->setJSON(['ok' => false, 'message' => 'ไม่พบบัญชีโอนออก']);
+                return $this->response->setJSON(['ok' => false, 'message' => 'ไม่พบบัญชี']);
             }
 
-            $land_account_cash_new = (float)$land_account->land_account_cash - (float)$pay_amount_apply;
+            $land_account_cash_new = (float)$land_account->land_account_cash - $pay_amount_apply;
 
             if ($land_account_cash_new < 0) {
-                return $this->response->setJSON([
-                    'ok' => false,
-                    'message' => 'ยอดเงินในบัญชีไม่พอ',
-                ]);
+                return $this->response->setJSON(['ok' => false, 'message' => 'ยอดเงินไม่พอ']);
             }
 
-            // 7) insert
-            $ok = $this->OwnerLoanModel->insertPayment([
+            // -------------------------
+            // 10. insert payment
+            // -------------------------
+            $paymentId  = $this->OwnerLoanModel->insertPayment([
                 'owner_loan_id'     => $owner_loan_id,
                 'pay_date'          => $pay_date,
                 'pay_amount'        => $pay_amount_apply,
@@ -601,55 +635,62 @@ class OwnerLoan extends BaseController
                 'created_at'        => $now,
                 'updated_at'        => $now,
             ]);
-            if (!$ok) {
+
+            if (!$paymentId) {
                 return $this->response->setJSON(['ok' => false, 'message' => 'บันทึกไม่สำเร็จ']);
             }
 
-            // ----------------------------
-            // 8) เงินออกจาก "บัญชีโอนออก" + เก็บรายงานบัญชี
-            // ----------------------------
+            // -------------------------
+            // 11. 🔥 update log (สำคัญสุด)
+            // -------------------------
+            $newBalance = $balanceNow - $pay_amount_apply;
+
+            // จ่ายเงิน
+            $this->OwnerLoanLedgerModel->insert([
+                'owner_loan_id' => $owner_loan_id,
+                'log_date'      => $pay_date,
+                'type'          => 'PAY',
+                'amount'        => -1 * $pay_amount_apply,
+                'ref_id'        => $paymentId,
+            ]);
+
+            // -------------------------
+            // 12. update บัญชี
+            // -------------------------
             $this->SettingLandModel->updateSettingLandByID($land_account->id, [
                 'land_account_cash' => $land_account_cash_new,
             ]);
 
+            // -------------------------
+            // 🔥 12.1 บันทึก report (ต้องมี)
+            // -------------------------
             $this->SettingLandModel->insertSettingLandReport([
                 'setting_land_id' => $land_account_id,
                 'setting_land_report_detail' =>
                 'ชำระคืนเงินกู้เจ้าของ(' . $loan->owner_code . ')',
-                'setting_land_report_money' => -1 * (float)$pay_amount_apply,
+                'setting_land_report_money' => (float)$pay_amount_apply,
                 'setting_land_report_note' => ($note !== '' ? $note : null),
                 'setting_land_report_account_balance' => $land_account_cash_new,
                 'employee_id' => $employee_id,
                 'employee_name' => $username,
             ]);
 
-            // ✅ ปิดรายการถ้าเงินต้นหมด
-            $closed = 0;
-            if ($principalBalance <= 0.00) {
-                $this->OwnerLoanModel->closeOwnerLoanById($owner_loan_id, $employee_id, 'Auto close: principal paid off');
-                $closed = 1;
+            // -------------------------
+            // 13. ปิด loan ถ้าหมด
+            // -------------------------
+            if ($principalBalance <= 0) {
+                $this->OwnerLoanModel->closeOwnerLoanById($owner_loan_id, $employee_id);
             }
 
             return $this->response->setJSON([
                 'ok' => true,
-                'message' => $overpay_amount > 0 ? 'บันทึกสำเร็จ (มีเงินเกิน)' : 'บันทึกสำเร็จ',
-                'calc' => [
-                    'principal_start'   => $principalStart,
-                    'days_diff'         => $days,
-                    'interest_due'      => $interestDue,
-                    'total_due_today'   => $totalDueToday,
-                    'pay_amount_input'  => $pay_amount_input,
-                    'pay_amount_apply'   => $pay_amount_apply,
-                    'overpay_amount'    => $overpay_amount,
-                    'interest_amount'   => $interestAmount,
-                    'principal_amount'  => $principalAmount,
-                    'principal_balance' => $principalBalance,
-                    'closed'            => $closed,
-                ]
+                'message' => 'บันทึกสำเร็จ',
             ]);
         } catch (\Throwable $e) {
-            log_message('error', 'OwnerLoan pay error: ' . $e->getMessage());
-            return $this->response->setJSON(['ok' => false, 'message' => 'ผิดพลาด: ' . $e->getMessage()]);
+            return $this->response->setJSON([
+                'ok' => false,
+                'message' => 'ผิดพลาด: ' . $e->getMessage()
+            ]);
         }
     }
 
@@ -711,8 +752,17 @@ class OwnerLoan extends BaseController
             $ok = $this->OwnerLoanModel->cancelPaymentById($id);
             if (!$ok) return $this->response->setJSON(['ok' => false, 'message' => 'ยกเลิกไม่สำเร็จ']);
 
-            // ✅ C) reopen สถานะ loan
+            // -------------------------
+            // C) reopen loan
+            // -------------------------
             $this->OwnerLoanModel->reopenOwnerLoanById($ownerLoanId);
+
+            // -------------------------
+            // 🔥 ลบ ledger ของวันนั้น
+            // -------------------------
+            $payDate = $row->pay_date;
+
+            $this->OwnerLoanLedgerModel->deleteLedgerByPaymentId($id);
 
             return $this->response->setJSON(['ok' => true, 'message' => 'ยกเลิกสำเร็จ']);
         } catch (\Throwable $e) {
@@ -789,15 +839,22 @@ class OwnerLoan extends BaseController
     {
         $loan = $this->OwnerLoanModel->getAllDataOwnerLoanByCode($owner_code);
         $owner_setting = $this->OwnerSettingModel->getOwnerSettingAll();
-        if (!$loan) return $this->response->setJSON(['ok' => false, 'message' => 'ไม่พบรายการยืม']);
 
-        $pay_date = date('Y-m-d'); // บังคับเป็นวันนี้
+        if (!$loan) {
+            return $this->response->setJSON([
+                'ok' => false,
+                'message' => 'ไม่พบรายการยืม'
+            ]);
+        }
 
+        $pay_date = date('Y-m-d');
         $ownerLoanId = (int)$loan->id;
 
-        // ✅ เงินต้นคงเหลือจริง (หลัง cancel ก็ถูก)
-        $paidPrincipal = $this->OwnerLoanModel->getPaidPrincipalTotalActive($ownerLoanId);
-        $principalRemain = max(0, (float)$loan->amount - (float)$paidPrincipal);
+        // -------------------------
+        // เงินต้นคงเหลือ
+        // -------------------------
+        $paidPrincipal = (float)$this->OwnerLoanModel->getPaidPrincipalTotalActive($ownerLoanId);
+        $principalRemain = max(0, (float)$loan->amount - $paidPrincipal);
 
         if ($principalRemain <= 0) {
             return $this->response->setJSON([
@@ -807,26 +864,47 @@ class OwnerLoan extends BaseController
                     'principal_remain' => 0,
                     'interest' => 0,
                     'total_due' => 0,
-                    'start_date' => null,
                     'days_diff' => 0,
+                    'start_date' => null,
+                    'interest_rate' => 0,
                 ]
             ]);
         }
 
-        // ✅ วันเริ่มคิดดอก = วัน ACTIVE ล่าสุดจริงๆ
+        // -------------------------
+        // 🔥 ใช้ ledger เป็นตัวจริง
+        // -------------------------
+        $balanceNow = $this->OwnerLoanLedgerModel->getBalance($ownerLoanId);
+
+        if ($balanceNow <= 0) {
+            return $this->response->setJSON([
+                'ok' => false,
+                'message' => 'ยังไม่มีข้อมูล ledger'
+            ]);
+        }
+
+        // -------------------------
+        // ดอกสะสม
+        // -------------------------
+        $interest = round(max(0, $balanceNow - $principalRemain), 2);
+
+        // -------------------------
+        // ยอดรวม
+        // -------------------------
+        $totalDue = $balanceNow;
+
+        // -------------------------
+        // 🔥 คำนวณ UI (จาก logic เก่า)
+        // -------------------------
         $startDate = $this->OwnerLoanModel->getLastActivePayDate($ownerLoanId);
         if (!$startDate) $startDate = $loan->owner_loan_date;
 
         $d1 = new \DateTime($startDate);
         $d2 = new \DateTime($pay_date);
-        $days = (int)$d1->diff($d2)->format('%r%a');
+        $days = (int)$d1->diff($d2)->format('%a');
         if ($days < 0) $days = 0;
 
-        $ratePercent = $loan->interest_rate ?? $owner_setting->default_interest_rate; // ดอกเบี้ยต่อปี
-        $ratePerYear = $ratePercent / 100;
-
-        $interest = round($principalRemain * $ratePerYear * $days / 365, 2);
-        $totalDue = round($principalRemain + $interest, 2);
+        $ratePercent = $loan->interest_rate ?? $owner_setting->default_interest_rate;
 
         return $this->response->setJSON([
             'ok' => true,
@@ -834,6 +912,7 @@ class OwnerLoan extends BaseController
                 'pay_date' => $pay_date,
                 'start_date' => $startDate,
                 'days_diff' => $days,
+                'interest_rate' => $ratePercent,
                 'principal_remain' => $principalRemain,
                 'interest' => $interest,
                 'total_due' => $totalDue,

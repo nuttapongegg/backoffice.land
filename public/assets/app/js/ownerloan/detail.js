@@ -273,7 +273,7 @@
         const rows = res.rows || [];
         if (!rows.length) {
           $tbody.html(
-            `<tr><td colspan="8" class="text-center text-muted">ยังไม่มีประวัติการชำระ</td></tr>`,
+            `<tr><td colspan="11" class="text-center text-muted">ยังไม่มีประวัติการชำระ</td></tr>`,
           );
           return;
         }

@@ -588,9 +588,11 @@ class OwnerLoanModel
             ->getRow();
     }
 
-    public function insertPayment(array $data)
+    public function insertPayment($data)
     {
-        return $this->db->table('owner_loan_payment')->insert($data);
+        $builder = $this->db->table('owner_loan_payment');
+        $builder->insert($data);
+        return $this->db->insertID();
     }
 
     public function cancelPaymentById($id)
@@ -983,5 +985,186 @@ class OwnerLoanModel
         $builder = $this->db->table('owner_loan');
 
         return $builder->where('id', $id)->update($data);
+    }
+
+    public function getAllOpenOwnerLoans()
+    {
+        return $this->db->table('owner_loan')
+            ->where('status', 'OPEN')
+            ->where('deleted_at', null)
+            ->get()
+            ->getResult();
+    }
+
+    public function getAllOwnerLoanWithLog($date = '')
+    {
+        $whereDate = '';
+        $params = [];
+
+        if (!empty($date)) {
+            $dateExplode = explode(" to ", $date);
+            $dateStart = trim($dateExplode[0]);
+            $dateEnd   = isset($dateExplode[1]) ? trim($dateExplode[1]) : $dateStart;
+
+            $whereDate = " 
+            AND owner_loan.owner_loan_date >= ? 
+            AND owner_loan.owner_loan_date <= ? 
+        ";
+            $params[] = $dateStart;
+            $params[] = $dateEnd;
+        }
+
+        $sql = "
+    SELECT 
+        owner_loan.id,
+        owner_loan.owner_code,
+        owner_loan.owner_loan_date,
+        owner_loan.amount,
+        owner_loan.note,
+        owner_loan.status,
+        owner_loan.username,
+
+        setting_land.land_account_name,
+
+        -- =========================
+        -- 🔥 balance ปัจจุบัน (ledger)
+        -- =========================
+        COALESCE(ledger.balance, 0) AS balance_now,
+
+        -- =========================
+        -- เงินต้นคงเหลือ
+        -- =========================
+        (
+            owner_loan.amount - COALESCE(SUM(
+                CASE 
+                    WHEN owner_loan_payment.status = 'ACTIVE'
+                    THEN owner_loan_payment.principal_amount
+                    ELSE 0
+                END
+            ), 0)
+        ) AS outstanding,
+
+        -- =========================
+        -- 🔥 ดอกสะสม (เหมือนของเดิม)
+        -- =========================
+        ROUND(
+            COALESCE(ledger.balance, 0) -
+            (
+                owner_loan.amount - COALESCE(SUM(
+                    CASE 
+                        WHEN owner_loan_payment.status = 'ACTIVE'
+                        THEN owner_loan_payment.principal_amount
+                        ELSE 0
+                    END
+                ), 0)
+            )
+        , 2) AS interest_due_today,
+
+        -- =========================
+        -- ดอกต่อวัน
+        -- =========================
+        COALESCE((
+            SELECT SUM(owner_loan_ledger.amount)
+            FROM owner_loan_ledger
+            WHERE owner_loan_ledger.owner_loan_id = owner_loan.id
+            AND owner_loan_ledger.type = 'INTEREST'
+            AND owner_loan_ledger.log_date = CURDATE()
+        ), 2) AS interest_per_day,
+
+        -- =========================
+        -- 🔥 ยอดปิดวันนี้ (สำคัญ)
+        -- =========================
+        COALESCE(ledger.balance, 0) AS total_due_today,
+
+        -- =========================
+        -- ดอก %
+        -- =========================
+        COALESCE(owner_loan.interest_rate, owner_setting.default_interest_rate) AS interest_rate_used,
+
+        -- =========================
+        -- วันตั้งแต่จ่ายล่าสุด
+        -- =========================
+        DATEDIFF(
+            CURDATE(),
+            COALESCE(
+                (
+                    SELECT MAX(pay_date)
+                    FROM owner_loan_payment
+                    WHERE owner_loan_id = owner_loan.id
+                    AND status = 'ACTIVE'
+                ),
+                owner_loan.owner_loan_date
+            )
+        ) AS days_since_last_pay,
+
+        -- =========================
+        -- จ่ายแล้ว
+        -- =========================
+        COALESCE(SUM(
+            CASE 
+                WHEN owner_loan_payment.status = 'ACTIVE'
+                THEN owner_loan_payment.pay_amount
+                ELSE 0
+            END
+        ), 0) AS paid_total,
+
+        COALESCE(SUM(
+            CASE 
+                WHEN owner_loan_payment.status = 'ACTIVE'
+                THEN owner_loan_payment.principal_amount
+                ELSE 0
+            END
+        ), 0) AS paid_principal_total,
+
+        COALESCE(SUM(
+            CASE 
+                WHEN owner_loan_payment.status = 'ACTIVE'
+                THEN owner_loan_payment.interest_amount
+                ELSE 0
+            END
+        ), 0) AS paid_interest_total,
+
+        MAX(owner_loan_payment.pay_date) AS last_pay_date,
+
+        DATEDIFF(CURDATE(), owner_loan.owner_loan_date) AS days_from_loan,
+
+        ROUND(
+            (
+                COALESCE(SUM(
+                    CASE 
+                        WHEN owner_loan_payment.status = 'ACTIVE'
+                        THEN owner_loan_payment.principal_amount
+                        ELSE 0
+                    END
+                ), 0) / NULLIF(owner_loan.amount, 0)
+            ) * 100
+        , 2) AS principal_progress_pct
+
+    FROM owner_loan
+
+    -- 🔥 ledger รวมครั้งเดียว (เร็ว + ถูก)
+    LEFT JOIN (
+        SELECT owner_loan_id, SUM(amount) AS balance
+        FROM owner_loan_ledger
+        GROUP BY owner_loan_id
+    ) ledger ON ledger.owner_loan_id = owner_loan.id
+
+    LEFT JOIN owner_loan_payment
+        ON owner_loan_payment.owner_loan_id = owner_loan.id
+
+    LEFT JOIN setting_land
+        ON setting_land.id = owner_loan.land_account_id
+
+    LEFT JOIN owner_setting ON owner_setting.id = 1
+
+    WHERE owner_loan.deleted_at IS NULL
+      AND owner_loan.status = 'OPEN'
+      {$whereDate}
+
+    GROUP BY owner_loan.id
+    ORDER BY owner_loan.id DESC
+    ";
+
+        return $this->db->query($sql, $params)->getResult();
     }
 }
