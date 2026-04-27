@@ -90,4 +90,17 @@ class OwnerLoanLedgerModel
             ->where('type', 'PAY')
             ->delete();
     }
+
+    public function getLastInterestDate($loanId)
+    {
+        return $this->db->table('owner_loan_ledger')
+            ->select('log_date')
+            ->where('owner_loan_id', $loanId)
+            ->where('type', 'INTEREST')
+            ->orderBy('log_date', 'DESC')
+            ->limit(1)
+            ->get()
+            ->getRow()
+            ->log_date ?? null;
+    }
 }

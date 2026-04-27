@@ -631,6 +631,35 @@ $("#payment_now").keyup(function () {
   $("#close_loan_payment").val(pay_now);
 });
 
+// ================= WHT =================
+
+// toggle
+$(document).on("change", "#withholding_tax_chk", function () {
+  if ($(this).is(":checked")) {
+    $("#col_net").show();
+    $("#tax_section").slideDown();
+
+    $("#result_row").slideDown(); // ✅ เพิ่ม
+
+    calculateTaxWHT();
+  } else {
+    $("#col_net").hide();
+    $("#tax_section").slideUp();
+
+    $("#result_row").slideUp(); // ✅ เพิ่ม
+
+    $("#main_amount_display").val("");
+    $("#tax_amount_display").val("");
+  }
+});
+
+// ===== trigger =====
+$(document).on("keyup", "#payment_now, #tax_percent", function () {
+  if ($("#withholding_tax_chk").is(":checked")) {
+    calculateTaxWHT();
+  }
+});
+
 $(document).delegate(".btn-add-loan-payment", "click", function (e) {
   let searchParams = window.location.pathname;
   var searchParams_ = searchParams.split("/loan/detail/");
@@ -641,6 +670,15 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
   let formAddLoanPay = modalPayLoan.find("form").attr("id");
   let form = modalPayLoan.find("form");
   var formData = new FormData(document.getElementById(formAddLoanPay));
+
+  // ================= WHT =================
+  formData.append(
+    "withholding_tax",
+    $("#withholding_tax_chk").is(":checked") ? 1 : 0,
+  );
+  formData.append("tax_percent", $("#tax_percent").val());
+  formData.append("tax_amount", $("#tax_amount").val());
+  formData.append("tax_account_id", $("#tax_account_id").val());
 
   const date = new Date(loan_installment_date);
   const newDate = new Date(date.setMonth(date.getMonth() + (loan_period - 1)));
@@ -809,6 +847,9 @@ function installmentTab() {
   $("#payment_now").val(payNow);
 
   $("#payment_now").attr("readonly", false);
+  if ($("#withholding_tax_chk").is(":checked")) {
+    calculateTaxWHT();
+  }
 }
 
 function closeTab() {
@@ -828,6 +869,10 @@ function closeTab() {
   $("#payment_now").val(close_pay);
   $("#pay_sum").val(Number(total_loan_payment));
   $("#price_month").html("<font>" + close_pay + "</font>");
+
+  if ($("#withholding_tax_chk").is(":checked")) {
+    calculateTaxWHT();
+  }
 }
 
 function closeLoanTab() {
@@ -849,6 +894,10 @@ function closeLoanTab() {
   $("#price_month").html("<font>" + close_pay + "</font>");
 
   $("#payment_now").attr("readonly", true);
+
+  if ($("#withholding_tax_chk").is(":checked")) {
+    calculateTaxWHT();
+  }
 }
 
 function dataTablePaymentDetail() {
@@ -1027,13 +1076,15 @@ function tableCall(data) {
         data: null,
         className: "text-center",
         render: function (data, type, row, meta) {
-
           const table = $("#tablePayment").DataTable();
           const rows = table.rows().data().toArray();
 
           const normalize = (d) => {
             const date = new Date(d);
-            return new Date(date.getFullYear(),date.getMonth(), date.getDate(),
+            return new Date(
+              date.getFullYear(),
+              date.getMonth(),
+              date.getDate(),
             );
           };
 
@@ -1372,6 +1423,28 @@ $("body").on("click", "#btn_edit_link_map", function () {
     $btn.prop("disabled", false).text("บันทึกลิงก์แผนที่"); // 🔓 เปิดปุ่มอีกครั้ง
   }
 });
+
+function calculateTaxWHT() {
+  let amount =
+    Number(
+      $("#payment_now")
+        .val()
+        .replace(/[^0-9.-]+/g, ""),
+    ) || 0;
+
+  let percent = 1.25; // ✅ fix เลย
+
+  let tax = (amount * percent) / 100;
+  let net = amount - tax;
+
+  $("#main_amount_display").val(
+    net.toLocaleString() + " บาท (" + (100 - percent) + "%)",
+  );
+
+  $("#tax_amount_display").val(
+    tax.toLocaleString() + " บาท (" + percent + "%)",
+  );
+}
 
 $(document).ready(function () {
   // ✅ ตรวจสอบว่าเป็น iOS หรือไม่

@@ -836,7 +836,7 @@
 
                                 </div>
                             </div>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <div class="col-6">
                                     <div class="row align-items-center">
                                         <div class="col-md-4 tx-right">
@@ -871,8 +871,105 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div> -->
+                            <div class="row mb-2">
+                                <div class="col-12 text-end">
+                                    <label>
+                                        <input type="checkbox" id="withholding_tax_chk">
+                                        แยกรายการภาษี 1.25%
+                                    </label>
+                                </div>
                             </div>
                             <div class="row">
+                                <!-- ✅ บัญชี -->
+                                <div class="col-6" id="col_account">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4 tx-right">
+                                            <label class="form-label mt-0" for="account_name">บัญชีสินเชื่อ <span class="tx-danger">*</span></label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <select name="account_name" id="account_name" class="form-control" required>
+                                                <?php foreach ($land_accounts as $acc) { ?>
+                                                    <option value="<?= $acc->id ?>"><?= $acc->land_account_name ?></option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ✅ ช่องทาง -->
+                                <div class="col-6" id="col_payment">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4 tx-right">
+                                            <label class="form-label mt-0" for="customer_payment_type">ช่องทางการชำระ <span class="tx-danger">*</span></label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <select name="customer_payment_type" id="customer_payment_type" class="form-control" required>
+                                                <option value="">เลือก</option>
+                                                <option value="โอน">โอน</option>
+                                                <option value="เงินสด">เงินสด</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ✅ ภาษี -->
+                            <div id="tax_section" style="display:none;" class="mt-2">
+                                <div class="row">
+
+                                    <div class="col-6">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4 tx-right">
+                                                <label class="form-label mt-0">บัญชีภาษี<span class="tx-danger">*</span></label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <select id="tax_account_id" class="form-control">
+                                                    <option value="">-- เลือกบัญชี --</option>
+                                                    <?php foreach ($land_accounts as $acc) { ?>
+                                                        <option value="<?= $acc->id ?>"><?= $acc->land_account_name ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- row แสดงผล -->
+                            <div class="row mt-2" id="result_row" style="display:none;">
+
+                                <!-- ยอดเงินเข้า -->
+                                <div class="col-6">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4 tx-right">
+                                            <label class="form-label mt-0">ยอดเข้าบัญชีหลัก</label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" id="main_amount_display" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ยอดที่ใช้ยื่นภาษี (1.25%) -->
+                                <div class="col-6">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4 tx-right">
+                                            <label class="form-label mt-0">ยอดที่ใช้ยื่นภาษี</label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" id="tax_amount_display" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row  mt-2">
                                 <div class="col-6">
                                     <div class="collapse" id="bill_credit">
                                         <div class="row align-items-center">

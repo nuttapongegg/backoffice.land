@@ -14,8 +14,8 @@ class OwnerLoanInterest extends BaseController
     public function run()
     {
         $loanModel = new OwnerLoanModel();
-        $ledger = new OwnerLoanLedgerModel();
-        $setting = new OwnerSettingModel();
+        $ledger    = new OwnerLoanLedgerModel();
+        $setting   = new OwnerSettingModel();
 
         $today = date('Y-m-d');
 
@@ -25,28 +25,61 @@ class OwnerLoanInterest extends BaseController
 
         foreach ($loans as $loan) {
 
-            // ❗ กันซ้ำ
-            if ($ledger->hasInterestToday($loan->id, $today)) continue;
+            // -------------------------
+            // 🔥 หา “วันล่าสุดที่มีดอก”
+            // -------------------------
+            $lastDate = $ledger->getLastInterestDate($loan->id);
 
-            $balance = (float)$ledger->getBalance($loan->id);
-            if ($balance <= 0) continue;
+            if (!$lastDate) {
+                $lastDate = $loan->owner_loan_date;
+            }
 
-            $rate = (float)($loan->interest_rate ?? $rateDefault);
-            $ratePerDay = ($rate / 100) / 365;
+            $dStart = new \DateTime($lastDate);
+            $dEnd   = new \DateTime($today);
 
-            $interest = round($balance * $ratePerDay, 2);
+            // เริ่มวันถัดไป
+            $current = (clone $dStart)->modify('+1 day');
 
-            if ($interest <= 0) continue;
+            while ($current <= $dEnd) {
 
-            try {
-                $ledger->insert([
-                    'owner_loan_id' => $loan->id,
-                    'log_date'      => $today,
-                    'type'          => 'INTEREST',
-                    'amount'        => $interest,
-                ]);
-            } catch (\Throwable $e) {
-                // กัน duplicate จาก cron ซ้ำ
+                $dateStr = $current->format('Y-m-d');
+
+                // -------------------------
+                // ❗ กันซ้ำ
+                // -------------------------
+                if ($ledger->hasInterestToday($loan->id, $dateStr)) {
+                    $current->modify('+1 day');
+                    continue;
+                }
+
+                // -------------------------
+                // balance ล่าสุด
+                // -------------------------
+                $balance = (float)$ledger->getBalance($loan->id);
+                if ($balance <= 0) break;
+
+                // -------------------------
+                // คิดดอก
+                // -------------------------
+                $rate = (float)($loan->interest_rate ?? $rateDefault);
+                $ratePerDay = ($rate / 100) / 365;
+
+                $interest = round($balance * $ratePerDay, 2);
+
+                if ($interest > 0) {
+                    try {
+                        $ledger->insert([
+                            'owner_loan_id' => $loan->id,
+                            'log_date'      => $dateStr,
+                            'type'          => 'INTEREST',
+                            'amount'        => $interest,
+                        ]);
+                    } catch (\Throwable $e) {
+                        // กันซ้ำ
+                    }
+                }
+
+                $current->modify('+1 day');
             }
         }
 

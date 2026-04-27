@@ -228,6 +228,9 @@ $routes->cli('cronjob/loanstatus', 'LoanStatus::run', ['namespace' => 'App\Contr
 // ส่งแจ้งเตือนรายการสินเชื่อประจำวัน
 $routes->cli('cronjob/loansenddailysummary', 'LoanSendDailySummary::run', ['namespace' => 'App\Controllers\cronjob']);
 
+// บันทึกยอดดอกเบี้ย ownerloan
+$routes->cli('cronjob/ownerloaninterest', 'OwnerLoanInterest::run', ['namespace' => 'App\Controllers\cronjob']);
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
