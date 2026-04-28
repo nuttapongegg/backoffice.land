@@ -42,7 +42,7 @@ function loadLoan(loanCode) {
 
       calInstallment(
         response.message.loan_payment_month,
-        response.message.loan_payment_year_counter * 12
+        response.message.loan_payment_year_counter * 12,
       );
 
       loan_period = response.message.loan_period;
@@ -60,7 +60,7 @@ function loadLoan(loanCode) {
       $("#total_loan_payment").val(response.message.loan_sum_interest);
 
       $("#pay_sum").val(
-        Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, ""))
+        Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, "")),
       );
 
       $("#open_loan_payment").val(response.message.loan_summary_no_vat);
@@ -74,7 +74,7 @@ function loadLoan(loanCode) {
     method: "get",
     success: function (response) {
       let installMentCount = parseInt(
-        response.message.loan_payment_installment
+        response.message.loan_payment_installment,
       );
       $("#installment_count").val(installMentCount);
       $("#payment_id").val(response.message.id);
@@ -112,6 +112,16 @@ $(".modalPaymentLoanClose").click(function () {
   let form = modalPayLoanNoLogin.find("form");
   form.parsley().reset();
   form[0].reset();
+
+  $("#withholding_tax_chk_no_login").prop("checked", false);
+  $("#tax_section_no_login").hide();
+  $("#result_row_no_login").hide();
+
+  $("#tax_account_id_no_login").val("");
+
+  $("#main_amount_display_no_login").val("");
+  $("#tax_amount_display_no_login").val("");
+
   $(".btn-add-loan-payment").text("บันทึก");
   $(".PaymentLoanType1").addClass("active");
   $(".PaymentLoanType2").removeClass("active");
@@ -128,23 +138,76 @@ $("#tablePayment").on("click", ".paymentBTN", function () {
 
   // console.log(id_install);
 
+  // ===== RESET ก่อนเปิด =====
+  $("#withholding_tax_chk_no_login").prop("checked", false);
+  $("#tax_section_no_login").hide();
+  $("#result_row_no_login").hide();
+
+  $("#tax_account_id_no_login").val("");
+  $("#main_amount_display_no_login").val("");
+  $("#tax_amount_display_no_login").val("");
+
   $("#modalPayLoanNoLogin").modal("show");
 
   loadLoan(searchParams_[1] + "###" + id_install);
   $("#installment_bar").addClass("show");
   installmentTab();
 });
-
-$("#payment_now").keyup(function () {
+$("#payment_now").on("keyup change", function () {
   let pay_now = $("#payment_now").val();
 
-  pay_now = Number(pay_now.replace(/[^0-9.-]+/g, ""));
+  pay_now = Number(pay_now.replace(/[^0-9.-]+/g, "")) || 0;
 
   let sum_pay =
     pay_now + Number(loan_payment_sum_installment.replace(/[^0-9.-]+/g, ""));
 
   $("#pay_sum").val(sum_pay);
+
+  if ($("#withholding_tax_chk_no_login").is(":checked")) {
+    calculateTaxWHT_NoLogin();
+  }
 });
+
+// ===== TOGGLE TAX =====
+$(document).on("change", "#withholding_tax_chk_no_login", function () {
+  if ($(this).is(":checked")) {
+    $("#tax_section_no_login").slideDown();
+    $("#result_row_no_login").slideDown();
+
+    $("#tax_account_id_no_login").prop("required", true); // ✔ บังคับ
+
+    calculateTaxWHT_NoLogin();
+  } else {
+    $("#tax_section_no_login").slideUp();
+    $("#result_row_no_login").slideUp();
+
+    $("#tax_account_id_no_login").prop("required", false); // ✔ เอาออก
+    $("#tax_account_id_no_login").val(""); // เคลียร์ค่า
+
+    $("#main_amount_display_no_login").val("");
+    $("#tax_amount_display_no_login").val("");
+  }
+});
+
+function calculateTaxWHT_NoLogin() {
+  let amount =
+    Number(
+      $("#payment_now")
+        .val()
+        .replace(/[^0-9.-]+/g, ""),
+    ) || 0;
+
+  let percent = 1.25;
+
+  let tax = (amount * percent) / 100;
+  let net = amount - tax;
+
+  $("#main_amount_display_no_login").val(
+    net.toLocaleString() + " บาท (98.75%)",
+  );
+
+  $("#tax_amount_display_no_login").val(tax.toLocaleString() + " บาท (1.25%)");
+}
 
 $(document).delegate(".btn-add-loan-payment", "click", function (e) {
   let searchParams = window.location.pathname;
@@ -156,11 +219,18 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
   let form = modalPayLoanNoLogin.find("form");
   var formData = new FormData(document.getElementById(formAddLoanPay));
 
+  formData.append(
+    "withholding_tax_chk",
+    $("#withholding_tax_chk_no_login").is(":checked") ? 1 : 0,
+  );
+
+  formData.append("tax_account_id", $("#tax_account_id_no_login").val());
+
   const date = new Date(loan_installment_date);
   const newDate = new Date(date.setMonth(date.getMonth() + (loan_period - 1)));
 
   const overdue_days = Math.floor(
-    (Date.now() - newDate) / (1000 * 60 * 60 * 24)
+    (Date.now() - newDate) / (1000 * 60 * 60 * 24),
   );
 
   let overdueColor;
@@ -233,7 +303,6 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
 });
 // ฟังก์ชันดำเนินการบันทึก
 function proceedLoanPayment(formData, form) {
-  
   let imageFileInvoice = document.querySelector("#imageFileInvoice");
 
   if (imageFileInvoice.files.length > 0) {
@@ -320,7 +389,7 @@ function dataTablePaymentDetail() {
       for (let i = 0; i < result.length; i++) {
         if (result[i].loan_payment_type == "Close") {
           $("#btn_seting").html(
-            "<div id='btn_seting' class='d-flex justify-content-end'></div>"
+            "<div id='btn_seting' class='d-flex justify-content-end'></div>",
           );
           break;
         }
@@ -328,7 +397,7 @@ function dataTablePaymentDetail() {
         if (result[0].loan_payment_date_fix != null) {
           if (i == 0) {
             result[0].loan_payment_date_fix = new Date(
-              result[0].loan_payment_date_fix
+              result[0].loan_payment_date_fix,
             );
             newDate = new Date(result[0].loan_payment_date_fix);
           } else if (i > 0) {
@@ -392,7 +461,7 @@ function tableCall(data) {
           return (
             '<span class="tx-success">' +
             new Intl.NumberFormat().format(
-              Number(data["loan_payment_amount"]).toFixed(2)
+              Number(data["loan_payment_amount"]).toFixed(2),
             ) +
             "</span>"
           );
@@ -406,7 +475,7 @@ function tableCall(data) {
           return (
             '<span class="tx-success">' +
             new Intl.NumberFormat().format(
-              Number(data["loan_balance"]).toFixed(2)
+              Number(data["loan_balance"]).toFixed(2),
             ) +
             "</span>"
           );
@@ -582,7 +651,7 @@ $("body").on("click", ".pdf_loan", function () {
   window.open(
     url,
     "Doc",
-    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 "
+    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 ",
   );
 });
 
@@ -594,7 +663,7 @@ $("body").on("click", ".pdf_installment_schedule", function () {
   window.open(
     url,
     "Doc",
-    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 "
+    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 ",
   );
 });
 
@@ -606,7 +675,7 @@ $("body").on("click", ".pdf_loan_receipt", function () {
   window.open(
     url,
     "Doc",
-    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 "
+    "menubar=no,toorlbar=no,location=no,scrollbars=yes, status=no,resizable=no,width=992,height=700,top=10,left=10 ",
   );
 });
 
@@ -811,7 +880,10 @@ $(document).ready(function () {
             // แปลงวันที่ก่อนที่จะนำไปใส่ใน input
             let formattedDateImg = formatDateImg(jsonData.date);
             // เติมข้อมูลลงใน input
-            $("input[id=payment_now]").val(amount_thb).addClass("is-valid");
+            $("input[id=payment_now]")
+              .val(amount_thb)
+              .trigger("change") // 👈 สำคัญมาก
+              .addClass("is-valid");
 
             $("input[name=payment_file_date]")
               .val(jsonData.date)
@@ -848,5 +920,15 @@ $(document).ready(function () {
     $("#imageFileInvoice").val(""); // รีเซ็ต input file
     $("#imagePreviewInvoice").attr("src", "").hide(); // ซ่อนภาพ preview
     $("#pdfPreviewInvoice").attr("src", "").hide(); // ซ่อน PDF preview
+  });
+
+  $("#modalPayLoanNoLogin").on("hidden.bs.modal", function () {
+    $("#withholding_tax_chk_no_login").prop("checked", false);
+    $("#tax_section_no_login").hide();
+    $("#result_row_no_login").hide();
+
+    $("#tax_account_id_no_login").val("");
+    $("#main_amount_display_no_login").val("");
+    $("#tax_amount_display_no_login").val("");
   });
 });

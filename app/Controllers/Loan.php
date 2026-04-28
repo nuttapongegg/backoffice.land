@@ -1020,6 +1020,32 @@ class Loan extends BaseController
         $account_id = $this->request->getPost('account_name');
         $close_loan_payment = $this->request->getPost('close_loan_payment');
 
+        $tax_status = (int)$this->request->getPost('withholding_tax_chk');
+        $tax_account_id = $this->request->getPost('tax_account_id');
+
+        $payment_now = (float)$payment_now; // กัน string
+
+        $main_amount = $payment_now;
+        $tax_amount = 0.00;
+
+        // ใช้เฉพาะตอนติ๊ก + มีบัญชีภาษี
+        if ($tax_status === 1 && !empty($tax_account_id)) {
+
+            $tax_amount = round(($payment_now * 1.25) / 100, 2);
+            $main_amount = $payment_now - $tax_amount;
+        } else {
+
+            // กันเคส user ไม่เลือกบัญชี แต่ติ๊ก
+            $tax_status = 0;
+            $tax_account_id = null;
+        }
+        $tax_account_name = null;
+
+        if ($tax_status === 1 && !empty($tax_account_id)) {
+            $tax_account = $this->SettingLandModel->getSettingLandByID($tax_account_id);
+            $tax_account_name = $tax_account ? $tax_account->land_account_name : null;
+        }
+
         // $status_payment = $this->request->getPost('status_payment');
 
         $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
@@ -1100,7 +1126,12 @@ class Loan extends BaseController
 
             $data_payment = [
                 // 'loan_code' => $codeloan_hidden,
-                'loan_payment_amount'  => $payment_now,
+                'loan_payment_amount'   => $payment_now,      // ยอดเต็ม
+                'main_account_amount'   => $main_amount,      // เงินเข้าบัญชีหลัก
+                'tax_status'            => $tax_status,
+                'tax_account_id'        => $tax_account_id,
+                'tax_account_name'      => $tax_account_name, // เดี๋ยวเติมด้านล่าง
+                'tax_amount'            => $tax_amount,
                 'loan_employee' => $employee_name,
                 'loan_payment_type' => $payment_type,
                 'loan_payment_pay_type' => $customer_payment_type,
@@ -1135,6 +1166,11 @@ class Loan extends BaseController
             $loan_payment = [
                 // 'loan_code' => $codeloan_hidden,
                 'loan_payment_amount'  => $payment_now,
+                'main_account_amount'   => $main_amount,      // เงินเข้าบัญชีหลัก
+                'tax_status'            => $tax_status,
+                'tax_account_id'        => $tax_account_id,
+                'tax_account_name'      => $tax_account_name, // เดี๋ยวเติมด้านล่าง
+                'tax_amount'            => $tax_amount,
                 'loan_employee' => $employee_name,
                 'loan_payment_type' => 'Installment',
                 'loan_payment_pay_type' => $customer_payment_type,
@@ -1162,6 +1198,11 @@ class Loan extends BaseController
 
             $data_close_payment = [
                 'loan_payment_amount'  => 0,
+                'main_account_amount'  => 0,
+                'tax_status'           => 0,
+                'tax_account_id'       => null,
+                'tax_account_name'     => null,
+                'tax_amount'           => 0,
                 'loan_employee' => $employee_name,
                 'loan_payment_pay_type' => $customer_payment_type,
                 'loan_payment_customer' => $payment_name,
@@ -1193,6 +1234,11 @@ class Loan extends BaseController
             $data_payment = [
                 // 'loan_code' => $codeloan_hidden,
                 'loan_payment_amount'  => $payment_now,
+                'main_account_amount'   => $main_amount,      // เงินเข้าบัญชีหลัก
+                'tax_status'            => $tax_status,
+                'tax_account_id'        => $tax_account_id,
+                'tax_account_name'      => $tax_account_name, // เดี๋ยวเติมด้านล่าง
+                'tax_amount'            => $tax_amount,
                 'loan_employee' => $employee_name,
                 'loan_payment_type' => $payment_type,
                 'loan_payment_pay_type' => $customer_payment_type,
@@ -1210,8 +1256,28 @@ class Loan extends BaseController
             $Loan_Staus = 'งวดที่ ' . $installment_count;
         }
 
+        if ($tax_status === 1 && !empty($tax_account_id)) {
+            $detail = 'ชำระสินเชื่อ ' . $codeloan_hidden . '(' . $Loan_Staus . ')';
+            $tax_account = $this->SettingLandModel->getSettingLandByID($tax_account_id);
+            if ($tax_account) {
+                $new_balance = $tax_account->land_account_cash + $tax_amount;
+                $this->SettingLandModel->updateSettingLandByID($tax_account_id, [
+                    'land_account_cash' => $new_balance,
+                ]);
+                $this->SettingLandModel->insertSettingLandReport([
+                    'setting_land_id' => $tax_account_id,
+                    'setting_land_report_detail' => $detail,
+                    'setting_land_report_money' => $tax_amount,
+                    'setting_land_report_note' => '1.25%',
+                    'setting_land_report_account_balance' => $new_balance,
+                    'employee_id' => session()->get('employeeID'),
+                    'employee_name' => session()->get('employee_fullname')
+                ]);
+            }
+        }
+
         if ($land_account_name != '') {
-            $land_account_cash_receipt = $land_account_name->land_account_cash + $payment_now;
+            $land_account_cash_receipt = $land_account_name->land_account_cash + $main_amount;
 
             $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                 'land_account_cash' => $land_account_cash_receipt,
@@ -1222,7 +1288,7 @@ class Loan extends BaseController
             $this->SettingLandModel->insertSettingLandReport([
                 'setting_land_id' => $account_id,
                 'setting_land_report_detail' => $detail,
-                'setting_land_report_money' => $payment_now,
+                'setting_land_report_money' => $main_amount,
                 'setting_land_report_note' => '',
                 'setting_land_report_account_balance' => $land_account_cash_receipt,
                 'employee_id' => session()->get('employeeID'),
@@ -4348,6 +4414,31 @@ class Loan extends BaseController
         $paymentFilePrice = $this->request->getVar('payment_file_price');
         $paymentFileRefNo = $this->request->getVar('payment_file_ref_no');
         // $status_payment = $this->request->getPost('status_payment');
+
+        // ===== TAX =====
+        $tax_status = (int)$this->request->getPost('withholding_tax_chk');
+        $tax_account_id = $this->request->getPost('tax_account_id');
+
+        $payment_now = (float)$payment_now;
+
+        $main_amount = $payment_now;
+        $tax_amount = 0.00;
+
+        if ($tax_status === 1 && !empty($tax_account_id)) {
+            $tax_amount = round(($payment_now * 1.25) / 100, 2);
+            $main_amount = $payment_now - $tax_amount;
+        } else {
+            $tax_status = 0;
+            $tax_account_id = null;
+        }
+
+        $tax_account_name = null;
+
+        if ($tax_status === 1 && !empty($tax_account_id)) {
+            $tax_account = $this->SettingLandModel->getSettingLandByID($tax_account_id);
+            $tax_account_name = $tax_account ? $tax_account->land_account_name : null;
+        }
+
         $fileName_img = '';
 
         $land_account_name = $this->SettingLandModel->getSettingLandByID($account_id);
@@ -4426,7 +4517,12 @@ class Loan extends BaseController
 
             $data_payment = [
                 // 'loan_code' => $codeloan_hidden,
-                'loan_payment_amount'  => $payment_now,
+                'loan_payment_amount'  => $payment_now,   // ยอดเต็ม
+                'main_account_amount'  => $main_amount,   // เงินเข้าจริง
+                'tax_status'           => $tax_status,
+                'tax_account_id'       => $tax_account_id,
+                'tax_account_name'     => $tax_account_name,
+                'tax_amount'           => $tax_amount,
                 'loan_employee' => $employee_name,
                 'loan_payment_type' => $payment_type,
                 'loan_payment_pay_type' => $customer_payment_type,
@@ -4464,7 +4560,12 @@ class Loan extends BaseController
 
             $loan_payment = [
                 // 'loan_code' => $codeloan_hidden,
-                'loan_payment_amount'  => $payment_now,
+                'loan_payment_amount'  => $payment_now,   // ยอดเต็ม
+                'main_account_amount'  => $main_amount,   // เงินเข้าจริง
+                'tax_status'           => $tax_status,
+                'tax_account_id'       => $tax_account_id,
+                'tax_account_name'     => $tax_account_name,
+                'tax_amount'           => $tax_amount,
                 'loan_employee' => $employee_name,
                 'loan_payment_type' => 'Installment',
                 'loan_payment_pay_type' => $customer_payment_type,
@@ -4496,6 +4597,11 @@ class Loan extends BaseController
 
             $data_close_payment = [
                 'loan_payment_amount'  => 0,
+                'main_account_amount'  => 0,
+                'tax_status'           => 0,
+                'tax_account_id'       => null,
+                'tax_account_name'     => null,
+                'tax_amount'           => 0,
                 'loan_employee' => $employee_name,
                 'loan_payment_pay_type' => $customer_payment_type,
                 'loan_payment_customer' => $payment_name,
@@ -4530,7 +4636,12 @@ class Loan extends BaseController
 
             $data_payment = [
                 // 'loan_code' => $codeloan_hidden,
-                'loan_payment_amount'  => $payment_now,
+                'loan_payment_amount'  => $payment_now,   // ยอดเต็ม
+                'main_account_amount'  => $main_amount,   // เงินเข้าจริง
+                'tax_status'           => $tax_status,
+                'tax_account_id'       => $tax_account_id,
+                'tax_account_name'     => $tax_account_name,
+                'tax_amount'           => $tax_amount,
                 'loan_employee' => $employee_name,
                 'loan_payment_type' => $payment_type,
                 'loan_payment_pay_type' => $customer_payment_type,
@@ -4553,7 +4664,7 @@ class Loan extends BaseController
         }
 
         if ($land_account_name != '') {
-            $land_account_cash_receipt = $land_account_name->land_account_cash + $payment_now;
+            $land_account_cash_receipt = $land_account_name->land_account_cash + $main_amount;
 
             $this->SettingLandModel->updateSettingLandByID($land_account_name->id, [
                 'land_account_cash' => $land_account_cash_receipt,
@@ -4564,11 +4675,33 @@ class Loan extends BaseController
             $this->SettingLandModel->insertSettingLandReport([
                 'setting_land_id' => $account_id,
                 'setting_land_report_detail' => $detail,
-                'setting_land_report_money' => $payment_now,
+                'setting_land_report_money' => $main_amount,
                 'setting_land_report_note' => '',
                 'setting_land_report_account_balance' => $land_account_cash_receipt,
                 'employee_id' => 1,
             ]);
+        }
+
+        if ($tax_status === 1 && !empty($tax_account_id)) {
+            $detail = 'ชำระสินเชื่อ ' . $codeloan_hidden . '(' . $Loan_Staus . ')';
+            $tax_account = $this->SettingLandModel->getSettingLandByID($tax_account_id);
+
+            if ($tax_account) {
+                $new_balance = $tax_account->land_account_cash + $tax_amount;
+
+                $this->SettingLandModel->updateSettingLandByID($tax_account_id, [
+                    'land_account_cash' => $new_balance,
+                ]);
+
+                $this->SettingLandModel->insertSettingLandReport([
+                    'setting_land_id' => $tax_account_id,
+                    'setting_land_report_detail' => $detail,
+                    'setting_land_report_money' => $tax_amount,
+                    'setting_land_report_note' => '1.25%',
+                    'setting_land_report_account_balance' => $new_balance,
+                    'employee_id' => 1,
+                ]);
+            }
         }
 
         $update_loan = $this->LoanModel->updateLoanSumPayment($data_loan, $codeloan_hidden);

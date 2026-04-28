@@ -404,7 +404,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="form-group">
-                                                        <select name="account_name" id='account_name' class="form-control custom-select"  data-bs-placeholder="Select ..." required>
+                                                        <select name="account_name" id='account_name' class="form-control custom-select" data-bs-placeholder="Select ..." required>
                                                             <?php if ($land_accounts) : ?>
                                                                 <?php foreach ($land_accounts as $land_account) { ?>
                                                                     <option value="<?php echo $land_account->id; ?>"><?php echo $land_account->land_account_name; ?></option>
@@ -427,14 +427,83 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="col-6">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <!-- ซ้าย -->
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0"></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <label class="mb-0">
+                                                        <input type="checkbox" id="withholding_tax_chk_no_login">
+                                                        รายการภาษี 1.25%
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- ขวา -->
+                                        <div class="col-6">
                                             <div class="row align-items-center">
                                                 <div class="col-md-12 tx-right">
                                                     <label class="form-label mt-0">ยอดที่ต้องชำระ <font id="price_month">X</font> บาท</label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-6 mb-2">
+                                    </div>
+                                    <div class="row align-items-center">
+                                        <!-- select -->
+                                        <div class="col-6" id="tax_section_no_login" style="display:none;">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">บัญชีภาษี<span class="tx-danger">*</span></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <select id="tax_account_id_no_login" class="form-control">
+                                                        <option value="">เลือกบัญชี</option>
+                                                        <?php foreach ($land_accounts as $land_account) { ?>
+                                                            <option value="<?= $land_account->id ?>">
+                                                                <?= $land_account->land_account_name ?>
+                                                            </option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <div class="col-6">
+                                        </div>
+
+                                    </div>
+                                    <div class="row mt-2" id="result_row_no_login" style="display:none;">
+
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดเข้าบัญชีหลัก</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" id="main_amount_display_no_login" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4 tx-right">
+                                                    <label class="form-label mt-0">ยอดที่ใช้ยื่นภาษี</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" id="tax_amount_display_no_login" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div class="row">
                                         <div class="col-6">

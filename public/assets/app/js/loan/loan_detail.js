@@ -595,6 +595,18 @@ $(".modalPaymentLoanClose").click(function () {
   let form = modalPayLoan.find("form");
   form.parsley().reset();
   form[0].reset();
+
+  // ===== RESET TAX UI =====
+  $("#withholding_tax_chk").prop("checked", false);
+  $("#tax_account_id").val("").trigger("change");
+
+  $("#tax_section").hide();
+  $("#result_row").hide();
+  $("#col_net").hide();
+
+  $("#main_amount_display").val("");
+  $("#tax_amount_display").val("");
+
   $(".btn-add-loan-payment").text("บันทึก");
   $(".PaymentLoanType1").addClass("active");
   $(".PaymentLoanType2").removeClass("active");
@@ -610,6 +622,16 @@ $("#tablePayment").on("click", ".paymentBTN", function () {
   id_install = $(this).attr("id");
 
   // console.log(id_install);
+  // ===== RESET TAX UI ก่อนเปิด =====
+  $("#withholding_tax_chk").prop("checked", false);
+  $("#tax_account_id").val("").trigger("change");
+
+  $("#tax_section").hide();
+  $("#result_row").hide();
+  $("#col_net").hide();
+
+  $("#main_amount_display").val("");
+  $("#tax_amount_display").val("");
 
   $("#modalPayLoan").modal("show");
 
@@ -638,7 +660,7 @@ $(document).on("change", "#withholding_tax_chk", function () {
   if ($(this).is(":checked")) {
     $("#col_net").show();
     $("#tax_section").slideDown();
-
+    $("#tax_account_id").prop("required", true);
     $("#result_row").slideDown(); // ✅ เพิ่ม
 
     calculateTaxWHT();
@@ -647,7 +669,7 @@ $(document).on("change", "#withholding_tax_chk", function () {
     $("#tax_section").slideUp();
 
     $("#result_row").slideUp(); // ✅ เพิ่ม
-
+    $("#tax_account_id").prop("required", false);
     $("#main_amount_display").val("");
     $("#tax_amount_display").val("");
   }
@@ -673,11 +695,9 @@ $(document).delegate(".btn-add-loan-payment", "click", function (e) {
 
   // ================= WHT =================
   formData.append(
-    "withholding_tax",
+    "withholding_tax_chk",
     $("#withholding_tax_chk").is(":checked") ? 1 : 0,
   );
-  formData.append("tax_percent", $("#tax_percent").val());
-  formData.append("tax_amount", $("#tax_amount").val());
   formData.append("tax_account_id", $("#tax_account_id").val());
 
   const date = new Date(loan_installment_date);
