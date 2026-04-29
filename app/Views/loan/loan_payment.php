@@ -442,7 +442,7 @@
                                                 <div class="col-md-8">
                                                     <label class="mb-0">
                                                         <input type="checkbox" id="withholding_tax_chk_no_login">
-                                                        รายการภาษี 1.25%
+                                                        รายการภาษี 12.5%
                                                     </label>
                                                 </div>
                                             </div>

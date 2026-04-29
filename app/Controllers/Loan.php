@@ -1031,7 +1031,7 @@ class Loan extends BaseController
         // ใช้เฉพาะตอนติ๊ก + มีบัญชีภาษี
         if ($tax_status === 1 && !empty($tax_account_id)) {
 
-            $tax_amount = round(($payment_now * 1.25) / 100, 2);
+            $tax_amount = round(($payment_now * 12.5) / 100, 2);
             $main_amount = $payment_now - $tax_amount;
         } else {
 
@@ -1268,7 +1268,7 @@ class Loan extends BaseController
                     'setting_land_id' => $tax_account_id,
                     'setting_land_report_detail' => $detail,
                     'setting_land_report_money' => $tax_amount,
-                    'setting_land_report_note' => '1.25%',
+                    'setting_land_report_note' => '12.5%',
                     'setting_land_report_account_balance' => $new_balance,
                     'employee_id' => session()->get('employeeID'),
                     'employee_name' => session()->get('employee_fullname')
@@ -4425,7 +4425,7 @@ class Loan extends BaseController
         $tax_amount = 0.00;
 
         if ($tax_status === 1 && !empty($tax_account_id)) {
-            $tax_amount = round(($payment_now * 1.25) / 100, 2);
+            $tax_amount = round(($payment_now * 12.5) / 100, 2);
             $main_amount = $payment_now - $tax_amount;
         } else {
             $tax_status = 0;
@@ -4697,7 +4697,7 @@ class Loan extends BaseController
                     'setting_land_id' => $tax_account_id,
                     'setting_land_report_detail' => $detail,
                     'setting_land_report_money' => $tax_amount,
-                    'setting_land_report_note' => '1.25%',
+                    'setting_land_report_note' => '12.5%',
                     'setting_land_report_account_balance' => $new_balance,
                     'employee_id' => 1,
                 ]);

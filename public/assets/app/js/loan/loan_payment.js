@@ -197,7 +197,7 @@ function calculateTaxWHT_NoLogin() {
         .replace(/[^0-9.-]+/g, ""),
     ) || 0;
 
-  let percent = 1.25;
+  let percent = 12.5;
 
   let tax = (amount * percent) / 100;
   let net = amount - tax;
@@ -206,7 +206,7 @@ function calculateTaxWHT_NoLogin() {
     net.toLocaleString() + " บาท (98.75%)",
   );
 
-  $("#tax_amount_display_no_login").val(tax.toLocaleString() + " บาท (1.25%)");
+  $("#tax_amount_display_no_login").val(tax.toLocaleString() + " บาท (12.5%)");
 }
 
 $(document).delegate(".btn-add-loan-payment", "click", function (e) {

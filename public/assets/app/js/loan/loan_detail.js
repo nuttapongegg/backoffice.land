@@ -1452,7 +1452,7 @@ function calculateTaxWHT() {
         .replace(/[^0-9.-]+/g, ""),
     ) || 0;
 
-  let percent = 1.25; // ✅ fix เลย
+  let percent = 12.5; // ✅ fix เลย
 
   let tax = (amount * percent) / 100;
   let net = amount - tax;

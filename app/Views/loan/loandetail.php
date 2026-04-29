@@ -876,7 +876,7 @@
                                 <div class="col-12 text-end">
                                     <label>
                                         <input type="checkbox" id="withholding_tax_chk">
-                                        รายการภาษี 1.25%
+                                        รายการภาษี 12.5%
                                     </label>
                                 </div>
                             </div>
@@ -955,7 +955,7 @@
                                     </div>
                                 </div>
 
-                                <!-- ยอดที่ใช้ยื่นภาษี (1.25%) -->
+                                <!-- ยอดที่ใช้ยื่นภาษี (12.5%) -->
                                 <div class="col-6">
                                     <div class="row align-items-center">
                                         <div class="col-md-4 tx-right">
