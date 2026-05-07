@@ -219,7 +219,9 @@ function getPlannedInstallments(
 }
 
 function callTableLoan() {
-  $("#tableLoanOn").DataTable().clear().destroy();
+  if ($.fn.DataTable.isDataTable("#tableLoanOn")) {
+    $("#tableLoanOn").DataTable().clear().destroy();
+  }
 
   const date = $("#daterange_loan").val() || "";
   const loan_types = getLoanTypesSelected();
@@ -251,6 +253,7 @@ function callTableLoan() {
 
 function callAutoloenTable(data) {
   var tableLoan = $("#tableLoanOn").DataTable({
+    destroy: true,
     responsive: false,
     language: {
       searchPlaceholder: "Search...",
@@ -265,7 +268,7 @@ function callAutoloenTable(data) {
     scrollX: "TRUE",
     paging: true,
     processing: true,
-    serverside: true,
+    serverside: false,
     data: data,
     columnDefs: [
       {
@@ -851,7 +854,8 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
     formData.append("imageFile", imageFile);
   }
 
-  let loanWithoutVat = parseFloat(form.find('input[name=loan_without_vat]').val()) || 0;
+  let loanWithoutVat =
+    parseFloat(form.find("input[name=loan_without_vat]").val()) || 0;
 
   if (loanWithoutVat <= 0) {
     Swal.fire({
@@ -860,13 +864,13 @@ $(document).delegate(".btn-add-loan", "click", function (e) {
       buttonsStyling: false,
       confirmButtonText: "ตกลง",
       customClass: {
-        confirmButton: "btn btn-primary"
-      }
+        confirmButton: "btn btn-primary",
+      },
     });
 
     return false;
   }
-  
+
   var loan_list = form.parsley();
   if (loan_list.isValid()) {
     $(".btn-add-loan").text("กำลังบันทึก...").prop("disabled", true); // 🔒 Disable ปุ่ม
@@ -1132,7 +1136,7 @@ function callAutoloenTablePayments(data) {
           );
         },
       },
-            {
+      {
         data: "setting_land_report_note",
         render: function (data, type, row) {
           return (
